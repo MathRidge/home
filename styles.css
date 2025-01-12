@@ -98,3 +98,27 @@ font-weight:500;
 color:#666;
 border-radius:50px;
 }
+
+.title {
+background-image: url('images/MathRidge.png'); 
+background-size: 100%; 
+opacity:0.9; 
+font-family:Geneva; 
+font-size:30px; 
+color:maroon;
+}
+.title2 {
+color:Cornsilk;
+background-image: linear-gradient(to bottom right, rgba(212, 140, 101, 0.97), rgba(212, 180, 101, 0.97));
+border-radius:50px;
+}
+.left{
+width:15%; 
+opacity:0.98;
+background-image: linear-gradient(to right,DarkTurquoise,rgba(150, 212, 212, 0.97))
+}
+.right{
+width:15%; 
+opacity:0.98;
+background-image: linear-gradient(to left,DarkTurquoise,rgba(150, 212, 212, 0.97))
+}
