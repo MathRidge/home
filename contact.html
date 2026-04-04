@@ -1,8 +1,8 @@
 <html lang="en" dir="ltr">
  <head>
   <meta charset="UTF-8">
-  <title> Math Ridge Responsive Application Form</title>
-  <link rel="stylesheet" href="style.css">
+  <title> Math Ridge Responsive Registration Form </title>
+  <link rel="stylesheet" href="styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
  </head>
  <body>
@@ -13,33 +13,33 @@
      <div class="user-details">
       <div class="input-box">
         <span class="details">Parent's Name</span>
-        <input type="text" placeholder="Enter Parent's Name" required>
+        <input type="text" name="ParentName" placeholder="Enter Parent's Name" required>
       </div>
       <div class="input-box">
         <span class="details">Student's Name</span>
-        <input type="text" placeholder="Enter Student's name" required>
+        <input type="text" name="StudentName" placeholder="Enter Student's name" required>
       </div>
       <div class="input-box">
         <span class="details">Grade</span>
-        <input type="text" placeholder="(1~12); Other specify" required>
+        <input type="text" name="Grade" placeholder="(1~12); Other specify" required>
       </div>
       <div class="input-box">
         <span class="details">Current Math Class</span>
-        <input type="text" placeholder="Enter math subject" required>
+        <input type="text" name="Subject" placeholder="Enter math subject" required>
       </div>
       <div class="input-box">
         <span class="details">Email</span>
-        <input type="text" placeholder="Enter your email" required>
+        <input type="email" name="Email" placeholder="Enter your email" required>
       </div>
       <div class="input-box">
         <span class="details">Phone Number</span>
-        <input type="text" placeholder="Enter your number" required>
+        <input type="text" name="PhoneNumber" placeholder="Enter your number" required>
       </div>
      </div>
      <div class="gender-details">
-      <input type="radio" name="gender" id="dot-1">
-      <input type="radio" name="gender" id="dot-2">
-      <input type="radio" name="gender" id="dot-3">
+      <input type="radio" name="gender" value="Male" id="dot-1">
+      <input type="radio" name="gender" value="Female" id="dot-2">
+      <input type="radio" name="gender" value="None" id="dot-3">
        <span class="gender-title">Student's Gender</span>
        <div class="category">
       <label for="dot-1">
