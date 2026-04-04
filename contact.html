@@ -1,51 +1,66 @@
-<html>
-<head>
-<title>Math Ridge - Contact</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="stylesheet" href="styles.css">
-
-</head>
-
-<body style="background-image: url('images/mbg.jpg');">
-<table style="width:100%">
-  <tr style="height:120px" id="top">
-    <th colspan="3" style="background-image: url('images/MathRidge.png'); background-size: 100%; opacity:0.9;">Math Ridge</th>
-  </tr>
-  <tr>
-    <th><a href="index.html">Home</a></th>
-    <th style="text-align:center;"><pre>|   <a href="dsat.html">DSAT Prep</a>   |   <a href="mathtutor.html">Math Tutoring</a>   |   <a href="resources.html">Resources</a>   |   <a href="testimonial.html">Testimonials</a>   |   <a href="about.html">About Me</a>   |   <b><u>Contact</u></b>   |  </pre></th>
-    <th>
-Date: <b id="datetime"></b><script src="script.js"></script>
-    </th>
-  </tr>
-  <tr style="height:50px">
-    <th style="width:15%" rowspan="2"></th>
-    <th style="width:70%; text-align:left"><pre class="t">Announcement:   Sign up today to get a <b>Free Trial</b> session! Get discount for 1 on 3 sessions! Offer discount for bulk sessions!</pre></th>
-    <th style="width:15%" rowspan="2"></th>
-  </tr>
-  <tr style="height:200px; text-align:center;">
-    <td>
-<h3 id="6"><a href="#top">Contact</a></h3>
-<div class="container">
-<form action="https://api.web3forms.com/submit" method="POST">
- <h4>GET IN TOUCH</h4>
-<input type="hidden" name="access_key" value="80a34395-a61f-408c-9289-3be412d5f31e">
-<input type="text" name="name" placeholder="Your Name" class="contact-inputs" required>
-<input type="email" name="email" placeholder="Email id" class="contact-inputs" required>
-<input type="text" name="phone" placeholder="Phone no." class="contact-inputs" required>
-<textarea name="message" row="4" placeholder="How can we help you?" required></textarea>
-<button type="submit">Submit</button>
-</form>
-</div>
-
-    </td>
-  </tr>
-
-  <tr style="height:70px">
-    <td colspan="3" style="text-align:center; font-size:11px;">© Math Ridge 2025. All rights reserved. | Administrator Address: 13209 Newcastle Way Newcastle, WA, 98059<br>
-   Text: (425) 919-0907   Email: primelearning.math.kevin@gmail.com<br>
-         Website Design by Kuan-Yuan (a.k.a Kevin) Huang</td>
-  </tr>
-</table>
-</body>
+<html lang="en" dir="ltr">
+ <head>
+  <meta charset="UTF-8">
+  <title> Math Ridge Responsive Application Form</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ </head>
+ <body>
+  <div class="container">
+   <div class="title">Registration</div>
+    <form action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="80a34395-a61f-408c-9289-3be412d5f31e">
+     <div class="user-details">
+      <div class="input-box">
+        <span class="details">Parent's Name</span>
+        <input type="text" placeholder="Enter Parent's Name" required>
+      </div>
+      <div class="input-box">
+        <span class="details">Student's Name</span>
+        <input type="text" placeholder="Enter Student's name" required>
+      </div>
+      <div class="input-box">
+        <span class="details">Grade</span>
+        <input type="text" placeholder="(1~12); Other specify" required>
+      </div>
+      <div class="input-box">
+        <span class="details">Current Math Class</span>
+        <input type="text" placeholder="Enter math subject" required>
+      </div>
+      <div class="input-box">
+        <span class="details">Email</span>
+        <input type="text" placeholder="Enter your email" required>
+      </div>
+      <div class="input-box">
+        <span class="details">Phone Number</span>
+        <input type="text" placeholder="Enter your number" required>
+      </div>
+     </div>
+     <div class="gender-details">
+      <input type="radio" name="gender" id="dot-1">
+      <input type="radio" name="gender" id="dot-2">
+      <input type="radio" name="gender" id="dot-3">
+       <span class="gender-title">Student's Gender</span>
+       <div class="category">
+      <label for="dot-1">
+       <span class="dot one"></span>
+       <span class="gender">Male</span>
+      </label>
+      <label for="dot-2">
+       <span class="dot two"></span>
+       <span class="gender">Female</span>
+      </label>
+      <label for="dot-3">
+       <span class="dot three"></span>
+       <span class="gender">Prefer not to say</span>
+      </label>
+     </div>
+    </div>
+    <div class="button">
+      <input type="submit" value="Request My Free Assessment">
+      <span>Students typically improve 1–2 letter grades within a few months</span>
+    </div>
+   </form>
+  </div>
+ </body>
 </html>
