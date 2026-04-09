@@ -1,5 +1,7 @@
-let currentIndex=0;
-const pages=['home','services','about','workshops','contact'];
+let currentIndex = 0;
+const pages = ['home','services','about','workshops','contact','success'];
+
+/* PAGE SWITCH */
 function showPage(pageId, newIndex){
   const currentPage = document.querySelector('.page.active');
   const nextPage = document.getElementById(pageId);
@@ -33,17 +35,71 @@ function showPage(pageId, newIndex){
   },500);
 
   currentIndex = newIndex;
+
+  updateActiveNav(); // ⭐ NEW
 }
-function toggleMenu(){sideMenu.classList.toggle('active');overlay.classList.toggle('active')}
-function navigate(id,i){showPage(id,i);if(innerWidth<768)toggleMenu()}
-function handleOther(){const select=document.getElementById('concern');const input=document.getElementById('otherInput');input.style.display=select.value==='Other'?'block':'none';}
-let startX=0,endX=0;
-window.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX});
-window.addEventListener('touchend',e=>{endX=e.changedTouches[0].screenX;let diff=startX-endX;if(Math.abs(diff)>50){if(diff>0&&currentIndex<pages.length-1){showPage(pages[currentIndex+1],currentIndex+1)}else if(diff<0&&currentIndex>0){showPage(pages[currentIndex-1],currentIndex-1)}}});
-// HANDLE FORM SUBMIT (prevent redirect)
+
+/* MENU TOGGLE */
+function toggleMenu(){
+  document.getElementById('sideMenu').classList.toggle('active');
+  document.getElementById('overlay').classList.toggle('active');
+}
+
+/* NAVIGATION (FIXED) */
+function navigate(pageId, index, fromMenu = false){
+  showPage(pageId, index);
+
+  // ONLY close menu if click came FROM menu
+  if(fromMenu && window.innerWidth < 768){
+    toggleMenu();
+  }
+}
+
+/* ACTIVE NAV HIGHLIGHT ⭐ */
+function updateActiveNav(){
+  const navLinks = document.querySelectorAll('.nav-links a, .side-menu a');
+
+  navLinks.forEach((link, i)=>{
+    link.classList.remove('active');
+    if(i === currentIndex){
+      link.classList.add('active');
+    }
+  });
+}
+
+/* OTHER INPUT */
+function handleOther(){
+  const select = document.getElementById('concern');
+  const input = document.getElementById('otherInput');
+  input.style.display = select.value === 'Other' ? 'block' : 'none';
+}
+
+/* SWIPE */
+let startX = 0;
+
+window.addEventListener('touchstart', e=>{
+  startX = e.changedTouches[0].screenX;
+});
+
+window.addEventListener('touchend', e=>{
+  let endX = e.changedTouches[0].screenX;
+  let diff = startX - endX;
+
+  if(Math.abs(diff) > 50){
+    if(diff > 0 && currentIndex < pages.length - 1){
+      showPage(pages[currentIndex + 1], currentIndex + 1);
+    } 
+    else if(diff < 0 && currentIndex > 0){
+      showPage(pages[currentIndex - 1], currentIndex - 1);
+    }
+  }
+});
+
+/* FORM SUBMIT */
 document.getElementById('contactForm').addEventListener('submit', function(e){
   e.preventDefault();
-const form = e.target;
+
+  const form = e.target;
   const data = new FormData(form);
 
   fetch(form.action, {
@@ -52,7 +108,7 @@ const form = e.target;
   })
   .then(response => {
     if(response.ok){
-      showPage('success',5);
+      showPage('success', 5);
       form.reset();
     } else {
       alert('Something went wrong. Please try again.');
@@ -62,3 +118,6 @@ const form = e.target;
     alert('Network error. Please try again.');
   });
 });
+
+/* INIT */
+updateActiveNav();
