@@ -1,5 +1,5 @@
 let currentIndex = 0;
-const pages = ['home','services','about','workshops','contact','success'];
+const pages = ['home','services','about','workshops','contact'];
 
 /* PAGE SWITCH */
 function showPage(pageId, newIndex){
