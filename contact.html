@@ -1,7 +1,164 @@
 <html lang="en" dir="ltr">
  <head>
   <meta charset="UTF-8">
-  <title> Math Ridge Responsive Registration Form </title>
+  <title> Math Ridge Responsive Registration Form </title><!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Math Ridge SPA</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav>
+	<div class="logo">Math Ridge
+	</div>
+	<div class="nav-links">
+		<a onclick="showPage('home',0)">Home</a>
+		<a onclick="showPage('services',1)">Services</a>
+		<a onclick="showPage('about',2)">About</a>
+		<a onclick="showPage('workshops',3)">Workshops</a>
+		<a onclick="showPage('contact',4)">Contact</a>
+	</div>
+	<div class="menu-btn" onclick="toggleMenu()">
+		<i class="fa fa-bars"></i>
+	</div>
+	</nav>
+
+	<div class="overlay-bg" id="overlay" onclick="toggleMenu()">
+	</div>
+	<div class="side-menu" id="sideMenu">
+		<a onclick="navigate('home',0)">Home</a>
+		<a onclick="navigate('services',1)">Services</a>
+		<a onclick="navigate('about',2)">About</a>
+		<a onclick="navigate('workshops',3)">Workshops</a>
+		<a onclick="navigate('contact',4)">Contact</a>
+	</div>
+
+<section id="home" class="page active">
+	<div class="hero">
+		<h1>Master Math with Confidence</h1>
+		<p>Personalized tutoring designed to help students truly understand concepts and excel in exams.</p>
+		<button onclick="navigate('contact',4)">Get Started</button>
+	</div>
+</section>
+
+<section id="services" class="page">
+	<div class="split">
+		<h2>Services</h2>
+		<div class="cards">
+			<div class="card"><h3>1-on-1 Tutoring</h3><p>Personalized sessions targeting each student’s exact needs and pace.</p></div>
+			<div class="card"><h3>Test Prep</h3><p>Focused SAT and school exam strategies to boost scores and confidence.</p></div>
+			<div class="card"><h3>Small Group Coaching</h3><p>2–3 students per session. Lower cost, longer sessions, stronger learning.</p></div>
+		</div>
+	</div>
+</section>
+
+<section id="about" class="page">
+	<div class="split">
+		<h2>About Math Ridge</h2>
+		<p>I specialize in helping students truly understand math; not just memorize it. My approach focuses on breaking down concepts so students gain confidence and independence in problem-solving.</p>
+		<p>With experience guiding students through algebra, geometry, and calculus, I help turn frustration into clarity and measurable progress.</p>
+		<p>My goal is simple: build strong foundations so students succeed long-term, not just on the next test.</p>
+	</div>
+</section>
+
+<section id="workshops" class="page">
+	<div class="split">
+		<h2>Live Math Workshops</h2>
+		<p>Join in-person sessions at local libraries where students learn core math foundations in a group setting.</p>
+		<p>These workshops are designed for all levels and allow parents and students to experience my teaching style before committing.</p>
+		<p>Great for building fundamentals in algebra and problem-solving skills.</p>
+		<button onclick="navigate('contact',4)">Join a Workshop</button>
+	</div>
+</section>
+
+<section id="contact" class="page">
+	<div class="container">
+		<div class="title">Free Assessment Request
+		</div>
+	<form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+	<input type="hidden" name="access_key" value="80a34395-a61f-408c-9289-3be412d5f31e">
+		<div class="user-details">
+			<div class="input-box"><span>Parent's Name</span><input type="text" name="ParentName" placeholder="Enter Parent's Name" required>
+			</div>
+			<div class="input-box"><span>Student's Name</span><input type="text" name="StudentName" placeholder="Enter Student's Name" required>
+			</div>
+			<div class="input-box"><span>Grade</span>
+				<select name="Grade" required>
+				<option value="">Select Grade</option>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
+				<option>4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
+				<option>8</option>
+				<option>9</option>
+				<option>10</option>
+				<option>11</option>
+				<option>12</option>
+				</select>
+			</div>
+			<div class="input-box">
+				<span>Current Math Class</span>
+				<select name="Subject" required>
+				<option value="">Select Class</option>
+				<option>Foundational</option>
+				<option>Pre-Algebra</option>
+				<option>Algebra</option>
+				<option>Geometry</option>
+				<option>Algebra II</option>
+				<option>Pre-Calculus</option>
+				<option>Calculus AB</option>
+				<option>Calculus BC</option>
+				</select>
+			</div>
+			<div class="input-box">
+				<span>Email</span>
+				<input type="email" name="Email" placeholder="Enter your email" required>
+			</div>
+			<div class="input-box">
+				<span>Phone Number</span>
+				<input type="tel" name="PhoneNumber" placeholder="Enter your number">
+			</div>
+			<div class="input-box">
+				<span>Main Concern</span>
+				<select name="MainConcern" id="concern" onchange="handleOther()" required>
+				<option value="">Select Concern</option>
+				<option>Falling behind</option>
+				<option>Test Performance</option>
+				<option>Lack understanding</option>
+				<option>SAT Prep</option>
+				<option>Other</option>
+				</select>
+				<input type="text" id="otherInput" name="OtherConcern" placeholder="Please specify">
+			</div>
+		</div>
+		<div class="note">
+<p>Students typically improve 1–2 letter grades within a few months</p>
+		</div>
+		<div class="button">
+			<input type="submit" value="Request My Free Assessment">
+		</div>
+	</form>
+	</div>
+</section>
+
+<!-- SUCCESS SCREEN -->
+<section id="success" class="page">
+	<div class="split">
+		<h2>✅ Request Sent!</h2>
+		<p>Thank you! Your free assessment request has been submitted.</p>
+		<p>I will contact you shortly to schedule your session.</p>
+		<button onclick="navigate('home',0)">Back to Home</button>
+	</div>
+</section>
+<script src="script.js"></script>
+</body>
+</html>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
  </head>
