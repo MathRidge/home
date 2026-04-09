@@ -1,12 +1,9 @@
-<html lang="en" dir="ltr">
- <head>
-  <meta charset="UTF-8">
-  <title> Math Ridge Responsive Registration Form </title><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Math Ridge SPA</title>
+	<title>Math Ridge</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	<link rel="stylesheet" href="style.css">
 </head>
@@ -15,16 +12,17 @@
 	<div class="logo">Math Ridge
 	</div>
 	<div class="nav-links">
-		<a onclick="showPage('home',0)">Home</a>
-		<a onclick="showPage('services',1)">Services</a>
-		<a onclick="showPage('about',2)">About</a>
-		<a onclick="showPage('workshops',3)">Workshops</a>
-		<a onclick="showPage('contact',4)">Contact</a>
+		<a onclick="navigate('home',0,true)">Home</a>
+		<a onclick="navigate('services',1,true)">Services</a>
+		<a onclick="navigate('about',2,true)">About</a>
+		<a onclick="navigate('workshops',3,true)">Workshops</a>
+		<a onclick="navigate('contact',4,true)">Contact</a>
 	</div>
 	<div class="menu-btn" onclick="toggleMenu()">
 		<i class="fa fa-bars"></i>
 	</div>
 	</nav>
+
 	<div class="overlay-bg" id="overlay" onclick="toggleMenu()">
 	</div>
 	<div class="side-menu" id="sideMenu">
@@ -34,6 +32,7 @@
 		<a onclick="navigate('workshops',3)">Workshops</a>
 		<a onclick="navigate('contact',4)">Contact</a>
 	</div>
+
 <section id="home" class="page active">
 	<div class="hero">
 		<h1>Master Math with Confidence</h1>
@@ -41,6 +40,7 @@
 		<button onclick="navigate('contact',4)">Get Started</button>
 	</div>
 </section>
+
 <section id="services" class="page">
 	<div class="split">
 		<h2>Services</h2>
@@ -51,6 +51,7 @@
 		</div>
 	</div>
 </section>
+
 <section id="about" class="page">
 	<div class="split">
 		<h2>About Math Ridge</h2>
@@ -59,6 +60,7 @@
 		<p>My goal is simple: build strong foundations so students succeed long-term, not just on the next test.</p>
 	</div>
 </section>
+
 <section id="workshops" class="page">
 	<div class="split">
 		<h2>Live Math Workshops</h2>
@@ -68,6 +70,7 @@
 		<button onclick="navigate('contact',4)">Join a Workshop</button>
 	</div>
 </section>
+
 <section id="contact" class="page">
 	<div class="container">
 		<div class="title">Free Assessment Request
@@ -140,6 +143,7 @@
 	</form>
 	</div>
 </section>
+
 <!-- SUCCESS SCREEN -->
 <section id="success" class="page">
 	<div class="split">
