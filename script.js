@@ -1,6 +1,64 @@
-  // Get current date and time
-  var d = new Date();
-  var datetime = d.toLocaleString("en-US", {dateStyle: "medium",});
+let currentIndex=0;
+const pages=['home','services','about','workshops','contact'];
+function showPage(pageId, newIndex){
+  const currentPage = document.querySelector('.page.active');
+  const nextPage = document.getElementById(pageId);
 
-  // Insert date and time into HTML
-  document.getElementById("datetime").innerHTML = datetime;
+  if(currentPage === nextPage) return;
+
+  const goingForward = newIndex > currentIndex;
+  const outDirection = goingForward ? '-100%' : '100%';
+  const inStart = goingForward ? '100%' : '-100%';
+
+  // prepare next page
+  nextPage.style.transition = 'none';
+  nextPage.style.transform = `translateX(${inStart})`;
+  nextPage.style.opacity = 1;
+  nextPage.classList.add('active');
+
+  document.body.offsetHeight; // force reflow
+
+  // animate
+  currentPage.style.transition = 'all 0.5s ease';
+  nextPage.style.transition = 'all 0.5s ease';
+
+  currentPage.style.transform = `translateX(${outDirection})`;
+  currentPage.style.opacity = 0;
+
+  nextPage.style.transform = 'translateX(0)';
+
+  setTimeout(()=>{
+    currentPage.classList.remove('active');
+    currentPage.style.transform = 'translateX(0)';
+  },500);
+
+  currentIndex = newIndex;
+}
+function toggleMenu(){sideMenu.classList.toggle('active');overlay.classList.toggle('active')}
+function navigate(id,i){showPage(id,i);if(innerWidth<768)toggleMenu()}
+function handleOther(){const select=document.getElementById('concern');const input=document.getElementById('otherInput');input.style.display=select.value==='Other'?'block':'none';}
+let startX=0,endX=0;
+window.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX});
+window.addEventListener('touchend',e=>{endX=e.changedTouches[0].screenX;let diff=startX-endX;if(Math.abs(diff)>50){if(diff>0&&currentIndex<pages.length-1){showPage(pages[currentIndex+1],currentIndex+1)}else if(diff<0&&currentIndex>0){showPage(pages[currentIndex-1],currentIndex-1)}}});
+// HANDLE FORM SUBMIT (prevent redirect)
+document.getElementById('contactForm').addEventListener('submit', function(e){
+  e.preventDefault();
+const form = e.target;
+  const data = new FormData(form);
+
+  fetch(form.action, {
+    method: 'POST',
+    body: data
+  })
+  .then(response => {
+    if(response.ok){
+      showPage('success',5);
+      form.reset();
+    } else {
+      alert('Something went wrong. Please try again.');
+    }
+  })
+  .catch(() => {
+    alert('Network error. Please try again.');
+  });
+});
