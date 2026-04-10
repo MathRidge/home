@@ -173,3 +173,5 @@ function checkOrientation(){
 checkOrientation();
 
 // Run on rotate
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
