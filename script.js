@@ -121,3 +121,20 @@ document.getElementById('contactForm').addEventListener('submit', function(e){
 
 /* INIT */
 updateActiveNav();
+
+// Prevent pinch zoom
+document.addEventListener('touchmove', function(e) {
+  if (e.scale !== 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// Prevent double tap zoom
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (e) {
+  const now = (new Date()).getTime();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
