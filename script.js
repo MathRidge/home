@@ -154,3 +154,22 @@ document.addEventListener('touchend', function (e) {
   }
   lastTouchEnd = now;
 }, false);
+// Prevent Rotation on phone
+function checkOrientation(){
+  if(window.innerWidth > window.innerHeight){
+    // Landscape
+    document.getElementById('rotateBlock').style.display = 'flex';
+
+    // Disable swipe when rotated
+    document.body.style.overflow = 'hidden';
+  } else {
+    // Portrait
+    document.getElementById('rotateBlock').style.display = 'none';
+    document.body.style.overflow = 'hidden'; // keep your SPA behavior
+  }
+}
+
+// Run on load
+checkOrientation();
+
+// Run on rotate
