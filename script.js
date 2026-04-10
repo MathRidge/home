@@ -168,3 +168,22 @@ function checkOrientation(){
 window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
+function fixIOSZoom(){
+  const meta = document.querySelector("meta[name=viewport]");
+  
+  if(!meta) return;
+
+  // temporarily allow resize
+  meta.setAttribute(
+    "content",
+    "width=device-width, initial-scale=1.0"
+  );
+
+  // force reset
+  setTimeout(()=>{
+    meta.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    );
+  }, 50);
+}
