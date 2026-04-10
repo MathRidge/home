@@ -167,7 +167,10 @@ function checkOrientation(){
 
 window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
+window.addEventListener('orientationchange', ()=>{
+  checkOrientation();
+  fixIOSZoom(); 
+});
 function fixIOSZoom(){
   const meta = document.querySelector("meta[name=viewport]");
   
