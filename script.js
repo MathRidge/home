@@ -78,15 +78,16 @@ function handleOther(){
 let startX = 0;
 let isSwiping = false;
 let isAnimating = false;
+let isRotating = false;
 
 window.addEventListener('touchstart', e=>{
-  if(isAnimating) return;
+  if(isAnimating || isRotating) return;
   startX = e.changedTouches[0].clientX;
   isSwiping = true;
 });
 
 window.addEventListener('touchend', e=>{
-  if(!isSwiping || isAnimating) return;
+  if(!isSwiping || isAnimating || isRotating) return;
 
   let endX = e.changedTouches[0].clientX;
   let diff = startX - endX;
@@ -168,25 +169,32 @@ function checkOrientation(){
 window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', ()=>{
+  isRotating = true;
+
   checkOrientation();
-  fixIOSZoom(); 
+  fixIOSZoom();
+
+  // give Safari time to settle
+  setTimeout(()=>{
+    isRotating = false;
+    fixIOSZoom(); // run again after settle
+  }, 500);
 });
+
 function fixIOSZoom(){
   const meta = document.querySelector("meta[name=viewport]");
-  
   if(!meta) return;
 
-  // temporarily allow resize
+  // force reset aggressively
   meta.setAttribute(
     "content",
     "width=device-width, initial-scale=1.0"
   );
 
-  // force reset
   setTimeout(()=>{
     meta.setAttribute(
       "content",
       "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     );
-  }, 50);
+  }, 100);
 }
