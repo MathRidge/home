@@ -154,35 +154,17 @@ document.addEventListener('touchend', function (e) {
   }
   lastTouchEnd = now;
 }, false);
-// Rotate Blocker
+//Rotate Block
 function checkOrientation(){
   const rotateBlock = document.getElementById('rotateBlock');
 
-  // iPhone-safe detection
-  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-
-  if(isLandscape){
+  if(window.innerWidth > window.innerHeight){
     rotateBlock.classList.add('active');
-
-    // HARD STOP all interaction
-    document.body.style.overflow = 'hidden';
   } else {
     rotateBlock.classList.remove('active');
   }
 }
 
-// Run multiple times (iPhone fix)
 window.addEventListener('load', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', checkOrientation);
-
-// Safety loop (handles Safari bugs)
-setInterval(checkOrientation, 500);
-}
-
-// Run on load
-checkOrientation();
-
-// Run on rotate
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
