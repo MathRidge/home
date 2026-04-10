@@ -154,19 +154,30 @@ document.addEventListener('touchend', function (e) {
   }
   lastTouchEnd = now;
 }, false);
-// Prevent Rotation on phone
+// Rotate Blocker
 function checkOrientation(){
-  if(window.innerWidth > window.innerHeight){
-    // Landscape
-    document.getElementById('rotateBlock').style.display = 'flex';
+  const rotateBlock = document.getElementById('rotateBlock');
 
-    // Disable swipe when rotated
+  // iPhone-safe detection
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+
+  if(isLandscape){
+    rotateBlock.classList.add('active');
+
+    // HARD STOP all interaction
     document.body.style.overflow = 'hidden';
   } else {
-    // Portrait
-    document.getElementById('rotateBlock').style.display = 'none';
-    document.body.style.overflow = 'hidden'; // keep your SPA behavior
+    rotateBlock.classList.remove('active');
   }
+}
+
+// Run multiple times (iPhone fix)
+window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+
+// Safety loop (handles Safari bugs)
+setInterval(checkOrientation, 500);
 }
 
 // Run on load
