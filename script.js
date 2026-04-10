@@ -74,26 +74,42 @@ function handleOther(){
   input.style.display = select.value === 'Other' ? 'block' : 'none';
 }
 
-/* SWIPE */
+/* SWIPE (UPGRADED - smooth + stable) */
 let startX = 0;
+let isSwiping = false;
+let isAnimating = false;
 
 window.addEventListener('touchstart', e=>{
-  startX = e.changedTouches[0].screenX;
+  if(isAnimating) return;
+  startX = e.changedTouches[0].clientX;
+  isSwiping = true;
 });
 
 window.addEventListener('touchend', e=>{
-  let endX = e.changedTouches[0].screenX;
+  if(!isSwiping || isAnimating) return;
+
+  let endX = e.changedTouches[0].clientX;
   let diff = startX - endX;
 
-  if(Math.abs(diff) > 50){
+  if(Math.abs(diff) > 60){
+    isAnimating = true;
+
     if(diff > 0 && currentIndex < pages.length - 1){
       showPage(pages[currentIndex + 1], currentIndex + 1);
     } 
     else if(diff < 0 && currentIndex > 0){
       showPage(pages[currentIndex - 1], currentIndex - 1);
     }
+
+    // unlock after animation
+    setTimeout(()=>{
+      isAnimating = false;
+    }, 500);
   }
+
+  isSwiping = false;
 });
+
 
 /* FORM SUBMIT */
 document.getElementById('contactForm').addEventListener('submit', function(e){
