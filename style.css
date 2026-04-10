@@ -22,6 +22,9 @@
     z-index:9999;
   }
 }
+#rotateMessage{
+  display:none;
+}
 html,
 body{
 	overflow:hidden; 
