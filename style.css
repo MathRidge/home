@@ -377,6 +377,9 @@ nav{
 		max-width:100%;
 		background:rgba(0,0,0,0.7);
 	}
+    .card{
+        height:160px;
+    }
 	.cards{
 		grid-template-columns:1fr;
 	}
