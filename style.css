@@ -384,7 +384,7 @@ nav{
 		background:rgba(0,0,0,0.7);
 	}
     .card{
-        height:160px;
+        height:130px;
     }
 	.cards{
 		grid-template-columns:1fr;
