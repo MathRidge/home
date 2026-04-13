@@ -87,7 +87,7 @@ nav{
 
 /* SIDE MENU */
 .side-menu{
-	box-shadow: -5px 0 5px rgba(0,0,0,0,25);
+	box-shadow: -5px 0 5px rgba(0,0,0,0.25);
 	position:fixed;
 	top:0;right:-40%;
 	width:40%;
