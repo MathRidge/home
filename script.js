@@ -68,7 +68,7 @@ function updateActiveNav(){
 }
 /* CARD INTERACTION ⭐ TOGGLE VERSION */
 document.querySelectorAll('.card').forEach(card => {
-  card.addEventListener('touchend', e => {
+    card.addEventListener('touchend', e => {
     e.preventDefault();
     e.stopPropagation();
     const isAlreadyOpen = card.classList.contains('flipped');
@@ -83,10 +83,9 @@ document.querySelectorAll('.card').forEach(card => {
     e.stopPropagation();
     const isAlreadyOpen = card.classList.contains('flipped');
     document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
-    if (!isAlreadyOpen) {
-      card.classList.add('flipped');
+    card.classList.toggle('flipped', !isAlreadyOpen);
     }
-  });
+  );
 });
 
 /* OTHER INPUT */
