@@ -66,46 +66,26 @@ function updateActiveNav(){
     }
   });
 }
-/* CARD INTERACTION ⭐ FINAL FIX */
+/* CARD INTERACTION ⭐ FINAL (NO SHAKE FIX) */
 document.querySelectorAll('.card').forEach(card => {
-  let startX = 0;
-  let startY = 0;
-  let touched = false; // ⭐ key fix
 
-  card.addEventListener('touchstart', e => {
-    startX = e.changedTouches[0].clientX;
-    startY = e.changedTouches[0].clientY;
-    touched = true;
-  });
-
+  // 📱 MOBILE → touch only
   card.addEventListener('touchend', e => {
-    let endX = e.changedTouches[0].clientX;
-    let endY = e.changedTouches[0].clientY;
+    e.preventDefault();        // ⭐ stops ghost click
+    e.stopPropagation();
 
-    let diffX = Math.abs(startX - endX);
-    let diffY = Math.abs(startY - endY);
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
+    card.classList.add('flipped');
+  }, { passive: false });
 
-    if (diffX < 10 && diffY < 10) {
-      e.stopPropagation();
-
-      // ⭐ only one open (clean UX)
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
-      card.classList.add('flipped');
-    }
-  });
-
+  // 💻 DESKTOP → click only
   card.addEventListener('click', e => {
-    // ⭐ IGNORE click if it came from touch
-    if (touched) {
-      touched = false;
-      return;
-    }
-
     e.stopPropagation();
 
     document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
     card.classList.add('flipped');
   });
+
 });
 
 
