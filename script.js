@@ -66,26 +66,39 @@ function updateActiveNav(){
     }
   });
 }
-/* CARD INTERACTION ⭐ */
-document.querySelectorAll('.card').forEach(card=>{
+/* CARD INTERACTION ⭐ (FIXED) */
+document.querySelectorAll('.card').forEach(card => {
   let startX = 0;
+  let startY = 0;
 
-  card.addEventListener('touchstart', e=>{
+  card.addEventListener('touchstart', e => {
     startX = e.changedTouches[0].clientX;
+    startY = e.changedTouches[0].clientY;
   });
 
-  card.addEventListener('touchend', e=>{
+  card.addEventListener('touchend', e => {
     let endX = e.changedTouches[0].clientX;
+    let endY = e.changedTouches[0].clientY;
 
-    // Only flip if it's a TAP (not swipe)
-    if(Math.abs(startX - endX) < 10){
+    let diffX = Math.abs(startX - endX);
+    let diffY = Math.abs(startY - endY);
+
+    // ✅ Only treat as TAP (not swipe or scroll)
+    if (diffX < 10 && diffY < 10) {
+      e.stopPropagation(); // ⭐ VERY IMPORTANT
       card.classList.toggle('flipped');
     }
   });
 
-  // Desktop support
-  card.addEventListener('click', ()=>{
-    card.classList.toggle('flipped');
+  // Desktop click
+  card.addEventListener('click', e => {
+    e.stopPropagation(); // ⭐ prevent interference
+    if(card.classList.contains('flipped')){
+  card.classList.remove('flipped');
+} else {
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('flipped')); // ⭐ only one open
+  card.classList.add('flipped');
+}
   });
 });
 
@@ -104,12 +117,19 @@ let isRotating = false;
 
 window.addEventListener('touchstart', e=>{
   if(isAnimating || isRotating) return;
+
+  // ⭐ BLOCK swipe if touching card
+  if(e.target.closest('.card')) return;
+
   startX = e.changedTouches[0].clientX;
   isSwiping = true;
 });
 
 window.addEventListener('touchend', e=>{
   if(!isSwiping || isAnimating || isRotating) return;
+
+  // ⭐ BLOCK swipe if touch ended on card
+  if(e.target.closest('.card')) return;
 
   let endX = e.changedTouches[0].clientX;
   let diff = startX - endX;
@@ -131,6 +151,7 @@ window.addEventListener('touchend', e=>{
   }
 
   isSwiping = false;
+  startX = 0;
 });
 
 
