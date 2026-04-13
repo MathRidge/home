@@ -68,11 +68,6 @@ function updateActiveNav(){
 }
 /* CARD INTERACTION ⭐ */
 document.querySelectorAll('.card').forEach(card=>{
-  card.addEventListener('click', ()=>{
-    card.classList.toggle('flipped');
-  });
-});
-document.querySelectorAll('.card').forEach(card=>{
   let startX = 0;
 
   card.addEventListener('touchstart', e=>{
@@ -82,12 +77,18 @@ document.querySelectorAll('.card').forEach(card=>{
   card.addEventListener('touchend', e=>{
     let endX = e.changedTouches[0].clientX;
 
-    // Only flip if it's a TAP, not a swipe
+    // Only flip if it's a TAP (not swipe)
     if(Math.abs(startX - endX) < 10){
       card.classList.toggle('flipped');
     }
   });
+
+  // Desktop support
+  card.addEventListener('click', ()=>{
+    card.classList.toggle('flipped');
+  });
 });
+
 /* OTHER INPUT */
 function handleOther(){
   const select = document.getElementById('concern');
