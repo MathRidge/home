@@ -66,28 +66,28 @@ function updateActiveNav(){
     }
   });
 }
-/* CARD INTERACTION ⭐ FINAL (NO SHAKE FIX) */
+/* CARD INTERACTION ⭐ TOGGLE VERSION */
 document.querySelectorAll('.card').forEach(card => {
-
-  // 📱 MOBILE → touch only
   card.addEventListener('touchend', e => {
-    e.preventDefault();        // ⭐ stops ghost click
+    e.preventDefault();
     e.stopPropagation();
-
+    const isAlreadyOpen = card.classList.contains('flipped');
+    // close all first
     document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
-    card.classList.add('flipped');
+    // reopen only if it was NOT already open
+    if (!isAlreadyOpen) {
+      card.classList.add('flipped');
+    }
   }, { passive: false });
-
-  // 💻 DESKTOP → click only
   card.addEventListener('click', e => {
     e.stopPropagation();
-
+    const isAlreadyOpen = card.classList.contains('flipped');
     document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
-    card.classList.add('flipped');
+    if (!isAlreadyOpen) {
+      card.classList.add('flipped');
+    }
   });
-
 });
-
 
 /* OTHER INPUT */
 function handleOther(){
