@@ -66,14 +66,16 @@ function updateActiveNav(){
     }
   });
 }
-/* CARD INTERACTION ⭐ (FIXED) */
+/* CARD INTERACTION ⭐ FINAL FIX */
 document.querySelectorAll('.card').forEach(card => {
   let startX = 0;
   let startY = 0;
+  let touched = false; // ⭐ key fix
 
   card.addEventListener('touchstart', e => {
     startX = e.changedTouches[0].clientX;
     startY = e.changedTouches[0].clientY;
+    touched = true;
   });
 
   card.addEventListener('touchend', e => {
@@ -83,24 +85,29 @@ document.querySelectorAll('.card').forEach(card => {
     let diffX = Math.abs(startX - endX);
     let diffY = Math.abs(startY - endY);
 
-    // ✅ Only treat as TAP (not swipe or scroll)
     if (diffX < 10 && diffY < 10) {
-      e.stopPropagation(); // ⭐ VERY IMPORTANT
-      card.classList.toggle('flipped');
+      e.stopPropagation();
+
+      // ⭐ only one open (clean UX)
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
+      card.classList.add('flipped');
     }
   });
 
-  // Desktop click
   card.addEventListener('click', e => {
-    e.stopPropagation(); // ⭐ prevent interference
-    if(card.classList.contains('flipped')){
-  card.classList.remove('flipped');
-} else {
-  document.querySelectorAll('.card').forEach(c=>c.classList.remove('flipped')); // ⭐ only one open
-  card.classList.add('flipped');
-}
+    // ⭐ IGNORE click if it came from touch
+    if (touched) {
+      touched = false;
+      return;
+    }
+
+    e.stopPropagation();
+
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
+    card.classList.add('flipped');
   });
 });
+
 
 /* OTHER INPUT */
 function handleOther(){
