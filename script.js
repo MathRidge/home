@@ -207,7 +207,6 @@ window.addEventListener('orientationchange', ()=>{
   isRotating = true;
 
   checkOrientation();
-  fixIOSZoom();
 
   // give Safari time to settle
   setTimeout(()=>{
@@ -216,20 +215,3 @@ window.addEventListener('orientationchange', ()=>{
   }, 500);
 });
 
-function fixIOSZoom(){
-  const meta = document.querySelector("meta[name=viewport]");
-  if(!meta) return;
-
-  // force reset aggressively
-  meta.setAttribute(
-    "content",
-    "width=device-width, initial-scale=1.0"
-  );
-
-  setTimeout(()=>{
-    meta.setAttribute(
-      "content",
-      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    );
-  }, 100);
-}
