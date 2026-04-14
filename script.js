@@ -1,6 +1,9 @@
 let currentIndex = 0;
 const pages = ['home','services','about','workshops','contact'];
-
+// 🔒 HARD BLOCK pinch zoom (ALL browsers)
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
 /* PAGE SWITCH */
 function showPage(pageId, newIndex){
   const currentPage = document.querySelector('.page.active');
@@ -104,7 +107,8 @@ let isRotating = false;
 window.addEventListener('touchstart', e=>{
   if(isAnimating || isRotating) return;
 
-  // ⭐ BLOCK swipe if touching card
+  if(e.touches.length > 1) return; // ⭐ BLOCK multi-touch (pinch)
+
   if(e.target.closest('.card')) return;
 
   startX = e.changedTouches[0].clientX;
@@ -177,18 +181,20 @@ document.addEventListener('touchmove', function(e) {
 
 // Prevent double tap zoom
 let lastTouchEnd = 0;
+
 document.addEventListener('touchend', function (e) {
-  const now = (new Date()).getTime();
-  if (now - lastTouchEnd <= 300) {
+  const now = Date.now();
+  if (now - lastTouchEnd < 300) {
     e.preventDefault();
   }
   lastTouchEnd = now;
-}, false);
+}, { passive: false });
+
 //Rotate Block
 function checkOrientation(){
   const rotateBlock = document.getElementById('rotateBlock');
-
-  if(window.innerWidth > window.innerHeight){
+  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+  if(isLandscape){
     rotateBlock.classList.add('active');
   } else {
     rotateBlock.classList.remove('active');
