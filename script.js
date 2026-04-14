@@ -200,18 +200,12 @@ function checkOrientation(){
     rotateBlock.classList.remove('active');
   }
 }
-
 window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', ()=>{
+window.addEventListener('orientationchange', () => {
   isRotating = true;
-
   checkOrientation();
-
-  // give Safari time to settle
-  setTimeout(()=>{
+  setTimeout(() => {
     isRotating = false;
-    fixIOSZoom(); // run again after settle
-  }, 500);
+  }, 400);
 });
-
