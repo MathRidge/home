@@ -36,8 +36,9 @@ html,
 body{
 	overflow:hidden; 
 	background:black;
+	touch-action: pan-y; /* ⭐ allow vertical only */
+    overscroll-behavior: none;
 }
-
 /* NAV */
 nav{
 	position:fixed;
@@ -142,6 +143,7 @@ nav{
 	opacity:0;
 	transition:0.5s;
 	pointer-events:none;
+	touch-action: pan-y;
 }
 .page.active{
 	opacity:1;
