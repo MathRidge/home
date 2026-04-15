@@ -239,7 +239,9 @@ nav{
   border-radius:15px;
   backdrop-filter:blur(1px)
 }
-
+.services-wrapper h2{
+  color: #feeddc;
+}
 /* CARDS */
 .cards{
   display:grid;
