@@ -1,9 +1,6 @@
 let currentIndex = 0;
 const pages = ['home','services','about','workshops','contact'];
-// 🔒 HARD BLOCK pinch zoom (ALL browsers)
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('gesturechange', e => e.preventDefault());
-document.addEventListener('gestureend', e => e.preventDefault());
+
 /* PAGE SWITCH */
 function showPage(pageId, newIndex){
   const currentPage = document.querySelector('.page.active');
@@ -104,38 +101,35 @@ let isSwiping = false;
 let isAnimating = false;
 let isRotating = false;
 
-window.addEventListener('touchstart', e=>{
-  if(isAnimating || isRotating) return;
+window.addEventListener('touchstart', e => {
+  if (isAnimating || isRotating || isZoomed()) return;
 
-  if(e.touches.length > 1) return; // ⭐ BLOCK multi-touch (pinch)
-
-  if(e.target.closest('.card')) return;
+  if (e.touches.length > 1) return;
+  if (e.target.closest('.card')) return;
 
   startX = e.changedTouches[0].clientX;
   isSwiping = true;
 });
 
-window.addEventListener('touchend', e=>{
-  if(!isSwiping || isAnimating || isRotating) return;
+window.addEventListener('touchend', e => {
+  if (!isSwiping || isAnimating || isRotating || isZoomed()) return;
 
-  // ⭐ BLOCK swipe if touch ended on card
-  if(e.target.closest('.card')) return;
+  if (e.target.closest('.card')) return;
 
   let endX = e.changedTouches[0].clientX;
   let diff = startX - endX;
 
-  if(Math.abs(diff) > 60){
+  if (Math.abs(diff) > 60) {
     isAnimating = true;
 
-    if(diff > 0 && currentIndex < pages.length - 1){
+    if (diff > 0 && currentIndex < pages.length - 1) {
       showPage(pages[currentIndex + 1], currentIndex + 1);
     } 
-    else if(diff < 0 && currentIndex > 0){
+    else if (diff < 0 && currentIndex > 0) {
       showPage(pages[currentIndex - 1], currentIndex - 1);
     }
 
-    // unlock after animation
-    setTimeout(()=>{
+    setTimeout(() => {
       isAnimating = false;
     }, 500);
   }
@@ -143,7 +137,13 @@ window.addEventListener('touchend', e=>{
   isSwiping = false;
   startX = 0;
 });
-
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    if (isZoomed()) {
+      isSwiping = false;
+    }
+  });
+}
 
 /* FORM SUBMIT */
 document.getElementById('contactForm').addEventListener('submit', function(e){
@@ -173,41 +173,33 @@ document.getElementById('contactForm').addEventListener('submit', function(e){
 updateActiveNav();
 
 
-// Prevent double tap zoom
-let lastTouchEnd = 0;
-
-document.addEventListener('touchend', function (e) {
-  const now = Date.now();
-  if (now - lastTouchEnd < 300) {
-    e.preventDefault();
-  }
-  lastTouchEnd = now;
-}, { passive: false });
-
 //Rotate Block
 function checkOrientation(){
   const rotateBlock = document.getElementById('rotateBlock');
-
-  // ✅ Detect mobile devices only
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  // Only apply rotate lock on mobile
   if(isMobile && window.innerWidth > window.innerHeight){
     rotateBlock.classList.add('active');
   } else {
     rotateBlock.classList.remove('active');
   }
 }
+
 window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
+
 window.addEventListener('orientationchange', () => {
   isRotating = true;
-  resetViewportZoom();
-  checkOrientation();
+
   setTimeout(() => {
     isRotating = false;
-  }, 400);
+    checkOrientation();
+  }, 300);
 });
+
+function isZoomed() {
+  return window.visualViewport && window.visualViewport.scale !== 1;
+}
 function resetViewportZoom() {
   let meta = document.querySelector("meta[name=viewport]");
   if (!meta) return;
