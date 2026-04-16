@@ -193,8 +193,12 @@ document.addEventListener('touchend', function (e) {
 //Rotate Block
 function checkOrientation(){
   const rotateBlock = document.getElementById('rotateBlock');
-  const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-  if(isLandscape){
+
+  // ✅ Detect mobile devices only
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  // Only apply rotate lock on mobile
+  if(isMobile && window.innerWidth > window.innerHeight){
     rotateBlock.classList.add('active');
   } else {
     rotateBlock.classList.remove('active');
