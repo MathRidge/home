@@ -172,12 +172,6 @@ document.getElementById('contactForm').addEventListener('submit', function(e){
 /* INIT */
 updateActiveNav();
 
-// Prevent pinch zoom
-document.addEventListener('touchmove', function(e) {
-  if (e.scale !== 1) {
-    e.preventDefault();
-  }
-}, { passive: false });
 
 // Prevent double tap zoom
 let lastTouchEnd = 0;
@@ -208,8 +202,25 @@ window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', () => {
   isRotating = true;
+  resetViewportZoom();
   checkOrientation();
   setTimeout(() => {
     isRotating = false;
   }, 400);
 });
+function resetViewportZoom() {
+  let meta = document.querySelector("meta[name=viewport]");
+  if (!meta) return;
+  // Force reset zoom
+  meta.setAttribute(
+    "content",
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+  );
+  // iOS needs a slight delay to apply correctly
+  setTimeout(() => {
+    meta.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1"
+    );
+  }, 50);
+}
