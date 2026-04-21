@@ -497,10 +497,13 @@ nav{
 		font-size:19px;
 	}
 	.hero h1{
-		font-size:30px;
+		font-size:27px;
+	}
+	.hero h3{
+		font-size:19px;
 	}
 	.hero p{
-		font-size: 19px;
+		font-size: 17px;
 	}
 	.split{
 		max-width:100%;
