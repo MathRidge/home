@@ -51,17 +51,21 @@ nav{
 	align-items:center;padding:15px 25px;
 	z-index:10;
 }
-.logo{
-	font-weight:700;
-	font-size:20px;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 20px;
 }
 .logo-img {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
+
 .nav-links{
 	display:flex;
 	gap:25px;
@@ -69,7 +73,7 @@ nav{
 .nav-links a{
   color:#fff;
   font-weight:600;
-  text-decoraton:none;
+  text-decoration:none;
   cursor:pointer;
   padding:8px 10px;
   border-radius:5px;
@@ -86,6 +90,8 @@ nav{
   background:#666;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
+
+
 .menu-btn{
 	display:none;
 	font-size:24px;
@@ -164,27 +170,48 @@ nav{
 /* HERO */
 #home{
 	background:url('http://images.unsplash.com/photo-1509228627152-72ae9ae6848d') center/cover;
+	overflow-y: auto;
+	height: 100vh;
+}
+#home.page{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	overflow-y: auto;
+	height: 100vh;
 }
 
 .hero{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: auto;
 	text-align: center;
-	max-width:800px;
-	background:rgba(0,0,0,0.35);
-	padding:35px;
-	border-radius:15px;
-	backdrop-filter:blur(5px);
+	max-width: 800px;
+	background: rgba(0,0,0,0.35);
+	padding: 40px 20px;
+	border-radius: 15px;
+	backdrop-filter: blur(5px);
 }
 .hero h1{
-	font-size:40px;
+	font-size:32px;
 	color: #feeddc;
 	margin-bottom:15px;
 }
+.hero h3{
+	font-size:28px;
+	color: #efbddc;
+	margin-bottom:15px;
+}
 .hero p{
-	font-size:23px;
+	font-size:19px;
 	font-style: italic;
 	font-weight: 400;
 	margin-bottom:20px;
 	line-height:1.6;
+	max-width: 500px;
 }
 .hero button{
 	padding:14px 30px;
@@ -194,10 +221,12 @@ nav{
 	color:white;
 	font-size:16px;
 	cursor:pointer;
+	margin-bottom: 30px;
 }
 
 /* SIDE CONTENT PAGES */
 .split{
+	margin:auto;
 	max-width:700px;
 	background:rgba(0,0,0,0.6);
 	padding:30px;
@@ -229,9 +258,13 @@ nav{
 }
 #about{
 	background:url('images/math3.jpg') center/cover;
+	overflow-y: auto;
+	height: 100vh;
 }
-#workshops{
+#results{
 	background:url('images/MathRidge.png') center/cover;
+	overflow-y: auto;
+	height: 100vh;
 }
 #contact{
 	background:url('images/mbg.jpg') center/cover;
@@ -306,7 +339,72 @@ nav{
   background:rgba(0,0,0,0.85);
   transform:rotateY(180deg);
 }
+/* RESULTS PAGE */
+.results-wrapper {
+	margin:auto;
+	max-width:900px;
+	background:rgba(0,0,0,0.6);
+	padding:30px 20px;
+	border-radius:15px;
+	backdrop-filter:blur(1px);
+	margin: auto;
+  	text-align: center;
+}
+.results-wrapper h2{
+	font-size:28px;
+	color: #efbddc;
+	margin-bottom:15px;
+}
+.results-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
 
+.stat {
+  background:rgba(4,2,2,0.5);
+  padding: 20px;
+  border-radius: 10px;
+  width: 250px;
+}
+
+.case {
+  text-align: left;
+  margin: 20px 0;
+  padding: 15px;
+  border-left: 4px solid #333;
+  background:rgba(2,4,2,0.5);
+}
+
+.testimonial {
+  margin: 20px 0;
+  padding: 20px;
+  font-style: italic;
+  background:rgba(2,2,4,0.5);
+  border-radius: 8px;
+}
+
+.testimonial span {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.results-cta {
+  margin-top: 40px;
+}
+.results-cta button{
+	padding:14px 30px;
+	border:none;
+	border-radius:30px;
+	background:linear-gradient(45deg,#71b7e6,#9b59b6);
+	color:white;
+	font-size:16px;
+	cursor:pointer;
+	margin-bottom: 30px;
+}
 /* CONTACT FORM */
 .container{
 	max-width:600px;
@@ -374,6 +472,13 @@ nav{
 	.input-box{
 		flex:1 1 100%;
 	}
+        .logo {
+		font-size: 18px;
+	}
+	.logo-img {
+		width: 32px;
+		height: 32px;
+	}
 	.container{
 		max-height:75vh;
 	}
@@ -387,7 +492,10 @@ nav{
 		font-size:19px;
 	}
 	.hero h1{
-		font-size:28px;
+		font-size:30px;
+	}
+	.hero p{
+		font-size: 19px;
 	}
 	.split{
 		max-width:100%;
