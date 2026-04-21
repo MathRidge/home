@@ -469,6 +469,11 @@ nav{
 
 /* MOBILE */
 @media(max-width:768px){
+	.page{
+	height: auto;       
+    min-height: 100vh;
+    overflow-y: auto;
+	}
 	.input-box{
 		flex:1 1 100%;
 	}
