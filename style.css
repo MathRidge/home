@@ -379,6 +379,12 @@ nav{
   border-left: 4px solid #623;
   background:rgba(2,4,2,0.5);
 }
+.case h3{
+	margin-bottom:10px;
+}
+.case p{
+	margin-top:8px;
+}
 
 .testimonial {
   margin: 20px 0;
