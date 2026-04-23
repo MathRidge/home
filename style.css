@@ -373,17 +373,16 @@ nav{
 
 .case {
   text-align: left;
-  margin: 20px 0;
   padding: 15px;
   border-radius:10px;
   border-left: 4px solid #623;
   background:rgba(2,4,2,0.5);
 }
 .case h3{
-	margin-bottom:10px;
+	margin-bottom:19px;
 }
 .case p{
-	margin-top:8px;
+	margin-bottom:19px;
 }
 
 .testimonial {
