@@ -358,6 +358,7 @@ nav{
 .results-stats {
   display: flex;
   gap: 20px;
+  border-radius:15px;
   justify-content: center;
   margin: 30px 0;
   flex-wrap: wrap;
@@ -374,7 +375,8 @@ nav{
   text-align: left;
   margin: 20px 0;
   padding: 15px;
-  border-left: 4px solid #333;
+  border-radius:10px;
+  border-left: 4px solid #623;
   background:rgba(2,4,2,0.5);
 }
 
