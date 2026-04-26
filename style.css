@@ -254,6 +254,7 @@ nav{
 }
 
 #services{
+	overflow-y: auto;
 	background:url('images/math2.jpg') center/cover;
 }
 #about{
@@ -297,7 +298,7 @@ nav{
 .card{
   perspective:1000px;
   cursor:pointer;
-  height:220px;
+  height:auto;
   transform:translateZ(0); /* ⭐ fix shake */
   touch-action: manipulation;
 }
