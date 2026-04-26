@@ -539,13 +539,16 @@ nav{
 		background:rgba(0,0,0,0.7);
 	}
 	#rotateBlock.active{
-        opacity:1;
-        pointer-events:auto;
-    }
-    .card{
-        height:180px;
-    }
+		opacity:1;
+		pointer-events:auto;
+	}
+	.card{
+		height:180px;
+	}
 	.cards{
 		grid-template-columns:1fr;
+	}
+	.card-back em{
+	color: #4CAF50;
 	}
 }
