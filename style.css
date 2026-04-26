@@ -275,7 +275,7 @@ nav{
 /* Service-Wrapper */
 .services-wrapper{
   width:100%;
-  max-width:700px;
+  max-width:1000px;
   margin:auto;
   text-align:center;
   background:rgba(0,0,0,0.6);
@@ -301,7 +301,10 @@ nav{
   transform:translateZ(0); /* ⭐ fix shake */
   touch-action: manipulation;
 }
-
+.card h3{
+  color:#71b7e6;
+  margin-bottom:8px;
+}
 .card-inner{
   position:relative;
   width:100%;
@@ -339,6 +342,19 @@ nav{
   background:rgba(0,0,0,0.85);
   transform:rotateY(180deg);
 }
+.card-back em{
+  color: #4CAF50;
+}
+.tag {
+  display: inline-block;
+  background: #4CAF50; /* green = positive / popular */
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
 /* RESULTS PAGE */
 .results-wrapper {
 	margin:auto;
@@ -370,8 +386,8 @@ nav{
   border-radius: 10px;
   width: 250px;
 }
-.state h3{
-  color: #32549f;
+.stat h3{
+  color:#71b7e6;
   margin-bottom:8px;
 }
 .case {
@@ -393,7 +409,7 @@ nav{
   margin: 20px 0;
   padding: 20px;
   font-style: italic;
-  background:rgba(2,2,4,0.5);
+  background:rgba(7,b,e,0.5);
   border-radius: 8px;
 }
 
@@ -401,7 +417,7 @@ nav{
   display: block;
   margin-top: 10px;
   font-weight: bold;
-  color:#8969df;
+  color:#71b7e6;
 }
 
 .results-cta {
