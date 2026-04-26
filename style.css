@@ -298,7 +298,7 @@ nav{
 .card{
   perspective:1000px;
   cursor:pointer;
-  height:auto;
+  height:180px;
   transform:translateZ(0); /* ⭐ fix shake */
   touch-action: manipulation;
 }
@@ -543,7 +543,7 @@ nav{
         pointer-events:auto;
     }
     .card{
-        height:130px;
+        height:180px;
     }
 	.cards{
 		grid-template-columns:1fr;
