@@ -34,7 +34,8 @@
 }
 html,
 body{
-	overflow:hidden; 
+	overflow-x:hidden;
+	overflow-y: auto; 
 	background:black;
 	touch-action: pan-y; /* ⭐ allow vertical only */
     overscroll-behavior: none;
@@ -150,17 +151,20 @@ nav{
 .page{
 	position:absolute;
 	width:100%;
-	height:100dvh;
+	min-height:100vh;   
 	top:0;
 	left:0;
+
 	display:flex;
+	flex-direction: column; 
 	align-items:center;
+
 	padding:80px 5%;
 	color:white;
+
 	opacity:0;
 	transition:0.5s;
 	pointer-events:none;
-	touch-action: pan-y;
 }
 .page.active{
 	opacity:1;
@@ -170,8 +174,6 @@ nav{
 /* HERO */
 #home{
 	background:url('http://images.unsplash.com/photo-1509228627152-72ae9ae6848d') center/cover;
-	overflow-y: auto;
-	height: 100vh;
 }
 #home.page{
 	display: flex;
@@ -179,7 +181,6 @@ nav{
 	align-items: center;
 	justify-content: flex-start;
 	overflow-y: auto;
-	height: 100vh;
 }
 
 .hero{
@@ -254,18 +255,13 @@ nav{
 }
 
 #services{
-	overflow-y: auto;
 	background:url('images/math2.jpg') center/cover;
 }
 #about{
 	background:url('images/math3.jpg') center/cover;
-	overflow-y: auto;
-	height: 100vh;
 }
 #results{
 	background:url('images/MathRidge.png') center/cover;
-	overflow-y: auto;
-	height: 100vh;
 }
 #contact{
 	background:url('images/mbg.jpg') center/cover;
@@ -273,6 +269,16 @@ nav{
 #success{
 	background:url('images/math9.png') center/cover;
 }
+#home,
+#services,
+#about,
+#results {
+	overflow-y: auto;
+}
+#services.page {
+	justify-content: flex-start;  /* content starts at top */
+}
+
 /* Service-Wrapper */
 .services-wrapper{
   width:100%;
@@ -499,10 +505,11 @@ nav{
 /* MOBILE */
 @media(max-width:768px){
 	.page{
-	height: auto;       
-    min-height: 100vh;
-    overflow-y: auto;
+		position:relative;
+		min-height:100vh;
+		overflow-y:auto;
 	}
+
 	.input-box{
 		flex:1 1 100%;
 	}
@@ -541,10 +548,6 @@ nav{
 	#rotateBlock.active{
 		opacity:1;
 		pointer-events:auto;
-	}
-	#services{
-	overflow-y: auto;
-		height: 100vh;
 	}
 	.card{
 		height:180px;
