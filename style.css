@@ -344,12 +344,24 @@ nav{
   background:rgba(0,0,0,0.85);
   transform:rotateY(180deg);
 }
-.card-back em{
-  color: #4CAF50;
+.check{
+  color:#4CAF50;
+  font-weight:bold;
+  margin-right:6px;
 }
 .tag {
   display: inline-block;
   background: #4CAF50; /* green = positive / popular */
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.tag1 {
+  display: inline-block;
+  background: #AF4C50; /* red = important / popular */
   color: white;
   font-size: 12px;
   font-weight: 600;
@@ -372,6 +384,11 @@ nav{
 .highlight{
   transform:scale(1.05);   /* slight pop */
   border:2px solid #4CAF50;
+  z-index:2;
+}
+.highlight1{
+  transform:scale(1.05);   /* slight pop */
+  border:2px solid #AF4C50;
   z-index:2;
 }
 .fit{
@@ -577,6 +594,10 @@ nav{
 		transform:none;           
 		border:2px solid #4CAF50;  
 	}
+	.highlight1{
+		transform:none;           
+		border:2px solid #AF4C50;  
+	}
 	#rotateBlock.active{
 		opacity:1;
 		pointer-events:auto;
@@ -586,8 +607,5 @@ nav{
 	}
 	.cards{
 		grid-template-columns:1fr;
-	}
-	.card-back em{
-	color: #4CAF50;
 	}
 }
