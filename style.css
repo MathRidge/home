@@ -369,6 +369,16 @@ nav{
   border-radius: 20px;
   margin-bottom: 10px;
 }
+.tag2 {
+  display: inline-block;
+  background: #504CAF; /* blue = premium / best result */
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
 .pricing-section{
   margin-top:50px;
   width:100%;
@@ -382,14 +392,21 @@ nav{
   margin:0 auto;       /* center the whole block */
 }
 .highlight{
-  transform:scale(1.05);   /* slight pop */
+  transform:scale(1.05);
   border:2px solid #4CAF50;
+  box-shadow:0 0 10px rgba(59,246,130,0.4);
   z-index:2;
 }
 .highlight1{
-  transform:scale(1.05);   /* slight pop */
+  transform:scale(1.05); 
   border:2px solid #AF4C50;
+  box-shadow:0 0 10px rgba(246,59,130,0.4);
   z-index:2;
+}
+.highlight2{
+  transform:scale(1.05);
+  border:2px solid #3C30AF;
+  box-shadow:0 0 10px rgba(59,130,246,0.4);
 }
 .fit{
   font-size:13px;
@@ -597,6 +614,10 @@ nav{
 	.highlight1{
 		transform:none;           
 		border:2px solid #AF4C50;  
+	}
+	.highlight2{
+		transform:none;           
+		border:2px solid #4C50AF;  
 	}
 	#rotateBlock.active{
 		opacity:1;
