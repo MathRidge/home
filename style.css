@@ -629,4 +629,9 @@ nav{
 	.cards{
 		grid-template-columns:1fr;
 	}
+	.check{
+		color:#4CAF50;
+		font-weight:bold;
+		margin-right:6px;
+	}
 }
