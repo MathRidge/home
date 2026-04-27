@@ -154,21 +154,20 @@ nav{
 	min-height:100vh;   
 	top:0;
 	left:0;
-
 	display:flex;
 	flex-direction: column; 
 	align-items:center;
-
 	padding:80px 5%;
 	color:white;
-
 	opacity:0;
 	transition:0.5s;
 	pointer-events:none;
+	z-index:0;
 }
 .page.active{
 	opacity:1;
 	pointer-events:auto;
+	z-index:2;
 }
 
 /* HERO */
@@ -269,12 +268,7 @@ nav{
 #success{
 	background:url('images/math9.png') center/cover;
 }
-#home,
-#services,
-#about,
-#results {
-	overflow-y: auto;
-}
+
 #services.page {
 	justify-content: flex-start;  /* content starts at top */
 }
@@ -416,7 +410,7 @@ nav{
   margin: 20px 0;
   padding: 20px;
   font-style: italic;
-  background:rgba(7,b,e,0.5);
+  background:rgba(7,11,14,0.5);
   border-radius: 8px;
 }
 
@@ -505,7 +499,7 @@ nav{
 /* MOBILE */
 @media(max-width:768px){
 	.page{
-		position:relative;
+		position:absolute;
 		min-height:100vh;
 		overflow-y:auto;
 	}
