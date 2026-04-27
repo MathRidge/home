@@ -293,12 +293,13 @@ nav{
   grid-template-columns:repeat(3, 1fr);
   gap:25px;
   margin-top:30px;
+  margin-bottom:40px;
 }
 
 .card{
   perspective:1000px;
   cursor:pointer;
-  height:180px;
+  height:110px;
   transform:translateZ(0); /* ⭐ fix shake */
   touch-action: manipulation;
 }
@@ -356,6 +357,29 @@ nav{
   border-radius: 20px;
   margin-bottom: 10px;
 }
+.pricing-section{
+  margin-top:50px;
+  width:100%;
+}
+.pricing-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:25px;
+  width:100%;          /* ⭐ important */
+  max-width:900px;     /* optional control */
+  margin:0 auto;       /* center the whole block */
+}
+.highlight{
+  transform:scale(1.05);   /* slight pop */
+  border:2px solid #4CAF50;
+  z-index:2;
+}
+.fit{
+  font-size:13px;
+  opacity:0.8;
+  margin-top:8px;
+}
+
 /* RESULTS PAGE */
 .results-wrapper {
 	margin:auto;
@@ -538,6 +562,20 @@ nav{
 	.split{
 		max-width:100%;
 		background:rgba(0,0,0,0.7);
+	}
+	.pricing-grid{
+		display:flex;             
+		flex-direction:column;     
+		gap:20px;
+	}
+	.price-card{
+		width:100%;
+		min-height:auto;           
+		transform:none;            
+	}
+	.highlight{
+		transform:none;           
+		border:2px solid #4CAF50;  
 	}
 	#rotateBlock.active{
 		opacity:1;
