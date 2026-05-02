@@ -188,11 +188,12 @@ a.nav-button:hover{
 	color:white;
 	opacity:0;
 	transition:0.5s;
-        overflow-x: hidden;
+    overflow-x: hidden;
 	overflow-y:auto;
 	overscroll-behavior: contain;
 	pointer-events:none;
 	z-index:0;
+	-webkit-overflow-scrolling: touch;
 }
 .page.active{
 	
