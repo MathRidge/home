@@ -1,5 +1,57 @@
 let currentIndex = 0;
-const pages = ['home','services','about','results','contact'];
+const pages = ['home','services','about','results','contact','booking'];
+const menuBtn = document.querySelector('.menu-btn');
+const overlay = document.getElementById('overlay');
+const sideMenu = document.getElementById('sideMenu');
+
+function toggleMenu(forceClose = false){
+  if(forceClose){
+    sideMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  } else {
+    sideMenu.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+}
+
+menuBtn.addEventListener('click', () => toggleMenu());
+overlay.addEventListener('click', () => toggleMenu(true));
+
+window.addEventListener('load', () => {
+  if (window.innerWidth >= 768) {
+    sideMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+});
+
+/* NAV LINKS */
+document.querySelectorAll('.nav-links a, .side-menu a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigate(link.dataset.page);
+  });
+});
+
+/* HERO BUTTON */
+document.querySelectorAll('.hero-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigate(btn.dataset.page);
+  });
+});
+document.querySelectorAll('.results-cta button').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigate(btn.dataset.page);
+  });
+});
+
 
 /* PAGE SWITCH */
 function showPage(pageId, newIndex){
@@ -8,7 +60,7 @@ function showPage(pageId, newIndex){
 
   if(currentPage === nextPage) return;
 
-  const goingForward = newIndex > currentIndex;
+  const goingForward = pages.indexOf(pageId) > currentIndex;
   const outDirection = goingForward ? '-100%' : '100%';
   const inStart = goingForward ? '100%' : '-100%';
 
@@ -46,11 +98,12 @@ function toggleMenu(){
 }
 
 /* NAVIGATION (FIXED) */
-function navigate(pageId, index, fromMenu = false){
-  showPage(pageId, index);
+function navigate(pageId, fromMenu = false){
+  const newIndex = pages.indexOf(pageId);
+  showPage(pageId, newIndex);
 
-  // ONLY close menu if click came FROM menu
-  if(fromMenu && window.innerWidth < 768){
+  // ONLY close menu if it was actually opened (mobile only)
+  if (window.innerWidth < 768 && sideMenu.classList.contains('active')) {
     toggleMenu();
   }
 }
@@ -87,13 +140,59 @@ document.querySelectorAll('.card').forEach(card => {
     }
   );
 });
+/*Result successStories*/
+function toggleStories() {
+  const results = document.getElementById("results");
+  const btn = document.getElementById("storiesBtn");
+
+  results.classList.toggle("show-stories");
+
+  btn.textContent = results.classList.contains("show-stories")
+    ? "← Hide Stories"
+    : "View Success Stories";
+}
+
+/* CONTACT INPUT */
+function handleSelection(){
+  const select = document.getElementById('contact-consult');
+  const otherInput = document.getElementById('contact-otherInput');
+  const messageBox = document.getElementById("contact-messageBox");
+
+  const templates = {
+    "General question": "Hi, I have a general question about your program.",
+    "Website feedback": "Hi, I'd like to share some feedback about your website.",
+    "Feedback on lessons/service": "Hi, I wanted to give feedback on your lessons.",
+    "Math question help": "Hi, I'm stuck on a math problem.",
+    "Just saying hello 🙂": "Hi! Just saying hello 🙂"
+  };
+
+  // Show textarea
+  messageBox.style.display = select.value ? "block" : "none";
+
+  // Other field
+  otherInput.style.display = select.value === "Other" ? "block" : "none";
+
+  // Autofill ONLY if user hasn't typed
+  if (!messageBox.dataset.edited && templates[select.value]) {
+    messageBox.value = templates[select.value];
+  }
+}
+
+
+
+const messageBox = document.getElementById("contact-messageBox");
+
+messageBox.addEventListener("input", () => {
+  messageBox.dataset.edited = "true";
+});
 
 /* OTHER INPUT */
 function handleOther(){
-  const select = document.getElementById('concern');
-  const input = document.getElementById('otherInput');
+  const select = document.getElementById('booking-concern');
+  const input = document.getElementById('booking-otherInput');
   input.style.display = select.value === 'Other' ? 'block' : 'none';
 }
+
 
 /* SWIPE (UPGRADED - smooth + stable) */
 let startX = 0;
@@ -146,29 +245,99 @@ if (window.visualViewport) {
 }
 
 /* FORM SUBMIT */
-document.getElementById('contactForm').addEventListener('submit', function(e){
-  e.preventDefault();
+document.querySelectorAll('form').forEach(form => {
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
 
-  const form = e.target;
-  const data = new FormData(form);
+    const data = new FormData(form);
 
-  fetch(form.action, {
-    method: 'POST',
-    body: data
-  })
-  .then(response => {
-    if(response.ok){
-      showPage('success', 5);
-      form.reset();
-    } else {
-      alert('Something went wrong. Please try again.');
+    // ⭐ NEW: detect form type
+
+    let formType = form.id === 'contactForm' ? 'contact' : 'booking';
+
+    // ⭐ NEW: get dropdown value ONLY for contact form
+    let extraData = null;
+    if(formType === 'contact'){
+      extraData = document.getElementById('contact-consult').value;
     }
-  })
-  .catch(() => {
-    alert('Network error. Please try again.');
+
+
+    fetch(form.action, {
+      method: 'POST',
+      body: data
+    })
+    .then(res => {
+      if(res.ok){
+
+        // ⭐ NEW: set correct message BEFORE showing page
+        setSuccessMessage(formType);
+
+        showPage('success', 5);
+        form.reset();
+
+      } else {
+        alert('Something went wrong.');
+      }
+    })
+    .catch(() => alert('Network error.'));
   });
 });
 
+/* SUCCESS MESSAGE CONTROL ⭐ (UPGRADED) */
+function setSuccessMessage(type, extra = null){
+  const title = document.querySelector('#success h2');
+  const paragraphs = document.querySelectorAll('#success p');
+
+  // BOOKING (unchanged)
+  if(type === 'booking'){
+    title.textContent = "✅ Request Sent!";
+    paragraphs[0].textContent = "Your free assessment request has been submitted.";
+    paragraphs[1].textContent = "I will contact you shortly to schedule your session.";
+  }
+
+  // CONTACT (dynamic based on selection)
+  else if(type === 'contact'){
+
+    switch(extra){
+
+      case "Website feedback":
+        title.textContent = "✅ Feedback Received!";
+        paragraphs[0].textContent = "Thank you for your feedback.";
+        paragraphs[1].textContent = "I truly appreciate you helping improve the experience.";
+        break;
+
+      case "Feedback on lessons/service":
+        title.textContent = "✅ Feedback Received!";
+        paragraphs[0].textContent = "Thank you for sharing your thoughts.";
+        paragraphs[1].textContent = "Your input helps me improve my teaching and service.";
+        break;
+
+      case "Math question help":
+        title.textContent = "✅ Message Sent!";
+        paragraphs[0].textContent = "Got your question!";
+        paragraphs[1].textContent = "I’ll take a look and get back to you with help shortly.";
+        break;
+
+      case "Just saying hello 🙂":
+        title.textContent = "✅ Message Sent!";
+        paragraphs[0].textContent = "Message received 🙂";
+        paragraphs[1].textContent = "I’ll say hello back soon!";
+        break;
+
+      case "General question":
+        title.textContent = "✅ Message Sent!";
+        paragraphs[0].textContent = "Thanks for your question.";
+        paragraphs[1].textContent = "I’ll get back to you shortly with an answer.";
+        break;
+
+      default:
+        // fallback (Other or empty)
+        title.textContent = "✅ Message Sent!";
+        paragraphs[0].textContent = "Thank you for reaching out.";
+        paragraphs[1].textContent = "I’ll get back to you as soon as possible.";
+    }
+  }
+}
 /* INIT */
 updateActiveNav();
 
