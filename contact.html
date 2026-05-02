@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>Math Ridge</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<script src="https://unpkg.com/lucide@latest"></script>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,44 +18,62 @@
 	</div>
 	<nav>
   <div class="logo">
-    Math Ridge<img src="images/math-ridge-logo.png" alt="Math Ridge Logo" class="logo-img">
+    <img src="images/math-ridge-logo.png" alt="Math Ridge Logo" class="logo-img">
+<span class="logo-name">
+<h1>Math Ridge</h1>
+<p>Climb Higher. Achieve More.</p>
+</span>
   </div>
 	<div class="nav-links">
-		<a onclick="navigate('home',0,true)">Home</a>
-		<a onclick="navigate('services',1,true)">Programs</a>
-		<a onclick="navigate('about',2,true)">About</a>
-		<a onclick="navigate('results',3,true)">Results</a>
-		<a onclick="navigate('contact',4,true)">Book Free Diagnostic</a>
+		<a data-page="home" data-index="0">Home</a>
+		<a data-page="services" data-index="1">Programs</a>
+		<a data-page="about" data-index="2">About</a>
+		<a data-page="results" data-index="3">Results</a>
+		<a data-page="contact" data-index="4">Contact</a>
+		<a class="nav-button" data-page="booking" data-index="5">Get Started</a>
 	</div>
-	<div class="menu-btn" onclick="toggleMenu()">
+	<div class="menu-btn">
 		<i class="fa fa-bars"></i>
 	</div>
 	</nav>
 
-	<div class="overlay-bg" id="overlay" onclick="toggleMenu()">
+	<div class="overlay-bg" id="overlay">
 	</div>
 	<div class="side-menu" id="sideMenu">
-		<a onclick="navigate('home',0)">Home</a>
-		<a onclick="navigate('services',1)">Programs</a>
-		<a onclick="navigate('about',2)">About</a>
-		<a onclick="navigate('results',3)">Results</a>
-		<a onclick="navigate('contact',4)">Booking</a>
+		<a data-page="home" data-index="0">Home</a>
+		<a data-page="services" data-index="1"">Programs</a>
+		<a data-page="about" data-index="2">About</a>
+		<a data-page="results" data-index="3"">Results</a>
+		<a data-page="contact" data-index="4">Contact</a>
+		<a data-page="booking" data-index="5">Booking</a>
 	</div>
 
 <section id="home" class="page active">
-	<div class="hero">
-		<h1>Falling Behind in Math?</h1>
-		<p>Struggling with homework, low test scores, or losing confidence? You're not alone, and it's fixable.</p>
-		<h3>Free 30–60 Minute Math Diagnostic</h3>
-		<p>Find out exactly where your child is struggling, and get a clear plan to fix it.</p>
-		<button onclick="navigate('contact',4)">Book Free Diagnostic</button>
-		<h3>Why Students Struggle</h3>
-		<p>Most students don’t fall behind because math is “too hard.” They miss key foundational concepts.</p>
-		<p>I identify those gaps and rebuild confidence step by step.</p>
+<div class="hero">
+	<div class="hero-content">
+		<div class="tagline">&#11835; MATH TUTORING THAT ELEVATES</div>
+		<h1>Stronger Math.<br> Brighter Future.</h1>
+		<p>Personalized math tutoring that builds confidence,
+		   strengthens skills, and helps sutdents reach their heighest potential.
+		</p>
+		<div class="hero-buttons">
+			<button class="hero-btn" data-page="booking" data-index="5">
+			<img src="images/logo.svg" class="btn-icon" alt="Math Ridge logo">
+			<span>Start Your Climb</span>
+			</button>
+		</div>
 	</div>
-
+</div>
+<div class="quote">
+	<img src="images/logold.svg" class="btn1-icon" alt="Math Ridge logo">
+	<p class="quote-text">
+	“The best view comes after the hardest climb.”
+	</p>
+	<span class="quote-brand">
+	&#11835;&#11835;&#11835; MATH RIDGE &#11835;&#11835;&#11835;
+	</span>
+</div>
 </section>
-
 <section id="services" class="page">
 	<div class="services-wrapper">
 	<h2>Programs</h2>
@@ -113,29 +132,29 @@
 	<div class="pricing-grid">
 		<div class="price-card highlight2">
     			<h3>In-Person</h3>
-			<p class="price">$70 <span>/ session</span></p>
+			<p class="price">$70/hr</p>
 			<p class="bundle">4 Sessions: <strong>$260</strong></p>
 			<p class="bundle">10 Sessions: <strong>$650</strong></p>
 		<div class="tag2">Best Result</div>
 		</div>
 		<div class="price-card highlight">
 			<h3>Online</h3>
-			<p class="price">$55 <span>/ session</span></p>
+			<p class="price">$55/hr</p>
 			<p class="bundle">4 Sessions: <strong>$200</strong></p>
 			<p class="bundle">10 Sessions: <strong>$500</strong></p>
 		<div class="tag">Most Popular</div>
 		</div>
 		<div class="price-card highlight1">
 			<h3>Group Coaching</h3>	
-			<p class="price">$35–$45 <span>/ student / hour</span></p>
+			<p class="price">$35–$45/student/hr</p>
 			<p class="bundle">2-hour sessions</p>
-			<p class="bundle">(total $70–$90 per student)</p>
+			<p class="fit">(total $70–$90 per student)</p>
 			<div class="tag1">Form your own group</div>
 		</div>
 	</div>
 </section>
 <section id="about" class="page">
-	<div class="split">
+	<div class="about-wrapper">
 		<h2>About Math Ridge</h2>
 		<p>Math Ridge is built on a focused belief: strong math skills come from strong foundations. Instead of spreading across multiple subjects, Math Ridge specializes only in mathematics to provide depth, precision, and real mastery.</p>
 		<p>Many students struggle not because they lack ability, but because they have never developed a structured way to learn. Without a system, studying becomes inconsistent, frustrating, and difficult to sustain.</p>
@@ -150,90 +169,199 @@
 </section>
 
 <section id="results" class="page">
-  <div class="results-wrapper">
+	<div class="results-hero">
+		<div class="tagline">RESULTS THAT MATTER</div>
+		<h1>Proven Results.<br>Real Transformation.</h1>
+		<p>Students gain confidence, improve grades, and achieve their academic goals.</p>
+	</div>
+	<div class="results-stats">
+		<div class="stat">
+			<span class="stat-top"><i class="icon" data-lucide="trending-up"></i>
+			<h2>+2</h2></span>
+			<p>Grade Levels Average Imporovement</p>
+		</div>
+		<div class="stat">
+			<span class="stat-top"><i class="icon" data-lucide="users"></i>
+			<h2>150+</h2></span>
+			<p>Students Helped</p>
+		</div>
+		<div class="stat">
+			<span class="stat-top"><i class="icon" data-lucide="star"></i>
+			<h2>95%</h2></span>
+			<p>Parent Satisfaction Rate</p>
+		</div>
+	</div>
+	<div class="results-testimonial">
+		<div class="results-content">
+			<div class="tagline">STUDENT TRANSFORMATIONS</div>
+			<div class="case">
+				<h3>From Struggling to Confident</h3>
+				<p class="red"><strong>Before:</strong> Max was failing Geometry, struggled with homework, and lacked confidence to participate.</p>
+				<p class="green"><strong>After:</strong> Raised his grade to a B within 2 months by rebuilding key Algebra foundations, leading to independent problem-solving and increased confidence.</p>
+			</div>
+			<div class="case">
+				<h3>Test Score Breakthrough</h3>
+				<p class="red"><strong>Before:</strong> Low SAT math scores due to weak fundamentals and time pressure.</p>
+ 				<p class="green"><strong>After:</strong> Increased score significantly by mastering core concepts and test strategies.</p>
+			</div>
+			<div class="case">
+				<h3>Confidence Restored</h3>
+				<p class="red"><strong>Before:</strong> Aelita, 11th grade Pre-Calculus, lacked confidence and relied heavily on memorization.</p>
+				<p class="green"><strong>After:</strong> Developed strong problem-solving skills, gained confidence, and raised her grade to an A.</p>
+			</div>
+		</div>
+		<div class="testimonial-layout">
+			<div class="tagline">WHAT PARENTS ARE SAYING</div>
+			<div class="t-cards">
+				<div class="testimonial">
+					<i class="left-quote" data-lucide="quote"></i> 
+					<p class="message">My child went from frustrated and confused to confident and motivated. The improvement in both grades and attitude has been incredible.</p>
+					<div class="user">
+						<img src="avatar.jpg" alt="parent">
+						<div class="info">
+		  					<h4>Name of parent</h4>
+							<p class="role">Parent of 8th Grade Student</p>
+							<p class="stars">★★★★★</p>
+						</div>
+					</div>
+				</div>
+				<div class="testimonial">
+					<i class="left-quote" data-lucide="quote"></i>
+					<p class="message">Kevin helped identify exactly where the gaps were and fixed them step by step. We finally see real progress.   Thank you for guiding our son.</p>
+					<div class="user">
+						<img src="images/j.jpg" alt="parent">
+						<div class="info">
+					  		<h4>Name of parent</h4>
+							<p class="role">Parent of Seiji, 9th Grade Student</p>
+							<p class="stars">★★★★★</p>
+						</div>
+					</div>
+				</div>
+				<div class="testimonial">
+					<i class="left-quote" data-lucide="quote"></i>
+					<p class="message">Hi Kevin, Great News! The girls scored 790 on their math SAT, they just checked... I thought I will share with you. Thank you for all your support!</p>
+					<div class="user">
+						<img src="images/saini.jpg" alt="parent">
+						<div class="info">
+					 		<h4>Sameepa Saini</h4>
+							<p class="role">Parent of Sawar and Saini, 12th Grade Student</p>
+							<p class="stars">★★★★★</p>
+						</div>
+					</div>		
+				</div>				
+			</div>
+		</div>
+		<div class="results-method">
+			<div class="why-box">
+				<div class="tagline">Why This Works</div>
+				<div class="why-item">
+					<div class="w-icon">
+						<i data-lucide="user"></i>
+					</div>
+				<div class="w-message">
+					<h4>Personalized Approach</h4>
+					<p>Every student gets a tailored learning plan based on their goals and learning style.</p>					</div>
+				</div>		
+				<div class="why-item">
+					<div class="w-icon">
+						<i data-lucide="book-open"></i>
+					</div>
+					<div class="w-message">
+						<h4>Clear & Effective Teaching</h4>
+						<p>Complex concepts are broken down into simple, easy-to-understand steps.</p>
+					</div>
+				</div>
+				<div class="why-item">
+					<div class="w-icon">
+						<i data-lucide="bar-chart"></i>
+					</div>
+					<div class="w-message">
+						<h4>Consistent Progress Tracking</h4>
+						<p>We track improvement and adjust strategies to keep students moving forward.</p>
+					</div>
+				</div>
+				<div class="why-item">
+					<div class="w-icon">
+						<i data-lucide="heart"></i>
+					</div>
+					<div class="w-message">
+						<h4>Confidence-First Mindset</h4>
+						<p>We focus on building confidence so students can tackle any challenge.</p>
+					</div>
+				</div>
+			</div>
+			<div class="results-cta">
+				<div class="w-icon">
+					<i data-lucide="trophy"></i>
+				</div>
+				<div class="w-message">
+					<h1>Start Seeing Results Today</h1>
+					<p>Every great achievement starts with the right guidance.</p>
+				</div>
+				<div>
+					<button data-page="booking" data-index="5">Book Free Diagnostic</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <!-- HEADER -->
-    <h2>Real Results, Real Progress</h2>
-    <p>Students don’t just improve grades. They build confidence, understanding, and long-term success in math.</p>
 
-    <!-- QUICK STATS -->
-    <div class="results-stats">
-      <div class="stat">
-        <h3>1–2 Letter Grades</h3>
-        <p>Average improvement within a few months</p>
-      </div>
-      <div class="stat">
-        <h3>Stronger Foundations</h3>
-        <p>Students close learning gaps quickly</p>
-      </div>
-      <div class="stat">
-        <h3>Higher Test Scores</h3>
-        <p>Improved accuracy and confidence under pressure</p>
-      </div>
-    </div>
 
-    <!-- CASE STUDIES -->
-    <h2>Student Transformations</h2>
-
-    <div class="case">
-      <h3>From Struggling to Confident</h3>
-      <p><strong>Before:</strong> Max was failing Geometry, struggled with homework, and lacked confidence to participate.</p>
-      <p><strong>After:</strong> Raised his grade to a B within 2 months by rebuilding key Algebra foundations, leading to independent problem-solving and increased confidence.</p>
-    </div>
-
-    <div class="case">
-      <h3>Test Score Breakthrough</h3>
-      <p><strong>Before:</strong> Low SAT math scores due to weak fundamentals and time pressure.</p>
-      <p><strong>After:</strong> Increased score significantly by mastering core concepts and test strategies.</p>
-    </div>
-
-    <div class="case">
-      <h3>Confidence Restored</h3>
-      <p><strong>Before:</strong> Aelita, 11th grade Pre-Calculus, lacked confidence and relied heavily on memorization.</p>
-      <p><strong>After:</strong> Developed strong problem-solving skills, gained confidence, and raised her grade to an A.</p>
-    </div>
-
-    <!-- TESTIMONIALS -->
-    <h2>What Parents Are Saying</h2>
-
-    <div class="testimonial">
-      <p>"My child went from frustrated and confused to confident and motivated. The improvement in both grades and attitude has been incredible."</p>
-      <span>— Parent of 8th Grade Student</span>
-    </div>
-
-    <div class="testimonial">
-      <p>"Kevin helped identify exactly where the gaps were and fixed them step by step. We finally see real progress."</p>
-      <span>— Parent of Seiji, 9th Grade Student</span>
-    </div>
-
-    <div class="testimonial">
-      <p>"Hi Kevin, 
-   Great News! The girls scored 790 on their math SAT, they just checked... I thought I will share with you.  
-Thank you for all your support!"</p>
-      <span>— Sameepa Saini</span>
-    </div>
-
-    <!-- METHOD REMINDER -->
-    <div class="results-method">
-      <h2>Why This Works</h2>
-      <p>Results come from identifying foundational gaps and rebuilding them with a structured learning system. Students gain both understanding and discipline, leading to lasting improvement.</p>
-    </div>
-
-    <!-- CTA -->
-    <div class="results-cta">
-      <h2>Start Seeing Results</h2>
-      <p>Book a free diagnostic session and get a clear plan for your child’s success.</p>
-      <button onclick="navigate('contact',4)">Book Free Diagnostic</button>
-    </div>
-
-  </div>
 </section>
-
 <section id="contact" class="page">
+<div class="contact-wrapper">
+  <div class="contact-hero">
+	<div class="contact-hero-content">
+		<div class="tagline">Let's Connect:</div>
+		<h1>Questions, feedback,<br> or just saying hello.</h1>
+		<p>I’d love to hear from you. No commitment needed.</p>
+        </div>
+
+	<div class="container">
+		<div class="title">Contact Me:
+		</div>
+	<form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+	<input type="hidden" name="access_key" value="80a34395-a61f-408c-9289-3be412d5f31e">
+		<div class="user-details">
+			<div class="input-box"><span>Name</span><input type="text" name="Name" placeholder="Your name (first name is fine)" required>
+			</div>
+			<div class="input-box">
+				<span>Email</span>
+				<input type="email" name="Email" placeholder="where should I reply?" required>
+			</div>
+			<div class="input-box">
+				<span>What would you like to talk about?</span>
+				<select name="GeneralContact" id="contact-consult" onchange="handleSelection()" required>
+				<option value="">What's in your mind?</option>
+				<option value="General question">General question</option>
+				<option value="Website feedback">Website feedback</option>
+				<option value="Feedback on lessons/service">Feedback on lessons/service</option>
+				<option value="Math question help">Math question help</option>
+				<option value="Just saying hello 🙂">Just saying hello 🙂</option>
+				<option value="Other">Other</option>
+				</select>
+				<input type="text" id="contact-otherInput" name="OtherConcern" placeholder="Subject (please specify)">
+				<textarea id="contact-messageBox" name="message" rows="6" placeholder="Your message..."></textarea>
+
+			</div>
+		</div>
+		<div class="note">
+<p>I'll only use this to respond to your message. I usually reply within 24 hours.</p>
+		</div>
+		<div class="button">
+			<center><input type="submit" value="Reach Out"></center>
+		</div>
+	</form>
+	</div>
+
+</div>
+</div>
+</section>
+<section id="booking" class="page">
 	<div class="container">
 		<div class="title">Book Your Free Math Diagnostic
 		</div>
-	<form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+	<form id="bookingForm" action="https://api.web3forms.com/submit" method="POST">
 	<input type="hidden" name="access_key" value="80a34395-a61f-408c-9289-3be412d5f31e">
 		<div class="user-details">
 			<div class="input-box"><span>Parent's Name</span><input type="text" name="ParentName" placeholder="Enter Parent's Name" required>
@@ -281,7 +409,7 @@ Thank you for all your support!"</p>
 			</div>
 			<div class="input-box">
 				<span>Main Concern</span>
-				<select name="MainConcern" id="concern" onchange="handleOther()" required>
+				<select name="MainConcern" id="booking-concern" onchange="handleOther()" required>
 				<option value="">Select Concern</option>
 				<option>Falling behind</option>
 				<option>Test Performance</option>
@@ -289,14 +417,14 @@ Thank you for all your support!"</p>
 				<option>SAT Prep</option>
 				<option>Other</option>
 				</select>
-				<input type="text" id="otherInput" name="OtherConcern" placeholder="Please specify">
+				<input type="text" id="booking-otherInput" name="OtherConcern" placeholder="Please specify">
 			</div>
 		</div>
 		<div class="note">
 <p>Students typically improve 1–2 letter grades within a few months</p>
 		</div>
 		<div class="button">
-			<input type="submit" value="Request My Free Assessment">
+			<center><input type="submit" value="Request My Free Assessment"></center>
 		</div>
 	</form>
 	</div>
@@ -304,13 +432,16 @@ Thank you for all your support!"</p>
 
 <!-- SUCCESS SCREEN -->
 <section id="success" class="page">
-	<div class="split">
-		<h2>✅ Request Sent!</h2>
-		<p>Thank you! Your free assessment request has been submitted.</p>
-		<p>I will contact you shortly to schedule your session.</p>
-		<button onclick="navigate('home',0)">Back to Home</button>
-	</div>
+  <div class="split">
+    <h2>✅ Message Sent!</h2>
+    <p>Thank you for reaching out.</p>
+    <p>I’ll get back to you as soon as possible.</p>
+    <button data-page="home" data-index="0">Back to Home</button>
+  </div>
 </section>
 <script src="script.js"></script>
+<script>
+lucide.createIcons();
+</script>
 </body>
 </html>
