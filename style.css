@@ -184,15 +184,16 @@ a.nav-button:hover{
 }
 .pages-wrapper{
 	display:flex;
-	width:100%;
+	width:max-content;
 	height:100vh;
 	transform: translate3d(0,0,0);
 	will-change: transform;
 	transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 	backface-visibility:hidden;
 	-webkit-backface-visibility:hidden;
-	position: relative; z-index: 1;
-} 
+	position: relative;
+	z-index: 1;
+}
 button,
 a,
 select,
@@ -206,6 +207,7 @@ textarea,
 	overflow-y:auto;
 	overflow-x:hidden;
 	min-width:100vw;
+	width:100vw;
 	height:100vh;
 	flex-shrink:0;
 	display:flex;
@@ -214,9 +216,11 @@ textarea,
 	color:white;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
-	scroll-behavior:smooth; transform: translateZ(0);
+	transform: translateZ(0);
 	position: relative;
 	z-index: 1;
+
+
 }
 .page::-webkit-scrollbar{
 	display:none; /* Chrome/Safari */
