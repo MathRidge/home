@@ -1047,11 +1047,11 @@ p.green {
 .results-panel{
 	width: 100%;
 	flex: 0 0 100%;
-	padding: 0 10px 160px;
+	padding: 0 10px 260px;
 	box-sizing: border-box;
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: calc(100vh - 160px);
+	height: calc(100vh - 260px);
 	max-height: none;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
