@@ -717,19 +717,23 @@ p.green {
 	grid-row: auto;
 }
 .results-mobile-slider {
+	width: 100%;
 	overflow: hidden;
 }
 
 .results-mobile-track {
 	display: flex;
 	width: 400%;
+	transition: transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .results-panel {
 	width: 100vw;
 	flex: 0 0 100vw;
 	padding: 0 15px;
+	box-sizing: border-box;
 }
+
 
 .why-box {
 	padding: 10px 10px;
@@ -1000,18 +1004,18 @@ p.green {
 	}
 
 	.results-mobile-slider {
-		overflow: visible;
+		overflow: hidden;
 	}
 
 	.results-mobile-track {
-		display: block;
-		width: auto;
-		transform: none !important;
+		display: flex;
+		width: 400%;
 	}
 
 	.results-panel {
-		width: auto;
-		padding: 0;
+		width: 100vw;
+		flex: 0 0 100vw;
+		padding: 0 15px;
 	}
 
 
