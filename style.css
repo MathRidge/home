@@ -13,7 +13,7 @@ html, body{
 	overflow: hidden;
 	height: 100%;
 	background:black;
-	touch-action: pan-y;
+	touch-action: manipulation;
 	overscroll-behavior: none;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -176,6 +176,12 @@ a.nav-button:hover{
 	opacity:1;
 	pointer-events: auto; /* only clickable when visible */
 }
+.pages-viewport{
+	width:100vw;
+	height:100vh;
+	overflow:hidden;
+	position:relative;
+}
 .pages-wrapper{
 	display:flex;
 	width:100%;
@@ -187,8 +193,18 @@ a.nav-button:hover{
 	-webkit-backface-visibility:hidden;
 	position: relative; z-index: 1;
 } 
+button,
+a,
+select,
+input,
+textarea,
+.card{
+	touch-action:manipulation;
+}
 /* PAGE BASE */
 .page{
+	overflow-y:auto;
+	overflow-x:hidden;
 	min-width:100vw;
 	height:100vh;
 	flex-shrink:0;
@@ -196,7 +212,6 @@ a.nav-button:hover{
 	flex-direction:column;
 	padding:80px 5%;
 	color:white;
-	overflow-y:auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	scroll-behavior:smooth; transform: translateZ(0);
