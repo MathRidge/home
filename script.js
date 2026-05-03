@@ -1,4 +1,4 @@
-make it feel like native ios app with full copy paste script entire: let currentIndex = 0;
+let currentIndex = 0;
 const pages = ['home','services','about','results','contact','booking'];
 
 let startX = 0;
@@ -9,11 +9,99 @@ let isHorizontal = false;
 let startTime = 0;
 let isRotating = false;
 
+// 🔥 NEW: prevents swipe from triggering click bugs
+let isClickCancelled = false;
+
 const wrapper = document.querySelector('.pages-wrapper');
 
 if (!wrapper) {
   console.warn('pages-wrapper not found');
 } else {
+
+  /* =========================
+     UPDATE NAV (ONLY ONE VERSION)
+  ========================== */
+  function updateActiveNav() {
+    document.querySelectorAll('.nav-links a, .side-menu a')
+      .forEach(link => {
+        link.classList.toggle(
+          'active',
+          pages[currentIndex] === link.dataset.page
+        );
+      });
+  }
+
+  /* =========================
+     UPDATE SLIDER
+  ========================== */
+  function updateSlider() {
+    wrapper.style.transform =
+      `translateX(${-currentIndex * window.innerWidth}px)`;
+    updateActiveNav();
+  }
+
+  /* INITIAL SYNC */
+  updateSlider();
+
+  /* =========================
+     MENU
+  ========================== */
+  const menuBtn = document.querySelector('.menu-btn');
+  const overlay = document.getElementById('overlay');
+  const sideMenu = document.getElementById('sideMenu');
+
+  function toggleMenu(forceClose = false) {
+    if (forceClose) {
+      sideMenu?.classList.remove('active');
+      overlay?.classList.remove('active');
+    } else {
+      sideMenu?.classList.toggle('active');
+      overlay?.classList.toggle('active');
+    }
+  }
+
+  menuBtn?.addEventListener('click', () => toggleMenu());
+  overlay?.addEventListener('click', () => toggleMenu(true));
+
+  window.addEventListener('load', () => {
+    if (window.innerWidth >= 768) {
+      sideMenu?.classList.remove('active');
+      overlay?.classList.remove('active');
+    }
+  });
+
+  /* =========================
+     NAVIGATION
+  ========================== */
+  function navigate(pageId) {
+    const index = pages.indexOf(pageId);
+    if (index === -1) return;
+
+    currentIndex = index;
+    updateSlider();
+  }
+
+  /* =========================
+     CLICK NAVIGATION (FIXED)
+  ========================== */
+  document.addEventListener('click', (e) => {
+
+    // 🔥 prevent swipe → click glitch
+    if (isClickCancelled) return;
+
+    const link = e.target.closest('[data-page]');
+    if (!link) return;
+
+    const page = link.dataset.page;
+    if (!page) return;
+
+    e.preventDefault();
+
+    navigate(page);
+
+    sideMenu?.classList.remove('active');
+    overlay?.classList.remove('active');
+  });
 
   /* =========================
      TOUCH START
@@ -28,6 +116,8 @@ if (!wrapper) {
     isDragging = true;
     isHorizontal = false;
     startTime = performance.now();
+
+    isClickCancelled = false; // 🔥 reset click lock
 
     wrapper.style.transition = 'none';
   }, { passive: true });
@@ -44,7 +134,7 @@ if (!wrapper) {
     const diffX = x - startX;
     const diffY = y - startY;
 
-    // lock direction
+    // lock gesture direction
     if (!isHorizontal) {
       if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY)) {
         isHorizontal = true;
@@ -57,6 +147,11 @@ if (!wrapper) {
     if (!isHorizontal) return;
 
     currentX = x;
+
+    // 🔥 cancel click if swipe detected
+    if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+      isClickCancelled = true;
+    }
 
     const atStart = currentIndex === 0 && diffX > 0;
     const atEnd = currentIndex === pages.length - 1 && diffX < 0;
@@ -73,7 +168,7 @@ if (!wrapper) {
   }, { passive: true });
 
   /* =========================
-     TOUCH END (SNAP LOGIC)
+     TOUCH END (SNAP)
   ========================== */
   window.addEventListener('touchend', () => {
     if (!isDragging) return;
@@ -103,115 +198,29 @@ if (!wrapper) {
   });
 
   /* =========================
-     UPDATE SLIDER
+     ORIENTATION
   ========================== */
-  function updateSlider() {
-    wrapper.style.transform =
-      `translateX(${-currentIndex * window.innerWidth}px)`;
-    updateActiveNav();
+  function checkOrientation() {
+    const rotateBlock = document.getElementById('rotateBlock');
+    if (!rotateBlock) return;
+
+    const isMobile =
+      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile && window.innerWidth > window.innerHeight) {
+      rotateBlock.classList.add('active');
+    } else {
+      rotateBlock.classList.remove('active');
+    }
   }
 
-  // IMPORTANT: initial sync
-  updateSlider();
+  window.addEventListener('load', checkOrientation);
+  window.addEventListener('resize', checkOrientation);
+
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      isRotating = true;
+      checkOrientation();
+    }, 250);
+  });
 }
-
-/* =========================
-   MENU
-========================== */
-const menuBtn = document.querySelector('.menu-btn');
-const overlay = document.getElementById('overlay');
-const sideMenu = document.getElementById('sideMenu');
-
-function toggleMenu(forceClose = false) {
-  if (forceClose) {
-    sideMenu?.classList.remove('active');
-    overlay?.classList.remove('active');
-  } else {
-    sideMenu?.classList.toggle('active');
-    overlay?.classList.toggle('active');
-  }
-}
-
-menuBtn?.addEventListener('click', () => toggleMenu());
-overlay?.addEventListener('click', () => toggleMenu(true));
-
-window.addEventListener('load', () => {
-  if (window.innerWidth >= 768) {
-    sideMenu?.classList.remove('active');
-    overlay?.classList.remove('active');
-  }
-});
-
-/* =========================
-   NAVIGATION
-========================== */
-function navigate(pageId) {
-  const index = pages.indexOf(pageId);
-  if (index === -1) return;
-
-  currentIndex = index;
-  updateSlider();
-}
-
-function updateActiveNav() {
-  document.querySelectorAll('.nav-links a, .side-menu a')
-    .forEach(link => {
-      link.classList.toggle(
-        'active',
-        pages[currentIndex] === link.dataset.page
-      );
-    });
-}
-
-/* INIT */
-updateActiveNav();
-
-te this UNDER your NAVIGATION section:
-
-/* =========================
-   CLICK NAVIGATION (FIX)
-========================= */
-
-document.addEventListener('click', (e) => {
-  const link = e.target.closest('[data-page]');
-  if (!link) return;
-
-  const page = link.dataset.page;
-  if (!page) return;
-
-  e.preventDefault();
-
-  navigate(page);
-
-  // close menu if open (mobile UX like iOS apps)
-  sideMenu?.classList.remove('active');
-  overlay?.classList.remove('active');
-});
-
-
-/* =========================
-   ORIENTATION
-========================== */
-function checkOrientation() {
-  const rotateBlock = document.getElementById('rotateBlock');
-  if (!rotateBlock) return;
-
-  const isMobile =
-    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-  if (isMobile && window.innerWidth > window.innerHeight) {
-    rotateBlock.classList.add('active');
-  } else {
-    rotateBlock.classList.remove('active');
-  }
-}
-
-window.addEventListener('load', checkOrientation);
-window.addEventListener('resize', checkOrientation);
-
-window.addEventListener('orientationchange', () => {
-  setTimeout(() => {
-    isRotating = true;
-    checkOrientation();
-  }, 250);
-});
