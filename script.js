@@ -109,6 +109,13 @@ menuBtn?.addEventListener('click', (e) => {
     if (isRotateBlocked()) return;
     if (e.touches.length > 1) return;
 
+const interactive = e.target.closest('button, a, input, textarea, select, .card');
+
+if (interactive) {
+	isDragging = false;
+	return;
+}
+
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     currentX = startX;
