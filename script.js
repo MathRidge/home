@@ -557,7 +557,7 @@ transform:rotateY(180deg);
 }
 .results-hero h1{
 	font-family: 'Playfair Display', serif;
-	font-weight: 380; font-size:46px;
+	font-weight: 380; font-size:42px;
 	color: #fff; margin-bottom: 0 0 12px;
 }
 .results-hero p{
