@@ -162,8 +162,14 @@ if (!wrapper) {
       move *= 0.3;
     }
 
+    const progress = Math.min(Math.abs(diffX) / window.innerWidth, 1);
+    const blurAmount = progress * 6;
+
     wrapper.style.transform =
       `translateX(${(-currentIndex * window.innerWidth) + move}px)`;
+
+    wrapper.style.filter = `blur(${blurAmount}px)`;
+
 
   }, { passive: true });
 
@@ -183,17 +189,16 @@ if (!wrapper) {
     wrapper.style.transition =
       'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
 
-    const threshold = window.innerWidth * 0.18;
-    const fastSwipe = velocity > 0.55;
+    const threshold = window.innerWidth * 0.5;
 
-    if (Math.abs(diff) > threshold || fastSwipe) {
-      if (diff < 0 && currentIndex < pages.length - 1) {
-        currentIndex++;
-      } else if (diff > 0 && currentIndex > 0) {
-        currentIndex--;
-      }
-    }
-
+    if (Math.abs(diff) >= threshold) {
+    if (diff < 0 && currentIndex < pages.length - 1) {
+    currentIndex++;
+  } else if (diff > 0 && currentIndex > 0) {
+    currentIndex--;
+  }
+}
+    wrapper.style.filter = 'blur(0px)';
     updateSlider();
   });
 
