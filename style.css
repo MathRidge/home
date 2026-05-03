@@ -1014,17 +1014,20 @@ p.green {
 }
 
 .results-panel{
+	width: 100%;
+	flex: 0 0 100%;
+	padding: 0 10px 40px;
+	box-sizing: border-box;
 	overflow-y: auto;
 	overflow-x: hidden;
-	max-height: calc(100vh - 230px);
+	height: calc(100vh - 190px);
+	max-height: none;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 }
 .results-panel > div{
-	max-height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
+	min-height: max-content;
+	overflow: visible;
 }
 
 	/* RESULTS MOBILE FIX */
