@@ -412,7 +412,7 @@ a.nav-button:hover{
 	will-change: transform; /* ⭐ smoother */
 }
 .card.flipped .card-inner{
-transform:rotateY(180deg); 
+	transform: rotateY(180deg);
 }
 .card-front,
 .card-back{
@@ -434,6 +434,14 @@ transform:rotateY(180deg);
 	background:rgba(255,236,225,0.7);
 	transform:rotateY(180deg);
 }
+.card,
+.card-inner,
+.card-front,
+.card-back{
+	pointer-events: auto;
+}
+
+
 .check{
 	color:#4CAF50;
 	font-weight:bold;
@@ -557,7 +565,7 @@ transform:rotateY(180deg);
 }
 .results-hero h1{
 	font-family: 'Playfair Display', serif;
-	font-weight: 380; font-size:42px;
+	font-weight: 380; font-size:46px;
 	color: #fff; margin-bottom: 0 0 12px;
 }
 .results-hero p{
@@ -1047,11 +1055,11 @@ p.green {
 .results-panel{
 	width: 100%;
 	flex: 0 0 100%;
-	padding: 0 10px 260px;
+	padding: 0 10px 160px;
 	box-sizing: border-box;
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: calc(100vh - 260px);
+	height: calc(100vh - 160px);
 	max-height: none;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
