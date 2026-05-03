@@ -213,14 +213,15 @@ a.nav-button:hover{
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
-	padding: 80px 5% 20px;
+	padding: 70px 5% 35px;
 }
 .hero {
 	flex: 1;
 	position: relative;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: flex-start;
+	padding-top: 35px;
 }
 .hero-content{
 	max-width: 420px;
@@ -285,7 +286,7 @@ a.nav-button:hover{
 }
 .quote {
 	position: sticky;
-	bottom: 10px;
+	bottom: 15px;
 	margin-top: auto;
 	align-self: center;
 	color: #fbf5f5;
