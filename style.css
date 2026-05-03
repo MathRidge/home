@@ -1013,17 +1013,19 @@ p.green {
 	width: 100%;
 }
 
-.results-panel {
-	width: 100%;
-	flex: 0 0 100%;
-	padding: 0 10px;
+.results-panel{
 	overflow-y: auto;
 	overflow-x: hidden;
 	max-height: calc(100vh - 230px);
 	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
 }
-
-
+.results-panel > div{
+	max-height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
+}
 
 	/* RESULTS MOBILE FIX */
 
