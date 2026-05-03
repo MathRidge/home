@@ -1055,7 +1055,7 @@ p.green {
 .results-panel{
 	width: 100%;
 	flex: 0 0 100%;
-	padding: 0 10px 160px;
+	padding: 0 10px 240px;
 	box-sizing: border-box;
 	overflow-y: auto;
 	overflow-x: hidden;
