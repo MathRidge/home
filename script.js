@@ -187,8 +187,8 @@ if (pageId !== 'results') {
         isResultsInnerSwipe = true;
 
         resultsTrack.style.transition = 'none';
-        resultsTrack.style.transform =
-          `translateX(${(-resultsInnerIndex * window.innerWidth) + diffX}px)`;
+	resultsTrack.style.transform =
+  		`translateX(calc(${-resultsInnerIndex * 100}% + ${diffX}px))`;
 
         return;
       }
@@ -244,8 +244,8 @@ if (pageId !== 'results') {
         }
       }
 
-      resultsTrack.style.transform =
-        `translateX(${-resultsInnerIndex * window.innerWidth}px)`;
+	resultsTrack.style.transform =
+  		`translateX(${-resultsInnerIndex * 100}%)`;
 
       isResultsInnerSwipe = false;
       wrapper.style.filter = 'blur(0px)';
