@@ -38,7 +38,7 @@ if (!wrapper) {
 
 function updateSlider() {
   wrapper.style.transform =
-    `translateX(${-currentIndex * 100}vw)`;
+    `translate3d(${-currentIndex * 100}%, 0, 0)`;
   updateActiveNav();
 }
 
@@ -190,7 +190,7 @@ if (interactive) {
     const blurAmount = progress * 6;
 
 wrapper.style.transform =
-  `translateX(calc(${-currentIndex * 100}vw + ${move}px))`;
+  `translate3d(calc(${-currentIndex * 100}% + ${move}px), 0, 0)`;
 
     wrapper.style.filter = `blur(${blurAmount}px)`;
 
