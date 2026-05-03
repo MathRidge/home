@@ -330,37 +330,37 @@ function handleSelection(){
 
 	if (!select || !otherInput || !messageBox) return;
 
+	const templates = {
+		"General question": "Hi Kevin, I have a question about your program...",
+		"Website feedback": "Hi Kevin, I’d like to share some feedback about your website...",
+		"Feedback on lessons/service": "Hi Kevin, I wanted to share some thoughts about the lessons/service...",
+		"Math question help": "Hi Kevin, I’m currently working on a math problem and got stuck on...",
+		"Just saying hello 🙂": "Hi Kevin, just wanted to say hello 🙂",
+		"Other": ""
+	};
+
+	// show textarea
 	if (select.value !== "") {
 		messageBox.style.display = "block";
-	} else {
-		messageBox.style.display = "none";
 	}
 
-	if (select.value === "Other") {
-		otherInput.style.display = "block";
-		otherInput.focus();
-	} else {
-		otherInput.style.display = "none";
-		otherInput.value = "";
+	// set smart message
+	if (templates[select.value]) {
+		messageBox.value = templates[select.value];
+		messageBox.placeholder = "Feel free to add more details...";
 	}
-}
-
 /* BOOKING INPUT */
-function handleOther(){
-	const select = document.getElementById('booking-concern');
-	const otherInput = document.getElementById('booking-otherInput');
-
-	if (!select || !otherInput) return;
-
+	// handle OTHER
 	if (select.value === "Other") {
 		otherInput.style.display = "block";
+		messageBox.value = "";
+		messageBox.placeholder = "Tell me what’s on your mind...";
 		otherInput.focus();
 	} else {
 		otherInput.style.display = "none";
 		otherInput.value = "";
 	}
 }
-
 
 
 document.querySelectorAll('.card').forEach(card => {
