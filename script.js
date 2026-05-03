@@ -158,10 +158,10 @@ if (pageId !== 'results') {
     if (!isHorizontal) {
       if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY)) {
         isHorizontal = true;
-      } else if (Math.abs(diffY) > 12) {
-        isDragging = false;
-        return;
-      }
+	} else if (Math.abs(diffY) > 12 && Math.abs(diffY) > Math.abs(diffX)) {
+		isDragging = false;
+		return;
+	}
     }
 
     if (!isHorizontal) return;
