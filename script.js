@@ -371,3 +371,20 @@ document.querySelectorAll('.card').forEach(card => {
 		card.classList.toggle('flipped');
 	});
 });
+document.addEventListener('gesturestart', function(e) {
+	e.preventDefault();
+});
+
+document.addEventListener('gesturechange', function(e) {
+	e.preventDefault();
+});
+
+document.addEventListener('gestureend', function(e) {
+	e.preventDefault();
+});
+
+document.addEventListener('touchmove', function(e) {
+	if (e.touches.length > 1) {
+		e.preventDefault();
+	}
+}, { passive: false });
