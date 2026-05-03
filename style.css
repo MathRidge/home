@@ -411,7 +411,7 @@ a.nav-button:hover{
 	-webkit-transform-style:preserve-3d;
 	will-change: transform; /* ⭐ smoother */
 }
-.card.flipped.card-inner{
+.card.flipped .card-inner{
 transform:rotateY(180deg); 
 }
 .card-front,
@@ -1044,11 +1044,11 @@ p.green {
 .results-panel{
 	width: 100%;
 	flex: 0 0 100%;
-	padding: 0 10px 40px;
+	padding: 0 10px 160px;
 	box-sizing: border-box;
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: calc(100vh - 190px);
+	height: calc(100vh - 160px);
 	max-height: none;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
