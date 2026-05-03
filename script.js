@@ -7,8 +7,7 @@ let currentX = 0;
 let isDragging = false;
 let isHorizontal = false;
 
-
-// 🔥 NEW: prevents swipe from triggering click bugs
+// 🔥 prevents swipe from triggering click bugs
 let isClickCancelled = false;
 
 let resultsInnerIndex = 0;
@@ -23,15 +22,10 @@ function isRotateBlocked() {
   return document.getElementById('rotateBlock')?.classList.contains('active');
 }
 
-
-
 if (!wrapper) {
   console.warn('pages-wrapper not found');
 } else {
 
-  /* =========================
-     UPDATE NAV (ONLY ONE VERSION)
-  ========================== */
   function updateActiveNav() {
     document.querySelectorAll('.nav-links a, .side-menu a')
       .forEach(link => {
@@ -42,21 +36,14 @@ if (!wrapper) {
       });
   }
 
-  /* =========================
-     UPDATE SLIDER
-  ========================== */
   function updateSlider() {
     wrapper.style.transform =
       `translateX(${-currentIndex * window.innerWidth}px)`;
     updateActiveNav();
   }
 
-  /* INITIAL SYNC */
   updateSlider();
 
-  /* =========================
-     MENU
-  ========================== */
   const menuBtn = document.querySelector('.menu-btn');
   const overlay = document.getElementById('overlay');
   const sideMenu = document.getElementById('sideMenu');
@@ -81,31 +68,23 @@ if (!wrapper) {
     }
   });
 
-  /* =========================
-     NAVIGATION
-  ========================== */
   function navigate(pageId) {
     const index = pages.indexOf(pageId);
     if (index === -1) return;
 
     currentIndex = index;
 
-if (pageId !== 'results') {
-  resultsInnerIndex = 0;
-  if (resultsTrack) {
-    resultsTrack.style.transform = 'translateX(0px)';
-  }
-}
+    if (pageId !== 'results') {
+      resultsInnerIndex = 0;
+      if (resultsTrack) {
+        resultsTrack.style.transform = 'translateX(0px)';
+      }
+    }
 
     updateSlider();
   }
 
-  /* =========================
-     CLICK NAVIGATION (FIXED)
-  ========================== */
   document.addEventListener('click', (e) => {
-
-    // 🔥 prevent swipe → click glitch
     if (isClickCancelled) return;
 
     const link = e.target.closest('[data-page]');
@@ -122,9 +101,6 @@ if (pageId !== 'results') {
     overlay?.classList.remove('active');
   });
 
-  /* =========================
-     TOUCH START
-  ========================== */
   window.addEventListener('touchstart', (e) => {
     if (isRotateBlocked()) return;
     if (e.touches.length > 1) return;
@@ -135,16 +111,12 @@ if (pageId !== 'results') {
 
     isDragging = true;
     isHorizontal = false;
-    
-    isClickCancelled = false; // 🔥 reset click lock
+    isClickCancelled = false;
 
     wrapper.style.transition = 'none';
   }, { passive: true });
-    /* =========================
-     TOUCH MOVE
-  ========================== */
-  window.addEventListener('touchmove', (e) => {
 
+  window.addEventListener('touchmove', (e) => {
     if (isRotateBlocked()) return;
     if (!isDragging) return;
 
@@ -154,21 +126,19 @@ if (pageId !== 'results') {
     const diffX = x - startX;
     const diffY = y - startY;
 
-    // lock gesture direction
     if (!isHorizontal) {
       if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY)) {
         isHorizontal = true;
-	} else if (Math.abs(diffY) > 12 && Math.abs(diffY) > Math.abs(diffX)) {
-		isDragging = false;
-		return;
-	}
+      } else if (Math.abs(diffY) > 12 && Math.abs(diffY) > Math.abs(diffX)) {
+        isDragging = false;
+        return;
+      }
     }
 
     if (!isHorizontal) return;
 
     currentX = x;
 
-    // 🔥 cancel click if swipe detected
     if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
       isClickCancelled = true;
     }
@@ -187,8 +157,8 @@ if (pageId !== 'results') {
         isResultsInnerSwipe = true;
 
         resultsTrack.style.transition = 'none';
-	resultsTrack.style.transform =
-  		`translateX(calc(${-resultsInnerIndex * 100}% + ${diffX}px))`;
+        resultsTrack.style.transform =
+          `translateX(calc(${-resultsInnerIndex * 100}% + ${diffX}px))`;
 
         return;
       }
@@ -214,9 +184,7 @@ if (pageId !== 'results') {
     wrapper.style.filter = `blur(${blurAmount}px)`;
 
   }, { passive: true });
-   /* =========================
-     TOUCH END (SNAP)
-  ========================== */
+
   window.addEventListener('touchend', () => {
     if (!isDragging || isRotateBlocked()) return;
 
@@ -244,8 +212,8 @@ if (pageId !== 'results') {
         }
       }
 
-	resultsTrack.style.transform =
-  		`translateX(${-resultsInnerIndex * 100}%)`;
+      resultsTrack.style.transform =
+        `translateX(${-resultsInnerIndex * 100}%)`;
 
       isResultsInnerSwipe = false;
       wrapper.style.filter = 'blur(0px)';
@@ -264,9 +232,6 @@ if (pageId !== 'results') {
     updateSlider();
   });
 
-  /* =========================
-     ORIENTATION
-  ========================== */
   function checkOrientation() {
     const rotateBlock = document.getElementById('rotateBlock');
     if (!rotateBlock) return;
@@ -286,8 +251,57 @@ if (pageId !== 'results') {
 
   window.addEventListener('orientationchange', () => {
     setTimeout(() => {
-      isRotating = true;
       checkOrientation();
     }, 250);
   });
 }
+
+/* =========================
+   FORM + SUCCESS (GLOBAL)
+========================== */
+
+function setSuccessMessage(title, line1, line2){
+	document.getElementById('successTitle').textContent = title;
+	document.getElementById('successLine1').textContent = line1;
+	document.getElementById('successLine2').textContent = line2;
+}
+
+document.getElementById('contactForm')?.addEventListener('submit', function(e){
+	e.preventDefault();
+
+	const choice = document.getElementById('contact-consult')?.value;
+
+	if (choice === "Website feedback") {
+		setSuccessMessage("✅ Feedback Received!","Thank you for helping improve Math Ridge.","I’ll review your suggestion carefully.");
+	} else if (choice === "Math question help") {
+		setSuccessMessage("✅ Math Question Received!","Thanks for sending your math question.","I’ll take a look and reply with guidance soon.");
+	} else if (choice === "Just saying hello 🙂") {
+		setSuccessMessage("👋 Hello Received!","Thank you for stopping by Math Ridge.","I’m glad you reached out.");
+	} else {
+		setSuccessMessage("✅ Message Sent!","Thank you for reaching out.","I’ll get back to you as soon as possible.");
+	}
+
+	document.getElementById('success').classList.add('active');
+});
+
+document.getElementById('bookingForm')?.addEventListener('submit', function(e){
+	e.preventDefault();
+
+	const concern = document.getElementById('booking-concern')?.value;
+
+	if (concern === "Falling behind") {
+		setSuccessMessage("✅ Diagnostic Request Sent!","Thank you for sharing your concern.","I’ll help identify the learning gaps and next steps.");
+	} else if (concern === "SAT Prep") {
+		setSuccessMessage("✅ SAT Prep Request Sent!","Thank you for requesting SAT support.","I’ll help build a focused score-improvement plan.");
+	} else {
+		setSuccessMessage("✅ Booking Request Sent!","Thank you for requesting a free diagnostic.","I’ll review your information and get back to you soon.");
+	}
+
+	document.getElementById('success').classList.add('active');
+});
+
+document.getElementById('successBackBtn')?.addEventListener('click', () => {
+	document.getElementById('success').classList.remove('active');
+	currentIndex = 0;
+	document.querySelector('.pages-wrapper').style.transform = 'translateX(0px)';
+});
