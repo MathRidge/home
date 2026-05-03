@@ -203,7 +203,7 @@ wrapper.style.transform =
     wrapper.style.transition =
       'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
 
-    const threshold = window.innerWidth * 0.25;
+    const threshold = window.innerWidth * 0.22;
 
     const isMobile = window.innerWidth < 768;
     const isResultsPage = pages[currentIndex] === 'results';
