@@ -13,11 +13,11 @@ html, body{
 	overflow: hidden;
 	height: 100%;
 	background:black;
-	touch-action: manipulation;
+	touch-action: none;
 	overscroll-behavior: none;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-} 
+}
 #rotateBlock{
 	position:fixed;
 	inset:0; background:#000;
@@ -966,9 +966,17 @@ p.green {
 
 /* MOBILE */ 
 @media (max-width: 767px) {
-	html, body{ 
+	html, body{
 		overflow:hidden;
 	}
+
+	.page,
+	.results-panel,
+	.container,
+	.about-wrapper{
+		touch-action: pan-y;
+	}
+
 	.page{
 		min-width:100vw;
 		height:100vh; /* IMPORTANT: do NOT use absolute positioning */
