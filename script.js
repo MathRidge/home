@@ -1,36 +1,19 @@
-let currentIndex = 0;
+make it feel like native ios app with full copy paste script entire: let currentIndex = 0;
 const pages = ['home','services','about','results','contact','booking'];
 
-const wrapper = document.querySelector('.pages-wrapper');
-
-/* STATE */
 let startX = 0;
 let startY = 0;
 let currentX = 0;
 let isDragging = false;
-let lockAxis = null;
+let isHorizontal = false;
 let startTime = 0;
+let isRotating = false;
 
-let rafId = null;
-let lastMove = 0;
+const wrapper = document.querySelector('.pages-wrapper');
 
 if (!wrapper) {
   console.warn('pages-wrapper not found');
 } else {
-
-  /* =========================
-     APPLY TRANSFORM (SMOOTH CORE)
-  ========================== */
-  function render(offset = 0) {
-    const base = -currentIndex * window.innerWidth;
-    wrapper.style.transform = `translate3d(${base + offset}px, 0, 0)`;
-  }
-
-  function snapToIndex() {
-    wrapper.style.transition = 'transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1)';
-    render(0);
-    updateActiveNav();
-  }
 
   /* =========================
      TOUCH START
@@ -40,19 +23,17 @@ if (!wrapper) {
 
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-
     currentX = startX;
-    lockAxis = null;
-    isDragging = true;
 
+    isDragging = true;
+    isHorizontal = false;
     startTime = performance.now();
 
     wrapper.style.transition = 'none';
-    cancelAnimationFrame(rafId);
   }, { passive: true });
 
   /* =========================
-     TOUCH MOVE (iOS FEEL)
+     TOUCH MOVE
   ========================== */
   window.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
@@ -63,57 +44,52 @@ if (!wrapper) {
     const diffX = x - startX;
     const diffY = y - startY;
 
-    /* LOCK DIRECTION LIKE iOS */
-    if (!lockAxis) {
-      if (Math.abs(diffX) > 8 && Math.abs(diffX) > Math.abs(diffY)) {
-        lockAxis = 'x';
-      } else if (Math.abs(diffY) > 8) {
+    // lock direction
+    if (!isHorizontal) {
+      if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY)) {
+        isHorizontal = true;
+      } else if (Math.abs(diffY) > 12) {
         isDragging = false;
         return;
       }
     }
 
-    if (lockAxis !== 'x') return;
+    if (!isHorizontal) return;
 
     currentX = x;
 
     const atStart = currentIndex === 0 && diffX > 0;
     const atEnd = currentIndex === pages.length - 1 && diffX < 0;
 
-    let resistance = 1;
+    let move = diffX;
 
     if (atStart || atEnd) {
-      resistance = 0.35; // iOS rubber band feel
+      move *= 0.3;
     }
 
-    const offset = diffX * resistance;
-
-    /* RAF SMOOTH RENDER */
-    cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(() => {
-      render(offset);
-    });
-
-    lastMove = offset;
+    wrapper.style.transform =
+      `translateX(${(-currentIndex * window.innerWidth) + move}px)`;
 
   }, { passive: true });
 
   /* =========================
-     TOUCH END (SMART SNAP)
+     TOUCH END (SNAP LOGIC)
   ========================== */
   window.addEventListener('touchend', () => {
     if (!isDragging) return;
 
+    const diff = currentX - startX;
+    const duration = Math.max(performance.now() - startTime, 16);
+
+    const velocity = Math.abs(diff) / duration;
+
     isDragging = false;
 
-    const diff = currentX - startX;
-    const time = Math.max(performance.now() - startTime, 16);
-    const velocity = Math.abs(diff) / time;
+    wrapper.style.transition =
+      'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
 
-    const threshold = window.innerWidth * 0.15;
+    const threshold = window.innerWidth * 0.18;
     const fastSwipe = velocity > 0.55;
-
-    wrapper.style.transition = 'transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1)';
 
     if (Math.abs(diff) > threshold || fastSwipe) {
       if (diff < 0 && currentIndex < pages.length - 1) {
@@ -123,41 +99,25 @@ if (!wrapper) {
       }
     }
 
-    snapToIndex();
+    updateSlider();
   });
 
-  /* FIRST RENDER */
-  render(0);
+  /* =========================
+     UPDATE SLIDER
+  ========================== */
+  function updateSlider() {
+    wrapper.style.transform =
+      `translateX(${-currentIndex * window.innerWidth}px)`;
+    updateActiveNav();
+  }
+
+  // IMPORTANT: initial sync
+  updateSlider();
 }
 
 /* =========================
-   NAVIGATION SYSTEM
-========================= */
-function navigate(pageId) {
-  const index = pages.indexOf(pageId);
-  if (index === -1) return;
-
-  currentIndex = index;
-
-  wrapper.style.transition = 'transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1)';
-  wrapper.style.transform = `translate3d(${-currentIndex * window.innerWidth}px,0,0)`;
-
-  updateActiveNav();
-}
-
-function updateActiveNav() {
-  document.querySelectorAll('.nav-links a, .side-menu a')
-    .forEach(link => {
-      link.classList.toggle(
-        'active',
-        pages[currentIndex] === link.dataset.page
-      );
-    });
-}
-
-/* =========================
-   MENU (SAFE)
-========================= */
+   MENU
+========================== */
 const menuBtn = document.querySelector('.menu-btn');
 const overlay = document.getElementById('overlay');
 const sideMenu = document.getElementById('sideMenu');
@@ -175,7 +135,7 @@ function toggleMenu(forceClose = false) {
 menuBtn?.addEventListener('click', () => toggleMenu());
 overlay?.addEventListener('click', () => toggleMenu(true));
 
-window.addEventListener('resize', () => {
+window.addEventListener('load', () => {
   if (window.innerWidth >= 768) {
     sideMenu?.classList.remove('active');
     overlay?.classList.remove('active');
@@ -183,25 +143,75 @@ window.addEventListener('resize', () => {
 });
 
 /* =========================
-   ORIENTATION WARNING
+   NAVIGATION
+========================== */
+function navigate(pageId) {
+  const index = pages.indexOf(pageId);
+  if (index === -1) return;
+
+  currentIndex = index;
+  updateSlider();
+}
+
+function updateActiveNav() {
+  document.querySelectorAll('.nav-links a, .side-menu a')
+    .forEach(link => {
+      link.classList.toggle(
+        'active',
+        pages[currentIndex] === link.dataset.page
+      );
+    });
+}
+
+/* INIT */
+updateActiveNav();
+
+te this UNDER your NAVIGATION section:
+
+/* =========================
+   CLICK NAVIGATION (FIX)
 ========================= */
+
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('[data-page]');
+  if (!link) return;
+
+  const page = link.dataset.page;
+  if (!page) return;
+
+  e.preventDefault();
+
+  navigate(page);
+
+  // close menu if open (mobile UX like iOS apps)
+  sideMenu?.classList.remove('active');
+  overlay?.classList.remove('active');
+});
+
+
+/* =========================
+   ORIENTATION
+========================== */
 function checkOrientation() {
   const rotateBlock = document.getElementById('rotateBlock');
   if (!rotateBlock) return;
 
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isMobile =
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  rotateBlock.classList.toggle(
-    'active',
-    isMobile && window.innerWidth > window.innerHeight
-  );
+  if (isMobile && window.innerWidth > window.innerHeight) {
+    rotateBlock.classList.add('active');
+  } else {
+    rotateBlock.classList.remove('active');
+  }
 }
 
 window.addEventListener('load', checkOrientation);
 window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', () => {
-  setTimeout(checkOrientation, 250);
-});
 
-/* INIT NAV */
-updateActiveNav();
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    isRotating = true;
+    checkOrientation();
+  }, 250);
+});
