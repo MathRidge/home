@@ -1117,17 +1117,45 @@ p.green {
 	.why-box{
 		width: 100%;
 	}
-	.results-cta{
-		flex-direction: row;
-		gap: 10px;
-		align-items: center;
-	}
-	.results-cta h1{
-		font-size: 19px;
-	}
-	.results-cta p{
-		font-size: 14px;
-	}
+
+.results-cta{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+}
+
+.cta-top{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	width: 100%;
+}
+
+.results-cta .w-message{
+	padding: 0;
+	text-align: left;
+}
+
+.results-cta h1{
+	font-size: 23px;
+	line-height: 1.1;
+	margin: 0 0 4px;
+}
+
+.results-cta p{
+	font-size: 14px;
+	line-height: 1.25;
+	margin: 0;
+}
+
+.cta-button-row{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
 #contact.page{
 	padding: 85px 5% 25px;
 	overflow: hidden;
