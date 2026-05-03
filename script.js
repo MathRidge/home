@@ -6,10 +6,7 @@ let startY = 0;
 let currentX = 0;
 let isDragging = false;
 let isHorizontal = false;
-
-// 🔥 prevents swipe from triggering click bugs
 let isClickCancelled = false;
-
 let resultsInnerIndex = 0;
 let isResultsInnerSwipe = false;
 
@@ -206,7 +203,7 @@ wrapper.style.transform =
     wrapper.style.transition =
       'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
 
-    const threshold = window.innerWidth * 0.33;
+    const threshold = window.innerWidth * 0.25;
 
     const isMobile = window.innerWidth < 768;
     const isResultsPage = pages[currentIndex] === 'results';
