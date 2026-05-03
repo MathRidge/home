@@ -305,3 +305,49 @@ document.getElementById('successBackBtn')?.addEventListener('click', () => {
 	currentIndex = 0;
 	document.querySelector('.pages-wrapper').style.transform = 'translateX(0px)';
 });
+/* CONTACT INPUT */
+function handleSelection(){
+	const select = document.getElementById('contact-consult');
+	const otherInput = document.getElementById('contact-otherInput');
+	const messageBox = document.getElementById('contact-messageBox');
+
+	if (!select || !otherInput || !messageBox) return;
+
+	if (select.value !== "") {
+		messageBox.style.display = "block";
+	} else {
+		messageBox.style.display = "none";
+	}
+
+	if (select.value === "Other") {
+		otherInput.style.display = "block";
+		otherInput.focus();
+	} else {
+		otherInput.style.display = "none";
+		otherInput.value = "";
+	}
+}
+
+/* BOOKING INPUT */
+function handleOther(){
+	const select = document.getElementById('booking-concern');
+	const otherInput = document.getElementById('booking-otherInput');
+
+	if (!select || !otherInput) return;
+
+	if (select.value === "Other") {
+		otherInput.style.display = "block";
+		otherInput.focus();
+	} else {
+		otherInput.style.display = "none";
+		otherInput.value = "";
+	}
+}
+
+
+
+document.querySelectorAll('.card').forEach(card => {
+	card.addEventListener('click', () => {
+		card.classList.toggle('flipped');
+	});
+});
