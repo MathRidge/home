@@ -6,13 +6,24 @@ let startY = 0;
 let currentX = 0;
 let isDragging = false;
 let isHorizontal = false;
-let startTime = 0;
-let isRotating = false;
+
 
 // 🔥 NEW: prevents swipe from triggering click bugs
 let isClickCancelled = false;
 
+let resultsInnerIndex = 0;
+let isResultsInnerSwipe = false;
+
+const resultsTrack = document.querySelector('.results-mobile-track');
+const resultsPanelCount = 4;
+
 const wrapper = document.querySelector('.pages-wrapper');
+
+function isRotateBlocked() {
+  return document.getElementById('rotateBlock')?.classList.contains('active');
+}
+
+
 
 if (!wrapper) {
   console.warn('pages-wrapper not found');
@@ -78,6 +89,14 @@ if (!wrapper) {
     if (index === -1) return;
 
     currentIndex = index;
+
+if (pageId !== 'results') {
+  resultsInnerIndex = 0;
+  if (resultsTrack) {
+    resultsTrack.style.transform = 'translateX(0px)';
+  }
+}
+
     updateSlider();
   }
 
@@ -107,6 +126,7 @@ if (!wrapper) {
      TOUCH START
   ========================== */
   window.addEventListener('touchstart', (e) => {
+    if (isRotateBlocked()) return;
     if (e.touches.length > 1) return;
 
     startX = e.touches[0].clientX;
@@ -115,17 +135,17 @@ if (!wrapper) {
 
     isDragging = true;
     isHorizontal = false;
-    startTime = performance.now();
-
+    
     isClickCancelled = false; // 🔥 reset click lock
 
     wrapper.style.transition = 'none';
   }, { passive: true });
-
-  /* =========================
+    /* =========================
      TOUCH MOVE
   ========================== */
   window.addEventListener('touchmove', (e) => {
+
+    if (isRotateBlocked()) return;
     if (!isDragging) return;
 
     const x = e.touches[0].clientX;
@@ -153,6 +173,29 @@ if (!wrapper) {
       isClickCancelled = true;
     }
 
+    const isMobile = window.innerWidth < 768;
+    const isResultsPage = pages[currentIndex] === 'results';
+
+    if (isMobile && isResultsPage && resultsTrack) {
+      const canSwipeInnerLeft =
+        diffX < 0 && resultsInnerIndex < resultsPanelCount - 1;
+
+      const canSwipeInnerRight =
+        diffX > 0 && resultsInnerIndex > 0;
+
+      if (canSwipeInnerLeft || canSwipeInnerRight) {
+        isResultsInnerSwipe = true;
+
+        resultsTrack.style.transition = 'none';
+        resultsTrack.style.transform =
+          `translateX(${(-resultsInnerIndex * window.innerWidth) + diffX}px)`;
+
+        return;
+      }
+
+      isResultsInnerSwipe = false;
+    }
+
     const atStart = currentIndex === 0 && diffX > 0;
     const atEnd = currentIndex === pages.length - 1 && diffX < 0;
 
@@ -170,19 +213,14 @@ if (!wrapper) {
 
     wrapper.style.filter = `blur(${blurAmount}px)`;
 
-
   }, { passive: true });
-
-  /* =========================
+   /* =========================
      TOUCH END (SNAP)
   ========================== */
   window.addEventListener('touchend', () => {
-    if (!isDragging) return;
+    if (!isDragging || isRotateBlocked()) return;
 
     const diff = currentX - startX;
-    const duration = Math.max(performance.now() - startTime, 16);
-
-    const velocity = Math.abs(diff) / duration;
 
     isDragging = false;
 
@@ -191,13 +229,37 @@ if (!wrapper) {
 
     const threshold = window.innerWidth * 0.5;
 
+    const isMobile = window.innerWidth < 768;
+    const isResultsPage = pages[currentIndex] === 'results';
+
+    if (isMobile && isResultsPage && isResultsInnerSwipe && resultsTrack) {
+      resultsTrack.style.transition =
+        'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+      if (Math.abs(diff) >= threshold) {
+        if (diff < 0 && resultsInnerIndex < resultsPanelCount - 1) {
+          resultsInnerIndex++;
+        } else if (diff > 0 && resultsInnerIndex > 0) {
+          resultsInnerIndex--;
+        }
+      }
+
+      resultsTrack.style.transform =
+        `translateX(${-resultsInnerIndex * window.innerWidth}px)`;
+
+      isResultsInnerSwipe = false;
+      wrapper.style.filter = 'blur(0px)';
+      return;
+    }
+
     if (Math.abs(diff) >= threshold) {
-    if (diff < 0 && currentIndex < pages.length - 1) {
-    currentIndex++;
-  } else if (diff > 0 && currentIndex > 0) {
-    currentIndex--;
-  }
-}
+      if (diff < 0 && currentIndex < pages.length - 1) {
+        currentIndex++;
+      } else if (diff > 0 && currentIndex > 0) {
+        currentIndex--;
+      }
+    }
+
     wrapper.style.filter = 'blur(0px)';
     updateSlider();
   });
