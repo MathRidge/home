@@ -297,8 +297,20 @@ document.getElementById('contactForm')?.addEventListener('submit', function(e){
 	} else {
 		setSuccessMessage("✅ Message Sent!","Thank you for reaching out.","I’ll get back to you as soon as possible.");
 	}
-
-	document.getElementById('success').classList.add('active');
+	fetch(this.action, {
+		method: "POST",
+		body: new FormData(this)
+	})
+.then(res => {
+	if (res.ok) {
+		document.getElementById('success').classList.add('active');
+		this.reset();
+	} else {
+		alert("Something went wrong. Please try again.");
+	}
+})
+.catch(() => {
+	alert("Network error. Please try again.");
 });
 
 document.getElementById('bookingForm')?.addEventListener('submit', function(e){
@@ -314,7 +326,20 @@ document.getElementById('bookingForm')?.addEventListener('submit', function(e){
 		setSuccessMessage("✅ Booking Request Sent!","Thank you for requesting a free diagnostic.","I’ll review your information and get back to you soon.");
 	}
 
-	document.getElementById('success').classList.add('active');
+	fetch(this.action, {
+		method: "POST",
+		body: new FormData(this)
+	})
+.then(res => {
+	if (res.ok) {
+		document.getElementById('success').classList.add('active');
+		this.reset();
+	} else {
+		alert("Something went wrong. Please try again.");
+	}
+})
+.catch(() => {
+	alert("Network error. Please try again.");
 });
 
 document.getElementById('successBackBtn')?.addEventListener('click', () => {
