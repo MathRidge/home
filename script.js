@@ -16,261 +16,263 @@ const resultsPanelCount = 4;
 const wrapper = document.querySelector('.pages-wrapper');
 
 function isRotateBlocked() {
-  return document.getElementById('rotateBlock')?.classList.contains('active');
+	return document.getElementById('rotateBlock')?.classList.contains('active');
 }
 
 if (!wrapper) {
-  console.warn('pages-wrapper not found');
+	console.warn('pages-wrapper not found');
 } else {
 
-  function updateActiveNav() {
-    document.querySelectorAll('.nav-links a, .side-menu a')
-      .forEach(link => {
-        link.classList.toggle(
-          'active',
-          pages[currentIndex] === link.dataset.page
-        );
-      });
-  }
+	function updateActiveNav() {
+		document.querySelectorAll('.nav-links a, .side-menu a')
+			.forEach(link => {
+				link.classList.toggle(
+					'active',
+					pages[currentIndex] === link.dataset.page
+				);
+			});
+	}
 
-function updateSlider() {
-  wrapper.style.transform =
-    `translate3d(${-currentIndex * 100}%, 0, 0)`;
-  updateActiveNav();
-}
+	function updateSlider() {
+		wrapper.style.transform =
+			`translate3d(${-currentIndex * 100}%, 0, 0)`;
+		updateActiveNav();
+	}
 
-  updateSlider();
-
-  const menuBtn = document.querySelector('.menu-btn');
-  const overlay = document.getElementById('overlay');
-  const sideMenu = document.getElementById('sideMenu');
-
-  function toggleMenu(forceClose = false) {
-    if (forceClose) {
-      sideMenu?.classList.remove('active');
-      overlay?.classList.remove('active');
-    } else {
-      sideMenu?.classList.toggle('active');
-      overlay?.classList.toggle('active');
-    }
-  }
-
-menuBtn?.addEventListener('click', (e) => {
-	e.stopPropagation();
-	isClickCancelled = false;
-	toggleMenu();
-});
-  overlay?.addEventListener('click', () => toggleMenu(true));
-
-  window.addEventListener('load', () => {
-    if (window.innerWidth >= 768) {
-      sideMenu?.classList.remove('active');
-      overlay?.classList.remove('active');
-    }
-  });
-
-  function navigate(pageId) {
-    const index = pages.indexOf(pageId);
-    if (index === -1) return;
-
-    currentIndex = index;
-
-    if (pageId !== 'results') {
-      resultsInnerIndex = 0;
-      if (resultsTrack) {
-        resultsTrack.style.transform = 'translateX(0vw)';
-      }
-    }
-
-    updateSlider();
-  }
-
-  document.addEventListener('click', (e) => {
-    if (isClickCancelled) return;
-
-    const link = e.target.closest('[data-page]');
-    if (!link) return;
-
-    const page = link.dataset.page;
-    if (!page) return;
-
-    e.preventDefault();
-
-    navigate(page);
-
-    sideMenu?.classList.remove('active');
-    overlay?.classList.remove('active');
-  });
-
-  window.addEventListener('touchstart', (e) => {
-    if (isRotateBlocked()) return;
-    if (e.touches.length > 1) return;
-
-const interactive = e.target.closest('button, a, input, textarea, select, .card');
-
-if (interactive) {
-	isDragging = false;
-	return;
-}
-
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    currentX = startX;
-
-    isDragging = true;
-    isHorizontal = false;
-    isClickCancelled = false;
-
-    wrapper.style.transition = 'none';
-  }, { passive: true });
-
-  window.addEventListener('touchmove', (e) => {
-    if (isRotateBlocked()) return;
-    if (!isDragging) return;
-
-    const x = e.touches[0].clientX;
-    const y = e.touches[0].clientY;
-
-    const diffX = x - startX;
-    const diffY = y - startY;
-
-    if (!isHorizontal) {
-      if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY)) {
-        isHorizontal = true;
-      } else if (Math.abs(diffY) > 12 && Math.abs(diffY) > Math.abs(diffX)) {
-        isDragging = false;
-        return;
-      }
-    }
-
-    if (!isHorizontal) return;
-
-    currentX = x;
-
-    if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
-      isClickCancelled = true;
-    }
-
-    const isMobile = window.innerWidth < 768;
-    const isResultsPage = pages[currentIndex] === 'results';
-
-    if (isMobile && isResultsPage && resultsTrack) {
-      const canSwipeInnerLeft =
-        diffX < 0 && resultsInnerIndex < resultsPanelCount - 1;
-
-      const canSwipeInnerRight =
-        diffX > 0 && resultsInnerIndex > 0;
-
-      if (canSwipeInnerLeft || canSwipeInnerRight) {
-        isResultsInnerSwipe = true;
-
-        resultsTrack.style.transition = 'none';
-        resultsTrack.style.transform =
-          `translateX(calc(${-resultsInnerIndex * 100}% + ${diffX}px))`;
-
-        return;
-      }
-
-      isResultsInnerSwipe = false;
-    }
-
-    const atStart = currentIndex === 0 && diffX > 0;
-    const atEnd = currentIndex === pages.length - 1 && diffX < 0;
-
-    let move = diffX;
-
-    if (atStart || atEnd) {
-      move *= 0.3;
-    }
-
-    const progress = Math.min(Math.abs(diffX) / window.innerWidth, 1);
-    const blurAmount = progress * 6;
-
-wrapper.style.transform =
-  `translate3d(calc(${-currentIndex * 100}% + ${move}px), 0, 0)`;
-
-    wrapper.style.filter = `blur(${blurAmount}px)`;
-
-  }, { passive: true });
-
-  window.addEventListener('touchend', () => {
-    if (!isDragging || isRotateBlocked()) return;
-
-    const diff = currentX - startX;
-
-    isDragging = false;
-
-    wrapper.style.transition =
-      'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
-
-    const threshold = window.innerWidth * 0.22;
-
-    const isMobile = window.innerWidth < 768;
-    const isResultsPage = pages[currentIndex] === 'results';
-
-    if (isMobile && isResultsPage && isResultsInnerSwipe && resultsTrack) {
-      resultsTrack.style.transition =
-        'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
-
-      if (Math.abs(diff) >= threshold) {
-        if (diff < 0 && resultsInnerIndex < resultsPanelCount - 1) {
-          resultsInnerIndex++;
-        } else if (diff > 0 && resultsInnerIndex > 0) {
-          resultsInnerIndex--;
-        }
-      }
-
-      resultsTrack.style.transform =
-        `translateX(${-resultsInnerIndex * 100}%)`;
-
-      isResultsInnerSwipe = false;
-      wrapper.style.filter = 'blur(0px)';
-setTimeout(() => {
-	isClickCancelled = false;
-}, 50);
-
-      return;
-    }
-
-    if (Math.abs(diff) >= threshold) {
-      if (diff < 0 && currentIndex < pages.length - 1) {
-        currentIndex++;
-      } else if (diff > 0 && currentIndex > 0) {
-        currentIndex--;
-      }
-    }
-
-	wrapper.style.filter = 'blur(0px)';
 	updateSlider();
 
-	setTimeout(() => {
-	isClickCancelled = false;
-	}, 50);
+	const menuBtn = document.querySelector('.menu-btn');
+	const overlay = document.getElementById('overlay');
+	const sideMenu = document.getElementById('sideMenu');
 
-  });
+	function toggleMenu(forceClose = false) {
+		if (forceClose) {
+			sideMenu?.classList.remove('active');
+			overlay?.classList.remove('active');
+		} else {
+			sideMenu?.classList.toggle('active');
+			overlay?.classList.toggle('active');
+		}
+	}
 
-  function checkOrientation() {
-    const rotateBlock = document.getElementById('rotateBlock');
-    if (!rotateBlock) return;
+	menuBtn?.addEventListener('click', (e) => {
+		e.stopPropagation();
+		isClickCancelled = false;
+		toggleMenu();
+	});
 
-    const isMobile =
-      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+	overlay?.addEventListener('click', () => toggleMenu(true));
 
-    if (isMobile && window.innerWidth > window.innerHeight) {
-      rotateBlock.classList.add('active');
-    } else {
-      rotateBlock.classList.remove('active');
-    }
-  }
+	window.addEventListener('load', () => {
+		if (window.innerWidth >= 768) {
+			sideMenu?.classList.remove('active');
+			overlay?.classList.remove('active');
+		}
+	});
 
-  window.addEventListener('load', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
+	function navigate(pageId) {
+		const index = pages.indexOf(pageId);
+		if (index === -1) return;
 
-  window.addEventListener('orientationchange', () => {
-    setTimeout(() => {
-      checkOrientation();
-    }, 250);
-  });
+		currentIndex = index;
+
+		if (pageId !== 'results') {
+			resultsInnerIndex = 0;
+			if (resultsTrack) {
+				resultsTrack.style.transform = 'translateX(0vw)';
+			}
+		}
+
+		updateSlider();
+	}
+
+	document.addEventListener('click', (e) => {
+		if (isClickCancelled) return;
+
+		const link = e.target.closest('[data-page]');
+		if (!link) return;
+
+		const page = link.dataset.page;
+		if (!page) return;
+
+		e.preventDefault();
+
+		navigate(page);
+
+		sideMenu?.classList.remove('active');
+		overlay?.classList.remove('active');
+	});
+
+	window.addEventListener('touchstart', (e) => {
+		if (isRotateBlocked()) return;
+		if (e.touches.length > 1) return;
+
+		const interactive = e.target.closest('button, a, input, textarea, select, .card');
+
+		if (interactive) {
+			isDragging = false;
+			return;
+		}
+
+		startX = e.touches[0].clientX;
+		startY = e.touches[0].clientY;
+		currentX = startX;
+
+		isDragging = true;
+		isHorizontal = false;
+		isClickCancelled = false;
+
+		wrapper.style.transition = 'none';
+	}, { passive: true });
+
+	window.addEventListener('touchmove', (e) => {
+		if (isRotateBlocked()) return;
+		if (!isDragging) return;
+
+		const x = e.touches[0].clientX;
+		const y = e.touches[0].clientY;
+
+		const diffX = x - startX;
+		const diffY = y - startY;
+
+		if (!isHorizontal) {
+			if (Math.abs(diffX) > 12 && Math.abs(diffX) > Math.abs(diffY)) {
+				isHorizontal = true;
+			} else if (Math.abs(diffY) > 12 && Math.abs(diffY) > Math.abs(diffX)) {
+				isDragging = false;
+				return;
+			}
+		}
+
+		if (!isHorizontal) return;
+
+		currentX = x;
+
+		if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+			isClickCancelled = true;
+		}
+
+		const isMobile = window.innerWidth < 768;
+		const isResultsPage = pages[currentIndex] === 'results';
+
+		if (isMobile && isResultsPage && resultsTrack) {
+			const canSwipeInnerLeft =
+				diffX < 0 && resultsInnerIndex < resultsPanelCount - 1;
+
+			const canSwipeInnerRight =
+				diffX > 0 && resultsInnerIndex > 0;
+
+			if (canSwipeInnerLeft || canSwipeInnerRight) {
+				isResultsInnerSwipe = true;
+
+				resultsTrack.style.transition = 'none';
+				resultsTrack.style.transform =
+					`translateX(calc(${-resultsInnerIndex * 100}% + ${diffX}px))`;
+
+				return;
+			}
+
+			isResultsInnerSwipe = false;
+		}
+
+		const atStart = currentIndex === 0 && diffX > 0;
+		const atEnd = currentIndex === pages.length - 1 && diffX < 0;
+
+		let move = diffX;
+
+		if (atStart || atEnd) {
+			move *= 0.3;
+		}
+
+		const progress = Math.min(Math.abs(diffX) / window.innerWidth, 1);
+		const blurAmount = progress * 6;
+
+		wrapper.style.transform =
+			`translate3d(calc(${-currentIndex * 100}% + ${move}px), 0, 0)`;
+
+		wrapper.style.filter = `blur(${blurAmount}px)`;
+
+	}, { passive: true });
+
+	window.addEventListener('touchend', () => {
+		if (!isDragging || isRotateBlocked()) return;
+
+		const diff = currentX - startX;
+
+		isDragging = false;
+
+		wrapper.style.transition =
+			'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+		const threshold = window.innerWidth * 0.22;
+
+		const isMobile = window.innerWidth < 768;
+		const isResultsPage = pages[currentIndex] === 'results';
+
+		if (isMobile && isResultsPage && isResultsInnerSwipe && resultsTrack) {
+			resultsTrack.style.transition =
+				'transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+			if (Math.abs(diff) >= threshold) {
+				if (diff < 0 && resultsInnerIndex < resultsPanelCount - 1) {
+					resultsInnerIndex++;
+				} else if (diff > 0 && resultsInnerIndex > 0) {
+					resultsInnerIndex--;
+				}
+			}
+
+			resultsTrack.style.transform =
+				`translateX(${-resultsInnerIndex * 100}%)`;
+
+			isResultsInnerSwipe = false;
+			wrapper.style.filter = 'blur(0px)';
+
+			setTimeout(() => {
+				isClickCancelled = false;
+			}, 50);
+
+			return;
+		}
+
+		if (Math.abs(diff) >= threshold) {
+			if (diff < 0 && currentIndex < pages.length - 1) {
+				currentIndex++;
+			} else if (diff > 0 && currentIndex > 0) {
+				currentIndex--;
+			}
+		}
+
+		wrapper.style.filter = 'blur(0px)';
+		updateSlider();
+
+		setTimeout(() => {
+			isClickCancelled = false;
+		}, 50);
+
+	});
+
+	function checkOrientation() {
+		const rotateBlock = document.getElementById('rotateBlock');
+		if (!rotateBlock) return;
+
+		const isMobile =
+			/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+		if (isMobile && window.innerWidth > window.innerHeight) {
+			rotateBlock.classList.add('active');
+		} else {
+			rotateBlock.classList.remove('active');
+		}
+	}
+
+	window.addEventListener('load', checkOrientation);
+	window.addEventListener('resize', checkOrientation);
+
+	window.addEventListener('orientationchange', () => {
+		setTimeout(() => {
+			checkOrientation();
+		}, 250);
+	});
 }
 
 /* =========================
@@ -297,20 +299,22 @@ document.getElementById('contactForm')?.addEventListener('submit', function(e){
 	} else {
 		setSuccessMessage("✅ Message Sent!","Thank you for reaching out.","I’ll get back to you as soon as possible.");
 	}
+
 	fetch(this.action, {
 		method: "POST",
 		body: new FormData(this)
 	})
-.then(res => {
-	if (res.ok) {
-		document.getElementById('success').classList.add('active');
-		this.reset();
-	} else {
-		alert("Something went wrong. Please try again.");
-	}
-})
-.catch(() => {
-	alert("Network error. Please try again.");
+	.then(res => {
+		if (res.ok) {
+			document.getElementById('success').classList.add('active');
+			this.reset();
+		} else {
+			alert("Something went wrong. Please try again.");
+		}
+	})
+	.catch(() => {
+		alert("Network error. Please try again.");
+	});
 });
 
 document.getElementById('bookingForm')?.addEventListener('submit', function(e){
@@ -330,23 +334,29 @@ document.getElementById('bookingForm')?.addEventListener('submit', function(e){
 		method: "POST",
 		body: new FormData(this)
 	})
-.then(res => {
-	if (res.ok) {
-		document.getElementById('success').classList.add('active');
-		this.reset();
-	} else {
-		alert("Something went wrong. Please try again.");
-	}
-})
-.catch(() => {
-	alert("Network error. Please try again.");
+	.then(res => {
+		if (res.ok) {
+			document.getElementById('success').classList.add('active');
+			this.reset();
+		} else {
+			alert("Something went wrong. Please try again.");
+		}
+	})
+	.catch(() => {
+		alert("Network error. Please try again.");
+	});
 });
 
 document.getElementById('successBackBtn')?.addEventListener('click', () => {
 	document.getElementById('success').classList.remove('active');
 	currentIndex = 0;
-	document.querySelector('.pages-wrapper').style.transform = 'translateX(0px)';
+
+	const pageWrapper = document.querySelector('.pages-wrapper');
+	if (pageWrapper) {
+		pageWrapper.style.transform = 'translate3d(0%, 0, 0)';
+	}
 });
+
 /* CONTACT INPUT */
 function handleSelection(){
 	const select = document.getElementById('contact-consult');
@@ -364,18 +374,17 @@ function handleSelection(){
 		"Other": ""
 	};
 
-	// show textarea
 	if (select.value !== "") {
 		messageBox.style.display = "block";
+	} else {
+		messageBox.style.display = "none";
 	}
 
-	// set smart message
 	if (templates[select.value]) {
 		messageBox.value = templates[select.value];
 		messageBox.placeholder = "Feel free to add more details...";
 	}
-/* BOOKING INPUT */
-	// handle OTHER
+
 	if (select.value === "Other") {
 		otherInput.style.display = "block";
 		messageBox.value = "";
@@ -387,12 +396,28 @@ function handleSelection(){
 	}
 }
 
+/* BOOKING INPUT */
+function handleOther(){
+	const select = document.getElementById('booking-concern');
+	const otherInput = document.getElementById('booking-otherInput');
+
+	if (!select || !otherInput) return;
+
+	if (select.value === "Other") {
+		otherInput.style.display = "block";
+		otherInput.focus();
+	} else {
+		otherInput.style.display = "none";
+		otherInput.value = "";
+	}
+}
 
 document.querySelectorAll('.card').forEach(card => {
 	card.addEventListener('click', () => {
 		card.classList.toggle('flipped');
 	});
 });
+
 document.addEventListener('gesturestart', function(e) {
 	e.preventDefault();
 });
