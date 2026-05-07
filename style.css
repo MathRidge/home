@@ -249,7 +249,7 @@ textarea,
 }
 .hero h1{
 	margin-bottom: 10px;
-	font-size: 50px; /* slightly bigger */ 
+	font-size: 42px; /* slightly bigger */ 
 	font-weight: 500;
 	font-family: 'Playfair Display', serif;
 	color: #1f2a37; 
@@ -309,21 +309,27 @@ textarea,
 	height: 22px;
 	display: block;
 }
-.quote {
-	position: sticky;
-	bottom: 15px;
-	margin-top: auto;
-	align-self: center;
+.quote{
+	position: fixed;
+	left: 50%;
+	bottom: calc(18px + env(safe-area-inset-bottom));
+	transform: translateX(-50%);
+	z-index: 50;
+
 	color: #fbf5f5;
-	padding: 6px 20px; /* ⬅ smaller padding */ 
+	padding: 6px 20px;
 	border-radius: 14px;
 	background: rgba(0,30,0,0.85);
 	text-align: center;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 6px; /* ⬅ tighter vertical spacing */
-} 
+	gap: 6px;
+
+	width: fit-content;
+	max-width: 90%;
+}
 /* Your SVG icon */
 .btn1-icon {
 	width: 22px;
@@ -334,7 +340,7 @@ textarea,
 /* Quote text */
 .quote-text { 
 	margin: 0;
-	font-size: 14px; /* slightly smaller */ 
+	font-size: 12px; /* slightly smaller */ 
 	line-height: 1.2; /* ⬅ reduces vertical height */
 	letter-spacing: 2px; /* optional: 3px is quite wide */
 	font-family: 'Playfair Display', serif; font-style: italic;
@@ -562,9 +568,10 @@ textarea,
 }
 .about-wrapper {
 	position: relative;
-	top: auto; /* Aligns to the top edge */
+	top: 10px;
 	right: 0; /* Aligns to the right edge */ 
 	margin: 0; 
+	margin-left: auto;
 	max-width:800px; 
 	width:680px; 
 	background:rgba(255,255,220,0.5);
@@ -573,8 +580,9 @@ textarea,
 	padding:20px;
 	border-radius:12px;
 	max-height:40vh; /* FIX overflow */ 
-	overflow-y:auto; /* allow internal scroll */ } 
-	.about-wrapper h2{
+	overflow-y:auto; /* allow internal scroll */ 
+} 
+.about-wrapper h2{
 	font-family: 'Playfair Display', serif;
 }
 .about-wrapper p{
@@ -589,9 +597,11 @@ textarea,
 	background: linear-gradient(to right, rgba(0,0,0,0.6), transparent);
 }
 .results-hero h1{
-	font-family: 'Playfair Display', serif;
-	font-weight: 380; font-size:46px;
-	color: #fff; margin-bottom: 0 0 12px;
+	font-family:'Playfair Display', serif;
+	font-weight:380;
+	font-size:46px;
+	color:#fff;
+	margin-bottom:12px;
 }
 .results-hero p{
 	width: 280px;
@@ -626,8 +636,8 @@ textarea,
 }
 .results-mobile-slider {
 	width: 100%;
-	x-overflow: hidden;
-	y-overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .results-mobile-track {
@@ -651,7 +661,7 @@ textarea,
 	box-shadow:0 0 3px rgba(255,255,220,.7);
 	backdrop-filter:blur(2px);
 	width: 180px;
-	height: 60vh
+	height: 60vh;
 	display: flex;
 	flex-direction:column;
 }
@@ -831,7 +841,7 @@ p.green {
 	font-size: 21px;
 }
 .w-message p{
-	font-size: 16px;
+	font-size: 14px;
 }
 .results-cta {
 	display: flex;
@@ -859,7 +869,11 @@ p.green {
 /* Contact */
 .title{
 	font-family: 'Playfair Display', serif;
-	font-size:21px;
+	font-size:25px;
+	width:fit-content;
+	margin:0 auto;
+	text-align:center;
+	margin-bottom:10px;
 }
 .contact-wrapper {
 	position: relative;
@@ -1001,7 +1015,7 @@ p.green {
 }
 
 /* MOBILE */ 
-@media (max-width: 767px) {
+@media (max-width: 878px) {
 	html, body{
 		overflow:hidden;
 	}
@@ -1015,234 +1029,324 @@ p.green {
 
 	.page{
 		min-width:100vw;
-		height:100vh; /* IMPORTANT: do NOT use absolute positioning */
+		height:100dvh;
 		position:relative;
-		overflow-x: hidden;
+		overflow-x:hidden;
 		overflow-y:auto;
-		box-sizing: border-box;
+		box-sizing:border-box;
 	}
+
 	.pages-wrapper{
 		transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 	}
+
 	.input-box{
 		flex:1 1 100%;
 	}
-	.logo {
-		font-size: 18px;
+
+	.logo{
+		font-size:18px;
 	}
-	.logo-img {
-		width: 32px;
-		height: 32px;
+
+	.logo-img{
+		width:32px;
+		height:32px;
 	}
+
 	.about-wrapper{
 		width:380px;
 	}
-#booking .container{
-	max-height:75vh;
-}
+
+	#booking .container{
+		max-height:75vh;
+	}
+
 	.nav-links{
 		display:none;
 	}
+
 	.menu-btn{ 
 		display:block;
 	}
+
 	.page{
 		font-size:19px;
 	}
+
 	.hero h1{
 		font-size:50px;
 	}
+
 	.hero p{
-		width: 280px;
-		font-size: 14px;
+		width:280px;
+		font-size:14px;
 	}
+
 	.quote{ 
-	        width:100%;
-	        max-width:400px;
-		font-size: 14px;
+		width:100%;
+		max-width:400px;
+		font-size:14px;
 	}
+
 	.split{
 		max-width:100%;
 		background:rgba(0,0,0,0.7);
 	}
+
 	.pricing-grid{
 		display:flex;
 		flex-direction:column;
-		align-items: flex-end;
+		align-items:flex-end;
 		gap:20px;
 	}
+
 	.price-card{
-		width: 260px;
+		width:260px;
 		min-height:auto;
 		transform:none;
 	}
+
 	.price-card.bundle{
-		font-size: 17px;
+		font-size:17px;
 	}
+
 	.highlight{
 		border:2px solid #4CAF50;
 	}
-	.highlight1{border:2px solid #AF4C50;
+
+	.highlight1{
+		border:2px solid #AF4C50;
 	}
-	.highlight2{border:2px solid #4C50AF;
+
+	.highlight2{
+		border:2px solid #4C50AF;
 	} 
+
 	#rotateBlock.active{
-		opacity:1; pointer-events:auto;
+		opacity:1;
+		pointer-events:auto;
 	}
+
 	.card{
 		height:150px;
-		width: 260px;
+		width:260px;
 	}
+
 	.card-front p{
-		font-size: 15px;
+		font-size:15px;
 	}
+
 	.card-back p{
-		font-size: 15px;
+		font-size:15px;
 	}
+
 	p.fit{
-		font-size: 12px;
+		font-size:12px;
 	}
+
 	.cards{
 		grid-template-columns:1fr;
-		justify-items: end;
+		justify-items:end;
 	}
 
-	.results-mobile-slider {
-		overflow: hidden;
+	.results-mobile-slider{
+		overflow:hidden;
 	}
 
-.results-mobile-track {
-	display: flex;
-	width: 100%;
-}
+	.results-mobile-track{
+		display:flex;
+		width:100%;
+	}
 
-.results-panel{
-	width: 100%;
-	flex: 0 0 100%;
-	padding: 0 10px 260px;
-	box-sizing: border-box;
-	overflow-y: auto;
-	overflow-x: hidden;
-	height: calc(100vh - 160px);
-	max-height: none;
-	-webkit-overflow-scrolling: touch;
-	overscroll-behavior: contain;
-}
-.results-panel > div{
-	min-height: max-content;
-	overflow: visible;
-}
+	.results-panel{
+		width:100%;
+		flex:0 0 100%;
+		padding:0 10px 260px;
+		box-sizing:border-box;
+		overflow-y:auto;
+		overflow-x:hidden;
+		height:calc(100dvh - 160px);
+		max-height:none;
+		-webkit-overflow-scrolling:touch;
+		overscroll-behavior:contain;
+	}
 
-	/* RESULTS MOBILE FIX */
+	.results-panel > div{
+		min-height:max-content;
+		overflow:visible;
+	}
 
 	.testimonial-layout{
-		width: 100%;
+		width:100%;
 	}
+
 	.results-method{
-		position: static;
-		top: auto;
-		width: 100%;
-		grid-column: auto;
-		grid-row: auto;
+		position:static;
+		top:auto;
+		width:100%;
+		grid-column:auto;
+		grid-row:auto;
 	}
+
 	.case p{
 		font-size:16px;
 	}
+
 	.why-box{
-		width: 100%;
+		width:100%;
 	}
 
-.results-cta{
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 14px;
-}
+	.results-cta{
+		display:flex;
+		flex-direction:column;
+		align-items:center;
+		gap:14px;
+	}
 
-.cta-top{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 12px;
-	width: 100%;
-}
+	.cta-top{
+		display:flex;
+		align-items:center;
+		justify-content:center;
+		gap:12px;
+		width:100%;
+	}
 
-.results-cta .w-message{
-	padding: 0;
-	text-align: left;
-}
+	.cta-button-row{
+		width:100%;
+		display:flex;
+		justify-content:center;
+	}
 
-.results-cta h1{
-	font-size: 23px;
-	line-height: 1.1;
-	margin: 0 0 4px;
-}
-
-.results-cta p{
-	font-size: 14px;
-	line-height: 1.25;
-	margin: 0;
-}
-
-.cta-button-row{
-	width: 100%;
-	display: flex;
-	justify-content: center;
-}
-
-#contact.page{
-	padding: 85px 5% 25px;
-	overflow: hidden;
-	height: 100vh;
-}
+	#contact.page{
+		padding:85px 5% 25px;
+		overflow:hidden;
+		height:100dvh;
+	}
 
 	.contact-wrapper{
-		width: 100%;
-		height: 100%;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
+		width:100%;
+		height:100%;
+		padding:0;
+		display:flex;
+		flex-direction:column;
 	}
 
 	.contact-hero{
-		width: 100%;
-		max-width: 100%;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		background: linear-gradient(to right, rgba(0,0,0,0.6), transparent);
+		width:100%;
+		max-width:100%;
+		padding:0;
+		display:flex;
+		flex-direction:column;
+		background:linear-gradient(to right, rgba(0,0,0,0.6), transparent);
 	}
 
 	.contact-hero-content{
-		width: 100%;
+		width:100%;
 	}
 
 	.contact-hero h1{
-		font-size: 36px;
-		line-height: 1.05;
-		margin-bottom: 10px;
+		font-size:36px;
+		line-height:1.05;
+		margin-bottom:10px;
 	}
 
 	.contact-hero p{
-		width: 100%;
-		font-size: 14px;
-		margin-bottom: 15px;
+		width:100%;
+		font-size:14px;
+		margin-bottom:15px;
 	}
 
-#contact .container{
-	width: 100%;
-	max-width: 100%;
-	margin: 0;
-	flex: 1;
-	min-height: 0;
-	max-height: calc(100vh - 260px);
-	overflow-y: auto;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
-	overscroll-behavior: contain;
-}
+	#contact .container{
+		width:100%;
+		max-width:100%;
+		margin:0;
+		flex:1;
+		min-height:0;
+		max-height:calc(100dvh - 260px);
+		overflow-y:auto;
+		overflow-x:hidden;
+		-webkit-overflow-scrolling:touch;
+		overscroll-behavior:contain;
+	}
 
 	#contactForm{
-		width: 100%;
+		width:100%;
 	} 
+}
+/* DESKTOP RESULTS LAYOUT */
+@media (min-width: 879px){
+
+	#results.page{
+		height:100dvh;
+		overflow-y:auto;
+		overflow-x:hidden;
+		padding-top:100px;
+		padding-bottom:60px;
+	}
+
+	.results-hero{
+		display:inline-flex;
+		flex-direction:column;
+		align-items:flex-start;
+		width:fit-content;
+		max-width:520px;
+		padding-right:40px;
+	}
+
+	.results-mobile-slider{
+		width:100%;
+		overflow:visible;
+	}
+
+	.results-mobile-track{
+		display:grid;
+		grid-template-columns:minmax(0, 1fr) minmax(320px, 420px);
+		grid-template-areas:
+			"stats stats"
+			"content method"
+			"testimonials method";
+		gap:20px;
+		width:100%;
+		max-width:1100px;
+		margin:0 auto;
+		transform:none !important;
+	}
+
+	.results-panel{
+		width:100%;
+		flex:none;
+		padding:0;
+		overflow:visible;
+	}
+
+	.results-panel:has(.results-stats){
+		grid-area:stats;
+	}
+
+	.results-panel:has(.results-content){
+		grid-area:content;
+	}
+
+	.results-panel:has(.testimonial-layout){
+		grid-area:testimonials;
+	}
+
+	.results-panel:has(.results-method){
+		grid-area:method;
+	}
+
+	.results-method{
+		width:100%;
+		align-self:start;
+	}
+
+	.results-cta{
+		justify-content:center;
+		text-align:center;
+		margin-top:20px;
+	}
+
+	.stat{
+		height:auto;
+	}
 }
