@@ -588,6 +588,64 @@ textarea,
 .about-wrapper p{
 	font-size:16px;
 } 
+.project-showcase{
+	width:680px;
+	margin-left:auto;
+	margin-top:18px;
+
+	display:flex;
+	justify-content:flex-end;
+}
+
+.project-shortcut{
+	display:flex;
+	align-items:center;
+	gap:12px;
+
+	text-decoration:none;
+	color:#111;
+
+	padding:12px 18px;
+	border-radius:18px;
+
+	background:rgba(255,255,255,0.28);
+
+	backdrop-filter:blur(4px);
+	-webkit-backdrop-filter:blur(4px);
+
+	border:1px solid rgba(255,255,255,0.35);
+
+	box-shadow:
+		0 4px 14px rgba(255,220,180,0.12),
+		inset 0 1px 0 rgba(255,255,255,0.28);
+
+	transition:0.28s ease;
+}
+
+.project-shortcut:hover{
+	transform:translateY(-2px);
+
+	background:rgba(255,255,255,0.38);
+
+	box-shadow:
+		0 8px 18px rgba(255,220,180,0.18),
+		inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.project-icon{
+	font-size:1.4rem;
+}
+
+.project-title{
+	font-weight:600;
+	font-size:1rem;
+}
+
+.project-arrow{
+	font-size:1rem;
+	opacity:0.7;
+}
+
 /* RESULTS PAGE */ 
 #results.page{
   padding-top: 90px;
@@ -1150,6 +1208,32 @@ p.green {
 		justify-items:end;
 	}
 
+.project-showcase{
+	width:100%;
+	margin-left:0;
+	margin-top:14px;
+	justify-content:flex-end;
+}
+
+.project-shortcut{
+	max-width:100%;
+	padding:10px 14px;
+	gap:9px;
+	border-radius:14px;
+}
+
+.project-title{
+	font-size:0.9rem;
+	white-space:nowrap;
+}
+
+.project-icon{
+	font-size:1.2rem;
+}
+
+.project-arrow{
+	font-size:0.9rem;
+}
 #results.page{
 	padding:90px 5% 0;
 	height:100dvh;
