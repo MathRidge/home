@@ -1150,32 +1150,50 @@ p.green {
 		justify-items:end;
 	}
 
-	.results-mobile-slider{
-		width:100%;
-		min-height:100%;
-		overflow:visible;
-	}
+.results-mobile-slider{
+	width:100%;
+	height:calc(100dvh - 170px);
+	overflow:hidden;
+}
 
-	.results-mobile-track{
-		display:flex;
-		flex-direction:column;
-		width:100%;
-		min-height:100%;
-	}
+.results-mobile-track{
+	display:flex;
+	flex-direction:row;
+	width:400%;
+	height:100%;
+	transition:transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
 
-	.results-panel{
-		width:100%;
-		flex:0 0 100%;
-		padding:0 10px 120px;
-		box-sizing:border-box;		
+.results-panel{
+	width:100vw;
+	flex:0 0 100vw;
+	padding:0 10px 120px;
+	box-sizing:border-box;
 
-		overflow-y:visible;
-		overflow-x:hidden;	
+	height:100%;
+	overflow-y:auto;
+	overflow-x:hidden;
 
-		min-height:100%;
-		height:auto;
-		max-height:none;
-	}
+	-webkit-overflow-scrolling:touch;
+	overscroll-behavior:contain;
+}
+
+.results-stats{
+	display:flex;
+	flex-wrap:wrap;
+	gap:12px;
+	align-items:flex-start;
+	justify-content:flex-start;
+}
+
+.stat{
+	width:180px;
+	height:auto;
+	min-height:unset;
+	flex:0 0 auto;
+}
+
+
 
 	.results-panel > div{
 		min-height:max-content;
@@ -1185,20 +1203,7 @@ p.green {
 	.testimonial-layout{
 		width:100%;
 	}
-	.results-stats{
-		display:flex;
-		flex-wrap:wrap;
-		gap:12px;
-		align-items:flex-start;
-		justify-content:flex-start;
-	}
 
-	.stat{
-		width:180px;
-		height:auto;
-		min-height:unset;
-		flex:0 0 auto;
-	}
 	.results-method{
 		position:static;
 		top:auto;
