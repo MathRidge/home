@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Sign Outside the Box</title>
+
+<style>
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+	background: linear-gradient(180deg, #fff7df, #eef7ff);
+	color: #283044;
+	line-height: 1.6;
+	padding: 20px;
+}
+
+.note-page {
+	max-width: 1050px;
+	margin: auto;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 28px;
+	padding: 28px;
+	box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+	border: 4px solid #ffe2a8;
+}
+
+.hero {
+	text-align: center;
+	margin-bottom: 28px;
+	padding: 28px;
+	border-radius: 24px;
+	background: linear-gradient(135deg, #fff1b8, #e8f5ff);
+}
+
+.hero h1 {
+	font-size: clamp(2rem, 5vw, 4rem);
+	color: #24304f;
+	margin-bottom: 10px;
+}
+
+.hero p {
+	font-size: clamp(1rem, 2.5vw, 1.4rem);
+	color: #555;
+}
+
+.section {
+	margin: 26px 0;
+	padding: 24px;
+	border-radius: 22px;
+	background: #ffffff;
+	border: 3px solid #f0e6d2;
+}
+
+.section h2 {
+	font-size: clamp(1.5rem, 3vw, 2.2rem);
+	margin-bottom: 14px;
+	color: #24304f;
+}
+
+.big-line {
+	font-size: clamp(1.2rem, 3vw, 2rem);
+	font-weight: bold;
+	text-align: center;
+	margin: 18px 0;
+}
+
+.term-row,
+.example-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 18px;
+	justify-content: center;
+	align-items: center;
+	margin: 22px 0;
+}
+
+.term {
+	min-width: 95px;
+	padding: 14px 20px;
+	border-radius: 22px;
+	font-size: 2rem;
+	font-weight: bold;
+	text-align: center;
+	background: #f9fbff;
+	box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+	border: 3px solid #ddd;
+}
+
+.plus {
+	color: #b87900;
+	background: #fff3bf;
+	border-color: #ffd56a;
+}
+
+.minus {
+	color: #1f6fb8;
+	background: #dff0ff;
+	border-color: #86c7ff;
+}
+
+.hidden {
+	color: #555;
+	background: #f5f5f5;
+	border-style: dashed;
+}
+
+.arrow {
+	font-size: 2.3rem;
+	font-weight: bold;
+	color: #777;
+}
+
+.box-method {
+	display: inline-block;
+	padding: 14px 22px;
+	border: 4px solid #333;
+	border-radius: 16px;
+	background: #fff;
+	font-size: clamp(1.5rem, 5vw, 3rem);
+	font-weight: bold;
+	margin: 8px;
+}
+
+.outside-sign {
+	font-size: clamp(1.8rem, 5vw, 3.2rem);
+	font-weight: bold;
+	margin-right: 4px;
+}
+
+.explanation {
+	background: #f7fbff;
+	border-left: 8px solid #8cc9ff;
+	padding: 16px;
+	border-radius: 12px;
+	margin: 16px 0;
+	font-size: 1.15rem;
+}
+
+.rule-card {
+	background: #fff8db;
+	border: 3px solid #ffd36e;
+	border-radius: 20px;
+	padding: 18px;
+	margin: 16px 0;
+}
+
+.rule-card h3 {
+	font-size: 1.5rem;
+	margin-bottom: 8px;
+}
+
+.compare-area {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 18px;
+	margin-top: 20px;
+}
+
+.compare-box {
+	text-align: center;
+	padding: 18px;
+	border-radius: 18px;
+	background: #fafafa;
+	border: 3px solid #ddd;
+}
+
+.practice {
+	background: #f3fff2;
+	border-color: #a6df9d;
+}
+
+.problem {
+	padding: 14px;
+	margin: 10px 0;
+	background: #fff;
+	border-radius: 14px;
+	border: 2px solid #d7ead3;
+	font-size: 1.25rem;
+}
+
+.footer-rule {
+	text-align: center;
+	font-size: clamp(1.3rem, 3vw, 2rem);
+	font-weight: bold;
+	padding: 24px;
+	border-radius: 24px;
+	background: linear-gradient(135deg, #fff0b8, #dff0ff);
+	margin-top: 30px;
+}
+
+.problem-check {
+	padding: 16px;
+	margin: 14px 0;
+	background: #fff;
+	border-radius: 16px;
+	border: 3px solid #d7ead3;
+	font-size: 1.25rem;
+}
+
+.problem-check label {
+	font-weight: bold;
+}
+
+.problem-check input {
+	width: 110px;
+	padding: 8px 10px;
+	font-size: 1.2rem;
+	border-radius: 10px;
+	border: 2px solid #bbb;
+	text-align: center;
+	margin: 6px;
+}
+
+.problem-check.correct {
+	border-color: #6cc070;
+	background: #f0fff1;
+}
+
+.problem-check.wrong {
+	border-color: #ef7777;
+	background: #fff1f1;
+}
+
+.feedback {
+	font-weight: bold;
+	margin-left: 8px;
+}
+
+.solution {
+	margin-top: 8px;
+	font-size: 1rem;
+	color: #444;
+	display: none;
+}
+
+.check-btn {
+	display: block;
+	margin: 24px auto 10px;
+	padding: 14px 28px;
+	font-size: 1.2rem;
+	font-weight: bold;
+	border: none;
+	border-radius: 18px;
+	background: linear-gradient(135deg, #ffd56a, #8cc9ff);
+	color: #24304f;
+	cursor: pointer;
+	box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+}
+
+.check-btn:hover {
+	transform: translateY(-2px);
+}
+
+.score-box {
+	text-align: center;
+	font-size: 1.4rem;
+	font-weight: bold;
+	margin-top: 18px;
+}
+.solution-btn {
+	margin-top: 12px;
+	padding: 8px 14px;
+	border: none;
+	border-radius: 12px;
+	background: #8cc9ff;
+	color: #24304f;
+	font-weight: bold;
+	cursor: pointer;
+	font-size: 1rem;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+	transition: 0.2s;
+}
+
+.solution-btn:hover {
+	transform: translateY(-2px);
+	background: #74b9ff;
+}
+
+.solution {
+	margin-top: 12px;
+	padding: 10px;
+	background: #fff8db;
+	border-radius: 12px;
+	border: 2px solid #ffd36e;
+	display: none;
+}
+
+.solution.show {
+	display: block;
+}
+
+@media (max-width: 700px) {
+	body {
+		padding: 10px;
+	}
+
+	.note-page {
+		padding: 16px;
+		border-radius: 20px;
+	}
+
+	.section {
+		padding: 18px;
+	}
+
+	.compare-area {
+		grid-template-columns: 1fr;
+	}
+
+	.term {
+		min-width: 78px;
+		font-size: 1.6rem;
+	}
+}
+</style>
+</head>
+
+<body>
+
+<div class="note-page">
+
+	<section class="hero">
+		<h1>The Sign Outside the Box</h1>
+		<p>A special note about signs, size, and clear thinking.</p>
+	</section>
+
+	<section class="section">
+		<h2>1. What is a Term?</h2>
+		<p>A <strong>term</strong> is a sign and a number together.</p>
+
+		<div class="term-row">
+			<div class="term plus">+4</div>
+			<div class="term minus">−3</div>
+			<div class="term plus">+8</div>
+		</div>
+
+		<div class="explanation">
+			Do not separate the sign from the number.  
+			The sign tells the direction. The number tells the size.
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>2. Hidden Plus</h2>
+		<p>If the first number has no sign, it is positive.</p>
+
+		<div class="example-row">
+			<div class="term hidden">4</div>
+			<div class="arrow">→</div>
+			<div class="term plus">+4</div>
+		</div>
+
+		<div class="example-row">
+			<div class="term hidden">7</div>
+			<div class="arrow">→</div>
+			<div class="term plus">+7</div>
+		</div>
+
+		<div class="rule-card">
+			<h3>Remember</h3>
+			<p>The leading plus sign may be hidden, but it is still there.</p>
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>3. Same Sign Means Add Inside the Box</h2>
+		<p>If both signs are the same, add the sizes inside the box.</p>
+
+		<div class="rule-card">
+			<h3>Positive + Positive</h3>
+			<div class="big-line">4 + 5</div>
+
+			<div class="example-row">
+				<span class="outside-sign plus">+</span>
+				<span class="box-method">4 + 5</span>
+				<span class="arrow">=</span>
+				<div class="term plus">+9</div>
+			</div>
+		</div>
+
+		<div class="rule-card">
+			<h3>Negative + Negative</h3>
+			<div class="big-line">−2 − 3</div>
+
+			<div class="example-row">
+				<span class="outside-sign minus">−</span>
+				<span class="box-method">2 + 3</span>
+				<span class="arrow">=</span>
+				<div class="term minus">−5</div>
+			</div>
+		</div>
+
+		<div class="explanation">
+			Same sign means they are on the same team.  
+			They add their sizes together.  
+			Their shared sign stays outside the box.
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>4. Different Signs Means Bigger Size Leads</h2>
+		<p>If signs are different, compare the sizes.</p>
+
+		<div class="compare-area">
+			<div class="compare-box">
+				<h3>Example A</h3>
+				<div class="big-line">3 − 8</div>
+				<p>3 means <strong>+3</strong>.</p>
+				<p>8 is bigger than 3.</p>
+				<p>The 8 has a negative sign.</p>
+
+				<div class="example-row">
+					<span class="outside-sign minus">−</span>
+					<span class="box-method">8 − 3</span>
+				</div>
+
+				<div class="big-line">= −5</div>
+			</div>
+
+			<div class="compare-box">
+				<h3>Example B</h3>
+				<div class="big-line">−4 + 6</div>
+				<p>6 is bigger than 4.</p>
+				<p>The 6 has a positive sign.</p>
+
+				<div class="example-row">
+					<span class="outside-sign plus">+</span>
+					<span class="box-method">6 − 4</span>
+				</div>
+
+				<div class="big-line">= +2</div>
+			</div>
+		</div>
+
+		<div class="explanation">
+			The bigger size leads.  
+			Its sign stays outside the box.  
+			Inside the box, subtract big minus small.
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>5. The Sign Outside Becomes the Answer Sign</h2>
+
+		<div class="example-row">
+			<span class="outside-sign minus">−</span>
+			<span class="box-method">8 − 3</span>
+			<span class="arrow">=</span>
+			<div class="term minus">−5</div>
+		</div>
+
+		<div class="example-row">
+			<span class="outside-sign plus">+</span>
+			<span class="box-method">6 − 4</span>
+			<span class="arrow">=</span>
+			<div class="term plus">+2</div>
+		</div>
+
+		<div class="rule-card">
+			<h3>Big Rule</h3>
+			<p>The sign outside the box becomes the sign of the result.</p>
+		</div>
+	</section>
+
+<section class="section practice">
+	<h2>6. Practice Pattern</h2>
+	<p>Ask these questions every time:</p>
+
+	<div class="rule-card">
+		<p><strong>1.</strong> Same sign or different sign?</p>
+		<p><strong>2.</strong> Who has the bigger size?</p>
+		<p><strong>3.</strong> What sign stays outside?</p>
+		<p><strong>4.</strong> Do we add or subtract inside the box?</p>
+	</div>
+
+	<div class="problem-check" data-answer="7" data-solution="5 + 2 = +(5 + 2) = +7">
+		<label>1) 5 + 2 = </label>
+		<input type="text" placeholder="answer">
+		<span class="feedback"></span>
+		<div class="solution"></div>
+	</div>
+
+	<div class="problem-check" data-answer="-7" data-solution="−4 − 3 = −(4 + 3) = −7">
+		<label>2) −4 − 3 = </label>
+		<input type="text" placeholder="answer">
+		<span class="feedback"></span>
+		<div class="solution"></div>
+	</div>
+
+	<div class="problem-check" data-answer="-3" data-solution="6 − 9 = −(9 − 6) = −3">
+		<label>3) 6 − 9 = </label>
+		<input type="text" placeholder="answer">
+		<span class="feedback"></span>
+		<div class="solution"></div>
+	</div>
+
+	<div class="problem-check" data-answer="3" data-solution="−5 + 8 = +(8 − 5) = +3">
+		<label>4) −5 + 8 = </label>
+		<input type="text" placeholder="answer">
+		<span class="feedback"></span>
+		<div class="solution"></div>
+	</div>
+
+	<div class="problem-check" data-answer="7" data-solution="10 − 3 = +(10 − 3) = +7">
+		<label>5) 10 − 3 = </label>
+		<input type="text" placeholder="answer">
+		<span class="feedback"></span>
+		<div class="solution"></div>
+	</div>
+
+	<div class="problem-check" data-answer="-5" data-solution="−7 + 2 = −(7 − 2) = −5">
+		<label>6) −7 + 2 = </label>
+		<input type="text" placeholder="answer">
+		<span class="feedback"></span>
+		<div class="solution"></div>
+	</div>
+
+	<button class="check-btn" onclick="checkAnswers()">Check My Answers</button>
+
+	<div id="scoreBox" class="score-box"></div>
+</section>
+
+	<section class="footer-rule">
+		Math is pattern.  
+		Pattern builds logic.  
+		Logic builds confidence.
+	</section>
+
+</div>
+
+
+<script>
+function normalizeAnswer(value) {
+	return value
+		.trim()
+		.replace(/\s+/g, "")
+		.replace("−", "-")
+		.replace("+", "");
+}
+
+function toggleSolution(button) {
+	const problem = button.closest(".problem-check");
+	const solution = problem.querySelector(".solution");
+
+	if (solution.classList.contains("show")) {
+		solution.classList.remove("show");
+		button.textContent = "Show Solution";
+	} else {
+		solution.classList.add("show");
+		button.textContent = "Hide Solution";
+	}
+}
+
+function checkAnswers() {
+
+	const problems = document.querySelectorAll(".problem-check");
+	let correctCount = 0;
+
+	problems.forEach(problem => {
+
+		const input = problem.querySelector("input");
+		const feedback = problem.querySelector(".feedback");
+		const solution = problem.querySelector(".solution");
+
+		let solutionBtn = problem.querySelector(".solution-btn");
+
+		const studentAnswer = normalizeAnswer(input.value);
+		const correctAnswer = normalizeAnswer(problem.dataset.answer);
+		const fullSolution = problem.dataset.solution;
+
+		problem.classList.remove("correct", "wrong");
+
+		feedback.textContent = "";
+		solution.textContent = "";
+		solution.classList.remove("show");
+
+		if (solutionBtn) {
+			solutionBtn.remove();
+		}
+
+		if (studentAnswer === correctAnswer) {
+
+			problem.classList.add("correct");
+
+			feedback.textContent = "✅ Correct!";
+			feedback.style.color = "#248a2f";
+
+			solution.classList.add("show");
+			solution.textContent = "Nice work: " + fullSolution;
+
+			correctCount++;
+
+		} else {
+
+			problem.classList.add("wrong");
+
+			feedback.textContent = "❌ Try Again!";
+			feedback.style.color = "#c0392b";
+
+			solution.textContent = "Correct solution: " + fullSolution;
+
+			solutionBtn = document.createElement("button");
+
+			solutionBtn.textContent = "Show Solution";
+			solutionBtn.className = "solution-btn";
+
+			solutionBtn.onclick = function() {
+				toggleSolution(this);
+			};
+
+			problem.appendChild(solutionBtn);
+		}
+	});
+
+	const scoreBox = document.getElementById("scoreBox");
+
+	scoreBox.textContent =
+	`You got ${correctCount} out of ${problems.length} correct.`;
+}
+</script>
+</body>
+</html>
