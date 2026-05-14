@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Positive Negative Showdown Note | Math Ridge</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+        background: linear-gradient(180deg, #fff7e6, #f3fbff);
+        color: #2d2d2d;
+        line-height: 1.6;
+    }
+
+    .page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px;
+    }
+
+    .hero {
+        background: #fff;
+        border: 4px solid #ffd27d;
+        border-radius: 24px;
+        padding: 28px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        margin-bottom: 24px;
+    }
+
+    .hero h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        color: #d97800;
+    }
+
+    .hero p {
+        font-size: 1.15rem;
+        margin: 12px auto 0;
+        max-width: 720px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+        border: 2px solid #e8f2ff;
+    }
+
+    .card h2 {
+        margin-top: 0;
+        color: #2466a8;
+    }
+
+    .math-box {
+        background: #f8fbff;
+        border: 2px dashed #8ec5ff;
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 1.2rem;
+        margin: 14px 0;
+        text-align: center;
+    }
+
+    .team-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 14px;
+    }
+
+    .team {
+        border-radius: 16px;
+        padding: 16px;
+        font-size: 1.1rem;
+    }
+
+    .positive {
+        background: #fff6d6;
+        border: 2px solid #ffc94d;
+    }
+
+    .negative {
+        background: #e8f3ff;
+        border: 2px solid #7bbcff;
+    }
+
+    .rule-list {
+        padding-left: 20px;
+    }
+
+    .rule-list li {
+        margin-bottom: 10px;
+    }
+
+    .practice-problem {
+        background: #fffdf8;
+        border: 2px solid #ffe1a8;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .problem-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #8a5200;
+        margin-bottom: 10px;
+    }
+
+    input {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 2px solid #ccc;
+        font-size: 1rem;
+        width: 150px;
+        max-width: 100%;
+    }
+
+    button {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin: 6px 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+        background: #ffbf47;
+        color: #3b2700;
+    }
+
+    button:hover {
+        background: #ffa91f;
+    }
+
+    .solution-btn {
+        background: #8ec5ff;
+        color: #07345c;
+    }
+
+    .solution-btn:hover {
+        background: #69b2ff;
+    }
+
+    .feedback {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .solution {
+        display: none;
+        margin-top: 12px;
+        background: #f4fbff;
+        border-left: 5px solid #5aaeff;
+        border-radius: 12px;
+        padding: 14px;
+    }
+
+    .correct {
+        color: #16803c;
+    }
+
+    .wrong {
+        color: #c0392b;
+    }
+
+    .footer-note {
+        text-align: center;
+        padding: 20px;
+        color: #555;
+    }
+
+    @media (max-width: 700px) {
+        .page {
+            padding: 14px;
+        }
+
+        .hero h1 {
+            font-size: 1.7rem;
+        }
+
+        .team-wrap {
+            grid-template-columns: 1fr;
+        }
+
+        input {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        button {
+            width: 100%;
+            margin: 5px 0;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+    <section class="hero">
+        <h1>Positive Negative Showdown Note</h1>
+<p>
+    Long expressions may look confusing at first.
+    But math becomes easier when every number keeps its sign.
+
+    We are not solving one operation at a time.
+    We are collecting signed terms.
+</p>
+    </section>
+
+    <section class="card">
+        <h2>Big Idea: Every Number Carries Its Sign</h2>
+<p>
+    In a long expression, the sign belongs to the number after it.
+</p>
+
+        <div class="math-box">
+            +3 - 2 + 5 - 8 + 1
+        </div>
+
+        <p>
+    So instead of seeing one long operation, we see a list of signed terms:
+</p>
+
+        <div class="math-box">
+            +3, -2, +5, -8, +1
+        </div>
+
+<p>
+    Since addition is <strong><em>commutative</em></strong>, the signed terms can move around.
+    We can group all the positive terms together and all the negative terms together.
+</p>
+    </section>
+
+    <section class="card">
+        <h2>Worked Example</h2>
+
+        <div class="math-box">
+            +3 - 2 + 5 - 8 + 1
+        </div>
+
+        <div class="team-wrap">
+            <div class="team positive">
+                <strong>Positive Team</strong><br>
+                +3 + 5 + 1 = +9
+            </div>
+
+            <div class="team negative">
+                <strong>Negative Team</strong><br>
+                -2 - 8 = -10
+            </div>
+        </div>
+
+        <p>Now the problem becomes:</p>
+
+        <div class="math-box">
+            +9 + (-10)
+        </div>
+
+<p>
+    The signs are different, so use Build the Box.
+</p>
+
+<div class="math-box">
+    10 - 9 = 1<br><br>
+
+    The bigger size is <strong><em>negative</em></strong>.<br>
+    So the final answer is <strong>-1</strong>.<br><br>
+
+    <strong>Tip</strong>: Write the <strong>negative</strong> sign first before subtracting.<br>
+    This helps you remember the final answer is <strong>negative</strong>.<br><br>
+
+    <strong>Common mistake:</strong><br>
+    Forgetting the negative sign at the end.
+</div>
+    </section>
+
+<section class="card">
+    <h2>Math Ridge Rules</h2>
+
+    <ol class="rule-list">
+        <li>The sign belongs to the number after it.</li>
+        <li>Turn subtraction into adding a negative term.</li>
+        <li>Group the positive terms together.</li>
+        <li>Group the negative terms together.</li>
+        <li>Add each team first.</li>
+        <li>Use Build the Box to combine the two teams.</li>
+    </ol>
+
+    <h3>Quick Version</h3>
+
+    <ol class="rule-list">
+        <li>Collect the positive team.</li>
+        <li>Collect the negative team.</li>
+        <li>Add each team.</li>
+        <li>Use Build the Box to combine the teams.</li>
+    </ol>
+</section>
+
+    <section class="card">
+        <h2>Practice Problems</h2>
+<p>
+    Type your answer with the correct sign.<br>
+    Example: <strong>+5</strong>, <strong>-3</strong>, or <strong>0</strong>
+</p>
+
+        <div id="practice-area"></div>
+    </section>
+
+    <div class="footer-note">
+        Math Ridge Note 2 | Positive Negative Showdown
+    </div>
+
+</div>
+
+<script>
+const problems = [
+    {
+        expression: "+4 - 3 + 6 - 2",
+        answer: "+5",
+        steps: `
+            <strong>Signed terms:</strong><br>
+            +4, -3, +6, -2<br><br>
+
+            <strong>Positive team:</strong><br>
+            +4 + 6 = +10<br><br>
+
+            <strong>Negative team:</strong><br>
+            -3 - 2 = -5<br><br>
+
+            <strong>Build the Box:</strong><br>
+            +10 and -5 have different signs.<br>
+            10 - 5 = 5<br>
+            Bigger size is positive.<br><br>
+
+            <strong>Answer: +5</strong>
+        `
+    },
+    {
+        expression: "-5 + 8 - 4 + 1",
+        answer: "0",
+        steps: `
+            <strong>Signed terms:</strong><br>
+            -5, +8, -4, +1<br><br>
+
+            <strong>Positive team:</strong><br>
+            +8 + 1 = +9<br><br>
+
+            <strong>Negative team:</strong><br>
+            -5 - 4 = -9<br><br>
+
+            <strong>Build the Box:</strong><br>
+            +9 and -9 are equal size.<br>
+            They cancel out.<br><br>
+
+            <strong>Answer: 0</strong>
+        `
+    },
+    {
+        expression: "+7 - 9 + 3 - 6",
+        answer: "-5",
+        steps: `
+            <strong>Signed terms:</strong><br>
+            +7, -9, +3, -6<br><br>
+
+            <strong>Positive team:</strong><br>
+            +7 + 3 = +10<br><br>
+
+            <strong>Negative team:</strong><br>
+            -9 - 6 = -15<br><br>
+
+            <strong>Build the Box:</strong><br>
+            +10 and -15 have different signs.<br>
+            15 - 10 = 5<br>
+            Bigger size is negative.<br><br>
+
+            <strong>Answer: -5</strong>
+        `
+    },
+    {
+        expression: "-2 - 5 + 10 + 1",
+        answer: "+4",
+        steps: `
+            <strong>Signed terms:</strong><br>
+            -2, -5, +10, +1<br><br>
+
+            <strong>Positive team:</strong><br>
+            +10 + 1 = +11<br><br>
+
+            <strong>Negative team:</strong><br>
+            -2 - 5 = -7<br><br>
+
+            <strong>Build the Box:</strong><br>
+            +11 and -7 have different signs.<br>
+            11 - 7 = 4<br>
+            Bigger size is positive.<br><br>
+
+            <strong>Answer: +4</strong>
+        `
+    },
+    {
+        expression: "+6 - 8 + 4 - 7 + 2",
+        answer: "-3",
+        steps: `
+            <strong>Signed terms:</strong><br>
+            +6, -8, +4, -7, +2<br><br>
+
+            <strong>Positive team:</strong><br>
+            +6 + 4 + 2 = +12<br><br>
+
+            <strong>Negative team:</strong><br>
+            -8 - 7 = -15<br><br>
+
+            <strong>Build the Box:</strong><br>
+            +12 and -15 have different signs.<br>
+            15 - 12 = 3<br>
+            Bigger size is negative.<br><br>
+
+            <strong>Answer: -3</strong>
+        `
+    },
+    {
+        expression: "-3 + 9 - 10 + 5 - 1",
+        answer: "0",
+        steps: `
+            <strong>Signed terms:</strong><br>
+            -3, +9, -10, +5, -1<br><br>
+
+            <strong>Positive team:</strong><br>
+            +9 + 5 = +14<br><br>
+
+            <strong>Negative team:</strong><br>
+            -3 - 10 - 1 = -14<br><br>
+
+            <strong>Build the Box:</strong><br>
+            +14 and -14 are equal size.<br>
+            They cancel out.<br><br>
+
+            <strong>Answer: 0</strong>
+        `
+    }
+];
+
+const practiceArea = document.getElementById("practice-area");
+
+problems.forEach((problem, index) => {
+    const box = document.createElement("div");
+    box.className = "practice-problem";
+
+    box.innerHTML = `
+        <div class="problem-title">Problem ${index + 1}: ${problem.expression}</div>
+
+        <input 
+            type="text" 
+            id="answer-${index}" 
+            placeholder="Type answer"
+            autocomplete="off"
+        >
+
+        <button onclick="checkAnswer(${index})">Check Answer</button>
+        <button class="solution-btn" onclick="showSolution(${index})">Show Steps and Solution</button>
+
+        <div class="feedback" id="feedback-${index}"></div>
+        <div class="solution" id="solution-${index}">
+            ${problem.steps}
+        </div>
+    `;
+
+    practiceArea.appendChild(box);
+});
+
+function cleanAnswer(value) {
+    return value
+        .trim()
+        .replace(/\s+/g, "")
+        .replace("−", "-")
+        .replace("+", "")
+        .toLowerCase();
+}
+
+function checkAnswer(index) {
+    const input = document.getElementById(`answer-${index}`);
+    const feedback = document.getElementById(`feedback-${index}`);
+    const userAnswer = cleanAnswer(input.value);
+    const correctAnswer = cleanAnswer(problems[index].answer);
+
+    if (userAnswer === correctAnswer) {
+        feedback.className = "feedback correct";
+	feedback.innerHTML = "Correct! You grouped the signed terms correctly.";
+        document.getElementById(`solution-${index}`).style.display = "block";
+    } else {
+        feedback.className = "feedback wrong";
+        feedback.innerHTML = "Not yet. Remember to keep each number with its sign.";
+    }
+}
+
+function showSolution(index) {
+    document.getElementById(`solution-${index}`).style.display = "block";
+}
+</script>
+
+</body>
+</html>
