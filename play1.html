@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build the Box - Turtle Climb</title>
+
+<style>
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+	background: linear-gradient(180deg, #fff7df, #eaf6ff);
+	color: #24304f;
+	padding: 16px;
+}
+
+.game {
+	max-width: 950px;
+	margin: auto;
+	background: white;
+	border: 4px solid #ffe2a8;
+	border-radius: 28px;
+	padding: 20px;
+	box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+h1 {
+	text-align: center;
+	font-size: clamp(2rem, 6vw, 4rem);
+	margin-bottom: 8px;
+}
+
+.subtitle {
+	text-align: center;
+	font-size: 1.1rem;
+	margin-bottom: 18px;
+}
+
+.challenge-board {
+	position: fixed;
+	top: 70px;
+	right: 14px;
+	width: clamp(82px, 9vw, 118px);
+	max-height: calc(100vh - 90px);
+	z-index: 50;
+	background: #fff8db;
+	border: 3px solid #ffd36e;
+	border-radius: 22px;
+	padding: clamp(6px, 1vw, 10px) clamp(4px, 0.8vw, 8px);
+	text-align: center;
+	box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+	overflow: hidden;
+}
+
+.challenge-board h2 {
+	font-size: clamp(0.68rem, 1.2vw, 0.95rem);
+	line-height: 1.05;
+	margin-bottom: 5px;
+}
+
+.score-badge {
+	background: white;
+	border: 2px solid #ffd36e;
+	border-radius: 14px;
+	padding: 5px 3px;
+	font-weight: bold;
+	font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+	margin-bottom: 6px;
+}
+
+.turtle-track {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: clamp(3px, 0.8vh, 6px);
+	align-items: center;
+	margin: 6px auto;
+	padding: clamp(5px, 0.9vh, 8px) 4px;
+	border-radius: 18px;
+	background: linear-gradient(180deg, #dff0ff, #fff8db);
+	border: 2px dashed #86c7ff;
+}
+
+.track-step {
+	width: clamp(22px, 3.8vh, 34px);
+	height: clamp(22px, 3.8vh, 34px);
+	background: white;
+	border: 2px dashed #b9dcff;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: clamp(0.72rem, 2vh, 1rem);
+}
+
+.track-step.active {
+	background: #dff0ff;
+	border: 3px solid #86c7ff;
+	transform: scale(1.15);
+}
+
+.track-step.done {
+	background: #dcfce7;
+	border: 3px solid #6cc070;
+}
+
+.challenge-text {
+	margin-top: 6px;
+	font-weight: bold;
+	font-size: clamp(0.58rem, 1vw, 0.78rem);
+	line-height: 1.15;
+}
+
+.motto {
+	text-align: center;
+	background: #fff8db;
+	border: 3px solid #ffd36e;
+	border-radius: 18px;
+	padding: 12px;
+	margin-bottom: 18px;
+	font-weight: bold;
+}
+
+.problem-card {
+	text-align: center;
+	padding: 18px;
+	border-radius: 22px;
+	background: #f7fbff;
+	border: 3px dashed #b9dcff;
+	margin-bottom: 18px;
+}
+
+.problem {
+	font-size: clamp(2.2rem, 8vw, 4rem);
+	font-weight: bold;
+	margin: 12px 0;
+}
+
+.term {
+	display: inline-block;
+	min-width: 82px;
+	padding: 12px 16px;
+	border-radius: 18px;
+	margin: 6px;
+	box-shadow: 0 5px 12px rgba(0,0,0,0.16);
+}
+
+.plus {
+	background: #fff3bf;
+	color: #b87900;
+	border: 3px solid #ffd56a;
+}
+
+.minus {
+	background: #dff0ff;
+	color: #1f6fb8;
+	border: 3px solid #86c7ff;
+}
+
+.step {
+	margin: 18px 0;
+	padding: 16px;
+	border-radius: 20px;
+	background: #ffffff;
+	border: 3px solid #f0e6d2;
+}
+
+.step h2 {
+	font-size: 1.4rem;
+	margin-bottom: 10px;
+	text-align: center;
+}
+
+.options,
+.sign-picker {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+button {
+	border: none;
+	border-radius: 16px;
+	padding: 12px 18px;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	background: linear-gradient(135deg, #ffe28a, #9ed8ff);
+	color: #24304f;
+	box-shadow: 0 5px 12px rgba(0,0,0,0.16);
+	font-family: inherit;
+}
+
+button:hover {
+	transform: translateY(-2px);
+}
+
+.choice-btn.selected,
+.sign-btn.selected,
+.op-btn.selected {
+	outline: 5px solid #333;
+	transform: scale(1.05);
+}
+
+.choice-btn.wrong,
+.sign-btn.wrong,
+.op-btn.wrong {
+	animation: shake 0.35s;
+	outline: 5px solid #ef7777;
+}
+
+@keyframes shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-6px); }
+	50% { transform: translateX(6px); }
+	75% { transform: translateX(-6px); }
+	100% { transform: translateX(0); }
+}
+
+.builder {
+	text-align: center;
+	display: none;
+}
+
+.box-builder {
+	margin: 18px auto;
+	font-size: clamp(1.6rem, 6vw, 3rem);
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.num-input {
+	width: 70px;
+	padding: 8px;
+	font-size: 1.4rem;
+	text-align: center;
+	border-radius: 12px;
+	border: 3px solid #bbb;
+	font-weight: bold;
+	font-family: inherit;
+}
+
+.sign-display,
+.op-display {
+	width: 70px;
+	min-height: 52px;
+	padding: 8px;
+	font-size: 1.6rem;
+	text-align: center;
+	border-radius: 12px;
+	border: 3px solid #bbb;
+	font-weight: bold;
+	background: white;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sign-display.filled,
+.op-display.filled {
+	border-color: #6cc070;
+	background: #f3fff2;
+}
+
+.ring-box {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	border: 5px solid #333;
+	border-radius: 20px;
+	padding: 12px 18px;
+	background: white;
+}
+
+.feedback {
+	text-align: center;
+	margin-top: 14px;
+	font-weight: bold;
+	font-size: 1.2rem;
+	min-height: 30px;
+}
+
+.answer-area {
+	text-align: center;
+	display: none;
+	margin-top: 18px;
+	padding: 16px;
+	border-radius: 18px;
+	background: #fff8db;
+	border: 3px solid #ffd36e;
+}
+
+.answer-area input {
+	width: 120px;
+	padding: 8px 10px;
+	font-size: 1.3rem;
+	border-radius: 10px;
+	border: 2px solid #bbb;
+	text-align: center;
+	margin: 8px;
+	font-family: inherit;
+}
+
+.rule-box {
+	background: #f3fff2;
+	border: 3px solid #a6df9d;
+	border-radius: 18px;
+	padding: 14px;
+	margin-top: 18px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.controls {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 22px;
+}
+
+.mini-problem {
+	margin: 10px auto;
+	padding: 6px;
+	border-radius: 14px;
+	background: transparent;
+	border: none;
+	font-size: 1.4rem;
+	font-weight: bold;
+	display: inline-block;
+}
+
+.builder-labels {
+	display: grid;
+	grid-template-columns: 70px 70px 70px 70px;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 14px;
+	font-size: 0.8rem;
+	font-weight: bold;
+	color: #555;
+}
+
+.quick-pick-box {
+	background: #fff8db;
+	border: none;
+	border-radius: 16px;
+	padding: 10px;
+	margin: 10px auto;
+	max-width: 520px;
+}
+
+.quick-pick-title {
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 8px;
+}
+
+.confetti-layer {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	overflow: hidden;
+	z-index: 90;
+}
+
+.confetti-piece {
+	position: absolute;
+	top: -20px;
+	width: 10px;
+	height: 16px;
+	border-radius: 3px;
+	animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+	0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+	100% { transform: translateY(110vh) rotate(720deg); opacity: 0.95; }
+}
+
+.achievement-popup {
+	position: fixed;
+	inset: 0;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	background: rgba(36, 48, 79, 0.35);
+	z-index: 100;
+	padding: 18px;
+}
+
+.achievement-card {
+	max-width: 440px;
+	background: #fff8db;
+	border: 5px solid #ffd36e;
+	border-radius: 28px;
+	padding: 24px;
+	text-align: center;
+	box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+	animation: popIn 0.35s ease;
+}
+
+.achievement-card h2 {
+	font-size: clamp(1.8rem, 6vw, 2.6rem);
+	margin-bottom: 10px;
+}
+
+.achievement-card p {
+	font-size: 1.1rem;
+	font-weight: bold;
+	line-height: 1.4;
+	margin: 10px 0;
+}
+
+@keyframes popIn {
+	0% { transform: scale(0.8); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 900px) {
+	.challenge-board {
+		right: 6px;
+		width: 78px;
+		top: 60px;
+		max-height: calc(100vh - 70px);
+		padding: 6px 4px;
+	}
+}
+
+@media (max-width: 700px) {
+	.builder-labels {
+		grid-template-columns: repeat(4, 58px);
+		font-size: 0.7rem;
+	}
+
+	body {
+		padding: 8px;
+	}
+
+	.game {
+		padding: 14px;
+		border-radius: 20px;
+		margin-right: 80px;
+	}
+
+	button {
+		width: 100%;
+	}
+
+	.num-input,
+	.sign-display,
+	.op-display {
+		width: 58px;
+		font-size: 1.2rem;
+	}
+
+	.ring-box {
+		padding: 10px;
+	}
+}
+</style>
+</head>
+
+<body>
+<div class="confetti-layer" id="confettiLayer"></div>
+
+<div class="achievement-popup" id="achievementPopup">
+	<div class="achievement-card">
+		<h2>🎉 Score 10!</h2>
+		<p>You reached the top of Math Ridge!</p>
+		<p>You understand the task, and now you can demonstrate it to your parent.</p>
+		<p>🎁 Show your parent and ask for a gift.</p>
+		<p>📸 Screenshot your high score and challenge your friend!</p>
+		<button onclick="closeAchievementPopup()">OK, I got it!</button>
+	</div>
+</div>
+
+<div class="game">
+	<div class="challenge-board">
+		<h2>🐢 Turtle Climb</h2>
+		<div class="score-badge" id="scoreText">Score: 0</div>
+		<div class="turtle-track" id="turtleTrack"></div>
+		<div class="challenge-text" id="challengeMessage">Climb 4 clean steps to score.</div>
+	</div>
+
+	<h1>Build the Box</h1>
+	<p class="subtitle">Practice signs, sizes, and the box method.</p>
+
+	<div class="motto">
+		Math becomes easier when patterns stay consistent.
+	</div>
+
+	<div class="problem-card" id="problemCard">
+		<p>Problem:</p>
+		<div class="problem" id="problemText"></div>
+		<p>Read each term as sign + size. Answer each step below.</p>
+	</div>
+
+	<div class="step" id="step1">
+		<h2>Step 1: Same sign or different sign?</h2>
+		<div class="options">
+			<button class="choice-btn" onclick="chooseSignType('same', this)">Same Sign</button>
+			<button class="choice-btn" onclick="chooseSignType('different', this)">Different Sign</button>
+		</div>
+	</div>
+
+	<div class="step" id="step2" style="display:none;">
+		<h2>Step 2: Which size is bigger?</h2>
+		<div class="options" id="sizeOptions"></div>
+	</div>
+
+	<div class="step builder" id="builder">
+		<h2>Step 3: Build the Box</h2>
+		<p>What sign does the bigger size carry?</p>
+
+		<div class="mini-problem" id="miniProblem"></div>
+
+		<div class="quick-pick-box">
+			<div class="quick-pick-title" id="outsideSignTitle">Outside sign: select one to match the sign of the bigger size.</div>
+			<div class="sign-picker">
+				<button class="sign-btn plus" onclick="pickOutsideSign('+', this)">+</button>
+				<button class="sign-btn minus" onclick="pickOutsideSign('-', this)">−</button>
+			</div>
+		</div>
+
+		<div class="quick-pick-box">
+			<div class="quick-pick-title" id="operationTitle">Inside operation: select + if same sign. Otherwise choose −.</div>
+			<div class="sign-picker">
+				<button class="op-btn plus" onclick="pickOperation('+', this)">+</button>
+				<button class="op-btn minus" onclick="pickOperation('-', this)">−</button>
+			</div>
+		</div>
+
+		<div class="builder-labels">
+			<span>Outside Sign</span>
+			<span>Big Size</span>
+			<span>Operation</span>
+			<span>Small Size</span>
+		</div>
+
+		<div class="box-builder">
+			<div class="sign-display" id="outsideSignDisplay">?</div>
+
+			<span class="ring-box">
+				<input class="num-input" id="firstNumInput" placeholder="big">
+				<div class="op-display" id="operationDisplay">?</div>
+				<input class="num-input" id="secondNumInput" placeholder="small">
+			</span>
+		</div>
+
+		<button onclick="checkBox()">Check Box</button>
+	</div>
+
+	<div class="answer-area" id="answerArea">
+		<p id="builtBoxText"></p>
+		<label>Now solve it:</label>
+		<input id="finalAnswerInput" type="text" placeholder="answer">
+		<button onclick="checkFinalAnswer()">Check Answer</button>
+		<div id="answerFeedback"></div>
+	</div>
+
+	<div class="feedback" id="feedback"></div>
+
+	<div class="rule-box">
+		Pattern: outside sign ( bigger size operation smaller size )
+	</div>
+
+	<div class="controls" id="bottomControls">
+		<button onclick="nextClimb()">Next Climb</button>
+		<button onclick="resetPracticeProblem()">Reset This Problem</button>
+		<button onclick="resetChallenge()">Reset Turtle Score</button>
+	</div>
+</div>
+
+<script>
+function getDifficultySettings() {
+	if (turtleScore <= 6) {
+		return { min: 1, max: 10 };
+	}
+
+	if (turtleScore <= 10) {
+		return { min: 12, max: 25 };
+	}
+
+	return { min: 1, max: 25 };
+}
+
+function randomTerm() {
+	const difficulty = getDifficultySettings();
+	const size = Math.floor(Math.random() * (difficulty.max - difficulty.min + 1)) + difficulty.min;
+	const sign = Math.random() < 0.5 ? 1 : -1;
+	return size * sign;
+}
+
+function generateProblem() {
+	let a = randomTerm();
+	let b = randomTerm();
+
+	while (Math.abs(a) === Math.abs(b)) {
+		b = randomTerm();
+	}
+
+	return { a, b };
+}
+
+let currentProblem = {};
+let chosenSignType = null;
+let chosenBiggerSize = null;
+let chosenOutsideSign = null;
+let chosenOperation = null;
+let expected = {};
+
+let turtleScore = 0;
+let runCorrectCount = 0;
+let mistakesThisProblem = 0;
+let gameScoreAwarded = false;
+let achievementShown = false;
+let confettiTimer = null;
+
+const problemText = document.getElementById("problemText");
+const feedback = document.getElementById("feedback");
+
+function scrollToCenter(id) {
+	const element = document.getElementById(id);
+	if (!element) return;
+
+	setTimeout(() => {
+		element.scrollIntoView({ behavior: "smooth", block: "center" });
+	}, 180);
+}
+
+function formatTerm(n, isFirst = false) {
+	if (n >= 0) {
+		return isFirst ? `${n}` : `+ ${n}`;
+	}
+	return isFirst ? `−${Math.abs(n)}` : `− ${Math.abs(n)}`;
+}
+
+function normalizeSymbol(value) {
+	return value.trim().replace("−", "-");
+}
+
+function updateTurtleBoard() {
+	const scoreText = document.getElementById("scoreText");
+	const turtleTrack = document.getElementById("turtleTrack");
+	const challengeMessage = document.getElementById("challengeMessage");
+
+	scoreText.textContent = `Score: ${turtleScore}`;
+	turtleTrack.innerHTML = "";
+
+	for (let i = 1; i <= 4; i++) {
+		const step = document.createElement("div");
+		step.className = "track-step";
+
+		if (i <= runCorrectCount) {
+			step.classList.add("done");
+			step.textContent = "🌿";
+		} else if (i === runCorrectCount + 1) {
+			step.classList.add("active");
+			step.textContent = "🐢";
+		} else {
+			step.textContent = "•";
+		}
+
+		turtleTrack.appendChild(step);
+	}
+
+	if (turtleScore >= 10) {
+		challengeMessage.textContent = "🎁 10 scores! Show your parent and ask for a gift.";
+		if (!achievementShown) showAchievementPopup();
+	} else if (turtleScore >= 6) {
+		challengeMessage.textContent = "🏆 6 scores! You mastered this concept.";
+	} else if (turtleScore >= 3) {
+		challengeMessage.textContent = "🌟 3 scores! You understand the concept.";
+	}
+}
+
+function markCorrectStep() {
+	if (gameScoreAwarded) return;
+
+	runCorrectCount++;
+
+	if (runCorrectCount >= 4 && mistakesThisProblem === 0) {
+		turtleScore++;
+		gameScoreAwarded = true;
+		document.getElementById("challengeMessage").textContent = "🏁 Flawless 4-step climb! +1 score. Press Next Climb for another run.";
+	} else if (mistakesThisProblem === 0) {
+		document.getElementById("challengeMessage").textContent = "Good. Keep climbing. Finish the whole problem with no mistake.";
+	} else {
+		document.getElementById("challengeMessage").textContent = "Keep practicing. This problem already has an error, so use Next Climb for the next score chance.";
+	}
+
+	updateTurtleBoard();
+}
+
+function markMistake() {
+	mistakesThisProblem++;
+	runCorrectCount = 0;
+
+	if (mistakesThisProblem > 1 && turtleScore > 0) {
+		turtleScore--;
+		document.getElementById("challengeMessage").textContent = "Second mistake in the same problem. Turtle loses 1 score, but score cannot go below 0.";
+	} else {
+		document.getElementById("challengeMessage").textContent = "Mistake made. Climb cleared. This problem cannot earn a score now.";
+	}
+
+	updateTurtleBoard();
+}
+
+function resetChallenge() {
+	turtleScore = 0;
+	runCorrectCount = 0;
+	mistakesThisProblem = 0;
+	gameScoreAwarded = false;
+	achievementShown = false;
+	stopConfetti();
+	document.getElementById("challengeMessage").textContent = "Climb 4 clean steps to score.";
+	updateTurtleBoard();
+}
+
+function showAchievementPopup() {
+	achievementShown = true;
+	document.getElementById("achievementPopup").style.display = "flex";
+	startConfetti();
+}
+
+function closeAchievementPopup() {
+	document.getElementById("achievementPopup").style.display = "none";
+	stopConfetti();
+}
+
+function startConfetti() {
+	const layer = document.getElementById("confettiLayer");
+	const colors = ["#ffd36e", "#86c7ff", "#ff8fab", "#95d5b2", "#cdb4db"];
+	stopConfetti();
+
+	confettiTimer = setInterval(() => {
+		for (let i = 0; i < 8; i++) {
+			const piece = document.createElement("div");
+			piece.className = "confetti-piece";
+			piece.style.left = `${Math.random() * 100}%`;
+			piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+			piece.style.animationDuration = `${2.5 + Math.random() * 2.5}s`;
+			layer.appendChild(piece);
+			setTimeout(() => piece.remove(), 5200);
+		}
+	}, 180);
+}
+
+function stopConfetti() {
+	if (confettiTimer) {
+		clearInterval(confettiTimer);
+		confettiTimer = null;
+	}
+
+	const layer = document.getElementById("confettiLayer");
+	if (layer) layer.innerHTML = "";
+}
+
+function nextClimb() {
+	currentProblem = generateProblem();
+	setupExpected();
+	renderProblem();
+	resetSteps(false);
+
+	setTimeout(() => {
+		window.scrollTo({
+			top: Math.max(0, document.getElementById("problemCard").offsetTop - 120),
+			behavior: "smooth"
+		});
+	}, 180);
+}
+
+function resetPracticeProblem() {
+	setupExpected();
+	renderProblem();
+	resetSteps(true);
+	feedback.textContent = "Practice reset. Turtle score and climb progress did not change.";
+}
+
+function setupExpected() {
+	const a = currentProblem.a;
+	const b = currentProblem.b;
+	const aSign = a >= 0 ? "+" : "-";
+	const bSign = b >= 0 ? "+" : "-";
+	const aSize = Math.abs(a);
+	const bSize = Math.abs(b);
+	const sameSign = aSign === bSign;
+	const biggerSize = Math.max(aSize, bSize);
+	const smallerSize = Math.min(aSize, bSize);
+
+	let outsideSign;
+	let operation;
+
+	if (sameSign) {
+		outsideSign = aSign;
+		operation = "+";
+	} else {
+		outsideSign = aSize > bSize ? aSign : bSign;
+		operation = "-";
+	}
+
+	expected = {
+		sameOrDifferent: sameSign ? "same" : "different",
+		biggerSize,
+		smallerSize,
+		outsideSign,
+		operation,
+		finalAnswer: a + b
+	};
+}
+
+function updateGuidanceText() {
+	const outsideTitle = document.getElementById("outsideSignTitle");
+	const operationTitle = document.getElementById("operationTitle");
+
+	if (turtleScore <= 3) {
+		outsideTitle.textContent = "Outside sign: click one to match the big size sign.";
+		operationTitle.textContent = "Inside operation: click + if same sign. Otherwise choose −.";
+		return;
+	}
+
+	outsideTitle.textContent = "Outside sign: click one.";
+	operationTitle.textContent = "Inside operation: click one.";
+}
+
+function renderProblem() {
+	const aText = formatTerm(currentProblem.a, true);
+	const bText = formatTerm(currentProblem.b, false);
+
+	problemText.innerHTML = `
+		<span class="term ${currentProblem.a >= 0 ? "plus" : "minus"}">${aText}</span>
+		<span class="term ${currentProblem.b >= 0 ? "plus" : "minus"}">${bText}</span>
+	`;
+
+	const aSize = Math.abs(currentProblem.a);
+	const bSize = Math.abs(currentProblem.b);
+
+	document.getElementById("sizeOptions").innerHTML = `
+		<button class="choice-btn" onclick="chooseBiggerSize(${aSize}, this)">${aSize}</button>
+		<button class="choice-btn" onclick="chooseBiggerSize(${bSize}, this)">${bSize}</button>
+	`;
+
+	document.getElementById("miniProblem").innerHTML = `
+		<span class="term ${currentProblem.a >= 0 ? "plus" : "minus"}">${aText}</span>
+		<span class="term ${currentProblem.b >= 0 ? "plus" : "minus"}">${bText}</span>
+	`;
+
+	updateGuidanceText();
+}
+
+function resetSteps(keepClimbProgress) {
+	chosenSignType = null;
+	chosenBiggerSize = null;
+	chosenOutsideSign = null;
+	chosenOperation = null;
+
+	if (!keepClimbProgress) {
+		runCorrectCount = 0;
+		mistakesThisProblem = 0;
+		gameScoreAwarded = false;
+		updateTurtleBoard();
+	}
+
+	document.querySelectorAll(".choice-btn, .sign-btn, .op-btn").forEach(btn => {
+		btn.classList.remove("selected", "wrong");
+	});
+
+	document.getElementById("step2").style.display = "none";
+	document.getElementById("builder").style.display = "none";
+	document.getElementById("answerArea").style.display = "none";
+
+	document.getElementById("outsideSignDisplay").textContent = "?";
+	document.getElementById("outsideSignDisplay").classList.remove("filled");
+	document.getElementById("operationDisplay").textContent = "?";
+	document.getElementById("operationDisplay").classList.remove("filled");
+	document.getElementById("firstNumInput").value = "";
+	document.getElementById("secondNumInput").value = "";
+	document.getElementById("finalAnswerInput").value = "";
+	document.getElementById("answerFeedback").textContent = "";
+	document.getElementById("builtBoxText").textContent = "";
+
+	feedback.textContent = "Start with Step 1.";
+}
+
+function markWrong(button, message) {
+	if (button) button.classList.add("wrong");
+	feedback.textContent = message;
+	markMistake();
+
+	setTimeout(() => {
+		if (button) button.classList.remove("wrong");
+	}, 500);
+}
+
+function chooseSignType(type, button) {
+	document.querySelectorAll("#step1 .choice-btn").forEach(btn => btn.classList.remove("selected"));
+
+	if (type !== expected.sameOrDifferent) {
+		markWrong(
+			button,
+			type === "same" ? "Try again. These signs are different." : "Try again. These signs are the same."
+		);
+		return;
+	}
+
+	button.classList.add("selected");
+	chosenSignType = type;
+	markCorrectStep();
+	document.getElementById("step2").style.display = "block";
+	scrollToCenter("step2");
+
+	feedback.textContent = type === "same"
+		? "Correct. Same signs add inside the box."
+		: "Correct. Different signs subtract inside the box.";
+}
+
+function chooseBiggerSize(size, button) {
+	document.querySelectorAll("#step2 .choice-btn").forEach(btn => btn.classList.remove("selected"));
+
+	if (size !== expected.biggerSize) {
+		markWrong(button, `${size} is smaller. Pick the bigger size first.`);
+		return;
+	}
+
+	button.classList.add("selected");
+	chosenBiggerSize = size;
+	markCorrectStep();
+	document.getElementById("builder").style.display = "block";
+	scrollToCenter("builder");
+
+	feedback.textContent = "Good. Now build: sign outside, bigger first, smaller second.";
+}
+
+function pickOutsideSign(sign, button) {
+	document.querySelectorAll(".sign-btn").forEach(btn => btn.classList.remove("selected"));
+	button.classList.add("selected");
+	chosenOutsideSign = sign;
+	document.getElementById("outsideSignDisplay").textContent = sign === "+" ? "+" : "−";
+	document.getElementById("outsideSignDisplay").classList.add("filled");
+	feedback.textContent = "Outside sign selected. Now fill the box or choose operation.";
+}
+
+function pickOperation(operation, button) {
+	document.querySelectorAll(".op-btn").forEach(btn => btn.classList.remove("selected"));
+	button.classList.add("selected");
+	chosenOperation = operation;
+	document.getElementById("operationDisplay").textContent = operation === "+" ? "+" : "−";
+	document.getElementById("operationDisplay").classList.add("filled");
+	feedback.textContent = "Operation selected. Now fill the big size and small size.";
+}
+
+function checkBox() {
+	const firstNum = Number(document.getElementById("firstNumInput").value.trim());
+	const secondNum = Number(document.getElementById("secondNumInput").value.trim());
+
+	if (chosenOutsideSign !== expected.outsideSign) {
+		feedback.textContent = `Try again. The outside sign should be ${expected.outsideSign === "+" ? "+" : "−"}.`;
+		markMistake();
+		return;
+	}
+
+	if (firstNum !== expected.biggerSize) {
+		feedback.textContent = "Try again. The bigger size must go first.";
+		markMistake();
+		return;
+	}
+
+	if (chosenOperation !== expected.operation) {
+		feedback.textContent = expected.operation === "+"
+			? "Try again. Same signs add inside the box."
+			: "Try again. Different signs subtract inside the box.";
+		markMistake();
+		return;
+	}
+
+	if (secondNum !== expected.smallerSize) {
+		feedback.textContent = "Try again. The smaller size goes second.";
+		markMistake();
+		return;
+	}
+
+	markCorrectStep();
+	document.getElementById("answerArea").style.display = "block";
+	document.getElementById("builtBoxText").textContent =
+		`You built: ${expected.outsideSign === "+" ? "+" : "−"}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "−"} ${expected.smallerSize})`;
+
+	feedback.textContent = "✅ Box is correct. Now solve it.";
+	scrollToCenter("answerArea");
+}
+
+function checkFinalAnswer() {
+	const input = document.getElementById("finalAnswerInput");
+	const answerFeedback = document.getElementById("answerFeedback");
+	const studentAnswer = normalizeSymbol(input.value).replace("+", "");
+	const correctAnswer = String(expected.finalAnswer);
+
+	if (studentAnswer === correctAnswer) {
+		answerFeedback.textContent = "✅ Correct! Great pattern work.";
+		answerFeedback.style.color = "#248a2f";
+		feedback.textContent = "✅ Finished. Pattern locked in.";
+		input.style.borderColor = "#6cc070";
+		markCorrectStep();
+		scrollToCenter("bottomControls");
+	} else {
+		answerFeedback.textContent = "❌ Try again. Check the outside sign and the operation inside.";
+		answerFeedback.style.color = "#c0392b";
+		feedback.textContent = "Try again. The check worked.";
+		input.style.borderColor = "#ef7777";
+		markMistake();
+	}
+}
+
+document.getElementById("secondNumInput").addEventListener("input", () => {
+	const smallValue = document.getElementById("secondNumInput").value.trim();
+
+	if (smallValue.length > 0) {
+		setTimeout(() => {
+			document
+				.querySelector("#builder button[onclick='checkBox()']")
+				.scrollIntoView({
+					behavior: "smooth",
+					block: "center"
+				});
+		}, 180);
+	}
+});
+
+updateTurtleBoard();
+nextClimb();
+</script>
+</body>
+</html>
