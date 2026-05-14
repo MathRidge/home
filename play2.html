@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Play 2 Demo - Positive Negative Showdown</title>
+	<title>Positive Negative Showdown - Play and Learn</title>
 
 	<style>
 		* {
@@ -422,39 +422,143 @@
 			100% { transform: translateY(110vh) rotate(720deg); opacity: 0.95; }
 		}
 
-		.achievement-popup {
-			position: fixed;
-			inset: 0;
-			display: none;
-			align-items: center;
-			justify-content: center;
-			background: rgba(36, 48, 79, 0.35);
-			z-index: 100;
-			padding: 18px;
-		}
 
-		.achievement-card {
-			max-width: 440px;
-			background: #fff8db;
-			border: 5px solid #ffd36e;
-			border-radius: 28px;
-			padding: 24px;
-			text-align: center;
-			box-shadow: 0 16px 35px rgba(0,0,0,0.25);
-			animation: popIn 0.35s ease;
-		}
+.achievement-popup {
+	position: fixed;
+	inset: 0;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	background: rgba(36, 48, 79, 0.35);
+	z-index: 100;
+	padding: 12px;
+	overflow: auto;
+}
 
-		.achievement-card h2 {
-			font-size: clamp(1.8rem, 6vw, 2.6rem);
-			margin-bottom: 10px;
-		}
+.certificate-card {
+	width: min(92vw, 900px);
+	max-height: 96vh;
+	background: #fffdf2;
+	border: 5px solid #d4a73c;
+	border-radius: 24px;
+	padding: 12px;
+	text-align: center;
+	box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+	overflow: auto;
+}
 
-		.achievement-card p {
-			font-size: 1.1rem;
-			font-weight: bold;
-			line-height: 1.4;
-			margin: 10px 0;
-		}
+.cert-border {
+	border: 7px double #d4a73c;
+	border-radius: 18px;
+	padding: clamp(14px, 3vh, 28px) clamp(14px, 4vw, 32px);
+	background: linear-gradient(180deg, #fffaf0, #fff3cf);
+}
+
+.cert-school {
+	font-size: clamp(1.4rem, 4vw, 2.5rem);
+	font-weight: bold;
+	margin-bottom: 6px;
+	color: #7a4b00;
+}
+
+.cert-leaves {
+	font-size: clamp(1.2rem, 3vw, 2rem);
+	color: #7a9a3a;
+	margin-bottom: 4px;
+}
+
+.cert-border h2 {
+	font-size: clamp(1.3rem, 4vw, 2.3rem);
+	margin-bottom: 4px;
+	color: #24304f;
+}
+
+.cert-border h3 {
+	font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+	margin-bottom: 10px;
+	color: #b87900;
+}
+
+.cert-border p {
+	font-size: clamp(0.85rem, 2.4vw, 1.1rem);
+	line-height: 1.3;
+	margin: 6px 0;
+}
+
+.cert-name {
+	font-size: clamp(1.5rem, 5vw, 2.8rem);
+	font-weight: bold;
+	margin: 8px 0;
+	color: #1f6fb8;
+	border-bottom: 3px solid #d4a73c;
+	display: inline-block;
+	padding: 2px 20px;
+	max-width: 100%;
+	word-break: break-word;
+}
+
+.cert-date {
+	margin-top: 10px;
+	font-weight: bold;
+	font-size: clamp(0.85rem, 2.3vw, 1rem);
+}
+
+.cert-signature {
+	margin-top: 12px;
+	font-family: cursive;
+	font-size: clamp(1rem, 3vw, 1.35rem);
+	color: #7a4b00;
+}
+
+.certificate-card button {
+	margin-top: 10px;
+	width: auto;
+	min-width: 150px;
+}
+.name-card {
+	max-width: 460px;
+	width: min(92vw, 460px);
+	background: #fff8db;
+	border: 5px solid #ffd36e;
+	border-radius: 28px;
+	padding: 24px;
+	text-align: center;
+	box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+	animation: popIn 0.35s ease;
+}
+
+.name-card h2 {
+	font-size: clamp(1.8rem, 6vw, 2.5rem);
+	margin-bottom: 10px;
+}
+
+.name-card p {
+	font-size: 1.05rem;
+	font-weight: bold;
+	line-height: 1.4;
+	margin: 10px 0;
+}
+
+.proof-note {
+	background: white;
+	border: 3px dashed #ffd36e;
+	border-radius: 16px;
+	padding: 10px;
+	color: #7a4b00;
+}
+
+.name-card label {
+	display: block;
+	font-weight: bold;
+	margin-top: 14px;
+	margin-bottom: 8px;
+}
+
+.name-card input {
+	width: 100%;
+	max-width: 320px;
+	margin-bottom: 14px;
+}
 
 		@keyframes popIn {
 			0% { transform: scale(0.8); opacity: 0; }
@@ -549,23 +653,65 @@
 	button {
 		width: 100%;
 	}
+
+	.achievement-popup {
+		align-items: flex-start;
+		padding: 8px;
+	}
+
+	.certificate-card {
+		width: 96vw;
+		max-height: 96vh;
+		padding: 8px;
+		border-radius: 18px;
+	}
+
+	.cert-border {
+		border-width: 5px;
+		padding: 12px 10px;
+	}
+
+	.certificate-card button {
+		width: 100%;
+		margin-top: 8px;
+		padding: 10px 12px;
+	}
 }
 	</style>
 </head>
 
 <body>
 	<div class="confetti-layer" id="confettiLayer"></div>
+<div class="achievement-popup" id="namePopup">
+	<div class="name-card">
+		<h2>🎉 Lesson Complete!</h2>
+		<p>You reached Score 10 in Positive Negative Showdown.</p>
+		<p class="proof-note">Be sure to save your certificate as proof of completing this lesson.</p>
 
-	<div class="achievement-popup" id="achievementPopup">
-		<div class="achievement-card">
-			<h2>🎉 Score 10!</h2>
-			<p>You reached the top of Math Ridge!</p>
-			<p>You understand the task, and now you can demonstrate it to your parent.</p>
-			<p>🎁 Show your parent and ask for a gift.</p>
-			<p>📸 Screenshot your high score and challenge your friend!</p>
-			<button onclick="closeAchievementPopup()">OK, I got it!</button>
-		</div>
+		<label for="playerNameInput">Name on Certificate</label>
+		<input id="playerNameInput" type="text" placeholder="Math Ridge Champion">
+
+		<button onclick="createCertificateFromName()">Create My Certificate</button>
 	</div>
+</div>
+<div class="achievement-popup" id="certificatePopup">
+	<div class="certificate-card" id="certificateCard">
+		<div class="cert-school">Math Ridge Academy</div>
+		<div class="cert-border">
+			<div class="cert-leaves">❦ ❦ ❦</div>
+			<h2>Certificate of Achievement</h2>
+			<h3>Positive Negative Showdown</h3>
+			<p>Presented to</p>
+			<div class="cert-name" id="certName">Math Ridge Champion</div>
+			<p>for completing the 10-score challenge with focus, accuracy, and perseverance.</p>
+			<div class="cert-date" id="certDate"></div>
+			<div class="cert-signature">Math Ridge Studio</div>
+		</div>
+
+		<button onclick="saveCertificateImage()">Save Certificate</button>
+		<button onclick="closeCertificatePopup()">Close</button>
+	</div>
+</div>
 
 	<div class="game">
 		<div class="challenge-board">
@@ -861,16 +1007,6 @@
 			updateTurtleBoard();
 		}
 
-		function showAchievementPopup() {
-			achievementShown = true;
-			document.getElementById("achievementPopup").style.display = "flex";
-			startConfetti();
-		}
-
-		function closeAchievementPopup() {
-			document.getElementById("achievementPopup").style.display = "none";
-			stopConfetti();
-		}
 
 		function startConfetti() {
 			const layer = document.getElementById("confettiLayer");
@@ -1242,8 +1378,113 @@
 			feedback.className = "feedback good-text";
 		}
 
+function showAchievementPopup() {
+	achievementShown = true;
+	startConfetti();
+
+	const nameInput = document.getElementById("playerNameInput");
+	nameInput.value = "";
+
+	document.getElementById("namePopup").style.display = "flex";
+
+	setTimeout(() => {
+		nameInput.focus();
+	}, 200);
+}
+
+function createCertificateFromName() {
+	const nameInput = document.getElementById("playerNameInput");
+	const finalName = nameInput.value.trim() || "Math Ridge Champion";
+	const now = new Date();
+
+	const formattedDate = now.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric"
+	});
+
+	const formattedTime = now.toLocaleTimeString("en-US", {
+		hour: "numeric",
+		minute: "2-digit",
+		hour12: true
+	});
+
+	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+	document.getElementById("certName").textContent = finalName;
+	document.getElementById("certDate").textContent =
+		`Completed on ${formattedDate} at ${formattedTime} (${timezone})`;
+
+	document.getElementById("namePopup").style.display = "none";
+	document.getElementById("certificatePopup").style.display = "flex";
+}
+
+function closeCertificatePopup() {
+	document.getElementById("certificatePopup").style.display = "none";
+	stopConfetti();
+}
+
+function saveCertificateImage() {
+	const name = document.getElementById("certName").textContent;
+	const date = document.getElementById("certDate").textContent;
+
+	const canvas = document.createElement("canvas");
+	canvas.width = 1200;
+	canvas.height = 850;
+
+	const ctx = canvas.getContext("2d");
+
+	ctx.fillStyle = "#fff8db";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	ctx.strokeStyle = "#d4a73c";
+	ctx.lineWidth = 18;
+	ctx.strokeRect(45, 45, 1110, 760);
+
+	ctx.lineWidth = 5;
+	ctx.strokeRect(85, 85, 1030, 680);
+
+	ctx.fillStyle = "#7a4b00";
+	ctx.font = "bold 54px Georgia";
+	ctx.textAlign = "center";
+	ctx.fillText("Math Ridge Academy", 600, 150);
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "bold 48px Georgia";
+	ctx.fillText("Certificate of Achievement", 600, 245);
+
+	ctx.fillStyle = "#b87900";
+	ctx.font = "bold 42px Georgia";
+	ctx.fillText("Positive Negative Showdown", 600, 315);
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "30px Georgia";
+	ctx.fillText("Presented to", 600, 390);
+
+	ctx.fillStyle = "#1f6fb8";
+	ctx.font = "bold 60px Georgia";
+	ctx.fillText(name, 600, 470);
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "28px Georgia";
+	ctx.fillText("for completing the 10-score challenge", 600, 550);
+	ctx.fillText("with focus, accuracy, and perseverance.", 600, 590);
+
+	ctx.font = "bold 26px Georgia";
+	ctx.fillText(date, 600, 665);
+
+	ctx.fillStyle = "#7a4b00";
+	ctx.font = "36px cursive";
+	ctx.fillText("Math Ridge Studio", 600, 735);
+
+	const link = document.createElement("a");
+	link.download = "math-ridge-certificate.png";
+	link.href = canvas.toDataURL("image/png");
+	link.click();
+}
 		updateTurtleBoard();
 		nextClimb();
+
 	</script>
 </body>
 </html>
