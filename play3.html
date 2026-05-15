@@ -751,7 +751,7 @@ button:hover {
 		<h2>🐢 Turtle Climb</h2>
 		<div class="score-badge" id="scoreText">Score: 0</div>
 		<div class="turtle-track" id="turtleTrack"></div>
-		<div class="challenge-text" id="challengeMessage">Fix signs carefully to score.</div>
+		<div class="challenge-text" id="challengeMessage">Complete each correct action to move the turtle.</div>
 	</div>
 
 	<h1>Sign Fixer Challenge</h1>
@@ -839,6 +839,7 @@ let currentRoundStarted = false;
 let selectedTerm = null;
 
 let turtleScore = 0;
+let runCorrectCount = 0;
 let mistakesThisRound = 0;
 let roundScoreAwarded = false;
 let achievementShown = false;
@@ -1057,10 +1058,38 @@ function createChoices(correctExpression) {
 	return choices.sort(() => Math.random() - 0.5);
 }
 
+function getTotalRoundSteps() {
+	if (!currentProblem || !currentProblem.fixedTerms) return 7;
+	// 1 sign-fix choice + each term sorted + bigger team + smaller team + final answer
+	return 1 + currentProblem.fixedTerms.length + 2 + 1;
+}
+
+function markCorrectStep() {
+	if (roundScoreAwarded) return;
+
+	runCorrectCount++;
+
+	if (runCorrectCount >= getTotalRoundSteps() && mistakesThisRound === 0) {
+		awardScore();
+		return;
+	}
+
+	if (mistakesThisRound === 0) {
+		document.getElementById("challengeMessage").textContent =
+			`Good. Turtle climbed ${runCorrectCount}/${getTotalRoundSteps()} steps this round.`;
+	} else {
+		document.getElementById("challengeMessage").textContent =
+			"Keep practicing. This round already has a mistake, so finish it and try the next round for a score.";
+	}
+
+	updateTurtleBoard();
+}
+
 function startRound() {
 	currentProblem = generateProblem();
 	currentRoundStarted = true;
 	selectedTerm = null;
+	runCorrectCount = 0;
 	mistakesThisRound = 0;
 	roundScoreAwarded = false;
 
@@ -1113,6 +1142,8 @@ function checkSignChoice(button, choice) {
 		button.classList.add("correct-choice");
 		signFeedback.textContent = "✅ Correct. The signs are fixed.";
 		signFeedback.className = "feedback good-text";
+		markCorrectStep();
+
 		document.getElementById("instruction").textContent =
 			"Step 2: Now sort each signed term into the correct team.";
 		showSortStep();
@@ -1198,6 +1229,7 @@ zones.forEach(zone => {
 
 		sortFeedback.textContent = "Good. Keep sorting.";
 		sortFeedback.className = "feedback good-text";
+		markCorrectStep();
 		checkIfSortingFinished();
 	});
 });
@@ -1302,6 +1334,7 @@ function chooseBiggerTeam(type, clickedButton) {
 		document.getElementById("finalFeedback").className =
 			"feedback good-text";
 
+		markCorrectStep();
 		boxPickStep = 2;
 		return;
 	}
@@ -1338,6 +1371,7 @@ function chooseBiggerTeam(type, clickedButton) {
 		document.getElementById("finalFeedback").className =
 			"feedback good-text";
 
+		markCorrectStep();
 		boxPickStep = 3;
 	}
 }
@@ -1357,10 +1391,10 @@ function checkFinalAnswer() {
 	const correctAnswer = cleanAnswer(String(currentProblem.finalAnswer));
 
 	if (studentAnswer === correctAnswer) {
-		finalFeedback.textContent = `✅ Correct! Final answer is ${currentProblem.finalAnswer}. +1 score!`;
+		finalFeedback.textContent = `✅ Correct! Final answer is ${currentProblem.finalAnswer}.`;
 		finalFeedback.className = "feedback good-text";
 		input.style.borderColor = "#6cc070";
-		awardScore();
+		markCorrectStep();
 		scrollToCenter("bottomControls");
 		return;
 	}
@@ -1407,6 +1441,7 @@ function awardScore() {
 
 function markMistake() {
 	mistakesThisRound++;
+	runCorrectCount = 0;
 
 	if (mistakesThisRound === 1) {
 		document.getElementById("challengeMessage").textContent =
@@ -1427,18 +1462,19 @@ function updateTurtleBoard() {
 	const scoreText = document.getElementById("scoreText");
 	const turtleTrack = document.getElementById("turtleTrack");
 	const challengeMessage = document.getElementById("challengeMessage");
+	const totalSteps = getTotalRoundSteps();
 
 	scoreText.textContent = `Score: ${turtleScore}`;
 	turtleTrack.innerHTML = "";
 
-	for (let i = 1; i <= 10; i++) {
+	for (let i = 1; i <= totalSteps; i++) {
 		const step = document.createElement("div");
 		step.className = "track-step";
 
-		if (i <= turtleScore) {
+		if (i <= runCorrectCount) {
 			step.classList.add("done");
 			step.textContent = "🌿";
-		} else if (i === turtleScore + 1) {
+		} else if (i === runCorrectCount + 1) {
 			step.classList.add("active");
 			step.textContent = "🐢";
 		} else {
@@ -1451,6 +1487,12 @@ function updateTurtleBoard() {
 	if (turtleScore >= 10 && !achievementShown) {
 		challengeMessage.textContent = "🎉 Score 10 reached! Certificate unlocked.";
 		showAchievementPopup();
+	} else if (roundScoreAwarded && mistakesThisRound === 0) {
+		challengeMessage.textContent =
+			`Clean round complete! +1 score. Press Next Round for the next climb.`;
+	} else if (mistakesThisRound === 0 && runCorrectCount > 0) {
+		challengeMessage.textContent =
+			`Good. Turtle climbed ${runCorrectCount}/${totalSteps} steps this round.`;
 	} else if (turtleScore >= 7) {
 		challengeMessage.textContent = "🔥 Long strands unlocked. Stay sharp with signs.";
 	} else if (turtleScore >= 4) {
@@ -1479,6 +1521,7 @@ function nextRound() {
 
 function resetChallenge() {
 	turtleScore = 0;
+	runCorrectCount = 0;
 	achievementShown = false;
 	stopConfetti();
 	startRound();
