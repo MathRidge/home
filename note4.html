@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Ridge | Note 4 - Chunking Repeated Values</title>
+  <style>
+    :root {
+      --bg: #fff8ed;
+      --card: #ffffff;
+      --ink: #2d251c;
+      --muted: #6f6256;
+      --accent: #f59e0b;
+      --accent-dark: #b45309;
+      --soft: #ffedd5;
+      --green: #16a34a;
+      --blue: #2563eb;
+      --purple: #7c3aed;
+      --border: #f4d8ae;
+      --shadow: 0 16px 36px rgba(120, 72, 18, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+      background: linear-gradient(180deg, #fff7e6, #eef7ff);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    .page {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .hero {
+      background: #fff;
+      border: 4px solid #ffd27d;
+      border-radius: 28px;
+      padding: clamp(24px, 5vw, 54px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -80px;
+      top: -80px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.14);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--accent-dark);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      margin-bottom: 14px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.12;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2.15rem, 6vw, 4.6rem);
+      max-width: 760px;
+    }
+
+    .subtitle {
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      color: var(--muted);
+      max-width: 760px;
+      margin: 18px 0 0;
+    }
+
+    .hero-note {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-card {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      font-weight: 800;
+    }
+
+    .mini-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .section {
+      margin-top: 22px;
+      background: #fff;
+      border: 2px solid #e8f2ff;
+      border-radius: 24px;
+      padding: clamp(20px, 4vw, 34px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+    }
+
+    .section h2 {
+      font-size: clamp(1.55rem, 3.5vw, 2.25rem);
+      margin-bottom: 12px;
+    }
+
+    .section p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      margin: 10px 0 0;
+    }
+
+    .math-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 18px;
+      background: #f8fbff;
+      border: 2px dashed #8ec5ff;
+      border-radius: 20px;
+      font-size: clamp(1.45rem, 4.7vw, 2.55rem);
+      font-weight: 900;
+      letter-spacing: 0.01em;
+      overflow-wrap: anywhere;
+    }
+
+    .math-small {
+      font-size: clamp(1.2rem, 3.5vw, 1.85rem);
+    }
+
+    .term {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.7em;
+      min-height: 1.7em;
+      padding: 0.1em 0.35em;
+      background: #ffffff;
+      border: 2px solid #f0b55f;
+      border-radius: 14px;
+      box-shadow: 0 4px 0 rgba(180, 83, 9, 0.16);
+    }
+
+    .chunk-a {
+      color: var(--blue);
+    }
+
+    .chunk-b {
+      color: var(--green);
+    }
+
+    .answer {
+      color: var(--purple);
+    }
+
+    .read-box {
+      margin-top: 16px;
+      padding: 16px 18px;
+      background: #fff6d6;
+      border-left: 5px solid #ffc94d;
+      border-radius: 16px;
+      font-size: 1.08rem;
+      font-weight: 800;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .panel {
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .panel h3 {
+      font-size: 1.28rem;
+      margin-bottom: 8px;
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #f8fbff;
+    }
+
+    .step::before {
+      content: counter(step);
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .example-card {
+      background: #f8fbff;
+      border: 2px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .example-card h3 {
+      color: var(--accent-dark);
+      margin-bottom: 12px;
+    }
+
+    .example-card .math-line {
+      margin-top: 10px;
+      padding: 12px;
+      font-size: clamp(1.1rem, 3vw, 1.55rem);
+      border-radius: 16px;
+    }
+
+    .practice-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .practice-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 15px 16px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #f8fbff;
+      font-weight: 900;
+      font-size: 1.15rem;
+    }
+
+    details {
+      margin-top: 8px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--accent-dark);
+      font-weight: 900;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      padding: 26px 10px 0;
+      font-weight: 800;
+    }
+
+    @media (max-width: 820px) {
+      .hero-note,
+      .two-col,
+      .example-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        width: min(100% - 22px, 1100px);
+        padding-top: 14px;
+      }
+
+      .hero,
+      .section {
+        border-radius: 22px;
+      }
+
+      .practice-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Math Ridge | Note 4</div>
+      <h1>Chunking Repeated Values</h1>
+      <p class="subtitle">
+        When the same value repeats too many times, we can compress it, split it into easier chunks,
+        and build the total without getting lost in a long line of addition.
+      </p>
+
+      <div class="hero-note" aria-label="lesson focus">
+        <div class="mini-card">Repeated value<span>Use only 2, 3, or 4</span></div>
+        <div class="mini-card">Multiplicity<span>Use only 7, 8, or 9</span></div>
+        <div class="mini-card">Chunk by 5<span>7 = 5 + 2, 8 = 5 + 3, 9 = 5 + 4</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>1. Repeated Values Can Be Compressed</h2>
+      <p>
+        If we keep adding the same value again and again, the line can become long.
+        Multiplicity helps us write the repeated value as one grouped term.
+      </p>
+
+      <div class="math-line" aria-label="seven repeated twos">
+        <span class="term">2</span> + <span class="term">2</span> + <span class="term">2</span> +
+        <span class="term">2</span> + <span class="term">2</span> + <span class="term">2</span> + <span class="term">2</span>
+      </div>
+
+      <div class="math-line">
+        7(2)
+      </div>
+
+      <div class="read-box">
+        Read 7(2) as <strong>seven 2s</strong>. The 7 tells how many repeated copies. The 2 is the value being repeated.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2. Why We Chunk</h2>
+      <p>
+        Even if 7(2) is short to write, counting seven 2s one by one can still feel slow.
+        So we break the seven copies into easier chunks.
+      </p>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3>Long way</h3>
+          <div class="math-line math-small">
+            2 + 2 + 2 + 2 + 2 + 2 + 2
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Chunk way</h3>
+          <div class="math-line math-small">
+            <span class="chunk-a">(2+2+2+2+2)</span> + <span class="chunk-b">(2+2)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="read-box">
+        This reads as <strong>five 2s plus two 2s</strong>.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>3. The Main Flow</h2>
+      <p>
+        This is the important pattern for Note 4. We start with a repeated value, split the multiplicity by 5,
+        solve each chunk, then add the chunk totals.
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div>
+            <strong>Start with the compressed repeated value.</strong>
+            <div class="math-line math-small">7(2)</div>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <strong>Split the multiplicity.</strong>
+            <div class="math-line math-small">7(2) = (5 + 2)(2)</div>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <strong>Open the chunks.</strong>
+            <div class="math-line math-small">(5 + 2)(2) = 5(2) + 2(2)</div>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <strong>Solve the easy chunks.</strong>
+            <div class="math-line math-small">5(2) + 2(2) = 10 + 4</div>
+          </div>
+        </div>
+        <div class="step">
+          <div>
+            <strong>Add the chunk totals.</strong>
+            <div class="math-line math-small answer">10 + 4 = 14</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="read-box">
+        Main pattern: <strong>7(2) = (5+2)(2) = 5(2)+2(2) = 10+4 = 14</strong>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>4. Chunking Pattern</h2>
+      <p>
+        In this note, we always chunk around 5 first. This makes the pattern easy to see and easy to repeat.
+      </p>
+
+      <div class="example-grid">
+        <div class="example-card">
+          <h3>7 copies</h3>
+          <div class="math-line">7 = 5 + 2</div>
+          <p>Seven repeated values become five copies plus two copies.</p>
+        </div>
+        <div class="example-card">
+          <h3>8 copies</h3>
+          <div class="math-line">8 = 5 + 3</div>
+          <p>Eight repeated values become five copies plus three copies.</p>
+        </div>
+        <div class="example-card">
+          <h3>9 copies</h3>
+          <div class="math-line">9 = 5 + 4</div>
+          <p>Nine repeated values become five copies plus four copies.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>5. More Examples</h2>
+      <p>
+        Keep the value small. The goal is not hard arithmetic. The goal is to see the structure.
+      </p>
+
+      <div class="example-grid">
+        <div class="example-card">
+          <h3>Example A</h3>
+          <div class="math-line">8(3)</div>
+          <div class="math-line">(5+3)(3)</div>
+          <div class="math-line">5(3)+3(3)</div>
+          <div class="math-line answer">15+9=24</div>
+        </div>
+
+        <div class="example-card">
+          <h3>Example B</h3>
+          <div class="math-line">9(4)</div>
+          <div class="math-line">(5+4)(4)</div>
+          <div class="math-line">5(4)+4(4)</div>
+          <div class="math-line answer">20+16=36</div>
+        </div>
+
+        <div class="example-card">
+          <h3>Example C</h3>
+          <div class="math-line">7(3)</div>
+          <div class="math-line">(5+2)(3)</div>
+          <div class="math-line">5(3)+2(3)</div>
+          <div class="math-line answer">15+6=21</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>6. What This Prepares Us For</h2>
+      <p>
+        We are not naming the bigger rule yet. For now, just notice the movement:
+        one repeated group can open into smaller repeated chunks, and smaller repeated chunks can close back into one repeated group.
+      </p>
+
+      <div class="two-col">
+
+<div class="panel">
+  <h3>Open the group</h3>
+
+  <div class="math-line math-small">
+    (5+2)(2) → 5(2)+2(2)
+  </div>
+
+  <div class="read-box">
+    Math vocabulary: <strong>Distribute the 2</strong>
+  </div>
+
+  <p>
+    This helps us build the total from easy chunks.
+  </p>
+</div>
+
+<div class="panel">
+  <h3>Close the group</h3>
+
+  <div class="math-line math-small">
+    5(2)+2(2) → (5+2)(2)
+  </div>
+
+  <div class="read-box">
+    Math vocabulary: <strong>Factor out the 2</strong>
+  </div>
+
+  <p>
+    This helps us see that both chunks repeat the same value.
+  </p>
+</div>
+
+    </section>
+
+    <section class="section">
+      <h2>7. Practice</h2>
+      <p>
+        Try each one by splitting the multiplicity around 5 first.
+      </p>
+
+      <div class="practice-list">
+        <div class="practice-row">
+          <span>7(4) = (5+2)(4) = 5(4)+2(4) = ?</span>
+          <details><summary>Answer</summary>20 + 8 = 28</details>
+        </div>
+        <div class="practice-row">
+          <span>8(2) = (5+3)(2) = 5(2)+3(2) = ?</span>
+          <details><summary>Answer</summary>10 + 6 = 16</details>
+        </div>
+        <div class="practice-row">
+          <span>9(3) = (5+4)(3) = 5(3)+4(3) = ?</span>
+          <details><summary>Answer</summary>15 + 12 = 27</details>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      Math Ridge | Note 4 · Repeated values can be compressed, chunked, opened, and rebuilt.
+    </p>
+  </main>
+</body>
+</html>
