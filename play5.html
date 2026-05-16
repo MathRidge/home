@@ -1182,50 +1182,81 @@
 			stopConfetti();
 		}
 
-		function saveCertificateImage() {
-			const name = document.getElementById("certName").textContent;
-			const date = document.getElementById("certDate").textContent;
-			const canvas = document.createElement("canvas");
-			canvas.width = 1200;
-			canvas.height = 850;
-			const ctx = canvas.getContext("2d");
-			ctx.fillStyle = "#fff8db";
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
-			ctx.strokeStyle = "#d4a73c";
-			ctx.lineWidth = 18;
-			ctx.strokeRect(45, 45, 1110, 760);
-			ctx.lineWidth = 5;
-			ctx.strokeRect(85, 85, 1030, 680);
-			ctx.fillStyle = "#7a4b00";
-			ctx.font = "bold 54px Georgia";
-			ctx.textAlign = "center";
-			ctx.fillText("Math Ridge Academy", 600, 150);
-			ctx.fillStyle = "#24304f";
-			ctx.font = "bold 48px Georgia";
-			ctx.fillText("Certificate of Achievement", 600, 245);
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 42px Georgia";
-			ctx.fillText("Fraction Reduction", 600, 315);
-			ctx.fillStyle = "#24304f";
-			ctx.font = "30px Georgia";
-			ctx.fillText("Presented to", 600, 390);
-			ctx.fillStyle = "#1f6fb8";
-			ctx.font = "bold 60px Georgia";
-			ctx.fillText(name, 600, 470);
-			ctx.fillStyle = "#24304f";
-			ctx.font = "28px Georgia";
-			ctx.fillText("for completing the 10-score challenge", 600, 550);
-			ctx.fillText("with focus, accuracy, and perseverance.", 600, 590);
-			ctx.font = "bold 26px Georgia";
-			ctx.fillText(date, 600, 665);
-			ctx.fillStyle = "#7a4b00";
-			ctx.font = "36px cursive";
-			ctx.fillText("Math Ridge Studio", 600, 735);
-			const link = document.createElement("a");
-			link.download = "math-ridge-play5-fraction-reduction-certificate.png";
-			link.href = canvas.toDataURL("image/png");
-			link.click();
+function saveCertificateImage() {
+	const name = document.getElementById("certName").textContent;
+	const date = document.getElementById("certDate").textContent;
+
+	const canvas = document.createElement("canvas");
+	canvas.width = 1200;
+	canvas.height = 850;
+
+	const ctx = canvas.getContext("2d");
+
+	ctx.fillStyle = "#fff8db";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	ctx.strokeStyle = "#d4a73c";
+	ctx.lineWidth = 18;
+	ctx.strokeRect(45, 45, 1110, 760);
+
+	ctx.lineWidth = 5;
+	ctx.strokeRect(85, 85, 1030, 680);
+
+	ctx.fillStyle = "#7a4b00";
+	ctx.font = "bold 54px Georgia";
+	ctx.textAlign = "center";
+	ctx.fillText("Math Ridge Academy", 600, 150);
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "bold 48px Georgia";
+	ctx.fillText("Certificate of Achievement", 600, 245);
+
+	ctx.fillStyle = "#b87900";
+	ctx.font = "bold 42px Georgia";
+	ctx.fillText("Fraction Reduction", 600, 315);
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "30px Georgia";
+	ctx.fillText("Presented to", 600, 390);
+
+	ctx.fillStyle = "#1f6fb8";
+	ctx.font = "bold 60px Georgia";
+	ctx.fillText(name, 600, 470);
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "28px Georgia";
+	ctx.fillText("for completing the 10-score challenge", 600, 550);
+	ctx.fillText("with focus, accuracy, and perseverance.", 600, 590);
+
+	ctx.font = "bold 26px Georgia";
+	ctx.fillText(date, 600, 665);
+
+	ctx.fillStyle = "#7a4b00";
+	ctx.font = "36px cursive";
+	ctx.fillText("Math Ridge Studio", 600, 735);
+
+	canvas.toBlob(function(blob) {
+		if (!blob) {
+			alert("Sorry, the certificate could not be saved. Please take a screenshot instead.");
+			return;
 		}
+
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+
+		link.href = url;
+		link.download = "math-ridge-play5-fraction-reduction-certificate.png";
+		link.style.display = "none";
+
+		document.body.appendChild(link);
+		link.click();
+
+		setTimeout(() => {
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		}, 500);
+	}, "image/png");
+}
 
 		updateTurtleBoard();
 		startNewProblem({ focus: false });
