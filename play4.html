@@ -293,6 +293,15 @@
 		.bad-text { color: #c0392b; }
 		.hidden { display: none; }
 
+		.play-footer-label {
+			text-align: center;
+			margin-top: 28px;
+			font-size: 0.9rem;
+			color: #7a7a7a;
+			font-style: italic;
+			font-weight: bold;
+		}
+
 		.bottom-controls {
 			display: flex;
 			justify-content: center;
@@ -443,7 +452,6 @@
 		<div class="instruction" id="instruction">Step 1: Count how many repeated values are being added.</div>
 
 		<div class="problem-card">
-			<h2 id="problemTitle">Math Ridge | Play 4</h2>
 			<div class="repeated-line" id="repeatedLine"></div>
 			<div class="read-line" id="difficultyLine"></div>
 		</div>
@@ -513,12 +521,12 @@
 		</div>
 
 		<div class="feedback" id="feedback"></div>
-
 		<div class="bottom-controls" id="bottomControls">
 			<button onclick="nextClimb()">Next Climb</button>
 			<button onclick="resetPracticeGame()">Reset This Problem</button>
 			<button onclick="resetChallenge()">Reset Turtle Score</button>
 		</div>
+		<div class="play-footer-label">Math Ridge | Chunking Repeated Values</div>
 	</div>
 
 	<script>
