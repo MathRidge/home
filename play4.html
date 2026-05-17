@@ -539,38 +539,77 @@
 		let achievementShown = false;
 		let confettiTimer = null;
 
-		const numberWords = { 2:"two", 3:"three", 4:"four", 5:"five", 6:"six", 7:"seven", 8:"eight", 9:"nine" };
+		const numberWords = {
+	2:"two", 3:"three", 4:"four", 5:"five", 6:"six",
+	7:"seven", 8:"eight", 9:"nine", 10:"ten", 11:"eleven", 12:"twelve"
+};
 		const feedback = document.getElementById("feedback");
 
 		function isHintLevel() { return turtleScore <= 3; }
 		function isMiddleLevel() { return turtleScore >= 4 && turtleScore <= 6; }
 		function isHardLevel() { return turtleScore >= 7; }
-
-		function getValuePool() {
-			return isHardLevel() ? [6, 7, 8] : [2, 3, 4];
-		}
-
-		function getMultiplicityPool() {
-			return [7, 8, 9];
-		}
-
 		function randomItem(list) {
 			return list[Math.floor(Math.random() * list.length)];
 		}
+			let problemDeck = [];
+			let deckLevel = "";
 
-		function makeProblem() {
-			const multiplicity = randomItem(getMultiplicityPool());
-			const value = randomItem(getValuePool());
-			const secondChunk = multiplicity - 5;
-			current = {
-				multiplicity,
-				value,
-				secondChunk,
-				chunkA: 5 * value,
-				chunkB: secondChunk * value,
-				answer: multiplicity * value
-			};
-		}
+function buildProblemDeck() {
+	const deck = [];
+
+	let valuePool;
+	let multiplicityPool;
+
+if (turtleScore <= 3) {
+	valuePool = [2, 3, 4];
+	multiplicityPool = [6, 7, 8];
+} else if (turtleScore <= 6) {
+	valuePool = [2, 3, 4, 5];
+	multiplicityPool = [7, 8, 9];
+} else {
+	valuePool = [5, 6, 7, 8];
+	multiplicityPool = [6, 7, 8, 9];
+}
+
+	multiplicityPool.forEach(multiplicity => {
+		valuePool.forEach(value => {
+			deck.push({ multiplicity, value });
+		});
+	});
+
+	return deck.sort(() => Math.random() - 0.5);
+}
+
+function getDeckLevel() {
+	if (turtleScore <= 3) return "hint";
+	if (turtleScore <= 6) return "middle";
+	return "hard";
+}
+
+function makeProblem() {
+	const currentLevel = getDeckLevel();
+
+	if (problemDeck.length === 0 || deckLevel !== currentLevel) {
+		problemDeck = buildProblemDeck();
+		deckLevel = currentLevel;
+	}
+
+	const picked = problemDeck.pop();
+
+	const multiplicity = picked.multiplicity;
+	const value = picked.value;
+	const secondChunk = multiplicity - 5;
+
+	current = {
+		multiplicity,
+		value,
+		secondChunk,
+		chunkA: 5 * value,
+		chunkB: secondChunk * value,
+		answer: multiplicity * value
+	};
+}
+		
 
 		function repeatedAdditionText(count, value) {
 			return Array(count).fill(String(value)).join("+");
@@ -645,10 +684,23 @@
 			return choice;
 		}
 
+function getCountChoiceOptions() {
+	const correct = current.multiplicity;
+	let options = [correct];
+
+	while (options.length < 3) {
+		const nearby = correct + randomItem([-2, -1, 1, 2]);
+		if (nearby >= 6 && nearby <= 12 && !options.includes(nearby)) {
+			options.push(nearby);
+		}
+	}
+
+	return options;
+}
 		function renderCountChoices() {
 			const box = document.getElementById("countChoices");
 			box.innerHTML = "";
-			const options = [7, 8, 9].map(num => ({
+			const options = getCountChoiceOptions().map(num => ({
 				text: `${numberWords[num]} ${current.value}s`,
 				correct: num === current.multiplicity
 			})).sort(() => Math.random() - 0.5);
@@ -828,13 +880,13 @@
 			document.getElementById("completedFlow").innerHTML = "";
 		}
 
-		function startNewProblem() {
-			makeProblem();
-			resetProblemOnly({ keepClimbProgress: true });
-			updateProblemText();
-			renderCountChoices();
-			document.getElementById("instruction").textContent = "Step 1: Count how many repeated values are being added.";
-		}
+function startNewProblem() {
+	makeProblem();
+	resetProblemOnly({ keepClimbProgress: true });
+	updateProblemText();
+	renderCountChoices();
+	document.getElementById("instruction").textContent = "Step 1: Count how many repeated values are being added.";
+}
 
 		function nextClimb() {
 			runCorrectCount = 0;
@@ -928,6 +980,8 @@
 			document.getElementById("challengeMessage").textContent = `Complete ${TOTAL_STEPS} clean steps to earn +1 point.`;
 			updateTurtleBoard();
 			updateProblemText();
+			problemDeck = [];
+			deckLevel = "";
 		}
 
 		function startConfetti() {
