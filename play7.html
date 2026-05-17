@@ -714,6 +714,111 @@ let stageComplete = false;
 let achievementShown = false;
 let confettiTimer = null;
 
+const usedProblemDecks = {};
+
+function fractionKey(f){
+  return `${f.top}/${f.bottom}`;
+}
+
+function recipeKey(recipe){
+  return `${recipe.op}|${recipe.a}|${recipe.b}|scoreBand:${score < 3 ? "0-2" : score < 6 ? "3-5" : score < 10 ? "6-9" : score < 13 ? "10-12" : score < 16 ? "13-15" : "16+"}`;
+}
+
+function problemKeyFromParts(recipe, f1, f2Original){
+  const first = fractionKey(f1);
+  const second = fractionKey(f2Original);
+
+  // Multiplication repeats even if the two fractions switch places.
+  // Division keeps order because a ÷ b is different from b ÷ a.
+  if(recipe.op === "multiply"){
+    return [first, second].sort().join(" × ");
+  }
+
+  return `${first} ÷ ${second}`;
+}
+
+function rememberProblem(recipe, key){
+  const bucket = recipeKey(recipe);
+  if(!usedProblemDecks[bucket]) usedProblemDecks[bucket] = new Set();
+  usedProblemDecks[bucket].add(key);
+}
+
+function problemWasUsed(recipe, key){
+  const bucket = recipeKey(recipe);
+  return usedProblemDecks[bucket] && usedProblemDecks[bucket].has(key);
+}
+
+function clearProblemDeck(recipe){
+  const bucket = recipeKey(recipe);
+  usedProblemDecks[bucket] = new Set();
+}
+
+function buildRoundCandidate(){
+  const recipe = getStageRecipe();
+  const f1 = makeFractionByLevel(recipe.a);
+  const f2Original = makeFractionByLevel(recipe.b);
+  const isDivision = recipe.op === "divide";
+  const key = problemKeyFromParts(recipe, f1, f2Original);
+
+  const f2Product = isDivision
+    ? {
+        top: f2Original.bottom,
+        bottom: f2Original.top,
+        topFactors: [...f2Original.bottomFactors],
+        bottomFactors: [...f2Original.topFactors],
+        level: f2Original.level
+      }
+    : f2Original;
+
+  const topGroupA = shuffle([...f1.topFactors]);
+  const topGroupB = shuffle([...f2Product.topFactors]);
+  const bottomGroupA = shuffle([...f1.bottomFactors]);
+  const bottomGroupB = shuffle([...f2Product.bottomFactors]);
+
+  const productTopFactors = [...topGroupA, ...topGroupB];
+  const productBottomFactors = [...bottomGroupA, ...bottomGroupB];
+
+  const productTop = product(productTopFactors);
+  const productBottom = product(productBottomFactors);
+  const g = gcd(productTop, productBottom);
+
+  return {
+    key,
+    recipe,
+    isDivision,
+    f1,
+    f2Original,
+    f2Product,
+    topGroupA,
+    topGroupB,
+    bottomGroupA,
+    bottomGroupB,
+    productTopFactors,
+    productBottomFactors,
+    productTop,
+    productBottom,
+    reducedTop: productTop / g,
+    reducedBottom: productBottom / g
+  };
+}
+
+function chooseUnusedRound(){
+  let candidate = buildRoundCandidate();
+
+  for(let attempt = 0; attempt < 700; attempt++){
+    if(!problemWasUsed(candidate.recipe, candidate.key)){
+      rememberProblem(candidate.recipe, candidate.key);
+      return candidate;
+    }
+    candidate = buildRoundCandidate();
+  }
+
+  // If the current recipe band appears exhausted, allow repeats again by clearing that deck.
+  clearProblemDeck(candidate.recipe);
+  rememberProblem(candidate.recipe, candidate.key);
+  return candidate;
+}
+
 function randInt(min,max){
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -901,50 +1006,12 @@ function updateCoachingText(){
 }
 
 function newRound(){
-  const recipe = getStageRecipe();
-  const f1 = makeFractionByLevel(recipe.a);
-  const f2Original = makeFractionByLevel(recipe.b);
-  const isDivision = recipe.op === "divide";
-
-  const f2Product = isDivision
-    ? {
-        top: f2Original.bottom,
-        bottom: f2Original.top,
-        topFactors: [...f2Original.bottomFactors],
-        bottomFactors: [...f2Original.topFactors],
-        level: f2Original.level
-      }
-    : f2Original;
-
-  const topGroupA = shuffle([...f1.topFactors]);
-  const topGroupB = shuffle([...f2Product.topFactors]);
-  const bottomGroupA = shuffle([...f1.bottomFactors]);
-  const bottomGroupB = shuffle([...f2Product.bottomFactors]);
-
-  const productTopFactors = [...topGroupA, ...topGroupB];
-  const productBottomFactors = [...bottomGroupA, ...bottomGroupB];
-
-  const productTop = product(productTopFactors);
-  const productBottom = product(productBottomFactors);
-  const g = gcd(productTop, productBottom);
-
-  round = {
-    recipe,
-    isDivision,
-    f1,
-    f2Original,
-    f2Product,
-    topGroupA,
-    topGroupB,
-    bottomGroupA,
-    bottomGroupB,
-    productTopFactors,
-    productBottomFactors,
-    productTop,
-    productBottom,
-    reducedTop: productTop / g,
-    reducedBottom: productBottom / g
-  };
+  round = chooseUnusedRound();
+  const recipe = round.recipe;
+  const f1 = round.f1;
+  const f2Original = round.f2Original;
+  const f2Product = round.f2Product;
+  const isDivision = round.isDivision;
 
   runCorrectCount = 0;
   mistakesThisStage = 0;
@@ -1319,6 +1386,7 @@ function nextClimb(){
 }
 
 function resetChallenge(){
+  Object.keys(usedProblemDecks).forEach(key => usedProblemDecks[key].clear());
   score = 0;
   stage = 1;
   runCorrectCount = 0;
