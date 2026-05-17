@@ -616,6 +616,26 @@
 	<script>
 		const TOTAL_STEPS = 12;
 		const GROUPS = [2, 3, 5];
+
+		const BASE_FRACTION_PAIRS = [
+			[2, 7], [2, 9], [3, 8], [4, 7], [4, 9],
+			[5, 6], [5, 8], [5, 9], [3, 7], [2, 5]
+		];
+
+		const PROBLEM_PATHS = {
+			1: [[2], [3], [5]],
+			2: [[2, 2], [2, 3], [2, 5], [3, 3], [3, 5]],
+			3: [[2, 2, 2], [2, 2, 3], [2, 2, 5], [2, 3, 3], [2, 3, 5], [3, 3, 3]],
+			4: [[2, 2, 2, 2], [2, 2, 2, 3], [2, 2, 3, 3], [2, 2, 3, 5]]
+		};
+
+		const usedProblemKeysByDepth = {
+			1: new Set(),
+			2: new Set(),
+			3: new Set(),
+			4: new Set()
+		};
+
 		let current = null;
 		let turtleScore = 0;
 		let runCorrectCount = 0;
@@ -654,43 +674,67 @@
 		}
 
 		function makeBaseFraction() {
-			const pairs = [
-				[2, 7], [2, 9], [3, 8], [4, 7], [4, 9],
-				[5, 6], [5, 8], [5, 9], [3, 7], [2, 5]
-			];
-			return randomItem(pairs);
+			return randomItem(BASE_FRACTION_PAIRS);
 		}
 
-		function makeMultiplier(depth) {
-			// Hand-picked group paths keep the values friendly.
-			// No huge 5×5×5 or 2×3×3×5 style problems before Score 10.
-			const paths = {
-				1: [[2], [3], [5]],
-				2: [[2, 2], [2, 3], [2, 5], [3, 3], [3, 5]],
-				3: [[2, 2, 2], [2, 2, 3], [2, 2, 5], [2, 3, 3], [2, 3, 5], [3, 3, 3]],
-				4: [[2, 2, 2, 2], [2, 2, 2, 3], [2, 2, 3, 3], [2, 2, 3, 5]]
-			};
-			const factors = [...randomItem(paths[depth] || paths[3])];
-			const multiplier = factors.reduce((product, factor) => product * factor, 1);
-			return { multiplier, factors };
+		function multiplyFactors(factors) {
+			return factors.reduce((product, factor) => product * factor, 1);
+		}
+
+		function makeProblemKey(depth, top, bottom) {
+			return `${depth}:${top}/${bottom}`;
+		}
+
+		function buildProblemDeck(depth) {
+			const paths = PROBLEM_PATHS[depth] || PROBLEM_PATHS[3];
+			const deck = [];
+
+			BASE_FRACTION_PAIRS.forEach(([baseTop, baseBottom]) => {
+				paths.forEach(path => {
+					const factors = [...path];
+					const multiplier = multiplyFactors(factors);
+					const top = baseTop * multiplier;
+					const bottom = baseBottom * multiplier;
+					deck.push({
+						key: makeProblemKey(depth, top, bottom),
+						originalTop: top,
+						originalBottom: bottom,
+						top,
+						bottom,
+						baseTop,
+						baseBottom,
+						factors
+					});
+				});
+			});
+
+			return deck;
 		}
 
 		function makeProblem() {
-			const [baseTop, baseBottom] = makeBaseFraction();
 			const depth = targetDepth();
-			const made = makeMultiplier(depth);
-			const top = baseTop * made.multiplier;
-			const bottom = baseBottom * made.multiplier;
+			let deck = buildProblemDeck(depth);
+			let unusedDeck = deck.filter(problem => !usedProblemKeysByDepth[depth].has(problem.key));
+
+			// Only allow repeats after every problem at this depth has already appeared.
+			if (unusedDeck.length === 0) {
+				usedProblemKeysByDepth[depth].clear();
+				unusedDeck = deck;
+			}
+
+			const made = randomItem(unusedDeck);
+			usedProblemKeysByDepth[depth].add(made.key);
+
 			current = {
-				originalTop: top,
-				originalBottom: bottom,
-				top,
-				bottom,
-				baseTop,
-				baseBottom,
-				factors: made.factors,
+				originalTop: made.originalTop,
+				originalBottom: made.originalBottom,
+				top: made.top,
+				bottom: made.bottom,
+				baseTop: made.baseTop,
+				baseBottom: made.baseBottom,
+				factors: [...made.factors],
 				chosenGroup: null,
-				history: [`${top}/${bottom}`],
+				history: [`${made.top}/${made.bottom}`],
 				finished: false
 			};
 		}
@@ -1122,6 +1166,7 @@
 			turtleScore = 0;
 			runCorrectCount = 0;
 			mistakesThisGame = 0;
+			Object.values(usedProblemKeysByDepth).forEach(usedSet => usedSet.clear());
 			gameScoreAwarded = false;
 			achievementShown = false;
 			stopConfetti();
