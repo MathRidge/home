@@ -793,10 +793,10 @@ button:hover {
 		</div>
 
 		<div class="quick-pick-box">
-			<div class="quick-pick-title" id="operationTitle">Inside operation: select + if same sign. Otherwise choose −.</div>
+			<div class="quick-pick-title" id="operationTitle">Inside operation: select Add: + if same sign. Otherwise choose Subract: −.</div>
 			<div class="sign-picker">
-				<button class="op-btn plus" onclick="pickOperation('+', this)">+</button>
-				<button class="op-btn minus" onclick="pickOperation('-', this)">−</button>
+				<button class="op-btn plus" onclick="pickOperation('+', this)">Add: +</button>
+				<button class="op-btn minus" onclick="pickOperation('-', this)">Subtract: -</button>
 			</div>
 		</div>
 
@@ -1390,16 +1390,8 @@ document.getElementById("secondNumInput").addEventListener("input", () => {
 	}
 });
 
-currentProblem = generateProblem();
-setupExpected();
-renderProblem();
-
-resetSteps(false);
-
-document.getElementById("challengeMessage").textContent =
-	"Climb 4 clean steps to score.";
-
 updateTurtleBoard();
+nextClimb();
 </script>
 </body>
 </html>
