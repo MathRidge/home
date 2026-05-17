@@ -606,6 +606,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 const TOTAL_STEPS = 3;
 const primes = [2,3,5,7];
 
+// No-repeat problem decks.
+// Each difficulty level gets its own deck of possible fraction problems.
+// A problem is only allowed to repeat after that level's deck has been fully used.
+const usedProblemDecks = {};
+const problemDecks = {};
+
 let score = 0;
 let stage = 1;
 let round = null;
@@ -619,6 +625,10 @@ let confettiTimer = null;
 
 function randInt(min,max){
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomItem(list){
+  return list[Math.floor(Math.random() * list.length)];
 }
 
 function shuffle(arr){
@@ -705,54 +715,107 @@ function buildValueFromFactors(factors){
   return factors.reduce((total, factor) => total * factor, 1);
 }
 
-function makeFactors(){
-  const rule = getDifficultyRule();
-  let guard = 0;
+function difficultyKey(rule){
+  return `${rule.min}-${rule.max}-${rule.minShared}-${rule.maxShared}`;
+}
 
-  while(guard < 500){
-    guard++;
+function canonicalFactors(factors){
+  return [...factors].sort((a,b) => a - b).join("x");
+}
 
-    const sharedTarget = randInt(rule.minShared, rule.maxShared);
-    const common = makeRandomFactorList(sharedTarget);
+function problemKeyFromFactors(topFactors, bottomFactors){
+  return `${canonicalFactors(topFactors)}/${canonicalFactors(bottomFactors)}`;
+}
 
-    // Add leftover pieces so the top and bottom are not the exact same value.
-    // These are still only made from 2, 3, 5, and 7.
-    const topExtraCount = randInt(1, Math.max(1, Math.min(3, rule.maxShared)));
-    const bottomExtraCount = randInt(1, Math.max(1, Math.min(3, rule.maxShared)));
+function makeFactorMultisetsForRule(rule){
+  const results = [];
 
-    const topExtra = makeRandomFactorList(topExtraCount);
-    const bottomExtra = makeRandomFactorList(bottomExtraCount);
+  function walk(startIndex, current, value){
+    if(value >= rule.max) return;
 
-    const topFactors = [...common, ...topExtra];
-    const bottomFactors = [...common, ...bottomExtra];
+    if(value >= rule.min){
+      results.push([...current]);
+    }
 
-    const topValue = buildValueFromFactors(topFactors);
-    const bottomValue = buildValueFromFactors(bottomFactors);
-
-    if(topValue === bottomValue) continue;
-    if(topValue < rule.min || topValue >= rule.max) continue;
-    if(bottomValue < rule.min || bottomValue >= rule.max) continue;
-
-    const actualShared = sharedCount(topFactors, bottomFactors);
-    const smallerSide = Math.min(topFactors.length, bottomFactors.length);
-
-    // Minimum shared/cross-out count must match the difficulty rule.
-    if(actualShared < rule.minShared) continue;
-
-    // Do not allow everything on the smaller shelf to disappear.
-    // This avoids results like 1/anything or anything/1 too often in the early path.
-    if(actualShared >= smallerSide) continue;
-
-    return {
-      topFactors: shuffle(topFactors),
-      bottomFactors: shuffle(bottomFactors)
-    };
+    for(let i = startIndex; i < primes.length; i++){
+      const nextValue = value * primes[i];
+      if(nextValue >= rule.max) continue;
+      current.push(primes[i]);
+      walk(i, current, nextValue);
+      current.pop();
+    }
   }
 
-  // Safe fallback if the random search gets unlucky.
+  walk(0, [], 1);
+  return results;
+}
+
+function buildProblemDeck(rule){
+  const allFactorSets = makeFactorMultisetsForRule(rule);
+  const deck = [];
+  const seen = new Set();
+
+  for(const topFactors of allFactorSets){
+    for(const bottomFactors of allFactorSets){
+      const topValue = buildValueFromFactors(topFactors);
+      const bottomValue = buildValueFromFactors(bottomFactors);
+      if(topValue === bottomValue) continue;
+
+      const actualShared = sharedCount(topFactors, bottomFactors);
+      const smallerSide = Math.min(topFactors.length, bottomFactors.length);
+
+      if(actualShared < rule.minShared) continue;
+      if(actualShared > rule.maxShared) continue;
+      if(actualShared >= smallerSide) continue;
+
+      const key = problemKeyFromFactors(topFactors, bottomFactors);
+      if(seen.has(key)) continue;
+      seen.add(key);
+
+      deck.push({
+        key,
+        topFactors: [...topFactors],
+        bottomFactors: [...bottomFactors]
+      });
+    }
+  }
+
+  return shuffle(deck);
+}
+
+function makeFactors(){
+  const rule = getDifficultyRule();
+  const key = difficultyKey(rule);
+
+  if(!problemDecks[key]){
+    problemDecks[key] = buildProblemDeck(rule);
+    usedProblemDecks[key] = new Set();
+  }
+
+  const deck = problemDecks[key];
+
+  // If every problem in this level has appeared, unlock the deck and allow repeats again.
+  if(usedProblemDecks[key].size >= deck.length){
+    usedProblemDecks[key].clear();
+  }
+
+  let available = deck.filter(problem => !usedProblemDecks[key].has(problem.key));
+
+  // Safe fallback if a rule ever creates an empty deck.
+  if(!available.length){
+    available = [{
+      key: "2x2x3/2x2x5",
+      topFactors: [2, 2, 3],
+      bottomFactors: [2, 2, 5]
+    }];
+  }
+
+  const chosen = randomItem(available);
+  usedProblemDecks[key].add(chosen.key);
+
   return {
-    topFactors: shuffle([2, 2, 3]),
-    bottomFactors: shuffle([2, 2, 5])
+    topFactors: shuffle(chosen.topFactors),
+    bottomFactors: shuffle(chosen.bottomFactors)
   };
 }
 
@@ -1083,6 +1146,7 @@ function nextClimb(){
 }
 
 function resetChallenge(){
+  Object.keys(usedProblemDecks).forEach(key => usedProblemDecks[key].clear());
   score = 0;
   stage = 1;
   runCorrectCount = 0;
