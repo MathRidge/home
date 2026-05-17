@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Math Ridge | Play 6 - Prime Factor Trees</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+  background: linear-gradient(180deg, #fff7df, #eaf6ff);
+  color: #24304f;
+  padding: 16px;
+  min-height: 100vh;
+}
+
+.game {
+  max-width: 1000px;
+  margin: auto;
+  background: white;
+  border: 4px solid #ffe2a8;
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+h1 {
+  text-align: center;
+  font-size: clamp(2rem, 6vw, 4rem);
+  margin-bottom: 8px;
+  color: #d97800;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  font-weight: bold;
+}
+
+.challenge-board {
+  position: fixed;
+  top: 70px;
+  right: 14px;
+  width: clamp(96px, 10vw, 128px);
+  max-height: calc(100vh - 90px);
+  z-index: 50;
+  background: #fff8db;
+  border: 3px solid #ffd36e;
+  border-radius: 22px;
+  padding: 8px 6px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+.challenge-board h2 {
+  font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+  line-height: 1.05;
+  margin-bottom: 5px;
+}
+
+.score-badge, .stage-badge {
+  background: white;
+  border: 2px solid #ffd36e;
+  border-radius: 14px;
+  padding: 5px 3px;
+  font-weight: bold;
+  font-size: clamp(0.72rem, 1.2vw, 0.95rem);
+  margin-bottom: 6px;
+}
+
+.turtle-track {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  margin: 6px auto;
+  padding: 7px 5px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #dff0ff, #fff8db);
+  border: 2px dashed #86c7ff;
+}
+
+.track-step {
+  width: clamp(24px, 3.6vh, 34px);
+  height: clamp(24px, 3.6vh, 34px);
+  background: white;
+  border: 2px dashed #b9dcff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.72rem, 2vh, 1rem);
+}
+
+.track-step.active {
+  background: #dff0ff;
+  border: 3px solid #86c7ff;
+  transform: scale(1.12);
+}
+
+.track-step.done {
+  background: #dcfce7;
+  border: 3px solid #6cc070;
+}
+
+.challenge-text {
+  margin-top: 6px;
+  font-weight: bold;
+  font-size: clamp(0.58rem, 1vw, 0.78rem);
+  line-height: 1.15;
+}
+
+.certificate-note-wide, .instruction, .read-line, .hint-box {
+  text-align: center;
+  background: #fff8db;
+  border: 3px dashed #ffd36e;
+  border-radius: 18px;
+  padding: 12px;
+  font-weight: bold;
+  color: #7a4b00;
+}
+
+.certificate-note-wide { max-width: 720px; margin: 0 auto 16px; }
+
+.instruction {
+  margin-bottom: 10px;
+  font-size: 1.08rem;
+}
+
+.focus-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.7em;
+  padding: 0.05em 0.35em;
+  margin-left: 6px;
+  border-radius: 12px;
+  background: white;
+  border: 3px solid #ffd36e;
+  color: #d97800;
+  font-size: 1.35rem;
+}
+
+.problem-card, .step-card {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 22px;
+  background: #f7fbff;
+  border: 3px solid #b9dcff;
+  scroll-margin-top: 120px;
+}
+
+.problem-card h2, .step-card h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.fraction-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 4px dashed #ffd36e;
+  border-radius: 26px;
+  padding: 18px;
+  margin: 14px auto;
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-weight: bold;
+  color: #d97800;
+}
+
+.fraction {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: center;
+  line-height: 1;
+  min-width: 1.35em;
+  vertical-align: middle;
+}
+
+.fraction .top {
+  border-bottom: 0.11em solid currentColor;
+  padding: 0 0.18em 0.1em;
+  color: #2563eb;
+}
+
+.fraction .bottom {
+  padding: 0.1em 0.18em 0;
+  color: #16a34a;
+}
+
+.input-row, .answer-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.factor-input {
+  width: 50px;
+  height: 54px;
+  padding: 6px;
+  font-size: 1.55rem;
+  border-radius: 14px;
+  border: 3px solid #b9dcff;
+  text-align: center;
+  font-family: inherit;
+  font-weight: bold;
+  background: white;
+}
+
+.factor-input:focus, .answer-input:focus, .name-card input:focus {
+  outline: none;
+  border-color: #ffd36e;
+  box-shadow: 0 0 0 4px rgba(255, 211, 110, 0.35);
+}
+
+.answer-input {
+  width: 92px;
+  padding: 10px;
+  font-size: 1.5rem;
+  border-radius: 14px;
+  border: 3px solid #b9dcff;
+  text-align: center;
+  font-family: inherit;
+  font-weight: bold;
+  background: white;
+}
+
+.factor-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 42px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: white;
+  border: 2px solid #ffd36e;
+  font-weight: bold;
+  font-size: 1.25rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.top-chip {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.bottom-chip {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #15803d;
+}
+
+.factor-chip.crossed {
+  text-decoration: line-through;
+  opacity: 0.45;
+  transform: scale(0.96);
+}
+
+.prime-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 8px;
+  margin-top: 14px;
+  padding: 14px;
+  background: white;
+  border: 3px dashed #8ec5ff;
+  border-radius: 18px;
+  font-size: clamp(1.1rem, 4vw, 1.7rem);
+  font-weight: bold;
+}
+
+.break-line { flex-basis: 100%; height: 0; }
+
+button {
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ffe28a, #9ed8ff);
+  color: #24304f;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.16);
+  font-family: inherit;
+}
+
+button:hover { transform: translateY(-2px); }
+button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.feedback {
+  text-align: center;
+  margin-top: 14px;
+  font-weight: bold;
+  font-size: 1.12rem;
+  min-height: 30px;
+}
+
+.good-text { color: #248a2f; }
+.bad-text { color: #c0392b; }
+.neutral-text { color: #7a4b00; }
+
+.hidden { display: none !important; }
+
+.bottom-controls {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 3px dashed #ffd36e;
+}
+
+.game-footer {
+  text-align: center;
+  margin-top: 16px;
+  color: #7a4b00;
+  font-size: 0.92rem;
+  font-weight: bold;
+  opacity: 0.82;
+}
+
+.confetti-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 90;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 16px;
+  border-radius: 3px;
+  animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.95; }
+}
+
+.achievement-popup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(36, 48, 79, 0.35);
+  z-index: 100;
+  padding: 12px;
+  overflow: auto;
+}
+
+.name-card, .certificate-card {
+  background: #fff8db;
+  border: 5px solid #ffd36e;
+  border-radius: 28px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+  animation: popIn 0.35s ease;
+}
+
+.name-card { max-width: 460px; width: min(92vw, 460px); }
+.name-card h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); margin-bottom: 10px; }
+.name-card p { font-size: 1.05rem; font-weight: bold; line-height: 1.4; margin: 10px 0; }
+.proof-note { background: white; border: 3px dashed #ffd36e; border-radius: 16px; padding: 10px; color: #7a4b00; }
+.name-card label { display: block; font-weight: bold; margin-top: 14px; margin-bottom: 8px; }
+.name-card input {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 14px;
+  padding: 10px;
+  font-size: 1.25rem;
+  border-radius: 12px;
+  border: 3px solid #b9dcff;
+  text-align: center;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.certificate-card {
+  width: min(92vw, 900px);
+  max-height: 96vh;
+  background: #fffdf2;
+  border-color: #d4a73c;
+  overflow: auto;
+}
+
+.cert-border {
+  border: 7px double #d4a73c;
+  border-radius: 18px;
+  padding: clamp(14px, 3vh, 28px) clamp(14px, 4vw, 32px);
+  background: linear-gradient(180deg, #fffaf0, #fff3cf);
+}
+
+.cert-school { font-size: clamp(1.4rem, 4vw, 2.5rem); font-weight: bold; margin-bottom: 6px; color: #7a4b00; }
+.cert-leaves { font-size: clamp(1.2rem, 3vw, 2rem); color: #7a9a3a; margin-bottom: 4px; }
+.cert-border h2 { font-size: clamp(1.3rem, 4vw, 2.3rem); margin-bottom: 4px; color: #24304f; }
+.cert-border h3 { font-size: clamp(1.1rem, 3.5vw, 1.8rem); margin-bottom: 10px; color: #b87900; }
+.cert-border p { font-size: clamp(0.85rem, 2.4vw, 1.1rem); line-height: 1.3; margin: 6px 0; }
+.cert-name { font-size: clamp(1.5rem, 5vw, 2.8rem); font-weight: bold; margin: 8px 0; color: #1f6fb8; border-bottom: 3px solid #d4a73c; display: inline-block; padding: 2px 20px; max-width: 100%; word-break: break-word; }
+.cert-date, .cert-stage { margin-top: 10px; font-weight: bold; font-size: clamp(0.85rem, 2.3vw, 1rem); }
+.cert-signature { margin-top: 12px; font-family: cursive; font-size: clamp(1rem, 3vw, 1.35rem); color: #7a4b00; }
+.certificate-card button { margin-top: 10px; width: auto; min-width: 150px; }
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 700px) {
+  body { padding: 8px; padding-top: 118px; }
+  .game { padding: 14px; border-radius: 20px; }
+
+  .challenge-board {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    width: 100%;
+    max-height: none;
+    border-radius: 0 0 18px 18px;
+    padding: 6px 8px;
+    display: grid;
+    grid-template-columns: 78px 1fr 74px;
+    grid-template-rows: auto auto;
+    gap: 4px 8px;
+    align-items: center;
+  }
+
+  .challenge-board h2 { display: none; }
+
+  .score-badge { grid-column: 1; grid-row: 1; margin: 0; font-size: 0.78rem; }
+
+  .turtle-track {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    padding: 4px;
+    gap: 3px;
+    flex-direction: row-reverse;
+    background: linear-gradient(90deg, #dcfce7, #dff0ff, #fff8db);
+  }
+
+  .stage-badge { grid-column: 3; grid-row: 1; margin: 0; font-size: 0.78rem; }
+
+  .challenge-text {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    margin: 0;
+    font-size: 0.72rem;
+  }
+
+  .track-step {
+    width: clamp(22px, 5.2vw, 28px);
+    height: clamp(22px, 5.2vw, 28px);
+    font-size: 0.7rem;
+  }
+
+  button { width: 100%; }
+  .factor-input { width: 42px; height: 48px; }
+
+  .achievement-popup { align-items: flex-start; padding: 8px; }
+  .certificate-card { width: 96vw; max-height: 96vh; padding: 8px; border-radius: 18px; }
+  .cert-border { border-width: 5px; padding: 12px 10px; }
+  .certificate-card button { width: 100%; margin-top: 8px; padding: 10px 12px; }
+}
+</style>
+</head>
+
+<body>
+<div class="confetti-layer" id="confettiLayer"></div>
+
+<div class="achievement-popup" id="namePopup">
+  <div class="name-card">
+    <h2>🎉 Lesson Complete!</h2>
+    <p>You reached Score 10 in Prime Factor Trees.</p>
+    <p class="proof-note">Be sure to save your certificate as proof of completing this lesson.</p>
+    <label for="playerNameInput">Name on Certificate</label>
+    <input id="playerNameInput" type="text" placeholder="Math Ridge Champion">
+    <button onclick="createCertificateFromName()">Create My Certificate</button>
+  </div>
+</div>
+
+<div class="achievement-popup" id="certificatePopup">
+  <div class="certificate-card" id="certificateCard">
+    <div class="cert-school">Math Ridge Academy</div>
+    <div class="cert-border">
+      <div class="cert-leaves">❦ ❦ ❦</div>
+      <h2>Certificate of Achievement</h2>
+      <h3>Prime Factor Trees</h3>
+      <p>Presented to</p>
+      <div class="cert-name" id="certName">Math Ridge Champion</div>
+      <p>for completing the 10-score challenge by breaking fractions into prime pieces and reducing carefully.</p>
+      <div class="cert-stage" id="certStage"></div>
+      <div class="cert-date" id="certDate"></div>
+      <div class="cert-signature">Math Ridge Studio</div>
+    </div>
+    <button onclick="saveCertificateImage()">Save Certificate</button>
+    <button onclick="closeCertificatePopup()">Close</button>
+  </div>
+</div>
+
+<div class="game">
+  <div class="challenge-board">
+    <h2>🐢 Turtle Climb</h2>
+    <div class="score-badge" id="scoreText">Score: 0</div>
+    <div class="turtle-track" id="turtleTrack"></div>
+    <div class="stage-badge" id="stageText">Stage: 1</div>
+    <div class="challenge-text" id="challengeMessage">Keep climbing. Each correct step moves the turtle closer!</div>
+  </div>
+
+  <h1>Prime Factor Trees</h1>
+  <p class="subtitle">Break the numerator and denominator into prime pieces. Cross out matching pieces. Write the reduced fraction.</p>
+
+  <div class="certificate-note-wide">🐢 Reach Score 10 to earn your certificate. Every stage shows your effort toward completion!</div>
+
+  <div class="instruction" id="instruction">Type the prime factors. Order does not matter.</div>
+
+  <div class="problem-card" id="problemCard">
+    <h2>Current Fraction</h2>
+    <div class="fraction-display">
+      <span class="fraction">
+        <span class="top" id="numDisplay">18</span>
+        <span class="bottom" id="denDisplay">24</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="step-card" id="topStep">
+    <h2>Step 1: Numerator Prime Pieces</h2>
+    <div class="read-line">
+      Top shelf value:
+      <strong class="focus-value" id="topFocusValue">18</strong>
+    </div>
+    <div class="input-row" id="topInputs"></div>
+    <div class="input-row"><button onclick="checkTop()">Check Numerator</button></div>
+  </div>
+
+  <div class="step-card hidden" id="bottomStep">
+    <h2>Step 2: Denominator Prime Pieces</h2>
+    <div class="read-line">
+      Bottom shelf value:
+      <strong class="focus-value" id="bottomFocusValue">24</strong>
+    </div>
+    <div class="input-row" id="bottomInputs"></div>
+    <div class="input-row"><button onclick="checkBottom()">Check Denominator</button></div>
+  </div>
+
+  <div class="step-card hidden" id="reduceStep">
+    <h2>Step 3: Cross Out Matches and Reduce</h2>
+    <div class="read-line" id="crossInstruction">Click matching pieces to cross them out. Crossing is like pencil marks, so the final reduced answer is what gets graded.</div>
+    <div class="prime-form" id="primeForm"></div>
+
+    <div class="answer-row">
+      <span class="fraction">
+        <span class="top"><input class="answer-input" id="ansTop" inputmode="numeric" aria-label="answer numerator"></span>
+        <span class="bottom"><input class="answer-input" id="ansBottom" inputmode="numeric" aria-label="answer denominator"></span>
+      </span>
+    </div>
+
+    <div class="hint-box">If every factor on one shelf gets crossed out, that shelf becomes 1.</div>
+
+    <div class="input-row">
+      <button onclick="checkAnswer()">Check Final Reduction</button>
+      <button id="showMatchBtn" onclick="showMatchingPieces()">Show Matching Pieces</button>
+    </div>
+  </div>
+
+  <div class="step-card hidden" id="completeStep">
+    <h2>✅ Stage Complete!</h2>
+    <div class="prime-form" id="completeFlow"></div>
+    <div class="read-line" id="completeMessage"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="bottom-controls">
+    <button id="nextBtn" onclick="nextClimb()" disabled>Next Climb</button>
+    <button onclick="retryStage()">Retry This Stage</button>
+    <button onclick="resetChallenge()">Reset Turtle Score</button>
+  </div>
+
+  <div class="game-footer">Math Ridge | Play 6 · Prime Factor Trees</div>
+</div>
+
+<script>
+const TOTAL_STEPS = 3;
+const primes = [2,3,5,7];
+
+let score = 0;
+let stage = 1;
+let round = null;
+
+let runCorrectCount = 0;
+let mistakesThisStage = 0;
+let stageEligible = true;
+let stageComplete = false;
+let achievementShown = false;
+let confettiTimer = null;
+
+function randInt(min,max){
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(arr){
+  const copy = [...arr];
+  for(let i = copy.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function product(arr){
+  return arr.reduce((a,b)=>a*b,1);
+}
+
+function gcd(a,b){
+  while(b){
+    [a,b] = [b,a%b];
+  }
+  return Math.abs(a);
+}
+
+function countMap(arr){
+  const map = {};
+  arr.forEach(n => map[n] = (map[n] || 0) + 1);
+  return map;
+}
+
+function sameMultiset(a,b){
+  if(a.length !== b.length) return false;
+  const A = countMap(a);
+  const B = countMap(b);
+  return primes.every(p => (A[p] || 0) === (B[p] || 0));
+}
+
+function makeExtra(count, avoidList = []){
+  const avoid = new Set(avoidList);
+  let allowed = primes.filter(p => !avoid.has(p));
+  if(!allowed.length) allowed = primes;
+  const arr = [];
+  for(let i = 0; i < count; i++) arr.push(allowed[randInt(0, allowed.length - 1)]);
+  return arr;
+}
+
+function makeFactors(){
+  let topLen, bottomLen, commonCount;
+
+  if(score < 3){
+    commonCount = randInt(2,3);
+    const topExtra = Math.random() < 0.5;
+    topLen = topExtra ? commonCount + 1 : commonCount;
+    bottomLen = topExtra ? commonCount : commonCount + 1;
+  } else if(score < 6){
+    topLen = randInt(4,5);
+    bottomLen = randInt(4,5);
+    commonCount = randInt(2, Math.min(4, topLen, bottomLen));
+  } else {
+    topLen = randInt(3,6);
+    bottomLen = randInt(3,6);
+    commonCount = randInt(3, Math.min(5, topLen, bottomLen));
+  }
+
+  const common = [];
+  for(let i = 0; i < commonCount; i++){
+    common.push(primes[randInt(0, primes.length - 1)]);
+  }
+
+  let topExtra = [];
+  let bottomExtra = [];
+
+  if(score < 3){
+    if(topLen > commonCount) topExtra = [2];
+    if(bottomLen > commonCount) bottomExtra = [2];
+  } else {
+    topExtra = makeExtra(topLen - commonCount, []);
+    bottomExtra = makeExtra(bottomLen - commonCount, topExtra);
+  }
+
+  return {
+    topFactors: shuffle([...common, ...topExtra]),
+    bottomFactors: shuffle([...common, ...bottomExtra])
+  };
+}
+
+function newRound(){
+  const made = makeFactors();
+  const numerator = product(made.topFactors);
+  const denominator = product(made.bottomFactors);
+  const g = gcd(numerator, denominator);
+
+  round = {
+    topFactors: made.topFactors,
+    bottomFactors: made.bottomFactors,
+    numerator,
+    denominator,
+    reducedTop: numerator / g,
+    reducedBottom: denominator / g
+  };
+
+  runCorrectCount = 0;
+  mistakesThisStage = 0;
+  stageEligible = true;
+  stageComplete = false;
+
+  document.getElementById("numDisplay").textContent = numerator;
+  document.getElementById("denDisplay").textContent = denominator;
+  document.getElementById("topFocusValue").textContent = numerator;
+  document.getElementById("bottomFocusValue").textContent = denominator;
+
+  buildInputs("topInputs", round.topFactors.length);
+  buildInputs("bottomInputs", round.bottomFactors.length);
+
+  document.getElementById("topStep").classList.remove("hidden");
+  document.getElementById("bottomStep").classList.add("hidden");
+  document.getElementById("reduceStep").classList.add("hidden");
+  document.getElementById("completeStep").classList.add("hidden");
+  document.getElementById("nextBtn").disabled = true;
+
+  document.getElementById("ansTop").value = "";
+  document.getElementById("ansBottom").value = "";
+
+  updateDifficultyText();
+  setFeedback("", "");
+  updateBoard();
+}
+
+function buildInputs(id, count){
+  const wrap = document.getElementById(id);
+  wrap.innerHTML = "";
+
+  for(let i = 0; i < count; i++){
+    const input = document.createElement("input");
+    input.className = "factor-input";
+    input.maxLength = 1;
+    input.inputMode = "numeric";
+
+    input.addEventListener("input", () => {
+      input.value = input.value.replace(/[^2357]/g,"");
+      if(input.value && input.nextElementSibling) input.nextElementSibling.focus();
+    });
+
+    input.addEventListener("keydown", e => {
+      if(e.key === "Backspace" && !input.value && input.previousElementSibling){
+        input.previousElementSibling.focus();
+      }
+    });
+
+    wrap.appendChild(input);
+  }
+}
+
+function getInputFactors(id){
+  return [...document.querySelectorAll(`#${id} input`)]
+    .map(i => Number(i.value))
+    .filter(Boolean);
+}
+
+function checkTop(){
+  if(stageComplete) return;
+  const entered = getInputFactors("topInputs");
+
+  if(sameMultiset(entered, round.topFactors)){
+    markCorrectStep();
+    document.getElementById("bottomStep").classList.remove("hidden");
+    setFeedback("✅ Numerator pieces match.", "good");
+    focusPanel("bottomStep");
+  } else {
+    markMistake();
+    setFeedback("Not yet. The numerator pieces must multiply back to the top shelf.", "bad");
+  }
+}
+
+function checkBottom(){
+  if(stageComplete) return;
+  const entered = getInputFactors("bottomInputs");
+
+  if(sameMultiset(entered, round.bottomFactors)){
+    markCorrectStep();
+    document.getElementById("reduceStep").classList.remove("hidden");
+    buildPrimeForm(false);
+    setFeedback("✅ Denominator pieces match. Now cross out matching pieces and reduce.", "good");
+    focusPanel("reduceStep");
+  } else {
+    markMistake();
+    setFeedback("Not yet. The denominator pieces must multiply back to the bottom shelf.", "bad");
+  }
+}
+
+function getCrossMap(){
+  const top = round.topFactors;
+  const bottom = round.bottomFactors;
+  const topCross = Array(top.length).fill(false);
+  const bottomCross = Array(bottom.length).fill(false);
+
+  for(let i = 0; i < top.length; i++){
+    for(let j = 0; j < bottom.length; j++){
+      if(!topCross[i] && !bottomCross[j] && top[i] === bottom[j]){
+        topCross[i] = true;
+        bottomCross[j] = true;
+        break;
+      }
+    }
+  }
+
+  return { topCross, bottomCross };
+}
+
+function buildPrimeForm(autoCross){
+  const wrap = document.getElementById("primeForm");
+  wrap.innerHTML = "";
+
+  const crossMap = autoCross ? getCrossMap() : {
+    topCross: Array(round.topFactors.length).fill(false),
+    bottomCross: Array(round.bottomFactors.length).fill(false)
+  };
+
+  const topLabel = document.createElement("strong");
+  topLabel.textContent = "Top: ";
+  wrap.appendChild(topLabel);
+
+  round.topFactors.forEach((n,i)=>{
+    const chip = document.createElement("span");
+    chip.className = "factor-chip top-chip";
+    chip.dataset.side = "top";
+    chip.dataset.index = i;
+    chip.textContent = `(${n})`;
+    if(crossMap.topCross[i]) chip.classList.add("crossed");
+    chip.onclick = () => chip.classList.toggle("crossed");
+    wrap.appendChild(chip);
+  });
+
+  const breakLine = document.createElement("span");
+  breakLine.className = "break-line";
+  wrap.appendChild(breakLine);
+
+  const bottomLabel = document.createElement("strong");
+  bottomLabel.textContent = "Bottom: ";
+  wrap.appendChild(bottomLabel);
+
+  round.bottomFactors.forEach((n,i)=>{
+    const chip = document.createElement("span");
+    chip.className = "factor-chip bottom-chip";
+    chip.dataset.side = "bottom";
+    chip.dataset.index = i;
+    chip.textContent = `(${n})`;
+    if(crossMap.bottomCross[i]) chip.classList.add("crossed");
+    chip.onclick = () => chip.classList.toggle("crossed");
+    wrap.appendChild(chip);
+  });
+}
+
+function showMatchingPieces(){
+  if(score >= 3){
+    setFeedback("Show Matching Pieces is only available during the first 3 scores. Now try crossing the matches yourself.", "bad");
+    return;
+  }
+  buildPrimeForm(true);
+  setFeedback("Guided help used: matching pieces are crossed out for you.", "neutral");
+}
+
+function crossingIsCorrect(){
+  const correct = getCrossMap();
+  let ok = true;
+
+  document.querySelectorAll("#primeForm .factor-chip").forEach(chip => {
+    const side = chip.dataset.side;
+    const index = Number(chip.dataset.index);
+    const crossed = chip.classList.contains("crossed");
+    const shouldCross = side === "top" ? correct.topCross[index] : correct.bottomCross[index];
+    if(crossed !== shouldCross) ok = false;
+  });
+
+  return ok;
+}
+
+function checkAnswer(){
+  if(stageComplete) return;
+
+  const a = Number(document.getElementById("ansTop").value);
+  const b = Number(document.getElementById("ansBottom").value);
+
+  if(a === round.reducedTop && b === round.reducedBottom){
+    markCorrectStep();
+    stageComplete = true;
+    document.getElementById("nextBtn").disabled = false;
+
+    const crossNote = crossingIsCorrect()
+      ? "Your cross-out marks match the reduction."
+      : "Your final answer is correct. Some cross-out marks may be sloppy, so check your pencil marks next time.";
+
+    showComplete(crossNote);
+    return;
+  }
+
+  markMistake();
+  setFeedback("Not yet. Cross out matching pieces. If a shelf has no pieces left, write 1.", "bad");
+}
+
+function showComplete(crossNote){
+  document.getElementById("topStep").classList.add("hidden");
+  document.getElementById("bottomStep").classList.add("hidden");
+  document.getElementById("reduceStep").classList.add("hidden");
+  document.getElementById("completeStep").classList.remove("hidden");
+
+  const completeFlow = document.getElementById("completeFlow");
+  completeFlow.innerHTML = `
+    <span class="fraction">
+      <span class="top">${round.numerator}</span>
+      <span class="bottom">${round.denominator}</span>
+    </span>
+    <span>→</span>
+    <span class="fraction">
+      <span class="top">${round.reducedTop}</span>
+      <span class="bottom">${round.reducedBottom}</span>
+    </span>
+  `;
+
+  let scoreText = "";
+
+  if(stageEligible){
+    score++;
+    scoreText = "🏁 Turtle reached the score! +1 score earned.";
+  } else {
+    scoreText = "Practice stage completed. No score earned from this retry or error run.";
+  }
+
+  if(round.reducedBottom === 1){
+    scoreText += ` ${round.reducedTop}/1 can also be written as ${round.reducedTop}.`;
+  }
+
+  document.getElementById("completeMessage").textContent = `${scoreText} ${crossNote}`;
+  setFeedback("✅ Stage complete. Press Next Climb when ready.", "good");
+
+  updateBoard();
+
+  if(score >= 10 && !achievementShown){
+    showAchievementPopup();
+  }
+
+  focusPanel("completeStep");
+}
+
+function markCorrectStep(){
+  runCorrectCount = Math.min(TOTAL_STEPS, runCorrectCount + 1);
+  updateBoard();
+}
+
+function markMistake(){
+  mistakesThisStage++;
+  runCorrectCount = 0;
+
+  if(!stageEligible){
+    setFeedback("Retry stage: mistake ignored. This stage is practice only.", "neutral");
+    updateBoard();
+    return;
+  }
+
+  if(mistakesThisStage === 1){
+    stageEligible = false;
+    document.getElementById("challengeMessage").textContent = "Mistake made. Turtle progress cleared. Finish this stage for practice, then try the next climb.";
+  } else {
+    if(score > 0) score--;
+    document.getElementById("challengeMessage").textContent = "Second mistake in the same stage. Score reduced by 1, but never below 0.";
+  }
+
+  updateBoard();
+}
+
+function retryStage(){
+  stageEligible = false;
+  runCorrectCount = 0;
+  mistakesThisStage = 0;
+  stageComplete = false;
+
+  buildInputs("topInputs", round.topFactors.length);
+  buildInputs("bottomInputs", round.bottomFactors.length);
+  document.getElementById("ansTop").value = "";
+  document.getElementById("ansBottom").value = "";
+
+  document.getElementById("topStep").classList.remove("hidden");
+  document.getElementById("bottomStep").classList.add("hidden");
+  document.getElementById("reduceStep").classList.add("hidden");
+  document.getElementById("completeStep").classList.add("hidden");
+  document.getElementById("nextBtn").disabled = true;
+
+  setFeedback("Retry this stage. This retry is practice only and will not change score.", "neutral");
+  updateBoard();
+  focusPanel("topStep");
+}
+
+function nextClimb(){
+  if(!stageComplete) return;
+  stage++;
+  newRound();
+
+  setTimeout(() => {
+    const target = document.querySelector("#numDisplay");
+    if (!target) return;
+
+    const fixedTop = window.matchMedia("(max-width: 700px)").matches ? 118 : 20;
+    const rect = target.getBoundingClientRect();
+    const targetTop = window.scrollY + rect.top - fixedTop - 20;
+
+    window.scrollTo({
+      top: Math.max(0, targetTop),
+      behavior: "smooth"
+    });
+  }, 120);
+}
+
+function resetChallenge(){
+  score = 0;
+  stage = 1;
+  runCorrectCount = 0;
+  mistakesThisStage = 0;
+  stageEligible = true;
+  stageComplete = false;
+  achievementShown = false;
+  stopConfetti();
+  newRound();
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function updateBoard(){
+  document.getElementById("scoreText").textContent = `Score: ${score}`;
+  document.getElementById("stageText").textContent = `Stage: ${stage}`;
+
+  const track = document.getElementById("turtleTrack");
+  track.innerHTML = "";
+
+  for(let i = 0; i < TOTAL_STEPS; i++){
+    const step = document.createElement("div");
+    step.className = "track-step";
+
+    if(i < runCorrectCount){
+      step.classList.add("done");
+      step.textContent = "🌱";
+    } else if(i === runCorrectCount){
+      step.classList.add("active");
+      step.textContent = "🐢";
+    } else {
+      step.textContent = "•";
+    }
+
+    track.appendChild(step);
+  }
+
+  if(score >= 10){
+    document.getElementById("challengeMessage").textContent = `🎁 Certificate unlocked! Score 10 after ${stage} stages of effort.`;
+  } else if(!stageEligible){
+    document.getElementById("challengeMessage").textContent = "Practice finish. This stage cannot earn score.";
+  } else {
+    document.getElementById("challengeMessage").textContent = "Keep climbing. Each correct step moves the turtle closer!";
+  }
+}
+
+function updateDifficultyText(){
+  const btn = document.getElementById("showMatchBtn");
+
+  if(score < 3){
+    btn.disabled = false;
+    btn.classList.remove("hidden");
+  } else {
+    btn.disabled = true;
+    btn.classList.add("hidden");
+  }
+}
+
+function setFeedback(text, type){
+  const box = document.getElementById("feedback");
+  box.textContent = text;
+  box.className = "feedback";
+  if(type === "good") box.classList.add("good-text");
+  if(type === "bad") box.classList.add("bad-text");
+  if(type === "neutral") box.classList.add("neutral-text");
+}
+
+function focusPanel(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  setTimeout(() => {
+    const fixedTop = window.matchMedia("(max-width: 700px)").matches ? 118 : 20;
+    const rect = el.getBoundingClientRect();
+    const targetTop = window.scrollY + rect.top - fixedTop;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+  }, 120);
+}
+
+function startConfetti(){
+  const layer = document.getElementById("confettiLayer");
+  const colors = ["#ffd36e", "#86c7ff", "#ff8fab", "#95d5b2", "#cdb4db"];
+  stopConfetti();
+
+  confettiTimer = setInterval(() => {
+    for(let i = 0; i < 8; i++){
+      const piece = document.createElement("div");
+      piece.className = "confetti-piece";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDuration = `${2.5 + Math.random() * 2.5}s`;
+      layer.appendChild(piece);
+      setTimeout(() => piece.remove(), 5200);
+    }
+  }, 180);
+}
+
+function stopConfetti(){
+  if(confettiTimer){
+    clearInterval(confettiTimer);
+    confettiTimer = null;
+  }
+  const layer = document.getElementById("confettiLayer");
+  if(layer) layer.innerHTML = "";
+}
+
+function showAchievementPopup(){
+  achievementShown = true;
+  startConfetti();
+  const nameInput = document.getElementById("playerNameInput");
+  nameInput.value = "";
+  document.getElementById("namePopup").style.display = "flex";
+  setTimeout(() => nameInput.focus(), 200);
+}
+
+function createCertificateFromName(){
+  const nameInput = document.getElementById("playerNameInput");
+  const finalName = nameInput.value.trim() || "Math Ridge Champion";
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const formattedTime = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  document.getElementById("certName").textContent = finalName;
+  document.getElementById("certStage").textContent = `Completed Score 10 after ${stage} stages of effort.`;
+  document.getElementById("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime} (${timezone})`;
+
+  document.getElementById("namePopup").style.display = "none";
+  document.getElementById("certificatePopup").style.display = "flex";
+}
+
+function closeCertificatePopup(){
+  document.getElementById("certificatePopup").style.display = "none";
+  stopConfetti();
+}
+
+function saveCertificateImage(){
+  const name = document.getElementById("certName").textContent;
+  const date = document.getElementById("certDate").textContent;
+  const stageText = document.getElementById("certStage").textContent;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1200;
+  canvas.height = 850;
+
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#fff8db";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.strokeStyle = "#d4a73c";
+  ctx.lineWidth = 18;
+  ctx.strokeRect(45,45,1110,760);
+
+  ctx.lineWidth = 5;
+  ctx.strokeRect(85,85,1030,680);
+
+  ctx.fillStyle = "#7a4b00";
+  ctx.font = "bold 54px Georgia";
+  ctx.textAlign = "center";
+  ctx.fillText("Math Ridge Academy",600,145);
+
+  ctx.fillStyle = "#24304f";
+  ctx.font = "bold 48px Georgia";
+  ctx.fillText("Certificate of Achievement",600,235);
+
+  ctx.fillStyle = "#b87900";
+  ctx.font = "bold 42px Georgia";
+  ctx.fillText("Prime Factor Trees",600,305);
+
+  ctx.fillStyle = "#24304f";
+  ctx.font = "30px Georgia";
+  ctx.fillText("Presented to",600,375);
+
+  ctx.fillStyle = "#1f6fb8";
+  ctx.font = "bold 60px Georgia";
+  ctx.fillText(name,600,455);
+
+  ctx.fillStyle = "#24304f";
+  ctx.font = "28px Georgia";
+  ctx.fillText("for completing the 10-score challenge",600,530);
+  ctx.fillText("by breaking fractions into prime pieces.",600,570);
+
+  ctx.font = "bold 28px Georgia";
+  ctx.fillText(stageText,600,635);
+
+  ctx.font = "bold 24px Georgia";
+  ctx.fillText(date,600,680);
+
+  ctx.fillStyle = "#7a4b00";
+  ctx.font = "36px cursive";
+  ctx.fillText("Math Ridge Studio",600,745);
+
+  canvas.toBlob(function(blob){
+    if(!blob){
+      alert("Sorry, the certificate could not be saved. Please take a screenshot instead.");
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "math-ridge-play6-prime-factor-trees-certificate.png";
+    link.style.display = "none";
+
+    document.body.appendChild(link);
+    link.click();
+
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 500);
+  }, "image/png");
+}
+
+newRound();
+window.scrollTo({ top: 0, behavior: "auto" });
+</script>
+</body>
+</html>
