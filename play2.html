@@ -55,7 +55,19 @@
 			padding: clamp(6px, 1vw, 10px) clamp(4px, 0.8vw, 8px);
 			text-align: center;
 			box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-			overflow: hidden;
+			overflow: visible;
+		}
+
+		.challenge-board.shake-board {
+			animation: boardShake 0.42s ease;
+		}
+
+		@keyframes boardShake {
+			0%, 100% { transform: translateX(0); }
+			20% { transform: translateX(-6px); }
+			40% { transform: translateX(6px); }
+			60% { transform: translateX(-4px); }
+			80% { transform: translateX(4px); }
 		}
 
 		.challenge-board h2 {
@@ -65,6 +77,8 @@
 		}
 
 		.score-badge {
+			position: relative;
+			overflow: visible;
 			background: white;
 			border: 2px solid #ffd36e;
 			border-radius: 14px;
@@ -75,15 +89,144 @@
 		}
 
 		.turtle-track {
+			--progress: 0%;
+			position: relative;
+			width: 34px;
+			height: min(44vh, 330px);
+			min-height: 190px;
+			margin: 8px auto 6px;
+			border-radius: 999px;
+			background: #ffffff;
+			border: 3px solid #86c7ff;
+			overflow: visible;
+			box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
+		}
+
+		.progress-fill {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			height: var(--progress);
+			border-radius: 999px;
+			background: linear-gradient(0deg, #dcfce7, #fff3bf);
+			transition: height 0.35s ease;
+		}
+
+		.progress-turtle {
+			position: absolute;
+			left: 50%;
+			bottom: var(--progress);
+			transform: translate(-50%, 50%);
+			font-size: 1.35rem;
+			line-height: 1;
+			z-index: 2;
+			transition: bottom 0.35s ease, left 0.35s ease;
+			filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+		}
+
+		.progress-percent {
+			display: none;
+		}
+
+		/* Soft neon progress themes */
+		.turtle-track.theme-neutral .progress-fill {
+			background: linear-gradient(0deg, #dcfce7 0%, #fff3bf 100%);
+			box-shadow: 0 0 8px rgba(108, 192, 112, 0.45), 0 0 14px rgba(255, 211, 110, 0.35);
+		}
+
+		.turtle-track.theme-blue .progress-fill {
+			background: linear-gradient(0deg, #bfe7ff 0%, #fff3bf 100%);
+			box-shadow: 0 0 8px rgba(99, 179, 237, 0.45), 0 0 16px rgba(255, 211, 110, 0.35);
+		}
+
+		.turtle-track.theme-purple .progress-fill {
+			background: linear-gradient(0deg, #d8c7ff 0%, #fff3bf 100%);
+			box-shadow: 0 0 8px rgba(157, 126, 255, 0.42), 0 0 16px rgba(255, 211, 110, 0.35);
+		}
+
+		.focus-hint-toggle {
+			display: inline-block;
+			border: none;
+			background: transparent;
+			box-shadow: none;
+			color: #1f6fb8;
+			text-decoration: underline;
+			padding: 4px 6px;
+			font-size: 0.92rem;
+			cursor: pointer;
+		}
+
+		.focus-hint-toggle:hover {
+			transform: none;
+		}
+
+		.mini-helper.focus-collapsed {
+			min-height: 0;
+			padding: 4px;
+			border-color: transparent;
+			background: transparent;
+		}
+
+		.mini-helper.focus-collapsed .mini-title,
+		.mini-helper.focus-collapsed .mini-list {
+			display: none;
+		}
+
+		.mini-helper.focus-expanded .mini-title,
+		.mini-helper.focus-expanded .mini-list {
 			display: flex;
-			flex-direction: column-reverse;
-			gap: clamp(3px, 0.8vh, 6px);
-			align-items: center;
-			margin: 6px auto;
-			padding: clamp(5px, 0.9vh, 8px) 4px;
-			border-radius: 18px;
-			background: linear-gradient(180deg, #dff0ff, #fff8db);
-			border: 2px dashed #86c7ff;
+		}
+
+		.mini-helper.focus-expanded .mini-title {
+			display: block;
+		}
+
+		.hint-text.focus-hint-hidden {
+			display: none;
+		}
+
+
+		.progress-turtle.turtle-fade-away {
+			animation: turtleFadeAway 2s ease forwards;
+		}
+
+		@keyframes turtleFadeAway {
+			0% { opacity: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
+			100% { opacity: 0; filter: drop-shadow(0 10px 10px rgba(0,0,0,0)); }
+		}
+
+		.score-pop {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			z-index: 5;
+			pointer-events: none;
+			font-size: clamp(1.05rem, 2vw, 1.55rem);
+			font-weight: 900;
+			text-shadow: 0 2px 0 white, 0 3px 8px rgba(0,0,0,0.18);
+		}
+
+		.score-pop.plus-pop {
+			color: #248a2f;
+			animation: scoreFloatUp 2s ease-out forwards;
+		}
+
+		.score-pop.minus-pop {
+			color: #c0392b;
+			animation: scoreFloatDown 2s ease-out forwards;
+		}
+
+		@keyframes scoreFloatUp {
+			0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+			15% { opacity: 1; transform: translate(-50%, -90%) scale(1.28); }
+			100% { opacity: 0; transform: translate(-50%, -190%) scale(0.9); }
+		}
+
+		@keyframes scoreFloatDown {
+			0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+			15% { opacity: 1; transform: translate(-50%, -15%) scale(1.28); }
+			100% { opacity: 0; transform: translate(-50%, 120%) scale(0.9); }
 		}
 .certificate-note-wide {
     text-align: center;
@@ -98,28 +241,6 @@
     font-size: 1rem;
 }
 
-		.track-step {
-			width: clamp(22px, 3.8vh, 34px);
-			height: clamp(22px, 3.8vh, 34px);
-			background: white;
-			border: 2px dashed #b9dcff;
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: clamp(0.72rem, 2vh, 1rem);
-		}
-
-		.track-step.active {
-			background: #dff0ff;
-			border: 3px solid #86c7ff;
-			transform: scale(1.15);
-		}
-
-		.track-step.done {
-			background: #dcfce7;
-			border: 3px solid #6cc070;
-		}
 
 		.challenge-text {
 			margin-top: 6px;
@@ -152,6 +273,46 @@
 			font-size: 1.5rem;
 			margin-bottom: 12px;
 		}
+
+		.expression-board {
+			text-align: center;
+			margin: 16px 0 12px;
+			padding: 16px 12px;
+			border-radius: 22px;
+			background: #fffdf2;
+			border: 4px solid #ffd36e;
+			box-shadow: inset 0 0 0 3px rgba(255, 211, 110, 0.25);
+		}
+
+		.expression-label {
+			font-weight: bold;
+			color: #7a4b00;
+			margin-bottom: 8px;
+			font-size: 1rem;
+		}
+
+		.expression-line {
+			font-size: clamp(2rem, 7vw, 4rem);
+			font-weight: bold;
+			letter-spacing: 0.04em;
+			line-height: 1.15;
+			word-break: break-word;
+		}
+
+		.count-input-row {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			gap: 12px;
+			margin-top: 14px;
+		}
+
+		.count-input-row input {
+			width: 120px;
+			font-size: 1.55rem;
+		}
+
 
 		.terms {
 			display: flex;
@@ -334,6 +495,20 @@
 
 		button:hover {
 			transform: translateY(-2px);
+		}
+
+		button.locked-button,
+		button:disabled {
+			background: #d8d8d8;
+			color: #777;
+			box-shadow: none;
+			cursor: not-allowed;
+			opacity: 0.72;
+		}
+
+		button.locked-button:hover,
+		button:disabled:hover {
+			transform: none;
 		}
 
 		.total-choice {
@@ -617,7 +792,7 @@
 		border-radius: 0 0 18px 18px;
 		padding: 6px 8px;
 		display: grid;
-		grid-template-columns: 74px 1fr;
+		grid-template-columns: 1fr 74px;
 		grid-template-rows: auto auto;
 		gap: 4px 8px;
 		align-items: center;
@@ -628,28 +803,55 @@
 	}
 
 	.score-badge {
-		grid-column: 1;
+		grid-column: 2;
 		grid-row: 1;
 		margin: 0;
 		font-size: 0.8rem;
 	}
 
 	.turtle-track {
-		grid-column: 2;
+		grid-column: 1;
 		grid-row: 1;
-		display: flex;
-		flex-direction: row-reverse;
-		justify-content: center;
-		gap: 3px;
+		width: 100%;
+		height: 24px;
+		min-height: 0;
 		margin: 0;
-		padding: 4px;
 	}
 
-	.track-step {
-		width: 21px;
-		height: 21px;
-		font-size: 0.68rem;
+	.progress-fill {
+		left: 0;
+		top: 0;
+		bottom: auto;
+		width: var(--progress);
+		height: 100%;
+		background: linear-gradient(90deg, #dcfce7, #fff3bf);
+		transition: width 0.35s ease;
 	}
+
+	.progress-turtle {
+		left: var(--progress);
+		top: 50%;
+		bottom: auto;
+		transform: translate(-50%, -58%) scaleX(-1);
+		font-size: 1.2rem;
+	}
+
+	.progress-percent {
+		display: none;
+	}
+
+	.turtle-track.theme-neutral .progress-fill {
+		background: linear-gradient(90deg, #dcfce7 0%, #fff3bf 100%);
+	}
+
+	.turtle-track.theme-blue .progress-fill {
+		background: linear-gradient(90deg, #bfe7ff 0%, #fff3bf 100%);
+	}
+
+	.turtle-track.theme-purple .progress-fill {
+		background: linear-gradient(90deg, #d8c7ff 0%, #fff3bf 100%);
+	}
+
 
 	.challenge-text {
 		grid-column: 1 / 3;
@@ -735,10 +937,10 @@
 
 	<div class="game">
 		<div class="challenge-board">
-			<h2>🐢 Turtle Climb</h2>
+			<h2>🐢 Progress Bar</h2>
 			<div class="score-badge" id="scoreText">Score: 0</div>
 			<div class="turtle-track" id="turtleTrack"></div>
-			<div class="challenge-text" id="challengeMessage">Climb 10 clean steps to score.</div>
+			<div class="challenge-text" id="challengeMessage">Complete one clean progress bar to score.</div>
 		</div>
 
 		<h1>Positive Negative Showdown</h1>
@@ -747,17 +949,32 @@
 🐢 Reach the finish line at Score 10 to earn your certificate!
 </div>
 		<div class="instruction" id="instruction">
-			Step 1: Five random terms are ready. Tap a number to begin.
+			Step 1: Count how many terms are in the question first.
 		</div>
 
-		<div class="terms" id="termBank"></div>
+		<div class="expression-board" id="expressionBoard">
+			<div class="expression-label">Given question:</div>
+			<div class="expression-line" id="expressionLine"></div>
+		</div>
 
-		<div class="step-card">
+		<div class="step-card" id="termCountStep">
+			<h2>Step 1: How many terms are presented?</h2>
+			<p style="text-align:center; font-weight:bold;">Each signed number is one movable term.</p>
+			<div class="count-input-row">
+				<input id="termCountInput" class="count-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="terms" />
+				<button onclick="checkTermCountFromInput()">Check Term Count</button>
+			</div>
+			<div class="feedback" id="countFeedback"></div>
+		</div>
+
+		<div class="step-card hidden" id="sortStep">
 			<h2>Step 2: Sort Positives and Negatives</h2>
-			<p style="text-align:center; font-weight:bold;">Tap a number, then tap the correct team.</p>
+			<p style="text-align:center; font-weight:bold;">Now the fixed line becomes movable objects. Tap a number, then tap the correct team.</p>
 		</div>
 
-		<div class="zones">
+		<div class="terms hidden" id="termBank"></div>
+
+		<div class="zones hidden" id="zones">
 			<div class="zone plus-zone" data-zone="plus">
 				<h2>☀️ Positive Team</h2>
 				<div class="zone-drop" id="plusTeam"></div>
@@ -781,7 +998,7 @@
 
 				<div>
 					<div class="input-row">
-						<input id="positiveInput" type="text" placeholder="+?" />
+						<input id="positiveInput" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="+?" />
 						<button onclick="checkPositiveTotal()">Check Positive Total</button>
 					</div>
 					<div class="feedback" id="positiveFeedback"></div>
@@ -799,7 +1016,7 @@
 
 				<div>
 					<div class="input-row">
-						<input id="negativeInput" type="text" placeholder="−?" />
+						<input id="negativeInput" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="−?" />
 						<button onclick="checkNegativeTotal()">Check Negative Total</button>
 					</div>
 					<div class="feedback" id="negativeFeedback"></div>
@@ -826,7 +1043,7 @@
 		</div>
 
 		<div class="bottom-controls" id="bottomControls">
-			<button onclick="nextClimb()">Next Climb</button>
+			<button id="nextClimbButton" class="locked-button" onclick="nextClimb()" disabled>Next Climb</button>
 			<button onclick="resetPracticeGame()">Reset This Game</button>
 			<button onclick="resetChallenge()">Reset Turtle Score</button>
 		</div>
@@ -842,6 +1059,7 @@
 		let selectedRingChoice = null;
 		let ringData = {};
 		let wrongAnswerCount = 0;
+		let termCountComplete = false;
 
 		let turtleScore = 0;
 		let runCorrectCount = 0;
@@ -849,41 +1067,152 @@
 		let gameScoreAwarded = false;
 		let achievementShown = false;
 		let confettiTimer = null;
+		let currentProgressTheme = "neutral";
+		let progressThemeTimer = null;
 
 		const termBank = document.getElementById("termBank");
 		const zones = document.querySelectorAll(".zone");
 		const feedback = document.getElementById("feedback");
 
+
+		function getProgressThemeForScore(score) {
+			if (score >= 7) return "purple";
+			if (score >= 4) return "blue";
+			return "neutral";
+		}
+
+		function applyProgressThemeNow() {
+			currentProgressTheme = getProgressThemeForScore(turtleScore);
+			updateTurtleBoard();
+		}
+
+		function applyProgressThemeAfterDelay() {
+			if (progressThemeTimer) clearTimeout(progressThemeTimer);
+			progressThemeTimer = setTimeout(() => {
+				currentProgressTheme = getProgressThemeForScore(turtleScore);
+				updateTurtleBoard();
+			}, 2000);
+		}
+
+		function toggleMiniHelper(button) {
+			const helper = button.closest(".mini-helper");
+			if (!helper) return;
+
+			const isExpanded = helper.classList.toggle("focus-expanded");
+			helper.classList.toggle("focus-collapsed", !isExpanded);
+			button.textContent = isExpanded ? "Hide hint" : "Show hint";
+		}
+
+		function updateFocusHintMode() {
+			const focusMode = turtleScore >= 4;
+
+			document.querySelectorAll(".mini-helper").forEach(helper => {
+				let toggle = helper.querySelector(".focus-hint-toggle");
+
+				if (focusMode) {
+					if (!toggle) {
+						toggle = document.createElement("button");
+						toggle.type = "button";
+						toggle.className = "focus-hint-toggle";
+						toggle.textContent = "Show hint";
+						toggle.onclick = () => toggleMiniHelper(toggle);
+						helper.insertBefore(toggle, helper.firstChild);
+					}
+
+					helper.classList.add("focus-collapsed");
+					helper.classList.remove("focus-expanded");
+					toggle.textContent = "Show hint";
+					toggle.style.display = "inline-block";
+				} else {
+					helper.classList.remove("focus-collapsed", "focus-expanded");
+					if (toggle) toggle.style.display = "none";
+				}
+			});
+
+			const ringHint = document.querySelector("#ringHint .hint-text");
+			if (ringHint && focusMode) {
+				let holder = document.getElementById("ringHint");
+				let toggle = holder.querySelector(".focus-hint-toggle");
+
+				if (!toggle) {
+					toggle = document.createElement("button");
+					toggle.type = "button";
+					toggle.className = "focus-hint-toggle";
+					toggle.textContent = "Show hint";
+					toggle.onclick = () => {
+						ringHint.classList.toggle("focus-hint-hidden");
+						toggle.textContent = ringHint.classList.contains("focus-hint-hidden") ? "Show hint" : "Hide hint";
+					};
+					holder.insertBefore(toggle, ringHint);
+				}
+
+				ringHint.classList.add("focus-hint-hidden");
+			}
+		}
+
+
 		function randomInt(min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
 
-		function getDifficultyRange() {
+		function getRequiredProgressSteps() {
+			// 1 term-count answer + each sorted term + positive total + negative total
+			// + bigger total pick + second total pick + final ring answer.
+			return terms.length > 0 ? terms.length + 6 : 10;
+		}
+
+		function getTermCountRange() {
 			if (turtleScore <= 3) {
-				return { minTotal: 2, maxTotal: 14, minValue: 1, maxValue: 7 };
+				return { minTerms: 4, maxTerms: 5 };
 			}
 
 			if (turtleScore <= 6) {
-				return { minTotal: 2, maxTotal: 19, minValue: 1, maxValue: 9 };
+				return { minTerms: 5, maxTerms: 6 };
 			}
 
 			if (turtleScore <= 10) {
-				return { minTotal: 11, maxTotal: 27, minValue: 2, maxValue: 12 };
+				return { minTerms: 6, maxTerms: 7 };
 			}
 
-			return { minTotal: 2, maxTotal: 27, minValue: 1, maxValue: 12 };
+			return { minTerms: 7, maxTerms: 8 };
+		}
+
+		function getDifficultyRange() {
+			if (turtleScore <= 3) {
+				return { minTotal: 2, maxTotal: 18, minValue: 1, maxValue: 7 };
+			}
+
+			if (turtleScore <= 6) {
+				return { minTotal: 3, maxTotal: 24, minValue: 1, maxValue: 9 };
+			}
+
+			if (turtleScore <= 10) {
+				return { minTotal: 5, maxTotal: 34, minValue: 2, maxValue: 12 };
+			}
+
+			if (turtleScore <= 13) {
+				return { minTotal: 6, maxTotal: 42, minValue: 2, maxValue: 12 };
+			}
+
+			if (turtleScore <= 16) {
+				return { minTotal: 8, maxTotal: 50, minValue: 2, maxValue: 12 };
+			}
+
+			return { minTotal: 9, maxTotal: 60, minValue: 2, maxValue: 12 };
 		}
 
 		function generateTerms() {
 			const difficulty = getDifficultyRange();
+			const termRange = getTermCountRange();
 			let safety = 0;
 
 			while (safety < 1000) {
 				safety++;
 
 				const result = [];
-				const positiveCount = randomInt(2, 3);
-				const negativeCount = 5 - positiveCount;
+				const termCount = randomInt(termRange.minTerms, termRange.maxTerms);
+				const positiveCount = randomInt(2, termCount - 2);
+				const negativeCount = termCount - positiveCount;
 
 				for (let i = 0; i < positiveCount; i++) {
 					result.push(randomInt(difficulty.minValue, difficulty.maxValue));
@@ -911,9 +1240,9 @@
 			}
 
 			// Backup, in case random generation has trouble finding a match.
-			terms = [3, -5, 2, -7, 4];
-			positiveTotal = 9;
-			negativeTotal = -12;
+			terms = [4, -2, 3, -5, -1];
+			positiveTotal = 7;
+			negativeTotal = -8;
 		}
 
 		function scrollToCenter(id) {
@@ -932,7 +1261,59 @@
 			return value > 0 ? `+${value}` : `−${Math.abs(value)}`;
 		}
 
+		function formatExpressionLine() {
+			return terms.map((value, index) => {
+				const size = Math.abs(value);
+				if (index === 0) {
+					return value < 0 ? `−${size}` : `${size}`;
+				}
+
+				return value < 0 ? `−${size}` : `+${size}`;
+			}).join("");
+		}
+
+		function renderExpressionLine() {
+			document.getElementById("expressionLine").textContent = formatExpressionLine();
+		}
+
+		function prepareTermCountInput() {
+			const input = document.getElementById("termCountInput");
+			if (!input) return;
+
+			input.value = "";
+			input.style.borderColor = "#b9dcff";
+		}
+
+		function checkTermCountFromInput() {
+			const input = document.getElementById("termCountInput");
+			const countFeedback = document.getElementById("countFeedback");
+			input.value = sanitizeDigitText(input.value);
+			const choice = Number(input.value);
+
+			if (!input.value || choice !== terms.length) {
+				input.style.borderColor = "#ef7777";
+				countFeedback.textContent = "Not yet. Count each signed number as one term.";
+				countFeedback.className = "feedback bad-text";
+				markMistake();
+				return;
+			}
+
+			termCountComplete = true;
+			input.style.borderColor = "#6cc070";
+			countFeedback.textContent = "✅ Correct. Now the terms become movable objects.";
+			countFeedback.className = "feedback good-text";
+			document.getElementById("termBank").classList.remove("hidden");
+			document.getElementById("sortStep").classList.remove("hidden");
+			document.getElementById("zones").classList.remove("hidden");
+			document.getElementById("instruction").textContent =
+				"Step 2: Tap a movable term, then tap the correct team.";
+			markCorrectStep();
+			scrollToCenter("sortStep");
+		}
+
 		function renderTerms() {
+			renderExpressionLine();
+			prepareTermCountInput();
 			termBank.innerHTML = "";
 
 			terms.forEach(value => {
@@ -956,24 +1337,21 @@
 			const challengeMessage = document.getElementById("challengeMessage");
 
 			scoreText.textContent = `Score: ${turtleScore}`;
-			turtleTrack.innerHTML = "";
 
-			for (let i = 1; i <= 10; i++) {
-				const step = document.createElement("div");
-				step.className = "track-step";
+			const requiredSteps = getRequiredProgressSteps();
+			const progressPercent = requiredSteps > 0
+				? Math.min(100, Math.round((runCorrectCount / requiredSteps) * 100))
+				: 0;
 
-				if (i <= runCorrectCount) {
-					step.classList.add("done");
-					step.textContent = "🌿";
-				} else if (i === runCorrectCount + 1) {
-					step.classList.add("active");
-					step.textContent = "🐢";
-				} else {
-					step.textContent = "•";
-				}
+			turtleTrack.style.setProperty("--progress", `${progressPercent}%`);
+			turtleTrack.classList.remove("theme-neutral", "theme-blue", "theme-purple");
+			turtleTrack.classList.add(`theme-${currentProgressTheme}`);
+			turtleTrack.innerHTML = `
+				<div class="progress-fill"></div>
+				<div class="progress-turtle">🐢</div>
+			`;
 
-				turtleTrack.appendChild(step);
-			}
+			updateFocusHintMode();
 
 			if (turtleScore >= 10) {
 				challengeMessage.textContent = "🎁 10 scores! Show your parent and ask for a gift.";
@@ -987,36 +1365,104 @@
 			}
 		}
 
+		function popScoreChange(text, type) {
+			const scoreText = document.getElementById("scoreText");
+			if (!scoreText) return;
+
+			const pop = document.createElement("span");
+			pop.className = `score-pop ${type === "plus" ? "plus-pop" : "minus-pop"}`;
+			pop.textContent = text;
+			scoreText.appendChild(pop);
+
+			setTimeout(() => {
+				pop.remove();
+			}, 2100);
+		}
+
+		function shakeScoreBoard() {
+			const board = document.querySelector(".challenge-board");
+			if (!board) return;
+
+			board.classList.remove("shake-board");
+			void board.offsetWidth;
+			board.classList.add("shake-board");
+
+			setTimeout(() => {
+				board.classList.remove("shake-board");
+			}, 500);
+		}
+
+		function fadeCompletionTurtle() {
+			const turtle = document.querySelector(".progress-turtle");
+			if (!turtle) return;
+
+			turtle.classList.remove("turtle-fade-away");
+			void turtle.offsetWidth;
+			turtle.classList.add("turtle-fade-away");
+		}
+
+
+		function setNextClimbLocked(isLocked) {
+			const button = document.getElementById("nextClimbButton");
+			if (!button) return;
+
+			button.disabled = isLocked;
+			button.classList.toggle("locked-button", isLocked);
+		}
+
+		function unlockNextClimb() {
+			setNextClimbLocked(false);
+		}
+
+
 		function markCorrectStep() {
 			if (gameScoreAwarded) return;
 
 			runCorrectCount++;
+			const requiredSteps = getRequiredProgressSteps();
+			let earnedScoreNow = false;
 
-			if (runCorrectCount >= 10 && mistakesThisGame === 0) {
+			if (runCorrectCount >= requiredSteps && mistakesThisGame === 0) {
 				turtleScore++;
 				gameScoreAwarded = true;
+				earnedScoreNow = true;
+				unlockNextClimb();
 				document.getElementById("challengeMessage").textContent = "🏁 Flawless full game! +1 score. Press Next Climb to try another perfect run.";
 			} else if (mistakesThisGame === 0) {
-				document.getElementById("challengeMessage").textContent = "Good. Keep the turtle moving. Finish all 10 steps without a mistake.";
+				document.getElementById("challengeMessage").textContent = "Good. Keep the turtle moving. Finish the bar without a mistake.";
 			} else {
 				document.getElementById("challengeMessage").textContent = "Keep practicing. This game already has an error, so start the next climb for another scoring chance.";
 			}
 
 			updateTurtleBoard();
+
+			if (earnedScoreNow) {
+				fadeCompletionTurtle();
+				popScoreChange("+1", "plus");
+			}
 		}
 
 		function markMistake() {
 			mistakesThisGame++;
 			runCorrectCount = 0;
+			let lostScoreNow = false;
 
 			if (mistakesThisGame > 1 && turtleScore > 0) {
 				turtleScore--;
+				lostScoreNow = true;
 				document.getElementById("challengeMessage").textContent = "Second mistake in the same game. Turtle loses 1 score, but score cannot go below 0.";
+			} else if (mistakesThisGame > 1) {
+				document.getElementById("challengeMessage").textContent = "Second mistake in the same game. Score is already 0, so keep practicing without losing more.";
 			} else {
 				document.getElementById("challengeMessage").textContent = "Mistake made. Climb cleared. This game cannot earn a score now. Try to finish, then press Next Climb.";
 			}
 
 			updateTurtleBoard();
+			shakeScoreBoard();
+
+			if (lostScoreNow) {
+				popScoreChange("−1", "minus");
+			}
 		}
 
 		function resetChallenge() {
@@ -1025,8 +1471,10 @@
 			mistakesThisGame = 0;
 			gameScoreAwarded = false;
 			achievementShown = false;
+			setNextClimbLocked(true);
 			stopConfetti();
-			document.getElementById("challengeMessage").textContent = "Finish 10 correct steps in one clean game to earn +1 point.";
+			document.getElementById("challengeMessage").textContent = `Finish ${getRequiredProgressSteps()} correct steps in one clean game to earn +1 point.`;
+			currentProgressTheme = "neutral";
 			updateTurtleBoard();
 		}
 
@@ -1066,6 +1514,12 @@
 		}
 
 		function selectTerm(term) {
+			if (!termCountComplete) {
+				document.getElementById("countFeedback").textContent = "Count the terms first. Then the pieces can move.";
+				document.getElementById("countFeedback").className = "feedback bad-text";
+				return;
+			}
+
 			document.querySelectorAll(".term").forEach(t => t.classList.remove("selected"));
 			selectedTerm = term;
 			term.classList.add("selected");
@@ -1147,11 +1601,59 @@
 				mini.textContent = formatSigned(value);
 				container.appendChild(mini);
 			});
+
+			updateFocusHintMode();
+		}
+
+		function sanitizeDigitText(raw) {
+			return String(raw).replace(/[^0-9]/g, "");
+		}
+
+		function sanitizeMathText(raw, allowPlus = true) {
+			let value = String(raw)
+				.replaceAll("−", "-")
+				.replaceAll("#", "-")
+				.replaceAll("*", "+")
+				.replace(/\s+/g, "");
+
+			value = value.replace(allowPlus ? /[^0-9+\-]/g : /[^0-9\-]/g, "");
+
+			const signMatch = value.match(/[+\-]/);
+			const sign = signMatch ? signMatch[0] : "";
+			const digits = value.replace(/[+\-]/g, "");
+
+			return `${sign}${digits}`;
 		}
 
 		function cleanInput(id) {
-			const raw = document.getElementById(id).value.trim().replace(/\s+/g, "").replace("−", "-");
-			return Number(raw);
+			const input = document.getElementById(id);
+			const allowPlus = id === "ringAnswer";
+			input.value = sanitizeMathText(input.value, allowPlus);
+			return Number(input.value);
+		}
+
+		function setupMathInputFiltering() {
+			document.addEventListener("input", event => {
+				if (!event.target.classList) return;
+
+				if (event.target.classList.contains("count-input")) {
+					event.target.value = sanitizeDigitText(event.target.value);
+					return;
+				}
+
+				if (!event.target.classList.contains("math-input")) return;
+
+				const allowPlus = event.target.id === "ringAnswer";
+				event.target.value = sanitizeMathText(event.target.value, allowPlus);
+			});
+
+			document.addEventListener("keydown", event => {
+				if (event.key !== "Enter") return;
+
+				if (event.target.id === "termCountInput") {
+					checkTermCountFromInput();
+				}
+			});
 		}
 
 		function checkPositiveTotal() {
@@ -1288,7 +1790,7 @@
 						Solve it: ${ringData.first.sign}(${ringData.first.size} − ${ringData.second.size}) =
 					</label>
 
-					<input id="ringAnswer" type="text" placeholder="answer">
+					<input id="ringAnswer" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="answer">
 					<button onclick="checkRingAnswer()">Check</button>
 				</div>
 
@@ -1308,7 +1810,8 @@
 
 			const answerSize = ringData.first.size - ringData.second.size;
 			const correctAnswer = answerSize === 0 ? "0" : `${ringData.first.sign}${answerSize}`;
-			const studentAnswer = input.value.trim().replace(/\s+/g, "").replace("−", "-");
+			input.value = sanitizeMathText(input.value, true);
+			const studentAnswer = input.value;
 			const cleanCorrect = correctAnswer.replace("−", "-");
 
 			if (studentAnswer === cleanCorrect || studentAnswer === cleanCorrect.replace("+", "")) {
@@ -1319,6 +1822,7 @@
 				feedback.className = "feedback good-text";
 				input.style.borderColor = "#6cc070";
 				markCorrectStep();
+				unlockNextClimb();
 				scrollToCenter("bottomControls");
 				return;
 			}
@@ -1335,6 +1839,7 @@
 					Now subtract ${ringData.first.size} − ${ringData.second.size}.
 				</div>
 			`;
+			updateFocusHintMode();
 
 			feedback.textContent = "Try again. The answer is not correct yet.";
 			feedback.className = "feedback bad-text";
@@ -1345,11 +1850,13 @@
 				runCorrectCount = 0;
 				mistakesThisGame = 0;
 				gameScoreAwarded = false;
+				setNextClimbLocked(true);
 				updateTurtleBoard();
 			}
 
 			selectedTerm = null;
 			selectedRingChoice = null;
+			termCountComplete = false;
 			ringStep = 0;
 			ringData = {};
 			wrongAnswerCount = 0;
@@ -1365,10 +1872,17 @@
 			document.getElementById("negativeMiniList").innerHTML = "";
 			document.getElementById("positiveInput").value = "";
 			document.getElementById("negativeInput").value = "";
+			document.getElementById("termCountInput").value = "";
+			document.getElementById("termCountInput").style.borderColor = "#b9dcff";
 			feedback.textContent = "";
 			feedback.className = "feedback";
 			document.getElementById("positiveFeedback").textContent = "";
 			document.getElementById("negativeFeedback").textContent = "";
+			document.getElementById("countFeedback").textContent = "";
+			document.getElementById("termBank").classList.add("hidden");
+			document.getElementById("sortStep").classList.add("hidden");
+			document.getElementById("zones").classList.add("hidden");
+			document.getElementById("instruction").textContent = "Step 1: Count how many terms are in the question first.";
 			document.getElementById("positiveTotalStep").classList.add("hidden");
 			document.getElementById("negativeTotalStep").classList.add("hidden");
 			document.getElementById("ringBuilder").classList.add("hidden");
@@ -1380,16 +1894,18 @@
 		}
 
 		function nextClimb() {
+			setNextClimbLocked(true);
 			resetGame({ keepClimbProgress: false });
 			termBank.innerHTML = "";
 			generateTerms();
 			renderTerms();
-			document.getElementById("challengeMessage").textContent = "New climb started. Finish 10 clean steps to score.";
+			document.getElementById("challengeMessage").textContent = "New climb started. Count the terms first, then sort them.";
 			updateTurtleBoard();
+			applyProgressThemeAfterDelay();
 
 			setTimeout(() => {
 				window.scrollTo({
-					top: Math.max(0, termBank.offsetTop - 120),
+					top: Math.max(0, document.getElementById("expressionBoard").offsetTop - 120),
 					behavior: "smooth"
 				});
 			}, 180);
@@ -1505,6 +2021,9 @@ function saveCertificateImage() {
 	link.href = canvas.toDataURL("image/png");
 	link.click();
 }
+		setupMathInputFiltering();
+		setNextClimbLocked(true);
+
 		resetGame({ keepClimbProgress: false });
 
 		termBank.innerHTML = "";
@@ -1512,7 +2031,7 @@ function saveCertificateImage() {
 		renderTerms();
 
 		document.getElementById("challengeMessage").textContent =
-			"Climb 10 clean steps to score.";
+			`Climb ${getRequiredProgressSteps()} clean steps to score.`;
 
 		updateTurtleBoard();
 
