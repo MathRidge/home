@@ -68,7 +68,19 @@ h1 {
 	padding: clamp(6px, 1vw, 10px) clamp(4px, 0.8vw, 8px);
 	text-align: center;
 	box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-	overflow: hidden;
+	overflow: visible;
+}
+
+.challenge-board.shake-board {
+	animation: boardShake 0.42s ease;
+}
+
+@keyframes boardShake {
+	0%, 100% { transform: translateX(0); }
+	20% { transform: translateX(-6px); }
+	40% { transform: translateX(6px); }
+	60% { transform: translateX(-4px); }
+	80% { transform: translateX(4px); }
 }
 
 .challenge-board h2 {
@@ -78,6 +90,8 @@ h1 {
 }
 
 .score-badge {
+	position: relative;
+	overflow: visible;
 	background: white;
 	border: 2px solid #ffd36e;
 	border-radius: 14px;
@@ -88,38 +102,103 @@ h1 {
 }
 
 .turtle-track {
-	display: flex;
-	flex-direction: column-reverse;
-	gap: clamp(3px, 0.8vh, 6px);
-	align-items: center;
-	margin: 6px auto;
-	padding: clamp(5px, 0.9vh, 8px) 4px;
-	border-radius: 18px;
-	background: linear-gradient(180deg, #dff0ff, #fff8db);
-	border: 2px dashed #86c7ff;
-}
-
-.track-step {
-	width: clamp(22px, 3.8vh, 34px);
-	height: clamp(22px, 3.8vh, 34px);
-	background: white;
-	border: 2px dashed #b9dcff;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: clamp(0.72rem, 2vh, 1rem);
-}
-
-.track-step.active {
-	background: #dff0ff;
+	--progress: 0%;
+	position: relative;
+	width: 34px;
+	height: min(44vh, 330px);
+	min-height: 190px;
+	margin: 8px auto 6px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.94);
 	border: 3px solid #86c7ff;
-	transform: scale(1.15);
+	overflow: visible;
+	box-shadow: inset 0 2px 6px rgba(0,0,0,0.12), 0 0 12px rgba(134,199,255,0.35);
 }
 
-.track-step.done {
-	background: #dcfce7;
-	border: 3px solid #6cc070;
+.progress-fill {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: var(--progress);
+	border-radius: 999px;
+	background: linear-gradient(0deg, #dcfce7 0%, #fff3bf 100%);
+	box-shadow: 0 0 10px rgba(255, 211, 110, 0.55), 0 0 18px rgba(134, 199, 255, 0.32);
+	transition: height 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.turtle-track.neon-blue,
+.turtle-track.neon-purple {
+	border-color: #86c7ff;
+	box-shadow: inset 0 2px 6px rgba(0,0,0,0.12), 0 0 12px rgba(134,199,255,0.35);
+}
+
+.turtle-track.neon-blue .progress-fill {
+	background: linear-gradient(0deg, #95d7ff 0%, #d8efff 45%, #fff3bf 100%);
+	box-shadow: 0 0 10px rgba(255, 211, 110, 0.58), 0 0 18px rgba(112, 190, 255, 0.48), 0 0 28px rgba(112, 190, 255, 0.22);
+}
+
+.turtle-track.neon-purple .progress-fill {
+	background: linear-gradient(0deg, #cfb8ff 0%, #eadfff 45%, #fff3bf 100%);
+	box-shadow: 0 0 10px rgba(255, 211, 110, 0.58), 0 0 18px rgba(177, 139, 255, 0.46), 0 0 28px rgba(177, 139, 255, 0.22);
+}
+
+.progress-turtle {
+	position: absolute;
+	left: 50%;
+	bottom: var(--progress);
+	transform: translate(-50%, 50%);
+	font-size: 1.35rem;
+	line-height: 1;
+	z-index: 2;
+	transition: bottom 0.35s ease, left 0.35s ease;
+	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+}
+
+.progress-percent {
+	display: none;
+}
+
+.progress-turtle.turtle-fade-away {
+	animation: turtleFadeAway 2s ease forwards;
+}
+
+@keyframes turtleFadeAway {
+	0% { opacity: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
+	100% { opacity: 0; filter: drop-shadow(0 10px 10px rgba(0,0,0,0)); }
+}
+
+.score-pop {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 5;
+	pointer-events: none;
+	font-size: clamp(1.05rem, 2vw, 1.55rem);
+	font-weight: 900;
+	text-shadow: 0 2px 0 white, 0 3px 8px rgba(0,0,0,0.18);
+}
+
+.score-pop.plus-pop {
+	color: #248a2f;
+	animation: scoreFloatUp 2s ease-out forwards;
+}
+
+.score-pop.minus-pop {
+	color: #c0392b;
+	animation: scoreFloatDown 2s ease-out forwards;
+}
+
+@keyframes scoreFloatUp {
+	0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+	15% { opacity: 1; transform: translate(-50%, -90%) scale(1.28); }
+	100% { opacity: 0; transform: translate(-50%, -190%) scale(0.9); }
+}
+
+@keyframes scoreFloatDown {
+	0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+	15% { opacity: 1; transform: translate(-50%, -15%) scale(1.28); }
+	100% { opacity: 0; transform: translate(-50%, 120%) scale(0.9); }
 }
 
 .challenge-text {
@@ -387,6 +466,34 @@ button:hover {
 	transform: translateY(-2px);
 }
 
+
+button:disabled,
+button.locked {
+	cursor: not-allowed;
+	opacity: 0.48;
+	filter: grayscale(0.75);
+	box-shadow: inset 0 2px 8px rgba(0,0,0,0.16);
+	transform: none;
+}
+
+button:disabled:hover,
+button.locked:hover {
+	transform: none;
+}
+
+.next-climb-btn.unlocked {
+	opacity: 1;
+	filter: none;
+	cursor: pointer;
+	animation: nextClimbReady 0.55s ease;
+}
+
+@keyframes nextClimbReady {
+	0% { transform: scale(0.96); }
+	60% { transform: scale(1.04); }
+	100% { transform: scale(1); }
+}
+
 .bottom-controls {
 	display: flex;
 	justify-content: center;
@@ -630,7 +737,7 @@ button:hover {
 		border-radius: 0 0 18px 18px;
 		padding: 6px 8px;
 		display: grid;
-		grid-template-columns: 74px 1fr;
+		grid-template-columns: 1fr 74px;
 		grid-template-rows: auto auto;
 		gap: 4px 8px;
 		align-items: center;
@@ -641,27 +748,45 @@ button:hover {
 	}
 
 	.score-badge {
-		grid-column: 1;
+		grid-column: 2;
 		grid-row: 1;
 		margin: 0;
 		font-size: 0.8rem;
 	}
 
 	.turtle-track {
-		grid-column: 2;
+		grid-column: 1;
 		grid-row: 1;
-		display: flex;
-		flex-direction: row-reverse;
-		justify-content: center;
-		gap: 3px;
+		width: 100%;
+		height: 24px;
+		min-height: 0;
 		margin: 0;
-		padding: 4px;
 	}
 
-	.track-step {
-		width: 21px;
-		height: 21px;
-		font-size: 0.68rem;
+	.progress-fill {
+		left: 0;
+		top: 0;
+		bottom: auto;
+		width: var(--progress);
+		height: 100%;
+		background: linear-gradient(90deg, #dcfce7 0%, #fff3bf 100%);
+		transition: width 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+	}
+
+	.turtle-track.neon-blue .progress-fill {
+		background: linear-gradient(90deg, #95d7ff 0%, #d8efff 45%, #fff3bf 100%);
+	}
+
+	.turtle-track.neon-purple .progress-fill {
+		background: linear-gradient(90deg, #cfb8ff 0%, #eadfff 45%, #fff3bf 100%);
+	}
+
+	.progress-turtle {
+		left: var(--progress);
+		top: 50%;
+		bottom: auto;
+		transform: translate(-50%, -58%) scaleX(-1);
+		font-size: 1.2rem;
 	}
 .problem-display {
 	font-size: clamp(0.95rem, 5vw, 1.45rem);
@@ -756,10 +881,10 @@ button:hover {
 
 <div class="game">
 	<div class="challenge-board">
-		<h2>🐢 Turtle Climb</h2>
+		<h2>🐢 Progress Bar</h2>
 		<div class="score-badge" id="scoreText">Score: 0</div>
 		<div class="turtle-track" id="turtleTrack"></div>
-		<div class="challenge-text" id="challengeMessage">Complete each correct action to move the turtle.</div>
+		<div class="challenge-text" id="challengeMessage">Complete one clean progress bar to score.</div>
 	</div>
 
 	<h1>Sign Fixer Challenge</h1>
@@ -827,7 +952,7 @@ button:hover {
 
 		<div class="input-row">
 			<label style="font-size:1.25rem; font-weight:bold;">Final Answer:</label>
-			<input id="finalAnswerInput" type="text" placeholder="answer">
+			<input id="finalAnswerInput" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="answer">
 			<button onclick="checkFinalAnswer()">Check Final Answer</button>
 		</div>
 
@@ -835,7 +960,7 @@ button:hover {
 	</div>
 
 	<div class="bottom-controls" id="bottomControls">
-		<button onclick="nextRound()">Next Round</button>
+		<button id="nextClimbButton" class="next-climb-btn locked" onclick="nextRound()" disabled>Next Climb</button>
 		<button onclick="resetCurrentRound()">Reset This Round</button>
 		<button onclick="resetChallenge()">Reset Turtle Score</button>
 	</div>
@@ -853,6 +978,9 @@ let mistakesThisRound = 0;
 let roundScoreAwarded = false;
 let achievementShown = false;
 let confettiTimer = null;
+let nextClimbUnlocked = false;
+let activeProgressThemeClass = "";
+let progressThemeTimer = null;
 
 const problemDisplay = document.getElementById("problemDisplay");
 const choiceGrid = document.getElementById("choiceGrid");
@@ -881,7 +1009,7 @@ function formatExpression(terms) {
 
 function getTermCount() {
 	if (turtleScore <= 2) return 3;
-	if (turtleScore <= 5) return 4;
+	if (turtleScore <= 6) return 4;
 	return 5;
 }
 
@@ -901,7 +1029,7 @@ function getRoundSettings() {
 		};
 	}
 
-	if (turtleScore <= 5) {
+	if (turtleScore <= 6) {
 		return {
 			termCount: 4,
 			minComplexTerms: 2,
@@ -964,7 +1092,7 @@ function makeTerm(size, type, isFirst) {
 	return { original: `+ ${size}`, value: size, complex: false, triple: false };
 }
 
-function generateProblem() {
+function buildRandomProblem() {
 	const settings = getRoundSettings();
 	let safety = 0;
 
@@ -1047,6 +1175,53 @@ function generateProblem() {
 	};
 }
 
+function getProblemDeckKey() {
+	const settings = getRoundSettings();
+	return [
+		settings.termCount,
+		settings.minComplexTerms,
+		settings.requireTriple ? "triple" : "regular",
+		settings.minValue,
+		settings.maxValue
+	].join("|");
+}
+
+const usedProblemDecks = {};
+
+function getProblemKey(problem) {
+	return `${problem.original} => ${problem.fixedExpression}`;
+}
+
+function generateProblem() {
+	const key = getProblemDeckKey();
+	if (!usedProblemDecks[key]) {
+		usedProblemDecks[key] = new Set();
+	}
+
+	let backupProblem = null;
+
+	for (let attempt = 0; attempt < 1500; attempt++) {
+		const problem = buildRandomProblem();
+		const problemKey = getProblemKey(problem);
+
+		if (!backupProblem) {
+			backupProblem = problem;
+		}
+
+		if (!usedProblemDecks[key].has(problemKey)) {
+			usedProblemDecks[key].add(problemKey);
+			return problem;
+		}
+	}
+
+	// If this difficulty bank has been exhausted, refresh the bank and allow questions again.
+	usedProblemDecks[key].clear();
+	const refreshedProblem = backupProblem || buildRandomProblem();
+	usedProblemDecks[key].add(getProblemKey(refreshedProblem));
+	return refreshedProblem;
+}
+
+
 function createChoices(correctExpression) {
 	const correct = correctExpression;
 	const terms = currentProblem.fixedTerms;
@@ -1085,13 +1260,30 @@ function markCorrectStep() {
 
 	if (mistakesThisRound === 0) {
 		document.getElementById("challengeMessage").textContent =
-			`Good. Turtle climbed ${runCorrectCount}/${getTotalRoundSteps()} steps this round.`;
+			"Good. Keep the turtle moving. Complete the full bar without a mistake.";
 	} else {
 		document.getElementById("challengeMessage").textContent =
-			"Keep practicing. This round already has a mistake, so finish it and try the next round for a score.";
+			"Keep practicing. This round already has a mistake, so finish it and try the next climb for a score.";
 	}
 
 	updateTurtleBoard();
+}
+
+
+
+function setNextClimbLocked(isLocked) {
+	const button = document.getElementById("nextClimbButton");
+	if (!button) return;
+
+	nextClimbUnlocked = !isLocked;
+	button.disabled = isLocked;
+	button.classList.toggle("locked", isLocked);
+	button.classList.toggle("unlocked", !isLocked);
+	button.setAttribute("aria-disabled", isLocked ? "true" : "false");
+}
+
+function unlockNextClimb() {
+	setNextClimbLocked(false);
 }
 
 function startRound() {
@@ -1101,6 +1293,7 @@ function startRound() {
 	runCorrectCount = 0;
 	mistakesThisRound = 0;
 	roundScoreAwarded = false;
+	setNextClimbLocked(true);
 
 	problemDisplay.textContent = currentProblem.original;
 
@@ -1122,9 +1315,11 @@ document.getElementById("instruction").textContent =
 	document.getElementById("termBank").innerHTML = "";
 	document.getElementById("finalAnswerInput").value = "";
 	document.getElementById("finalAnswerInput").style.borderColor = "#b9dcff";
+	prepareFinalAnswerInput();
 
 	renderChoices();
 	updateTurtleBoard();
+	scheduleProgressThemeChange();
 }
 
 function renderChoices() {
@@ -1384,13 +1579,56 @@ function chooseBiggerTeam(type, clickedButton) {
 		boxPickStep = 3;
 	}
 }
-function cleanAnswer(value) {
+function normalizeTypedSignText(value) {
 	return value
 		.trim()
 		.replace(/\s+/g, "")
-		.replace("−", "-")
-		.replace("+", "");
+		.replace(/−/g, "-")
+		.replace(/#/g, "+")
+		.replace(/\*/g, "-");
 }
+
+function keepSignedMathOnly(input, maxLength = null) {
+	let cleaned = normalizeTypedSignText(input.value)
+		.replace(/(?!^)[+\-]/g, "")
+		.replace(/[^0-9+\-]/g, "");
+
+	if ((cleaned.includes("+") || cleaned.includes("-")) && !/^[+\-]/.test(cleaned)) {
+		cleaned = cleaned.replace(/[+\-]/g, "");
+	}
+
+	if (maxLength !== null) {
+		cleaned = cleaned.slice(0, maxLength);
+	}
+
+	input.value = cleaned;
+	return cleaned;
+}
+
+function prepareFinalAnswerInput() {
+	const input = document.getElementById("finalAnswerInput");
+	if (!input) return;
+
+	const targetLength = String(currentProblem?.finalAnswer ?? "").length + 1;
+	input.maxLength = Math.max(2, targetLength);
+	input.oninput = () => keepSignedMathOnly(input, input.maxLength);
+	input.onkeydown = event => {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			checkFinalAnswer();
+		}
+	};
+}
+
+function cleanAnswer(value) {
+	const normalized = normalizeTypedSignText(value)
+		.replace(/[^0-9+\-]/g, "");
+
+	if (normalized === "") return "";
+	if (normalized.startsWith("+")) return normalized.slice(1);
+	return normalized;
+}
+
 
 function checkFinalAnswer() {
 	const input = document.getElementById("finalAnswerInput");
@@ -1404,6 +1642,13 @@ function checkFinalAnswer() {
 		finalFeedback.className = "feedback good-text";
 		input.style.borderColor = "#6cc070";
 		markCorrectStep();
+		if (mistakesThisRound > 0) {
+			roundScoreAwarded = true;
+			unlockNextClimb();
+			document.getElementById("challengeMessage").textContent =
+				"Round finished. Press Next Climb to start a fresh score chance.";
+			updateTurtleBoard();
+		}
 		scrollToCenter("bottomControls");
 		return;
 	}
@@ -1414,14 +1659,53 @@ function checkFinalAnswer() {
 	markMistake();
 }
 
+
+function getProgressThemeClass() {
+	if (turtleScore >= 7) return "neon-purple";
+	if (turtleScore >= 4) return "neon-blue";
+	return "";
+}
+
+function scheduleProgressThemeChange() {
+	clearTimeout(progressThemeTimer);
+	progressThemeTimer = setTimeout(() => {
+		activeProgressThemeClass = getProgressThemeClass();
+		updateTurtleBoard();
+	}, 2000);
+}
+
+function popScoreChange(text, type) {
+	const scoreText = document.getElementById("scoreText");
+	if (!scoreText) return;
+
+	const pop = document.createElement("span");
+	pop.className = `score-pop ${type === "plus" ? "plus-pop" : "minus-pop"}`;
+	pop.textContent = text;
+	scoreText.appendChild(pop);
+
+	setTimeout(() => pop.remove(), 2100);
+}
+
+function shakeScoreBoard() {
+	const board = document.querySelector(".challenge-board");
+	if (!board) return;
+
+	board.classList.remove("shake-board");
+	void board.offsetWidth;
+	board.classList.add("shake-board");
+
+	setTimeout(() => board.classList.remove("shake-board"), 500);
+}
+
 function awardScore() {
 	if (roundScoreAwarded) return;
 
 	if (mistakesThisRound > 0) {
 		roundScoreAwarded = true;
+		unlockNextClimb();
 
 		document.getElementById("challengeMessage").textContent =
-			"Round finished, but the first mistake blocked the score. Press Next Round to try a clean run.";
+			"Round finished, but the first mistake blocked the score. Press Next Climb to try a clean run.";
 
 		updateTurtleBoard();
 		return;
@@ -1429,11 +1713,13 @@ function awardScore() {
 
 	turtleScore++;
 	roundScoreAwarded = true;
+	unlockNextClimb();
 
 	if (turtleScore >= 10) {
 		document.getElementById("challengeMessage").textContent =
 			"🎉 Score 10 reached! Certificate unlocked.";
 		updateTurtleBoard();
+		popScoreChange("+1", "plus");
 
 		if (!achievementShown) {
 			showAchievementPopup();
@@ -1443,14 +1729,17 @@ function awardScore() {
 	}
 
 	document.getElementById("challengeMessage").textContent =
-		"Clean round! +1 score. Press Next Round for the next climb.";
+		"Clean round! +1 score. Press Next Climb for the next progress bar.";
 
 	updateTurtleBoard();
+	popScoreChange("+1", "plus");
 }
+
 
 function markMistake() {
 	mistakesThisRound++;
 	runCorrectCount = 0;
+	shakeScoreBoard();
 
 	if (mistakesThisRound === 1) {
 		document.getElementById("challengeMessage").textContent =
@@ -1458,6 +1747,7 @@ function markMistake() {
 	} else {
 		if (turtleScore > 0) {
 			turtleScore--;
+			popScoreChange("−1", "minus");
 		}
 
 		document.getElementById("challengeMessage").textContent =
@@ -1467,49 +1757,42 @@ function markMistake() {
 	updateTurtleBoard();
 }
 
+
 function updateTurtleBoard() {
 	const scoreText = document.getElementById("scoreText");
 	const turtleTrack = document.getElementById("turtleTrack");
 	const challengeMessage = document.getElementById("challengeMessage");
 	const totalSteps = getTotalRoundSteps();
+	const progressPercent = totalSteps > 0
+		? Math.min(100, Math.round((runCorrectCount / totalSteps) * 100))
+		: 0;
 
 	scoreText.textContent = `Score: ${turtleScore}`;
-	turtleTrack.innerHTML = "";
-
-	for (let i = 1; i <= totalSteps; i++) {
-		const step = document.createElement("div");
-		step.className = "track-step";
-
-		if (i <= runCorrectCount) {
-			step.classList.add("done");
-			step.textContent = "🌿";
-		} else if (i === runCorrectCount + 1) {
-			step.classList.add("active");
-			step.textContent = "🐢";
-		} else {
-			step.textContent = "•";
-		}
-
-		turtleTrack.appendChild(step);
-	}
+	turtleTrack.style.setProperty("--progress", `${progressPercent}%`);
+	turtleTrack.className = `turtle-track ${activeProgressThemeClass}`.trim();
+	turtleTrack.innerHTML = `
+		<div class="progress-fill"></div>
+		<div class="progress-turtle ${roundScoreAwarded && mistakesThisRound === 0 ? "turtle-fade-away" : ""}">🐢</div>
+	`;
 
 	if (turtleScore >= 10 && !achievementShown) {
 		challengeMessage.textContent = "🎉 Score 10 reached! Certificate unlocked.";
 		showAchievementPopup();
 	} else if (roundScoreAwarded && mistakesThisRound === 0) {
 		challengeMessage.textContent =
-			`Clean round complete! +1 score. Press Next Round for the next climb.`;
+			"Clean round complete! +1 score. Press Next Climb for the next progress bar.";
 	} else if (mistakesThisRound === 0 && runCorrectCount > 0) {
 		challengeMessage.textContent =
-			`Good. Turtle climbed ${runCorrectCount}/${totalSteps} steps this round.`;
+			"Good. Keep the turtle moving. Complete the full bar without a mistake.";
 	} else if (turtleScore >= 7) {
-		challengeMessage.textContent = "🔥 Long strands unlocked. Stay sharp with signs.";
+		challengeMessage.textContent = "🔥 Purple neon level. Stay sharp with signs.";
 	} else if (turtleScore >= 4) {
-		challengeMessage.textContent = "🌟 4-term problems unlocked.";
+		challengeMessage.textContent = "💙 Blue neon level unlocked. Keep fixing signs carefully.";
 	} else if (turtleScore >= 1) {
 		challengeMessage.textContent = "Good start. Keep fixing signs carefully.";
 	}
 }
+
 
 function resetCurrentRound() {
 	startRound();
@@ -1518,6 +1801,7 @@ function resetCurrentRound() {
 }
 
 function nextRound() {
+	if (!nextClimbUnlocked) return;
 	startRound();
 
 	setTimeout(() => {
@@ -1532,10 +1816,12 @@ function resetChallenge() {
 	turtleScore = 0;
 	runCorrectCount = 0;
 	achievementShown = false;
+	activeProgressThemeClass = "";
+	clearTimeout(progressThemeTimer);
 	stopConfetti();
 	startRound();
 	document.getElementById("challengeMessage").textContent =
-		"Fix signs carefully to score.";
+		"Complete one clean progress bar to score.";
 	updateTurtleBoard();
 }
 
