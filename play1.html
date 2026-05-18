@@ -54,7 +54,19 @@ h1 {
 	padding: clamp(6px, 1vw, 10px) clamp(4px, 0.8vw, 8px);
 	text-align: center;
 	box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-	overflow: hidden;
+	overflow: visible;
+}
+
+.challenge-board.shake-board {
+	animation: boardShake 0.42s ease;
+}
+
+@keyframes boardShake {
+	0%, 100% { transform: translateX(0); }
+	20% { transform: translateX(-6px); }
+	40% { transform: translateX(6px); }
+	60% { transform: translateX(-4px); }
+	80% { transform: translateX(4px); }
 }
 
 .challenge-board h2 {
@@ -64,6 +76,8 @@ h1 {
 }
 
 .score-badge {
+	position: relative;
+	overflow: visible;
 	background: white;
 	border: 2px solid #ffd36e;
 	border-radius: 14px;
@@ -73,17 +87,7 @@ h1 {
 	margin-bottom: 6px;
 }
 
-.turtle-track {
-	display: flex;
-	flex-direction: column-reverse;
-	gap: clamp(3px, 0.8vh, 6px);
-	align-items: center;
-	margin: 6px auto;
-	padding: clamp(5px, 0.9vh, 8px) 4px;
-	border-radius: 18px;
-	background: linear-gradient(180deg, #dff0ff, #fff8db);
-	border: 2px dashed #86c7ff;
-}
+
 .certificate-note-wide {
     text-align: center;
     max-width: 620px;
@@ -96,27 +100,101 @@ h1 {
     font-weight: bold;
     font-size: 1rem;
 }
-.track-step {
-	width: clamp(22px, 3.8vh, 34px);
-	height: clamp(22px, 3.8vh, 34px);
-	background: white;
-	border: 2px dashed #b9dcff;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: clamp(0.72rem, 2vh, 1rem);
-}
 
-.track-step.active {
-	background: #dff0ff;
+.turtle-track {
+	--progress: 0%;
+	position: relative;
+	width: 34px;
+	height: min(44vh, 330px);
+	min-height: 190px;
+	margin: 8px auto 6px;
+	border-radius: 999px;
+	background: #ffffff;
 	border: 3px solid #86c7ff;
-	transform: scale(1.15);
+	overflow: visible;
+	box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
 }
 
-.track-step.done {
-	background: #dcfce7;
-	border: 3px solid #6cc070;
+.progress-fill {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: var(--progress);
+	border-radius: 999px;
+	background: linear-gradient(0deg, #dcfce7, #fff3bf);
+	transition: height 0.35s ease;
+}
+
+
+.turtle-track.theme-neutral .progress-fill {
+	background: linear-gradient(0deg, #dcfce7 0%, #fff3bf 100%);
+	box-shadow: 0 0 8px rgba(108, 192, 112, 0.45), 0 0 14px rgba(255, 211, 110, 0.35);
+}
+
+.turtle-track.theme-blue .progress-fill {
+	background: linear-gradient(0deg, #bfe7ff 0%, #fff3bf 100%);
+	box-shadow: 0 0 8px rgba(99, 179, 237, 0.45), 0 0 16px rgba(255, 211, 110, 0.35);
+}
+
+.turtle-track.theme-purple .progress-fill {
+	background: linear-gradient(0deg, #d8c7ff 0%, #fff3bf 100%);
+	box-shadow: 0 0 8px rgba(157, 126, 255, 0.42), 0 0 16px rgba(255, 211, 110, 0.35);
+}
+
+
+.progress-turtle {
+	position: absolute;
+	left: 50%;
+	bottom: var(--progress);
+	transform: translate(-50%, 50%);
+	font-size: 1.35rem;
+	line-height: 1;
+	z-index: 2;
+	transition: bottom 0.35s ease, left 0.35s ease;
+	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+}
+
+.progress-turtle.turtle-fade-away {
+	animation: turtleFadeAway 2s ease forwards;
+}
+
+@keyframes turtleFadeAway {
+	0% { opacity: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
+	100% { opacity: 0; filter: drop-shadow(0 10px 10px rgba(0,0,0,0)); }
+}
+
+.score-pop {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 5;
+	pointer-events: none;
+	font-size: clamp(1.05rem, 2vw, 1.55rem);
+	font-weight: 900;
+	text-shadow: 0 2px 0 white, 0 3px 8px rgba(0,0,0,0.18);
+}
+
+.score-pop.plus-pop {
+	color: #248a2f;
+	animation: scoreFloatUp 2s ease-out forwards;
+}
+
+.score-pop.minus-pop {
+	color: #c0392b;
+	animation: scoreFloatDown 2s ease-out forwards;
+}
+
+@keyframes scoreFloatUp {
+	0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+	15% { opacity: 1; transform: translate(-50%, -90%) scale(1.28); }
+	100% { opacity: 0; transform: translate(-50%, -190%) scale(0.9); }
+}
+
+@keyframes scoreFloatDown {
+	0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
+	15% { opacity: 1; transform: translate(-50%, -15%) scale(1.28); }
+	100% { opacity: 0; transform: translate(-50%, 120%) scale(0.9); }
 }
 
 .challenge-text {
@@ -211,6 +289,58 @@ button {
 button:hover {
 	transform: translateY(-2px);
 }
+
+
+button.locked-button,
+button:disabled {
+	background: #d8d8d8;
+	color: #777;
+	box-shadow: none;
+	cursor: not-allowed;
+	opacity: 0.72;
+}
+
+button.locked-button:hover,
+button:disabled:hover {
+	transform: none;
+}
+
+.focus-hint-toggle {
+	display: inline-block;
+	border: none;
+	background: transparent;
+	box-shadow: none;
+	color: #1f6fb8;
+	text-decoration: underline;
+	padding: 4px 6px;
+	font-size: 0.92rem;
+	cursor: pointer;
+}
+
+.focus-hint-toggle:hover {
+	transform: none;
+}
+
+.quick-pick-box.focus-collapsed {
+	background: transparent;
+	border: none;
+	padding: 4px;
+}
+
+.quick-pick-box.focus-collapsed .quick-pick-title,
+.quick-pick-box.focus-collapsed .sign-picker {
+	display: none;
+}
+
+.quick-pick-box.focus-expanded .quick-pick-title,
+.quick-pick-box.focus-expanded .sign-picker {
+	display: flex;
+}
+
+.quick-pick-box.focus-expanded .quick-pick-title {
+	display: block;
+}
+
 
 .choice-btn.selected,
 .sign-btn.selected,
@@ -615,7 +745,7 @@ button:hover {
 		border-radius: 0 0 18px 18px;
 		padding: 6px 8px;
 		display: grid;
-		grid-template-columns: 74px 1fr;
+		grid-template-columns: 1fr 74px;
 		grid-template-rows: auto auto;
 		gap: 4px 8px;
 		align-items: center;
@@ -626,30 +756,53 @@ button:hover {
 	}
 
 	.score-badge {
-		grid-column: 1;
+		grid-column: 2;
 		grid-row: 1;
 		margin: 0;
 		font-size: 0.8rem;
 	}
 
 	.turtle-track {
-		grid-column: 2;
+		grid-column: 1;
 		grid-row: 1;
-		display: flex;
-		flex-direction: row-reverse;
-		justify-content: center;
-		gap: 5px;
-		margin: 0;
-		padding: 4px;
-	}
-
-	.track-step {
-		width: 24px;
+		width: 100%;
 		height: 24px;
-		font-size: 0.8rem;
+		min-height: 0;
+		margin: 0;
 	}
 
-	.challenge-text {
+	.progress-fill {
+		left: 0;
+		top: 0;
+		bottom: auto;
+		width: var(--progress);
+		height: 100%;
+		background: linear-gradient(90deg, #dcfce7, #fff3bf);
+		transition: width 0.35s ease;
+	}
+
+	.progress-turtle {
+		left: var(--progress);
+		top: 50%;
+		bottom: auto;
+		transform: translate(-50%, -58%) scaleX(-1);
+		font-size: 1.2rem;
+	}
+
+	
+	.turtle-track.theme-neutral .progress-fill {
+		background: linear-gradient(90deg, #dcfce7 0%, #fff3bf 100%);
+	}
+
+	.turtle-track.theme-blue .progress-fill {
+		background: linear-gradient(90deg, #bfe7ff 0%, #fff3bf 100%);
+	}
+
+	.turtle-track.theme-purple .progress-fill {
+		background: linear-gradient(90deg, #d8c7ff 0%, #fff3bf 100%);
+	}
+
+.challenge-text {
 		grid-column: 1 / 3;
 		grid-row: 2;
 		margin: 0;
@@ -744,10 +897,10 @@ button:hover {
 
 <div class="game">
 	<div class="challenge-board">
-		<h2>🐢 Turtle Climb</h2>
+		<h2>🐢 Progress Bar</h2>
 		<div class="score-badge" id="scoreText">Score: 0</div>
 		<div class="turtle-track" id="turtleTrack"></div>
-		<div class="challenge-text" id="challengeMessage">Climb 4 clean steps to score.</div>
+		<div class="challenge-text" id="challengeMessage">Complete one clean progress bar to score.</div>
 	</div>
 
 	<h1>Build the Box</h1>
@@ -835,7 +988,7 @@ button:hover {
 	</div>
 
 	<div class="controls" id="bottomControls">
-		<button onclick="nextClimb()">Next Climb</button>
+		<button id="nextClimbButton" class="locked-button" onclick="nextClimb()" disabled>Next Climb</button>
 		<button onclick="resetPracticeProblem()">Reset This Problem</button>
 		<button onclick="resetChallenge()">Reset Turtle Score</button>
 	</div>
@@ -935,6 +1088,8 @@ let mistakesThisProblem = 0;
 let gameScoreAwarded = false;
 let achievementShown = false;
 let confettiTimer = null;
+let currentProgressTheme = "neutral";
+let progressThemeTimer = null;
 
 const problemText = document.getElementById("problemText");
 const feedback = document.getElementById("feedback");
@@ -1010,8 +1165,16 @@ function prepareSmartNumberInputs() {
 	finalInput.maxLength = answerLength;
 
 	firstInput.oninput = () => {
-		const value = keepDigitsOnly(firstInput, bigLength);
-		if (value.length >= bigLength) focusNextField(secondInput);
+		let value = keepDigitsOnly(firstInput, null);
+		if (value.length > bigLength) {
+			firstInput.value = value.slice(0, bigLength);
+			secondInput.value = value.slice(bigLength, bigLength + smallLength);
+			focusNextField(secondInput);
+			return;
+		}
+
+		firstInput.value = value.slice(0, bigLength);
+		if (firstInput.value.length >= bigLength) focusNextField(secondInput);
 	};
 
 	secondInput.oninput = () => {
@@ -1033,30 +1196,95 @@ function prepareSmartNumberInputs() {
 	};
 }
 
+function getRequiredProgressSteps() {
+	return 4;
+}
+
+
+function getProgressThemeForScore(score) {
+	if (score >= 7) return "purple";
+	if (score >= 4) return "blue";
+	return "neutral";
+}
+
+function applyProgressThemeAfterDelay() {
+	if (progressThemeTimer) clearTimeout(progressThemeTimer);
+	progressThemeTimer = setTimeout(() => {
+		currentProgressTheme = getProgressThemeForScore(turtleScore);
+		updateTurtleBoard();
+	}, 2000);
+}
+
+function setNextClimbLocked(isLocked) {
+	const button = document.getElementById("nextClimbButton");
+	if (!button) return;
+
+	button.disabled = isLocked;
+	button.classList.toggle("locked-button", isLocked);
+}
+
+function unlockNextClimb() {
+	setNextClimbLocked(false);
+}
+
+function toggleQuickHint(button) {
+	const box = button.closest(".quick-pick-box");
+	if (!box) return;
+
+	const isExpanded = box.classList.toggle("focus-expanded");
+	box.classList.toggle("focus-collapsed", !isExpanded);
+	button.textContent = isExpanded ? "Hide hint" : "Show hint";
+}
+
+function updateFocusHintMode() {
+	const focusMode = turtleScore >= 4;
+
+	document.querySelectorAll(".quick-pick-box").forEach(box => {
+		let toggle = box.querySelector(".focus-hint-toggle");
+
+		if (focusMode) {
+			if (!toggle) {
+				toggle = document.createElement("button");
+				toggle.type = "button";
+				toggle.className = "focus-hint-toggle";
+				toggle.textContent = "Show hint";
+				toggle.onclick = () => toggleQuickHint(toggle);
+				box.insertBefore(toggle, box.firstChild);
+			}
+
+			box.classList.add("focus-collapsed");
+			box.classList.remove("focus-expanded");
+			toggle.textContent = "Show hint";
+			toggle.style.display = "inline-block";
+		} else {
+			box.classList.remove("focus-collapsed", "focus-expanded");
+			if (toggle) toggle.style.display = "none";
+		}
+	});
+}
+
+
 function updateTurtleBoard() {
 	const scoreText = document.getElementById("scoreText");
 	const turtleTrack = document.getElementById("turtleTrack");
 	const challengeMessage = document.getElementById("challengeMessage");
 
 	scoreText.textContent = `Score: ${turtleScore}`;
-	turtleTrack.innerHTML = "";
 
-	for (let i = 1; i <= 4; i++) {
-		const step = document.createElement("div");
-		step.className = "track-step";
+	const requiredSteps = getRequiredProgressSteps();
+	const progressPercent = requiredSteps > 0
+		? Math.min(100, Math.round((runCorrectCount / requiredSteps) * 100))
+		: 0;
 
-		if (i <= runCorrectCount) {
-			step.classList.add("done");
-			step.textContent = "🌿";
-		} else if (i === runCorrectCount + 1) {
-			step.classList.add("active");
-			step.textContent = "🐢";
-		} else {
-			step.textContent = "•";
-		}
+	turtleTrack.style.setProperty("--progress", `${progressPercent}%`);
+	turtleTrack.classList.remove("theme-neutral", "theme-blue", "theme-purple");
+	turtleTrack.classList.add(`theme-${currentProgressTheme}`);
+	turtleTrack.innerHTML = `
+		<div class="progress-fill"></div>
+		<div class="progress-turtle">🐢</div>
+	`;
 
-		turtleTrack.appendChild(step);
-	}
+	updateFocusHintMode();
 
 	if (turtleScore >= 10) {
 		challengeMessage.textContent = "🎁 10 scores! Show your parent and ask for a gift.";
@@ -1068,36 +1296,98 @@ function updateTurtleBoard() {
 	}
 }
 
+
+function popScoreChange(text, type) {
+	const scoreText = document.getElementById("scoreText");
+	if (!scoreText) return;
+
+	const pop = document.createElement("span");
+	pop.className = `score-pop ${type === "plus" ? "plus-pop" : "minus-pop"}`;
+	pop.textContent = text;
+	scoreText.appendChild(pop);
+
+	setTimeout(() => {
+		pop.remove();
+	}, 2100);
+}
+
+function shakeScoreBoard() {
+	const board = document.querySelector(".challenge-board");
+	if (!board) return;
+
+	board.classList.remove("shake-board");
+	void board.offsetWidth;
+	board.classList.add("shake-board");
+
+	setTimeout(() => {
+		board.classList.remove("shake-board");
+	}, 500);
+}
+
+function fadeCompletionTurtle() {
+	const turtle = document.querySelector(".progress-turtle");
+	if (!turtle) return;
+
+	turtle.classList.remove("turtle-fade-away");
+	void turtle.offsetWidth;
+	turtle.classList.add("turtle-fade-away");
+}
+
+
+function completeCurrentProblemNavigation() {
+	unlockNextClimb();
+	setTimeout(() => {
+		scrollToCenter("bottomControls");
+	}, 80);
+}
+
 function markCorrectStep() {
 	if (gameScoreAwarded) return;
 
 	runCorrectCount++;
+	const requiredSteps = getRequiredProgressSteps();
+	let earnedScoreNow = false;
 
-	if (runCorrectCount >= 4 && mistakesThisProblem === 0) {
+	if (runCorrectCount >= requiredSteps && mistakesThisProblem === 0) {
 		turtleScore++;
 		gameScoreAwarded = true;
-		document.getElementById("challengeMessage").textContent = "🏁 Flawless 4-step climb! +1 score. Press Next Climb for another run.";
+		earnedScoreNow = true;
+		document.getElementById("challengeMessage").textContent = "🏁 Flawless progress bar! +1 score. Press Next Climb for another run.";
 	} else if (mistakesThisProblem === 0) {
-		document.getElementById("challengeMessage").textContent = "Good. Keep climbing. Finish the whole problem with no mistake.";
+		document.getElementById("challengeMessage").textContent = "Good. Keep the turtle moving. Finish the bar without a mistake.";
 	} else {
 		document.getElementById("challengeMessage").textContent = "Keep practicing. This problem already has an error, so use Next Climb for the next score chance.";
 	}
 
 	updateTurtleBoard();
+
+	if (earnedScoreNow) {
+		fadeCompletionTurtle();
+		popScoreChange("+1", "plus");
+	}
 }
 
 function markMistake() {
 	mistakesThisProblem++;
 	runCorrectCount = 0;
+	let lostScoreNow = false;
 
 	if (mistakesThisProblem > 1 && turtleScore > 0) {
 		turtleScore--;
+		lostScoreNow = true;
 		document.getElementById("challengeMessage").textContent = "Second mistake in the same problem. Turtle loses 1 score, but score cannot go below 0.";
+	} else if (mistakesThisProblem > 1) {
+		document.getElementById("challengeMessage").textContent = "Second mistake in the same problem. Score is already 0, so keep practicing without losing more.";
 	} else {
-		document.getElementById("challengeMessage").textContent = "Mistake made. Climb cleared. This problem cannot earn a score now.";
+		document.getElementById("challengeMessage").textContent = "Mistake made. Progress bar cleared. This problem cannot earn a score now.";
 	}
 
 	updateTurtleBoard();
+	shakeScoreBoard();
+
+	if (lostScoreNow) {
+		popScoreChange("−1", "minus");
+	}
 }
 
 function resetChallenge() {
@@ -1105,13 +1395,14 @@ function resetChallenge() {
 	runCorrectCount = 0;
 	mistakesThisProblem = 0;
 	gameScoreAwarded = false;
+	setNextClimbLocked(true);
 	achievementShown = false;
 
 	// A full score reset starts a fresh practice session, so the no-repeat banks reset too.
 	Object.keys(usedProblemDecks).forEach(key => usedProblemDecks[key].clear());
 
 	stopConfetti();
-	document.getElementById("challengeMessage").textContent = "Climb 4 clean steps to score.";
+	document.getElementById("challengeMessage").textContent = "Complete one clean progress bar to score.";
 	updateTurtleBoard();
 }
 
@@ -1249,11 +1540,14 @@ function stopConfetti() {
 }
 
 function nextClimb(shouldScroll = true) {
+	setNextClimbLocked(true);
 	currentProblem = generateProblem();
 	setupExpected();
 	renderProblem();
 	resetSteps(false);
+	setNextClimbLocked(true);
 	prepareSmartNumberInputs();
+	setTimeout(() => setNextClimbLocked(true), 80);
 
 	if (!shouldScroll) return;
 
@@ -1496,7 +1790,7 @@ function checkFinalAnswer() {
 		feedback.textContent = "✅ Finished. Pattern locked in.";
 		input.style.borderColor = "#6cc070";
 		markCorrectStep();
-		scrollToCenter("bottomControls");
+		completeCurrentProblemNavigation();
 	} else {
 		answerFeedback.textContent = "❌ Try again. Check the outside sign and the operation inside.";
 		answerFeedback.style.color = "#c0392b";
@@ -1508,6 +1802,7 @@ function checkFinalAnswer() {
 
 updateTurtleBoard();
 nextClimb(false);
+setNextClimbLocked(true);
 </script>
 </body>
 </html>
