@@ -811,9 +811,9 @@ button:hover {
 			<div class="sign-display" id="outsideSignDisplay">?</div>
 
 			<span class="ring-box">
-				<input class="num-input" id="firstNumInput" placeholder="big">
+				<input class="num-input" id="firstNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="big" aria-label="big size">
 				<div class="op-display" id="operationDisplay">?</div>
-				<input class="num-input" id="secondNumInput" placeholder="small">
+				<input class="num-input" id="secondNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="small" aria-label="small size">
 			</span>
 		</div>
 
@@ -823,7 +823,7 @@ button:hover {
 	<div class="answer-area" id="answerArea">
 		<p id="builtBoxText"></p>
 		<label>Now solve it:</label>
-		<input id="finalAnswerInput" type="text" placeholder="answer">
+		<input id="finalAnswerInput" type="text" inputmode="numeric" pattern="-?[0-9]*" autocomplete="off" placeholder="answer" aria-label="final answer">
 		<button onclick="checkFinalAnswer()">Check Answer</button>
 		<div id="answerFeedback"></div>
 	</div>
@@ -855,22 +855,71 @@ function getDifficultySettings() {
 	return { min: 1, max: 25 };
 }
 
-function randomTerm() {
-	const difficulty = getDifficultySettings();
-	const size = Math.floor(Math.random() * (difficulty.max - difficulty.min + 1)) + difficulty.min;
-	const sign = Math.random() < 0.5 ? 1 : -1;
-	return size * sign;
+// No-repeat problem decks.
+// Each difficulty range has its own shuffled bank.
+// A problem only repeats after every problem in that bank has appeared.
+const problemDecks = {};
+const usedProblemDecks = {};
+
+function shuffleList(list) {
+	const copy = [...list];
+	for (let i = copy.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[copy[i], copy[j]] = [copy[j], copy[i]];
+	}
+	return copy;
+}
+
+function difficultyKey(settings) {
+	return `${settings.min}-${settings.max}`;
+}
+
+function problemKey(problem) {
+	return `${problem.a},${problem.b}`;
+}
+
+function buildProblemDeck(settings) {
+	const deck = [];
+
+	for (let aSize = settings.min; aSize <= settings.max; aSize++) {
+		for (let bSize = settings.min; bSize <= settings.max; bSize++) {
+			if (aSize === bSize) continue;
+
+			for (const aSign of [1, -1]) {
+				for (const bSign of [1, -1]) {
+					deck.push({
+						a: aSize * aSign,
+						b: bSize * bSign
+					});
+				}
+			}
+		}
+	}
+
+	return shuffleList(deck);
 }
 
 function generateProblem() {
-	let a = randomTerm();
-	let b = randomTerm();
+	const settings = getDifficultySettings();
+	const key = difficultyKey(settings);
 
-	while (Math.abs(a) === Math.abs(b)) {
-		b = randomTerm();
+	if (!problemDecks[key]) {
+		problemDecks[key] = buildProblemDeck(settings);
+		usedProblemDecks[key] = new Set();
 	}
 
-	return { a, b };
+	const deck = problemDecks[key];
+
+	// Once every question in this difficulty bank has been used, refresh that bank.
+	if (usedProblemDecks[key].size >= deck.length) {
+		usedProblemDecks[key].clear();
+	}
+
+	const available = deck.filter(problem => !usedProblemDecks[key].has(problemKey(problem)));
+	const chosen = available[Math.floor(Math.random() * available.length)];
+	usedProblemDecks[key].add(problemKey(chosen));
+
+	return { ...chosen };
 }
 
 let currentProblem = {};
@@ -908,6 +957,80 @@ function formatTerm(n, isFirst = false) {
 
 function normalizeSymbol(value) {
 	return value.trim().replace("−", "-");
+}
+
+function keepDigitsOnly(input, maxLength = null) {
+	let cleaned = input.value.replace(/\D/g, "");
+
+	if (maxLength !== null) {
+		cleaned = cleaned.slice(0, maxLength);
+	}
+
+	input.value = cleaned;
+	return cleaned;
+}
+
+function keepSignedNumberOnly(input, maxLength = null) {
+	let cleaned = input.value
+		.replace(/−/g, "-")
+		.replace(/(?!^)-/g, "")
+		.replace(/[^0-9-]/g, "");
+
+	if (cleaned.includes("-") && cleaned.indexOf("-") !== 0) {
+		cleaned = cleaned.replace(/-/g, "");
+	}
+
+	if (maxLength !== null) {
+		cleaned = cleaned.slice(0, maxLength);
+	}
+
+	input.value = cleaned;
+	return cleaned;
+}
+
+function focusNextField(nextInput) {
+	if (!nextInput) return;
+	setTimeout(() => {
+		nextInput.focus();
+		nextInput.select();
+	}, 40);
+}
+
+function prepareSmartNumberInputs() {
+	const firstInput = document.getElementById("firstNumInput");
+	const secondInput = document.getElementById("secondNumInput");
+	const finalInput = document.getElementById("finalAnswerInput");
+
+	const bigLength = String(expected.biggerSize || "").length;
+	const smallLength = String(expected.smallerSize || "").length;
+	const answerLength = String(expected.finalAnswer || "").length;
+
+	firstInput.maxLength = bigLength;
+	secondInput.maxLength = smallLength;
+	finalInput.maxLength = answerLength;
+
+	firstInput.oninput = () => {
+		const value = keepDigitsOnly(firstInput, bigLength);
+		if (value.length >= bigLength) focusNextField(secondInput);
+	};
+
+	secondInput.oninput = () => {
+		const value = keepDigitsOnly(secondInput, smallLength);
+		if (value.length >= smallLength) {
+			setTimeout(() => {
+				document.querySelector("#builder button[onclick='checkBox()']")?.focus();
+			}, 40);
+		}
+	};
+
+	finalInput.oninput = () => {
+		const value = keepSignedNumberOnly(finalInput, answerLength);
+		if (value.length >= answerLength) {
+			setTimeout(() => {
+				document.querySelector("#answerArea button[onclick='checkFinalAnswer()']")?.focus();
+			}, 40);
+		}
+	};
 }
 
 function updateTurtleBoard() {
@@ -983,6 +1106,10 @@ function resetChallenge() {
 	mistakesThisProblem = 0;
 	gameScoreAwarded = false;
 	achievementShown = false;
+
+	// A full score reset starts a fresh practice session, so the no-repeat banks reset too.
+	Object.keys(usedProblemDecks).forEach(key => usedProblemDecks[key].clear());
+
 	stopConfetti();
 	document.getElementById("challengeMessage").textContent = "Climb 4 clean steps to score.";
 	updateTurtleBoard();
@@ -1121,11 +1248,14 @@ function stopConfetti() {
 	if (layer) layer.innerHTML = "";
 }
 
-function nextClimb() {
+function nextClimb(shouldScroll = true) {
 	currentProblem = generateProblem();
 	setupExpected();
 	renderProblem();
 	resetSteps(false);
+	prepareSmartNumberInputs();
+
+	if (!shouldScroll) return;
 
 	setTimeout(() => {
 		window.scrollTo({
@@ -1139,6 +1269,7 @@ function resetPracticeProblem() {
 	setupExpected();
 	renderProblem();
 	resetSteps(true);
+	prepareSmartNumberInputs();
 	feedback.textContent = "Practice reset. Turtle score and climb progress did not change.";
 }
 
@@ -1375,23 +1506,8 @@ function checkFinalAnswer() {
 	}
 }
 
-document.getElementById("secondNumInput").addEventListener("input", () => {
-	const smallValue = document.getElementById("secondNumInput").value.trim();
-
-	if (smallValue.length > 0) {
-		setTimeout(() => {
-			document
-				.querySelector("#builder button[onclick='checkBox()']")
-				.scrollIntoView({
-					behavior: "smooth",
-					block: "center"
-				});
-		}, 180);
-	}
-});
-
 updateTurtleBoard();
-nextClimb();
+nextClimb(false);
 </script>
 </body>
 </html>
