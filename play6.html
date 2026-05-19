@@ -53,7 +53,7 @@ h1 {
   padding: 8px 6px;
   text-align: center;
   box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .challenge-board h2 {
@@ -73,39 +73,94 @@ h1 {
 }
 
 .turtle-track {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 5px;
-  align-items: center;
-  justify-content: center;
-  margin: 6px auto;
-  padding: 7px 5px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #dff0ff, #fff8db);
-  border: 2px dashed #86c7ff;
-}
-
-.track-step {
-  width: clamp(24px, 3.6vh, 34px);
-  height: clamp(24px, 3.6vh, 34px);
-  background: white;
-  border: 2px dashed #b9dcff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(0.72rem, 2vh, 1rem);
-}
-
-.track-step.active {
-  background: #dff0ff;
+  --progress: 0%;
+  position: relative;
+  width: 34px;
+  height: min(44vh, 330px);
+  min-height: 190px;
+  margin: 8px auto 6px;
+  border-radius: 999px;
+  background: #ffffff;
   border: 3px solid #86c7ff;
-  transform: scale(1.12);
+  overflow: visible;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
 }
 
-.track-step.done {
-  background: #dcfce7;
-  border: 3px solid #6cc070;
+.progress-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--progress);
+  border-radius: 999px;
+  background: linear-gradient(0deg, #dcfce7, #fff3bf);
+  transition: height 0.35s ease;
+}
+
+.progress-turtle {
+  position: absolute;
+  left: 50%;
+  bottom: var(--progress);
+  transform: translate(-50%, 50%);
+  font-size: 1.35rem;
+  line-height: 1;
+  z-index: 2;
+  transition: bottom 0.35s ease, left 0.35s ease;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+}
+
+.turtle-track.theme-neutral .progress-fill {
+  background: linear-gradient(0deg, #dcfce7 0%, #fff3bf 100%);
+  box-shadow: 0 0 8px rgba(108, 192, 112, 0.45), 0 0 14px rgba(255, 211, 110, 0.35);
+}
+
+.turtle-track.theme-blue .progress-fill {
+  background: linear-gradient(0deg, #bfe7ff 0%, #fff3bf 100%);
+  box-shadow: 0 0 8px rgba(99, 179, 237, 0.45), 0 0 16px rgba(255, 211, 110, 0.35);
+}
+
+.turtle-track.theme-purple .progress-fill {
+  background: linear-gradient(0deg, #d8c7ff 0%, #fff3bf 100%);
+  box-shadow: 0 0 8px rgba(157, 126, 255, 0.42), 0 0 16px rgba(255, 211, 110, 0.35);
+}
+
+.problem-card {
+  position: relative;
+}
+
+.start-climb-cover {
+  position: absolute;
+  inset: 12px;
+  z-index: 8;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255,248,219,0.97), rgba(234,246,255,0.97));
+  border: 4px solid #ffd36e;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+  text-align: center;
+}
+
+.start-climb-cover.active {
+  display: flex;
+}
+
+.start-climb-card {
+  max-width: 520px;
+}
+
+.start-climb-card h2 {
+  margin-bottom: 8px;
+  color: #d97800;
+}
+
+.start-climb-card p {
+  font-weight: bold;
+  line-height: 1.35;
+  margin: 8px 0 14px;
+  color: #7a4b00;
 }
 
 .challenge-text {
@@ -428,8 +483,64 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   100% { transform: scale(1); opacity: 1; }
 }
 
+
+
+.timer-panel {
+  grid-column: 1 / 4;
+  font-weight: bold;
+  font-size: clamp(0.66rem, 1vw, 0.82rem);
+  line-height: 1.2;
+  background: white;
+  border: 2px solid #ffd36e;
+  border-radius: 14px;
+  padding: 5px 6px;
+  color: #7a4b00;
+  margin-top: 6px;
+}
+
+.race-record-board {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #f7fbff;
+  border: 3px solid #b9dcff;
+  text-align: center;
+}
+
+.race-record-board h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.record-list { max-width: 520px; margin: 8px auto 0; text-align: left; font-weight: bold; line-height: 1.5; }
+.record-list.empty { text-align: center; color: #777; }
+
+.ladder-card {
+  max-width: 560px;
+  width: min(94vw, 560px);
+  background: #fff8db;
+  border: 5px solid #ffd36e;
+  border-radius: 28px;
+  padding: 22px;
+  text-align: center;
+  box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+  animation: popIn 0.35s ease;
+}
+
+.ladder-card h2 { font-size: clamp(1.5rem, 5vw, 2.2rem); margin-bottom: 10px; }
+.ladder-stats {
+  background: white;
+  border: 3px dashed #ffd36e;
+  border-radius: 18px;
+  padding: 12px;
+  margin: 12px 0;
+  font-weight: bold;
+  color: #7a4b00;
+  line-height: 1.6;
+}
+
+.cert-rank { margin-top: 8px; font-size: clamp(1rem, 3vw, 1.35rem); font-weight: bold; color: #b87900; }
+.locked-button { background: #d8d8d8; color: #777; box-shadow: none; cursor: not-allowed; opacity: 0.72; }
+.locked-button:hover { transform: none; }
+
 @media (max-width: 700px) {
-  body { padding: 8px; padding-top: 118px; }
+  body { padding: 8px; padding-top: 148px; }
   .game { padding: 14px; border-radius: 20px; }
 
   .challenge-board {
@@ -453,11 +564,42 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   .turtle-track {
     grid-column: 2;
     grid-row: 1;
+    width: 100%;
+    height: 24px;
+    min-height: 0;
     margin: 0;
-    padding: 4px;
-    gap: 3px;
-    flex-direction: row-reverse;
-    background: linear-gradient(90deg, #dcfce7, #dff0ff, #fff8db);
+    padding: 0;
+    border-radius: 999px;
+  }
+
+  .progress-fill {
+    left: 0;
+    top: 0;
+    bottom: auto;
+    width: var(--progress);
+    height: 100%;
+    background: linear-gradient(90deg, #dcfce7, #fff3bf);
+    transition: width 0.35s ease;
+  }
+
+  .progress-turtle {
+    left: var(--progress);
+    top: 50%;
+    bottom: auto;
+    transform: translate(-50%, -58%) scaleX(-1);
+    font-size: 1.2rem;
+  }
+
+  .turtle-track.theme-neutral .progress-fill {
+    background: linear-gradient(90deg, #dcfce7 0%, #fff3bf 100%);
+  }
+
+  .turtle-track.theme-blue .progress-fill {
+    background: linear-gradient(90deg, #bfe7ff 0%, #fff3bf 100%);
+  }
+
+  .turtle-track.theme-purple .progress-fill {
+    background: linear-gradient(90deg, #d8c7ff 0%, #fff3bf 100%);
   }
 
   .stage-badge { grid-column: 3; grid-row: 1; margin: 0; font-size: 0.78rem; }
@@ -469,10 +611,13 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     font-size: 0.72rem;
   }
 
-  .track-step {
-    width: clamp(22px, 5.2vw, 28px);
-    height: clamp(22px, 5.2vw, 28px);
-    font-size: 0.7rem;
+  .timer-panel {
+    grid-column: 1 / 4;
+    grid-row: 3;
+    width: 100%;
+    margin: 0;
+    font-size: 0.72rem;
+    padding: 5px 8px;
   }
 
   button { width: 100%; }
@@ -511,11 +656,24 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
       <div class="cert-name" id="certName">Math Ridge Champion</div>
       <p>for completing the 10-score challenge by breaking fractions into prime pieces and reducing carefully.</p>
       <div class="cert-stage" id="certStage"></div>
+      <div class="cert-date" id="certRaceTime"></div>
+      <div class="cert-rank" id="certRank"></div>
       <div class="cert-date" id="certDate"></div>
       <div class="cert-signature">Math Ridge Studio</div>
     </div>
     <button onclick="saveCertificateImage()">Save Certificate</button>
     <button onclick="closeCertificatePopup()">Close</button>
+  </div>
+</div>
+
+<div class="achievement-popup" id="ladderPopup">
+  <div class="ladder-card">
+    <h2>🏁 Current Ladder</h2>
+    <div class="ladder-stats" id="ladderStats"></div>
+    <h3>🌎 Play6 World Time Records</h3>
+    <div id="ladderRecordList" class="record-list empty">Loading records...</div>
+    <button onclick="loadWorldRecords()">Refresh World Records</button>
+    <button onclick="closeLadderPopup()">Close Ladder</button>
   </div>
 </div>
 
@@ -526,14 +684,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     <div class="turtle-track" id="turtleTrack"></div>
     <div class="stage-badge" id="stageText">Stage: 1</div>
     <div class="challenge-text" id="challengeMessage">Keep climbing. Each correct step moves the turtle closer!</div>
+    <div class="timer-panel" id="timerPanel">⏱ Time: 0:00 | This stage: 0:00</div>
   </div>
 
   <h1>Prime Factor Trees</h1>
-  <p class="subtitle">Break the numerator and denominator into prime pieces. Cross out matching pieces. Write the reduced fraction.</p>
+  <p class="subtitle">Break the numerator and denominator into prime pieces. Break the top and bottom into prime pieces. Match equal pieces. Then write the reduced fraction.</p>
 
-  <div class="certificate-note-wide">🐢 Reach Score 10 to earn your certificate. Every stage shows your effort toward completion!</div>
+  <div class="certificate-note-wide">🐢 Reach Score 10 to earn your certificate. Your time and stage count are saved on the world record board.</div>
 
-  <div class="instruction" id="instruction">Type the prime factors. Order does not matter.</div>
+  <div class="instruction" id="instruction">Type the prime pieces. Use only 2, 3, 5, and 7. Order does not matter.</div>
 
   <div class="problem-card" id="problemCard">
     <h2>Current Fraction</h2>
@@ -543,12 +702,19 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         <span class="bottom" id="denDisplay">24</span>
       </span>
     </div>
+    <div class="start-climb-cover active" id="startClimbCover">
+      <div class="start-climb-card">
+        <h2>Ready for the next climb?</h2>
+        <p>The fraction is covered until the timer starts. Press START the Climb, then solve with focus and speed.</p>
+        <button onclick="startCoveredClimb()">START the Climb</button>
+      </div>
+    </div>
   </div>
 
   <div class="step-card" id="topStep">
-    <h2>Step 1: Numerator Prime Pieces</h2>
+    <h2>Step 1: Top Shelf Prime Pieces</h2>
     <div class="read-line">
-      Top shelf value:
+      Top shelf value. Type its prime pieces:
       <strong class="focus-value" id="topFocusValue">18</strong>
     </div>
     <div class="input-row" id="topInputs"></div>
@@ -556,9 +722,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   </div>
 
   <div class="step-card hidden" id="bottomStep">
-    <h2>Step 2: Denominator Prime Pieces</h2>
+    <h2>Step 2: Bottom Shelf Prime Pieces</h2>
     <div class="read-line">
-      Bottom shelf value:
+      Bottom shelf value. Type its prime pieces:
       <strong class="focus-value" id="bottomFocusValue">24</strong>
     </div>
     <div class="input-row" id="bottomInputs"></div>
@@ -566,21 +732,21 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   </div>
 
   <div class="step-card hidden" id="reduceStep">
-    <h2>Step 3: Cross Out Matches and Reduce</h2>
-    <div class="read-line" id="crossInstruction">Click matching pieces to cross them out. Crossing is like pencil marks, so the final reduced answer is what gets graded.</div>
+    <h2>Step 3: Match Pieces and Write the Reduced Fraction</h2>
+    <div class="read-line" id="crossInstruction">Tap matching prime pieces on the top and bottom. Then write the reduced fraction.</div>
     <div class="prime-form" id="primeForm"></div>
 
     <div class="answer-row">
       <span class="fraction">
-        <span class="top"><input class="answer-input" id="ansTop" inputmode="numeric" aria-label="answer numerator"></span>
-        <span class="bottom"><input class="answer-input" id="ansBottom" inputmode="numeric" aria-label="answer denominator"></span>
+        <span class="top"><input class="answer-input" id="ansTop" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="answer numerator"></span>
+        <span class="bottom"><input class="answer-input" id="ansBottom" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="answer denominator"></span>
       </span>
     </div>
 
-    <div class="hint-box">If every factor on one shelf gets crossed out, that shelf becomes 1.</div>
+    <div class="hint-box">If every prime piece on one shelf is matched, that shelf becomes 1.</div>
 
     <div class="input-row">
-      <button onclick="checkAnswer()">Check Final Reduction</button>
+      <button onclick="checkAnswer()">Check Reduced Fraction</button>
       <button id="showMatchBtn" onclick="showMatchingPieces()">Show Matching Pieces</button>
     </div>
   </div>
@@ -594,9 +760,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   <div class="feedback" id="feedback"></div>
 
   <div class="bottom-controls">
-    <button id="nextBtn" onclick="nextClimb()" disabled>Next Climb</button>
-    <button onclick="retryStage()">Retry This Stage</button>
-    <button onclick="resetChallenge()">Reset Turtle Score</button>
+    <button id="nextBtn" class="locked-button hidden" onclick="nextClimb()" disabled>Next Climb</button>
+    <button onclick="showLadderPopup()">View Current Ladder</button>
   </div>
 
   <div class="game-footer">Math Ridge | Play 6 · Prime Factor Trees</div>
@@ -605,6 +770,14 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 <script>
 const TOTAL_STEPS = 3;
 const primes = [2,3,5,7];
+const GLOBAL_RECORD_URL = "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/?game=play6";
+
+let totalRaceMs = 0;
+let climbStartMs = null;
+let timerDisplayInterval = null;
+let latestWorldRank = null;
+let latestSavedRaceSeconds = null;
+let worldRecordsCache = [];
 
 // No-repeat problem decks.
 // Each difficulty level gets its own deck of possible fraction problems.
@@ -620,8 +793,168 @@ let runCorrectCount = 0;
 let mistakesThisStage = 0;
 let stageEligible = true;
 let stageComplete = false;
+let climbStarted = false;
 let achievementShown = false;
 let confettiTimer = null;
+
+
+function formatRaceTime(ms){
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function getCurrentClimbMs(){
+  return climbStartMs === null ? 0 : Date.now() - climbStartMs;
+}
+
+function updateTimerPanel(){
+  const panel = document.getElementById("timerPanel");
+  if(!panel) return;
+  const activeMs = getCurrentClimbMs();
+  panel.textContent = `⏱ Time: ${formatRaceTime(totalRaceMs + activeMs)} | This stage: ${formatRaceTime(activeMs)}`;
+}
+
+function startClimbTimer(){
+  if(score >= 10) return;
+  if(!climbStarted) return;
+  if(climbStartMs !== null) return;
+  climbStartMs = Date.now();
+  updateTimerPanel();
+  if(!timerDisplayInterval){
+    timerDisplayInterval = setInterval(updateTimerPanel, 250);
+  }
+}
+
+function stopClimbTimer(addToTotal = true){
+  if(climbStartMs === null) return;
+  if(addToTotal) totalRaceMs += Date.now() - climbStartMs;
+  climbStartMs = null;
+  if(timerDisplayInterval){
+    clearInterval(timerDisplayInterval);
+    timerDisplayInterval = null;
+  }
+  updateTimerPanel();
+}
+
+function resetRaceTimer(){
+  if(timerDisplayInterval){
+    clearInterval(timerDisplayInterval);
+    timerDisplayInterval = null;
+  }
+  totalRaceMs = 0;
+  climbStartMs = null;
+  latestWorldRank = null;
+  latestSavedRaceSeconds = null;
+  updateTimerPanel();
+}
+
+function rankText(rank){
+  if(rank === 1) return "🥇 1st Place World Time Champion";
+  if(rank === 2) return "🥈 2nd Place World Time";
+  if(rank === 3) return "🥉 3rd Place World Time";
+  return "";
+}
+
+function renderWorldRecords(records = worldRecordsCache){
+  const boxes = [document.getElementById("recordList"), document.getElementById("ladderRecordList")].filter(Boolean);
+  boxes.forEach(list => {
+    if(!records || records.length === 0){
+      list.className = "record-list empty";
+      list.textContent = "No world records yet.";
+      return;
+    }
+    list.className = "record-list";
+    list.innerHTML = records.slice(0, 10).map((record, index) => {
+      const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
+      const stageInfo = record.stage ? ` · Stage ${record.stage}` : "";
+      return `<div>${medal} ${record.name} — ${record.timeDisplay || formatRaceTime((record.timeSeconds || 0) * 1000)}${stageInfo}</div>`;
+    }).join("");
+  });
+}
+
+async function loadWorldRecords(){
+  try{
+    const response = await fetch(GLOBAL_RECORD_URL, { method: "GET" });
+    const data = await response.json();
+    if(!data.ok) throw new Error(data.error || "Could not load records.");
+    worldRecordsCache = data.records || [];
+    renderWorldRecords(worldRecordsCache);
+    return worldRecordsCache;
+  }catch(error){
+    const lists = [document.getElementById("recordList"), document.getElementById("ladderRecordList")].filter(Boolean);
+    lists.forEach(list => {
+      list.className = "record-list empty";
+      list.textContent = "World records could not load. Check the connection.";
+    });
+    return [];
+  }
+}
+
+async function submitWorldRecord(name, timeSeconds, stageNumber){
+  const response = await fetch(GLOBAL_RECORD_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, timeSeconds, stage: stageNumber, game: "play6" })
+  });
+  const data = await response.json();
+  if(!data.ok) throw new Error(data.error || "Could not save record.");
+  worldRecordsCache = data.records || [];
+  renderWorldRecords(worldRecordsCache);
+  return data;
+}
+
+function showLadderPopup(){
+  const stats = document.getElementById("ladderStats");
+  if(stats){
+    stats.innerHTML = `Score: ${score}<br>Stage: ${stage}<br>Active Time: ${formatRaceTime(totalRaceMs + getCurrentClimbMs())}`;
+  }
+  renderWorldRecords(worldRecordsCache);
+  document.getElementById("ladderPopup").style.display = "flex";
+  loadWorldRecords();
+}
+
+function closeLadderPopup(){
+  document.getElementById("ladderPopup").style.display = "none";
+}
+
+function setNextClimbLocked(isLocked){
+  const button = document.getElementById("nextBtn");
+  if(!button) return;
+  button.disabled = isLocked;
+  button.classList.toggle("locked-button", isLocked);
+  button.classList.toggle("hidden", isLocked);
+}
+
+function getProgressThemeForScore(currentScore){
+  if(currentScore >= 7) return "purple";
+  if(currentScore >= 4) return "blue";
+  return "neutral";
+}
+
+function showClimbCover(){
+  climbStarted = false;
+  stopClimbTimer(false);
+  const cover = document.getElementById("startClimbCover");
+  if(cover) cover.classList.add("active");
+  document.getElementById("topStep").classList.add("hidden");
+  document.getElementById("bottomStep").classList.add("hidden");
+  document.getElementById("reduceStep").classList.add("hidden");
+  document.getElementById("completeStep").classList.add("hidden");
+}
+
+function startCoveredClimb(){
+  if(stageComplete) return;
+  climbStarted = true;
+  const cover = document.getElementById("startClimbCover");
+  if(cover) cover.classList.remove("active");
+  document.getElementById("topStep").classList.remove("hidden");
+  startClimbTimer();
+  setFeedback("Timer started. Type the top prime pieces first.", "neutral");
+  focusPanel("topStep");
+}
+
 
 function randInt(min,max){
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -847,14 +1180,18 @@ function newRound(){
   buildInputs("topInputs", round.topFactors.length);
   buildInputs("bottomInputs", round.bottomFactors.length);
 
-  document.getElementById("topStep").classList.remove("hidden");
+  climbStarted = false;
+  document.getElementById("topStep").classList.add("hidden");
   document.getElementById("bottomStep").classList.add("hidden");
   document.getElementById("reduceStep").classList.add("hidden");
   document.getElementById("completeStep").classList.add("hidden");
-  document.getElementById("nextBtn").disabled = true;
+  const cover = document.getElementById("startClimbCover");
+  if(cover) cover.classList.add("active");
+  setNextClimbLocked(true);
 
   document.getElementById("ansTop").value = "";
   document.getElementById("ansBottom").value = "";
+  prepareAnswerInputs();
 
   updateDifficultyText();
   setFeedback("", "");
@@ -869,9 +1206,12 @@ function buildInputs(id, count){
     const input = document.createElement("input");
     input.className = "factor-input";
     input.maxLength = 1;
+    input.type = "text";
     input.inputMode = "numeric";
+    input.pattern = "[0-9]*";
 
     input.addEventListener("input", () => {
+      startClimbTimer();
       input.value = input.value.replace(/[^2357]/g,"");
       if(input.value && input.nextElementSibling) input.nextElementSibling.focus();
     });
@@ -886,6 +1226,36 @@ function buildInputs(id, count){
   }
 }
 
+
+function prepareAnswerInputs(){
+  const topInput = document.getElementById("ansTop");
+  const bottomInput = document.getElementById("ansBottom");
+  if(!topInput || !bottomInput || !round) return;
+
+  const topLength = String(round.reducedTop).length;
+  const bottomLength = String(round.reducedBottom).length;
+  topInput.maxLength = topLength;
+  bottomInput.maxLength = bottomLength;
+
+  topInput.oninput = () => {
+    startClimbTimer();
+    let value = topInput.value.replace(/\D/g, "");
+    if(value.length > topLength){
+      topInput.value = value.slice(0, topLength);
+      bottomInput.value = value.slice(topLength, topLength + bottomLength);
+      bottomInput.focus();
+      return;
+    }
+    topInput.value = value.slice(0, topLength);
+    if(topInput.value.length >= topLength) bottomInput.focus();
+  };
+
+  bottomInput.oninput = () => {
+    startClimbTimer();
+    bottomInput.value = bottomInput.value.replace(/\D/g, "").slice(0, bottomLength);
+  };
+}
+
 function getInputFactors(id){
   return [...document.querySelectorAll(`#${id} input`)]
     .map(i => Number(i.value))
@@ -893,6 +1263,7 @@ function getInputFactors(id){
 }
 
 function checkTop(){
+  startClimbTimer();
   if(stageComplete) return;
   const entered = getInputFactors("topInputs");
 
@@ -908,6 +1279,7 @@ function checkTop(){
 }
 
 function checkBottom(){
+  startClimbTimer();
   if(stageComplete) return;
   const entered = getInputFactors("bottomInputs");
 
@@ -962,7 +1334,7 @@ function buildPrimeForm(autoCross){
     chip.dataset.index = i;
     chip.textContent = `(${n})`;
     if(crossMap.topCross[i]) chip.classList.add("crossed");
-    chip.onclick = () => chip.classList.toggle("crossed");
+    chip.onclick = () => { startClimbTimer(); chip.classList.toggle("crossed"); };
     wrap.appendChild(chip);
   });
 
@@ -981,12 +1353,13 @@ function buildPrimeForm(autoCross){
     chip.dataset.index = i;
     chip.textContent = `(${n})`;
     if(crossMap.bottomCross[i]) chip.classList.add("crossed");
-    chip.onclick = () => chip.classList.toggle("crossed");
+    chip.onclick = () => { startClimbTimer(); chip.classList.toggle("crossed"); };
     wrap.appendChild(chip);
   });
 }
 
 function showMatchingPieces(){
+  startClimbTimer();
   if(score >= 3){
     setFeedback("Show Matching Pieces is only available during the first 3 scores. Now try crossing the matches yourself.", "bad");
     return;
@@ -1011,19 +1384,21 @@ function crossingIsCorrect(){
 }
 
 function checkAnswer(){
+  startClimbTimer();
   if(stageComplete) return;
 
-  const a = Number(document.getElementById("ansTop").value);
-  const b = Number(document.getElementById("ansBottom").value);
+  const a = Number(document.getElementById("ansTop").value.replace(/\D/g, ""));
+  const b = Number(document.getElementById("ansBottom").value.replace(/\D/g, ""));
 
   if(a === round.reducedTop && b === round.reducedBottom){
     markCorrectStep();
     stageComplete = true;
-    document.getElementById("nextBtn").disabled = false;
+    stopClimbTimer(true);
+    setNextClimbLocked(false);
 
     const crossNote = crossingIsCorrect()
       ? "Your cross-out marks match the reduction."
-      : "Your final answer is correct. Some cross-out marks may be sloppy, so check your pencil marks next time.";
+      : "Your final answer is correct. Speed is okay when the reduction is accurate.";
 
     showComplete(crossNote);
     return;
@@ -1034,6 +1409,7 @@ function checkAnswer(){
 }
 
 function showComplete(crossNote){
+  climbStarted = false;
   document.getElementById("topStep").classList.add("hidden");
   document.getElementById("bottomStep").classList.add("hidden");
   document.getElementById("reduceStep").classList.add("hidden");
@@ -1066,7 +1442,7 @@ function showComplete(crossNote){
   }
 
   document.getElementById("completeMessage").textContent = `${scoreText} ${crossNote}`;
-  setFeedback("✅ Stage complete. Press Next Climb when ready.", "good");
+  setFeedback("✅ Stage complete. Next Climb is unlocked. Your active time is saved toward the certificate.", "good");
 
   updateBoard();
 
@@ -1083,6 +1459,8 @@ function markCorrectStep(){
 }
 
 function markMistake(){
+  stopClimbTimer(true);
+  climbStarted = false;
   mistakesThisStage++;
   runCorrectCount = 0;
 
@@ -1118,7 +1496,7 @@ function retryStage(){
   document.getElementById("bottomStep").classList.add("hidden");
   document.getElementById("reduceStep").classList.add("hidden");
   document.getElementById("completeStep").classList.add("hidden");
-  document.getElementById("nextBtn").disabled = true;
+  setNextClimbLocked(true);
 
   setFeedback("Retry this stage. This retry is practice only and will not change score.", "neutral");
   updateBoard();
@@ -1127,6 +1505,8 @@ function retryStage(){
 
 function nextClimb(){
   if(!stageComplete) return;
+  stopClimbTimer(false);
+  setNextClimbLocked(true);
   stage++;
   newRound();
 
@@ -1155,6 +1535,7 @@ function resetChallenge(){
   stageComplete = false;
   achievementShown = false;
   stopConfetti();
+  resetRaceTimer();
   newRound();
   window.scrollTo({ top: 0, behavior: "auto" });
 }
@@ -1164,27 +1545,22 @@ function updateBoard(){
   document.getElementById("stageText").textContent = `Stage: ${stage}`;
 
   const track = document.getElementById("turtleTrack");
-  track.innerHTML = "";
+  const progressPercent = TOTAL_STEPS > 0
+    ? Math.min(100, Math.round((runCorrectCount / TOTAL_STEPS) * 100))
+    : 0;
 
-  for(let i = 0; i < TOTAL_STEPS; i++){
-    const step = document.createElement("div");
-    step.className = "track-step";
-
-    if(i < runCorrectCount){
-      step.classList.add("done");
-      step.textContent = "🌱";
-    } else if(i === runCorrectCount){
-      step.classList.add("active");
-      step.textContent = "🐢";
-    } else {
-      step.textContent = "•";
-    }
-
-    track.appendChild(step);
-  }
+  track.style.setProperty("--progress", `${progressPercent}%`);
+  track.classList.remove("theme-neutral", "theme-blue", "theme-purple");
+  track.classList.add(`theme-${getProgressThemeForScore(score)}`);
+  track.innerHTML = `
+    <div class="progress-fill"></div>
+    <div class="progress-turtle">🐢</div>
+  `;
 
   if(score >= 10){
     document.getElementById("challengeMessage").textContent = `🎁 Certificate unlocked! Score 10 after ${stage} stages of effort.`;
+  } else if(!climbStarted && !stageComplete){
+    document.getElementById("challengeMessage").textContent = "Press START the Climb when you are ready. The timer begins there.";
   } else if(!stageEligible){
     document.getElementById("challengeMessage").textContent = "Practice finish. This stage cannot earn score.";
   } else {
@@ -1260,16 +1636,30 @@ function showAchievementPopup(){
   setTimeout(() => nameInput.focus(), 200);
 }
 
-function createCertificateFromName(){
+async function createCertificateFromName(){
   const nameInput = document.getElementById("playerNameInput");
   const finalName = nameInput.value.trim() || "Math Ridge Champion";
   const now = new Date();
   const formattedDate = now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const formattedTime = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const raceSeconds = Math.max(1, Math.round(totalRaceMs / 1000));
+  let rankMessage = "";
+
+  try{
+    const saved = await submitWorldRecord(finalName, raceSeconds, stage);
+    latestWorldRank = saved.rank;
+    latestSavedRaceSeconds = saved.record && saved.record.timeSeconds ? saved.record.timeSeconds : raceSeconds;
+    rankMessage = saved.topThree ? rankText(saved.rank) : "";
+  }catch(error){
+    latestSavedRaceSeconds = raceSeconds;
+    rankMessage = "World record could not save. Certificate time is still shown.";
+  }
 
   document.getElementById("certName").textContent = finalName;
   document.getElementById("certStage").textContent = `Completed Score 10 after ${stage} stages of effort.`;
+  document.getElementById("certRaceTime").textContent = `World Time Completion: ${formatRaceTime((latestSavedRaceSeconds || raceSeconds) * 1000)}`;
+  document.getElementById("certRank").textContent = rankMessage;
   document.getElementById("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime} (${timezone})`;
 
   document.getElementById("namePopup").style.display = "none";
@@ -1285,6 +1675,8 @@ function saveCertificateImage(){
   const name = document.getElementById("certName").textContent;
   const date = document.getElementById("certDate").textContent;
   const stageText = document.getElementById("certStage").textContent;
+  const raceTime = document.getElementById("certRaceTime").textContent;
+  const rank = document.getElementById("certRank").textContent;
 
   const canvas = document.createElement("canvas");
   canvas.width = 1200;
@@ -1329,10 +1721,20 @@ function saveCertificateImage(){
   ctx.fillText("by breaking fractions into prime pieces.",600,570);
 
   ctx.font = "bold 28px Georgia";
-  ctx.fillText(stageText,600,635);
+  ctx.fillText(stageText,600,620);
 
+  ctx.font = "bold 28px Georgia";
+  ctx.fillText(raceTime,600,660);
+
+  if(rank && !rank.startsWith("World record could not")){
+    ctx.fillStyle = "#b87900";
+    ctx.font = "bold 30px Georgia";
+    ctx.fillText(rank,600,700);
+  }
+
+  ctx.fillStyle = "#24304f";
   ctx.font = "bold 24px Georgia";
-  ctx.fillText(date,600,680);
+  ctx.fillText(date,600,rank && !rank.startsWith("World record could not") ? 735 : 705);
 
   ctx.fillStyle = "#7a4b00";
   ctx.font = "36px cursive";
@@ -1361,6 +1763,8 @@ function saveCertificateImage(){
   }, "image/png");
 }
 
+loadWorldRecords();
+updateTimerPanel();
 newRound();
 window.scrollTo({ top: 0, behavior: "auto" });
 </script>
