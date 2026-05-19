@@ -249,6 +249,52 @@
 			line-height: 1.15;
 		}
 
+		.timer-panel {
+			grid-column: 1 / 3;
+			font-weight: bold;
+			font-size: clamp(0.62rem, 1vw, 0.82rem);
+			line-height: 1.2;
+			background: white;
+			border: 2px solid #ffd36e;
+			border-radius: 14px;
+			padding: 5px 6px;
+			color: #7a4b00;
+		}
+
+		.race-record-board {
+			margin-top: 18px;
+			padding: 14px;
+			border-radius: 18px;
+			background: #f7fbff;
+			border: 3px solid #b9dcff;
+			text-align: center;
+		}
+
+		.race-record-board h2 {
+			font-size: 1.2rem;
+			margin-bottom: 8px;
+		}
+
+		.record-list {
+			max-width: 520px;
+			margin: 8px auto 0;
+			text-align: left;
+			font-weight: bold;
+			line-height: 1.5;
+		}
+
+		.record-list.empty {
+			text-align: center;
+			color: #777;
+		}
+
+		.cert-rank {
+			margin-top: 8px;
+			font-size: clamp(1rem, 3vw, 1.35rem);
+			font-weight: bold;
+			color: #b87900;
+		}
+
 		.instruction {
 			text-align: center;
 			background: #fff8db;
@@ -575,6 +621,64 @@
 			background: #fff8db;
 			border: 2px solid #ffd36e;
 			font-size: 1rem;
+		}
+
+		.signed-total-builder,
+		.final-answer-builder {
+			margin-top: 8px;
+			text-align: center;
+		}
+
+		.answer-size-row {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+			margin-top: 10px;
+		}
+
+		.fixed-answer-preview {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			min-width: 150px;
+			min-height: 56px;
+			margin: 10px auto 0;
+			padding: 8px 14px;
+			border-radius: 16px;
+			border: 3px solid #ffd36e;
+			background: #fff8db;
+			font-size: 1.5rem;
+			font-weight: bold;
+		}
+
+		.fixed-answer-preview.filled {
+			border-color: #6cc070;
+			background: #f3fff2;
+		}
+
+		.fixed-sign {
+			font-size: 1.65rem;
+			font-weight: 900;
+		}
+
+		.preview-label {
+			font-size: 0.85rem;
+			color: #7a4b00;
+			margin-right: 2px;
+		}
+
+		.size-input {
+			width: 120px;
+			padding: 10px;
+			font-size: 1.3rem;
+			border-radius: 12px;
+			border: 3px solid #b9dcff;
+			text-align: center;
+			font-family: inherit;
+			font-weight: bold;
 		}
 
 		.bottom-controls {
@@ -926,6 +1030,8 @@
 			<p>Presented to</p>
 			<div class="cert-name" id="certName">Math Ridge Champion</div>
 			<p>for completing the 10-score challenge with focus, accuracy, and perseverance.</p>
+			<div class="cert-date" id="certRaceTime"></div>
+			<div class="cert-rank" id="certRank"></div>
 			<div class="cert-date" id="certDate"></div>
 			<div class="cert-signature">Math Ridge Studio</div>
 		</div>
@@ -941,6 +1047,7 @@
 			<div class="score-badge" id="scoreText">Score: 0</div>
 			<div class="turtle-track" id="turtleTrack"></div>
 			<div class="challenge-text" id="challengeMessage">Complete one clean progress bar to score.</div>
+			<div class="timer-panel" id="timerPanel">⏱ Time: 0:00 | This climb: 0:00</div>
 		</div>
 
 		<h1>Positive Negative Showdown</h1>
@@ -949,7 +1056,7 @@
 🐢 Reach the finish line at Score 10 to earn your certificate!
 </div>
 		<div class="instruction" id="instruction">
-			Step 1: Count how many terms are in the question first.
+			Step 1: Count the signed numbers first.
 		</div>
 
 		<div class="expression-board" id="expressionBoard">
@@ -958,8 +1065,8 @@
 		</div>
 
 		<div class="step-card" id="termCountStep">
-			<h2>Step 1: How many terms are presented?</h2>
-			<p style="text-align:center; font-weight:bold;">Each signed number is one movable term.</p>
+			<h2>Step 1: How many signed numbers are there?</h2>
+			<p style="text-align:center; font-weight:bold;">Each signed number counts as one term.</p>
 			<div class="count-input-row">
 				<input id="termCountInput" class="count-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="terms" />
 				<button onclick="checkTermCountFromInput()">Check Term Count</button>
@@ -996,10 +1103,16 @@
 					<div class="mini-list" id="positiveMiniList"></div>
 				</div>
 
-				<div>
-					<div class="input-row">
-						<input id="positiveInput" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="+?" />
+				<div class="signed-total-builder">
+					<p style="text-align:center; font-weight:bold;">The positive team already has a + sign. Type the size only.</p>
+					<div class="answer-size-row">
+						<span class="fixed-sign">+</span>
+						<input id="positiveInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="size" aria-label="positive team size" />
 						<button onclick="checkPositiveTotal()">Check Positive Total</button>
+					</div>
+					<div class="fixed-answer-preview" id="positivePreview">
+						<span class="preview-label">Positive total:</span>
+						<span>+</span><span id="positivePreviewSize">__</span>
 					</div>
 					<div class="feedback" id="positiveFeedback"></div>
 				</div>
@@ -1014,10 +1127,16 @@
 					<div class="mini-list" id="negativeMiniList"></div>
 				</div>
 
-				<div>
-					<div class="input-row">
-						<input id="negativeInput" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="−?" />
+				<div class="signed-total-builder">
+					<p style="text-align:center; font-weight:bold;">The negative team already has a − sign. Type the size only.</p>
+					<div class="answer-size-row">
+						<span class="fixed-sign">−</span>
+						<input id="negativeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="size" aria-label="negative team size" />
 						<button onclick="checkNegativeTotal()">Check Negative Total</button>
+					</div>
+					<div class="fixed-answer-preview" id="negativePreview">
+						<span class="preview-label">Negative total:</span>
+						<span>−</span><span id="negativePreviewSize">__</span>
 					</div>
 					<div class="feedback" id="negativeFeedback"></div>
 				</div>
@@ -1026,7 +1145,7 @@
 
 		<div class="step-card hidden" id="ringBuilder">
 			<h2>Step 5: Build the Ring</h2>
-			<p style="text-align:center; font-weight:bold;">Tap the bigger total first. Its sign will move outside the ring.</p>
+			<p style="text-align:center; font-weight:bold;">Tap the bigger total first. Its sign moves outside the ring.</p>
 
 			<div class="total-buttons" id="totalButtons"></div>
 
@@ -1046,6 +1165,12 @@
 			<button id="nextClimbButton" class="locked-button" onclick="nextClimb()" disabled>Next Climb</button>
 			<button onclick="resetPracticeGame()">Reset This Game</button>
 			<button onclick="resetChallenge()">Reset Turtle Score</button>
+			<button onclick="loadWorldRecords()">Refresh World Records</button>
+		</div>
+
+		<div class="race-record-board">
+			<h2>🏁 Play2 World Time Records</h2>
+			<div id="recordList" class="record-list empty">Loading world records...</div>
 		</div>
 		<div class="game-footer">Math Ridge | Positive Negative Showdown</div>
 	</div>
@@ -1070,9 +1195,149 @@
 		let currentProgressTheme = "neutral";
 		let progressThemeTimer = null;
 
+		const GLOBAL_RECORD_URL = "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/?game=play2";
+		let totalRaceMs = 0;
+		let climbStartMs = null;
+		let timerDisplayInterval = null;
+		let latestRaceRank = null;
+		let latestSavedRaceSeconds = null;
+
 		const termBank = document.getElementById("termBank");
 		const zones = document.querySelectorAll(".zone");
 		const feedback = document.getElementById("feedback");
+
+		function formatRaceTime(ms) {
+			const totalSeconds = Math.max(0, Math.round(ms / 1000));
+			const minutes = Math.floor(totalSeconds / 60);
+			const seconds = totalSeconds % 60;
+			return `${minutes}:${String(seconds).padStart(2, "0")}`;
+		}
+
+		function formatRaceSeconds(seconds) {
+			return formatRaceTime(Number(seconds || 0) * 1000);
+		}
+
+		function getCurrentClimbMs() {
+			return climbStartMs === null ? 0 : Date.now() - climbStartMs;
+		}
+
+		function updateTimerPanel() {
+			const panel = document.getElementById("timerPanel");
+			if (!panel) return;
+
+			const activeClimbMs = getCurrentClimbMs();
+			panel.textContent = `⏱ Time: ${formatRaceTime(totalRaceMs + activeClimbMs)} | This climb: ${formatRaceTime(activeClimbMs)}`;
+		}
+
+		function startClimbTimer() {
+			if (turtleScore >= 10) return;
+			if (climbStartMs !== null) return;
+
+			climbStartMs = Date.now();
+			updateTimerPanel();
+
+			if (!timerDisplayInterval) {
+				timerDisplayInterval = setInterval(updateTimerPanel, 250);
+			}
+		}
+
+		function stopClimbTimer(addToTotal = true) {
+			if (climbStartMs === null) return;
+
+			if (addToTotal) {
+				totalRaceMs += Date.now() - climbStartMs;
+			}
+
+			climbStartMs = null;
+
+			if (timerDisplayInterval) {
+				clearInterval(timerDisplayInterval);
+				timerDisplayInterval = null;
+			}
+
+			updateTimerPanel();
+		}
+
+		function resetRaceTimer() {
+			if (timerDisplayInterval) {
+				clearInterval(timerDisplayInterval);
+				timerDisplayInterval = null;
+			}
+			totalRaceMs = 0;
+			climbStartMs = null;
+			latestRaceRank = null;
+			latestSavedRaceSeconds = null;
+			updateTimerPanel();
+		}
+
+		function rankText(rank) {
+			if (rank === 1) return "🥇 1st Place World Time Champion";
+			if (rank === 2) return "🥈 2nd Place World Time";
+			if (rank === 3) return "🥉 3rd Place World Time";
+			return "";
+		}
+
+		function renderWorldRecords(records = []) {
+			const list = document.getElementById("recordList");
+			if (!list) return;
+
+			if (!records.length) {
+				list.className = "record-list empty";
+				list.textContent = "No world records yet.";
+				return;
+			}
+
+			list.className = "record-list";
+			list.innerHTML = records.slice(0, 10).map((record, index) => {
+				const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
+				const safeName = String(record.name || "Math Ridge Champion").replace(/[<>]/g, "");
+				const timeText = record.timeDisplay || formatRaceSeconds(record.timeSeconds);
+				return `<div>${medal} ${safeName} — ${timeText}</div>`;
+			}).join("");
+		}
+
+		async function loadWorldRecords() {
+			const list = document.getElementById("recordList");
+			if (list) {
+				list.className = "record-list empty";
+				list.textContent = "Loading world records...";
+			}
+
+			try {
+				const response = await fetch(GLOBAL_RECORD_URL, { method: "GET" });
+				const data = await response.json();
+
+				if (!data.ok) throw new Error(data.error || "Could not load records.");
+				renderWorldRecords(data.records || []);
+			} catch (error) {
+				if (list) {
+					list.className = "record-list empty";
+					list.textContent = "World records could not load. Practice still works.";
+				}
+			}
+		}
+
+		async function submitWorldRecord(name, timeMs) {
+			const timeSeconds = Math.max(1, Math.round(timeMs / 1000));
+
+			const response = await fetch(GLOBAL_RECORD_URL, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					game: "play2",
+					name,
+					timeSeconds
+				})
+			});
+
+			const data = await response.json();
+			if (!data.ok) throw new Error(data.error || "Could not save record.");
+
+			latestRaceRank = data.rank || null;
+			latestSavedRaceSeconds = data.record?.timeSeconds || timeSeconds;
+			renderWorldRecords(data.records || []);
+			return data;
+		}
 
 
 		function getProgressThemeForScore(score) {
@@ -1285,6 +1550,7 @@
 		}
 
 		function checkTermCountFromInput() {
+			startClimbTimer();
 			const input = document.getElementById("termCountInput");
 			const countFeedback = document.getElementById("countFeedback");
 			input.value = sanitizeDigitText(input.value);
@@ -1306,7 +1572,7 @@
 			document.getElementById("sortStep").classList.remove("hidden");
 			document.getElementById("zones").classList.remove("hidden");
 			document.getElementById("instruction").textContent =
-				"Step 2: Tap a movable term, then tap the correct team.";
+				"Step 2: Tap a signed number, then tap its team.";
 			markCorrectStep();
 			scrollToCenter("sortStep");
 		}
@@ -1423,6 +1689,7 @@
 			let earnedScoreNow = false;
 
 			if (runCorrectCount >= requiredSteps && mistakesThisGame === 0) {
+				stopClimbTimer(true);
 				turtleScore++;
 				gameScoreAwarded = true;
 				earnedScoreNow = true;
@@ -1443,6 +1710,7 @@
 		}
 
 		function markMistake() {
+			stopClimbTimer(true);
 			mistakesThisGame++;
 			runCorrectCount = 0;
 			let lostScoreNow = false;
@@ -1471,6 +1739,7 @@
 			mistakesThisGame = 0;
 			gameScoreAwarded = false;
 			achievementShown = false;
+			resetRaceTimer();
 			setNextClimbLocked(true);
 			stopConfetti();
 			document.getElementById("challengeMessage").textContent = `Finish ${getRequiredProgressSteps()} correct steps in one clean game to earn +1 point.`;
@@ -1514,6 +1783,7 @@
 		}
 
 		function selectTerm(term) {
+			startClimbTimer();
 			if (!termCountComplete) {
 				document.getElementById("countFeedback").textContent = "Count the terms first. Then the pieces can move.";
 				document.getElementById("countFeedback").className = "feedback bad-text";
@@ -1528,6 +1798,7 @@
 		}
 
 		termBank.addEventListener("click", () => {
+			if (selectedTerm) startClimbTimer();
 			if (!selectedTerm) {
 				feedback.textContent = "Tap a number first.";
 				return;
@@ -1541,6 +1812,7 @@
 
 		zones.forEach(zone => {
 			zone.addEventListener("click", () => {
+				if (selectedTerm) startClimbTimer();
 				if (!selectedTerm) {
 					feedback.textContent = "Tap a number first.";
 					return;
@@ -1636,8 +1908,30 @@
 			document.addEventListener("input", event => {
 				if (!event.target.classList) return;
 
+				if (event.target.matches("input")) {
+					startClimbTimer();
+				}
+
 				if (event.target.classList.contains("count-input")) {
 					event.target.value = sanitizeDigitText(event.target.value);
+					return;
+				}
+
+				if (event.target.classList.contains("size-input")) {
+					event.target.value = sanitizeDigitText(event.target.value);
+
+					if (event.target.id === "positiveInput") {
+						updateSizePreview("positiveInput", "positivePreviewSize", "positivePreview");
+					}
+
+					if (event.target.id === "negativeInput") {
+						updateSizePreview("negativeInput", "negativePreviewSize", "negativePreview");
+					}
+
+					if (event.target.id === "ringAnswerSize") {
+						updateSizePreview("ringAnswerSize", "ringAnswerPreviewSize", "ringAnswerPreview");
+					}
+
 					return;
 				}
 
@@ -1653,14 +1947,45 @@
 				if (event.target.id === "termCountInput") {
 					checkTermCountFromInput();
 				}
+
+				if (event.target.id === "positiveInput") {
+					checkPositiveTotal();
+				}
+
+				if (event.target.id === "negativeInput") {
+					checkNegativeTotal();
+				}
+
+				if (event.target.id === "ringAnswerSize") {
+					checkRingAnswer();
+				}
 			});
 		}
 
+
+		function updateSizePreview(inputId, previewSizeId, previewId) {
+			const input = document.getElementById(inputId);
+			const previewSize = document.getElementById(previewSizeId);
+			const preview = document.getElementById(previewId);
+
+			if (!input || !previewSize || !preview) return;
+
+			const value = sanitizeDigitText(input.value);
+			input.value = value;
+			previewSize.textContent = value || "__";
+			preview.classList.toggle("filled", Boolean(value));
+		}
+
 		function checkPositiveTotal() {
-			const answer = cleanInput("positiveInput");
+			startClimbTimer();
+			const input = document.getElementById("positiveInput");
 			const positiveFeedback = document.getElementById("positiveFeedback");
 
-			if (answer === positiveTotal) {
+			updateSizePreview("positiveInput", "positivePreviewSize", "positivePreview");
+			const answer = Number(input.value);
+
+			if (input.value && answer === positiveTotal) {
+				input.style.borderColor = "#6cc070";
 				positiveFeedback.textContent = "✅ Correct. The positive team is ready.";
 				positiveFeedback.className = "feedback good-text";
 				markCorrectStep();
@@ -1669,24 +1994,32 @@
 				scrollToCenter("negativeTotalStep");
 				setTimeout(() => document.getElementById("negativeInput").focus(), 450);
 			} else {
-				positiveFeedback.textContent = "Not yet. Add only the plus numbers together.";
+				input.style.borderColor = "#ef7777";
+				positiveFeedback.textContent = "Not yet. Add only the plus numbers, then type the size.";
 				positiveFeedback.className = "feedback bad-text";
 				markMistake();
 			}
 		}
 
 		function checkNegativeTotal() {
-			const answer = cleanInput("negativeInput");
+			startClimbTimer();
+			const input = document.getElementById("negativeInput");
 			const negativeFeedback = document.getElementById("negativeFeedback");
 
-			if (answer === negativeTotal) {
+			updateSizePreview("negativeInput", "negativePreviewSize", "negativePreview");
+			const answerSize = Number(input.value);
+			const correctSize = Math.abs(negativeTotal);
+
+			if (input.value && answerSize === correctSize) {
+				input.style.borderColor = "#6cc070";
 				negativeFeedback.textContent = "✅ Correct. The negative team is ready.";
 				negativeFeedback.className = "feedback good-text";
 				markCorrectStep();
 				startRingBuilder();
 				scrollToCenter("ringBuilder");
 			} else {
-				negativeFeedback.textContent = "Not yet. Add the minus numbers together and keep the negative sign.";
+				input.style.borderColor = "#ef7777";
+				negativeFeedback.textContent = "Not yet. Add the minus numbers, then type the size after the − sign.";
 				negativeFeedback.className = "feedback bad-text";
 				markMistake();
 			}
@@ -1722,6 +2055,7 @@
 		}
 
 		function chooseRingNumber(type, clickedButton) {
+			startClimbTimer();
 			const chosen = ringData[type];
 			const allChoices = document.querySelectorAll(".total-choice");
 
@@ -1785,13 +2119,21 @@
 			wrongAnswerCount = 0;
 
 			document.getElementById("finalBuilt").innerHTML = `
-				<div class="input-row">
+				<div class="final-answer-builder">
 					<label style="font-size:1.25rem; font-weight:bold;">
-						Solve it: ${ringData.first.sign}(${ringData.first.size} − ${ringData.second.size}) =
+						Solve the ring size: ${ringData.first.size} − ${ringData.second.size}
 					</label>
 
-					<input id="ringAnswer" class="math-input" type="text" inputmode="tel" pattern="[0-9#*+\-]*" autocomplete="off" placeholder="answer">
-					<button onclick="checkRingAnswer()">Check</button>
+					<div class="answer-size-row">
+						<span class="fixed-sign">${ringData.first.sign}</span>
+						<input id="ringAnswerSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="size" aria-label="final answer size">
+						<button onclick="checkRingAnswer()">Check</button>
+					</div>
+
+					<div class="fixed-answer-preview" id="ringAnswerPreview">
+						<span class="preview-label">Final answer:</span>
+						<span>${ringData.first.sign}</span><span id="ringAnswerPreviewSize">__</span>
+					</div>
 				</div>
 
 				<div id="ringAnswerFeedback" class="feedback"></div>
@@ -1799,22 +2141,23 @@
 			`;
 
 			setTimeout(() => {
-				document.getElementById("ringAnswer").focus();
+				document.getElementById("ringAnswerSize").focus();
 			}, 100);
 		}
 
 		function checkRingAnswer() {
-			const input = document.getElementById("ringAnswer");
+			startClimbTimer();
+			const input = document.getElementById("ringAnswerSize");
 			const answerFeedback = document.getElementById("ringAnswerFeedback");
 			const hintBox = document.getElementById("ringHint");
 
-			const answerSize = ringData.first.size - ringData.second.size;
-			const correctAnswer = answerSize === 0 ? "0" : `${ringData.first.sign}${answerSize}`;
-			input.value = sanitizeMathText(input.value, true);
-			const studentAnswer = input.value;
-			const cleanCorrect = correctAnswer.replace("−", "-");
+			updateSizePreview("ringAnswerSize", "ringAnswerPreviewSize", "ringAnswerPreview");
 
-			if (studentAnswer === cleanCorrect || studentAnswer === cleanCorrect.replace("+", "")) {
+			const answerSize = ringData.first.size - ringData.second.size;
+			const studentSize = Number(input.value);
+			const correctAnswer = answerSize === 0 ? "0" : `${ringData.first.sign}${answerSize}`;
+
+			if (input.value && studentSize === answerSize) {
 				answerFeedback.textContent = `✅ Correct! Final answer is ${correctAnswer}.`;
 				answerFeedback.className = "feedback good-text";
 				hintBox.innerHTML = "";
@@ -1836,12 +2179,12 @@
 			hintBox.innerHTML = `
 				<div class="hint-text">
 					Hint: The outside sign is ${ringData.first.sign}.
-					Now subtract ${ringData.first.size} − ${ringData.second.size}.
+					Type only the size after subtracting ${ringData.first.size} − ${ringData.second.size}.
 				</div>
 			`;
 			updateFocusHintMode();
 
-			feedback.textContent = "Try again. The answer is not correct yet.";
+			feedback.textContent = "Try again. The answer size is not correct yet.";
 			feedback.className = "feedback bad-text";
 		}
 
@@ -1872,6 +2215,12 @@
 			document.getElementById("negativeMiniList").innerHTML = "";
 			document.getElementById("positiveInput").value = "";
 			document.getElementById("negativeInput").value = "";
+			document.getElementById("positiveInput").style.borderColor = "#b9dcff";
+			document.getElementById("negativeInput").style.borderColor = "#b9dcff";
+			document.getElementById("positivePreviewSize").textContent = "__";
+			document.getElementById("negativePreviewSize").textContent = "__";
+			document.getElementById("positivePreview").classList.remove("filled");
+			document.getElementById("negativePreview").classList.remove("filled");
 			document.getElementById("termCountInput").value = "";
 			document.getElementById("termCountInput").style.borderColor = "#b9dcff";
 			feedback.textContent = "";
@@ -1882,7 +2231,7 @@
 			document.getElementById("termBank").classList.add("hidden");
 			document.getElementById("sortStep").classList.add("hidden");
 			document.getElementById("zones").classList.add("hidden");
-			document.getElementById("instruction").textContent = "Step 1: Count how many terms are in the question first.";
+			document.getElementById("instruction").textContent = "Step 1: Count the signed numbers first.";
 			document.getElementById("positiveTotalStep").classList.add("hidden");
 			document.getElementById("negativeTotalStep").classList.add("hidden");
 			document.getElementById("ringBuilder").classList.add("hidden");
@@ -1894,6 +2243,7 @@
 		}
 
 		function nextClimb() {
+			stopClimbTimer(false);
 			setNextClimbLocked(true);
 			resetGame({ keepClimbProgress: false });
 			termBank.innerHTML = "";
@@ -1912,6 +2262,7 @@
 		}
 
 		function resetPracticeGame() {
+			stopClimbTimer(false);
 			resetGame({ keepClimbProgress: true });
 			feedback.textContent = "Practice reset. Turtle score and climb progress did not change.";
 			feedback.className = "feedback good-text";
@@ -1931,10 +2282,16 @@ function showAchievementPopup() {
 	}, 200);
 }
 
-function createCertificateFromName() {
+async function createCertificateFromName() {
 	const nameInput = document.getElementById("playerNameInput");
 	const finalName = nameInput.value.trim() || "Math Ridge Champion";
 	const now = new Date();
+	const button = document.querySelector("#namePopup button");
+
+	if (button) {
+		button.disabled = true;
+		button.textContent = "Saving world record...";
+	}
 
 	const formattedDate = now.toLocaleDateString("en-US", {
 		year: "numeric",
@@ -1949,10 +2306,28 @@ function createCertificateFromName() {
 	});
 
 	const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	let rankMessage = "";
+	let raceTimeText = formatRaceTime(totalRaceMs);
+
+	try {
+		const result = await submitWorldRecord(finalName, totalRaceMs);
+		rankMessage = result.topThree ? rankText(result.rank) : "";
+		raceTimeText = result.record?.timeDisplay || formatRaceSeconds(result.record?.timeSeconds);
+	} catch (error) {
+		rankMessage = "World record could not save. Certificate time is still shown.";
+	}
 
 	document.getElementById("certName").textContent = finalName;
+	document.getElementById("certRaceTime").textContent =
+		`World Time Race Completion: ${raceTimeText}`;
+	document.getElementById("certRank").textContent = rankMessage;
 	document.getElementById("certDate").textContent =
 		`Completed on ${formattedDate} at ${formattedTime} (${timezone})`;
+
+	if (button) {
+		button.disabled = false;
+		button.textContent = "Create My Certificate";
+	}
 
 	document.getElementById("namePopup").style.display = "none";
 	document.getElementById("certificatePopup").style.display = "flex";
@@ -1966,6 +2341,8 @@ function closeCertificatePopup() {
 function saveCertificateImage() {
 	const name = document.getElementById("certName").textContent;
 	const date = document.getElementById("certDate").textContent;
+	const raceTime = document.getElementById("certRaceTime").textContent;
+	const rank = document.getElementById("certRank").textContent;
 
 	const canvas = document.createElement("canvas");
 	canvas.width = 1200;
@@ -2009,15 +2386,25 @@ function saveCertificateImage() {
 	ctx.fillText("for completing the 10-score challenge", 600, 550);
 	ctx.fillText("with focus, accuracy, and perseverance.", 600, 590);
 
-	ctx.font = "bold 26px Georgia";
-	ctx.fillText(date, 600, 665);
+	ctx.font = "bold 30px Georgia";
+	ctx.fillText(raceTime, 600, 635);
+
+	if (rank) {
+		ctx.fillStyle = "#b87900";
+		ctx.font = "bold 34px Georgia";
+		ctx.fillText(rank, 600, 685);
+	}
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "bold 24px Georgia";
+	ctx.fillText(date, 600, rank ? 725 : 690);
 
 	ctx.fillStyle = "#7a4b00";
 	ctx.font = "36px cursive";
-	ctx.fillText("Math Ridge Studio", 600, 735);
+	ctx.fillText("Math Ridge Studio", 600, 775);
 
 	const link = document.createElement("a");
-	link.download = "math-ridge-certificate.png";
+	link.download = "math-ridge-positive-negative-showdown-certificate.png";
 	link.href = canvas.toDataURL("image/png");
 	link.click();
 }
@@ -2033,6 +2420,8 @@ function saveCertificateImage() {
 		document.getElementById("challengeMessage").textContent =
 			`Climb ${getRequiredProgressSteps()} clean steps to score.`;
 
+		updateTimerPanel();
+		loadWorldRecords();
 		updateTurtleBoard();
 
 	</script>
