@@ -304,6 +304,52 @@
       font-weight: 900;
     }
 
+
+    .footer-rule {
+      margin: 24px auto 0;
+      background: linear-gradient(135deg, #fff8db, #eef7ff);
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+      text-align: center;
+    }
+
+    .footer-quote {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(1.15rem, 2.6vw, 1.75rem);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 1.35;
+    }
+
+    .footer-quote::before {
+      content: "\201C";
+      color: var(--accent-dark);
+      font-size: 1.35em;
+      line-height: 0;
+      vertical-align: -0.12em;
+    }
+
+    .footer-quote::after {
+      content: "\201D";
+      color: var(--accent-dark);
+      font-size: 1.35em;
+      line-height: 0;
+      vertical-align: -0.12em;
+    }
+
+    .quote-author {
+      display: inline-block;
+      margin-left: 10px;
+      color: var(--accent-dark);
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      font-weight: 900;
+      font-style: normal;
+      white-space: nowrap;
+    }
+
     .footer-note {
       text-align: center;
       color: var(--muted);
@@ -542,6 +588,7 @@
     This helps us see that both chunks repeat the same value.
   </p>
 </div>
+      </div>
 
     </section>
 
@@ -565,6 +612,10 @@
           <details><summary>Answer</summary>15 + 12 = 27</details>
         </div>
       </div>
+    </section>
+
+    <section class="footer-rule">
+      <p class="footer-quote">Math is pattern. Pattern builds logic. Logic builds confidence.<span class="quote-author">— Math Ridge</span></p>
     </section>
 
     <p class="footer-note">
