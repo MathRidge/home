@@ -52,7 +52,7 @@
 			padding: clamp(6px, 1vw, 10px) clamp(4px, 0.8vw, 8px);
 			text-align: center;
 			box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-			overflow: hidden;
+			overflow: visible;
 		}
 
 		.challenge-board h2 {
@@ -61,7 +61,7 @@
 			margin-bottom: 5px;
 		}
 
-		.score-badge {
+		.score-badge, .stage-badge {
 			background: white;
 			border: 2px solid #ffd36e;
 			border-radius: 14px;
@@ -72,31 +72,65 @@
 		}
 
 		.turtle-track {
-			display: flex;
-			flex-direction: column-reverse;
-			gap: clamp(3px, 0.8vh, 6px);
-			align-items: center;
-			margin: 6px auto;
-			padding: clamp(5px, 0.9vh, 8px) 4px;
-			border-radius: 18px;
-			background: linear-gradient(180deg, #dff0ff, #fff8db);
-			border: 2px dashed #86c7ff;
+			--progress: 0%;
+			position: relative;
+			width: 34px;
+			height: min(44vh, 330px);
+			min-height: 190px;
+			margin: 8px auto 6px;
+			border-radius: 999px;
+			background: #ffffff;
+			border: 3px solid #86c7ff;
+			overflow: visible;
+			box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
 		}
 
-		.track-step {
-			width: clamp(22px, 3.8vh, 34px);
-			height: clamp(22px, 3.8vh, 34px);
-			background: white;
-			border: 2px dashed #b9dcff;
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: clamp(0.72rem, 2vh, 1rem);
+		.progress-fill {
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			height: var(--progress);
+			border-radius: 999px;
+			background: linear-gradient(0deg, #dcfce7, #fff3bf);
+			transition: height 0.35s ease;
 		}
 
-		.track-step.active { background: #dff0ff; border: 3px solid #86c7ff; transform: scale(1.15); }
-		.track-step.done { background: #dcfce7; border: 3px solid #6cc070; }
+		.turtle-track.theme-neutral .progress-fill {
+			background: linear-gradient(0deg, #dcfce7 0%, #fff3bf 100%);
+			box-shadow: 0 0 8px rgba(108, 192, 112, 0.45), 0 0 14px rgba(255, 211, 110, 0.35);
+		}
+
+		.turtle-track.theme-blue .progress-fill {
+			background: linear-gradient(0deg, #bfe7ff 0%, #fff3bf 100%);
+			box-shadow: 0 0 8px rgba(99, 179, 237, 0.45), 0 0 16px rgba(255, 211, 110, 0.35);
+		}
+
+		.turtle-track.theme-purple .progress-fill {
+			background: linear-gradient(0deg, #d8c7ff 0%, #fff3bf 100%);
+			box-shadow: 0 0 8px rgba(157, 126, 255, 0.42), 0 0 16px rgba(255, 211, 110, 0.35);
+		}
+
+		.progress-turtle {
+			position: absolute;
+			left: 50%;
+			bottom: var(--progress);
+			transform: translate(-50%, 50%);
+			font-size: 1.35rem;
+			line-height: 1;
+			z-index: 2;
+			transition: bottom 0.35s ease, left 0.35s ease;
+			filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+		}
+
+		.progress-turtle.turtle-fade-away {
+			animation: turtleFadeAway 2s ease forwards;
+		}
+
+		@keyframes turtleFadeAway {
+			0% { opacity: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
+			100% { opacity: 0; filter: drop-shadow(0 10px 10px rgba(0,0,0,0)); }
+		}
 
 		.challenge-text {
 			margin-top: 6px;
@@ -370,6 +404,163 @@
 
 		button:hover { transform: translateY(-2px); }
 
+		button.locked-button,
+		button:disabled {
+			background: #d8d8d8;
+			color: #777;
+			box-shadow: none;
+			cursor: not-allowed;
+			opacity: 0.72;
+		}
+
+		button.locked-button:hover,
+		button:disabled:hover {
+			transform: none;
+		}
+
+		.timer-panel {
+			margin-top: 6px;
+			font-weight: bold;
+			font-size: clamp(0.58rem, 1vw, 0.78rem);
+			line-height: 1.15;
+			background: white;
+			border: 2px solid #ffd36e;
+			border-radius: 14px;
+			padding: 5px 6px;
+			color: #7a4b00;
+		}
+
+		.race-record-board {
+			margin-top: 18px;
+			padding: 14px;
+			border-radius: 18px;
+			background: #f7fbff;
+			border: 3px solid #b9dcff;
+			text-align: center;
+		}
+
+		.race-record-board h2 {
+			font-size: 1.2rem;
+			margin-bottom: 8px;
+		}
+
+		.record-list {
+			max-width: 520px;
+			margin: 8px auto 0;
+			text-align: left;
+			font-weight: bold;
+			line-height: 1.5;
+		}
+
+		.record-list.empty {
+			text-align: center;
+			color: #777;
+		}
+
+		.cert-rank {
+			margin-top: 8px;
+			font-size: clamp(1rem, 3vw, 1.35rem);
+			font-weight: bold;
+			color: #b87900;
+		}
+
+
+		.problem-card {
+			position: relative;
+			min-height: 250px;
+		}
+
+		.problem-card.climb-locked .fraction-display {
+			visibility: hidden;
+		}
+
+		.climb-cover {
+			display: none;
+			position: absolute;
+			inset: 12px;
+			z-index: 5;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			border-radius: 20px;
+			background: linear-gradient(180deg, #fff8db, #eaf6ff);
+			border: 3px dashed #ffd36e;
+			padding: 18px;
+			box-shadow: inset 0 2px 10px rgba(0,0,0,0.06);
+		}
+
+		.problem-card.climb-locked .climb-cover {
+			display: flex;
+		}
+
+		.climb-cover-card {
+			max-width: 620px;
+			margin: auto;
+		}
+
+		.climb-cover-card h3 {
+			font-size: clamp(1.35rem, 4.8vw, 2.1rem);
+			color: #d97800;
+			margin-bottom: 8px;
+		}
+
+		.climb-cover-card p {
+			font-weight: bold;
+			color: #7a4b00;
+			line-height: 1.35;
+			margin-bottom: 14px;
+		}
+
+		.start-climb-btn {
+			min-width: min(100%, 260px);
+			font-size: 1.1rem;
+		}
+
+		.ladder-card {
+			width: min(92vw, 620px);
+			background: #fff8db;
+			border: 5px solid #ffd36e;
+			border-radius: 28px;
+			padding: 22px;
+			text-align: center;
+			box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+			animation: popIn 0.35s ease;
+		}
+
+		.ladder-card h2 {
+			font-size: clamp(1.6rem, 5vw, 2.2rem);
+			margin-bottom: 10px;
+			color: #d97800;
+		}
+
+		.ladder-current {
+			background: white;
+			border: 3px dashed #ffd36e;
+			border-radius: 18px;
+			padding: 12px;
+			margin: 12px 0;
+			font-weight: bold;
+			color: #7a4b00;
+			line-height: 1.5;
+		}
+
+		.ladder-record-box {
+			background: #ffffff;
+			border: 3px solid #b9dcff;
+			border-radius: 18px;
+			padding: 12px;
+			margin: 12px 0;
+		}
+
+		.ladder-actions {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 10px;
+			margin-top: 12px;
+		}
+
+
 		.feedback {
 			text-align: center;
 			margin-top: 14px;
@@ -477,7 +668,7 @@
 			#completeStep .math-flow { margin-top: 4px; padding: 6px; font-size: 0.9rem; gap: 4px; }
 			#completeStep .flow-piece { padding: 3px 6px; }
 			#completeMessage { margin-top: 5px; padding: 6px 8px; font-size: 0.88rem; }
-			body { padding: 8px; padding-top: 118px; }
+			body { padding: 8px; padding-top: 142px; }
 			.game { padding: 14px; border-radius: 20px; margin-right: 0; }
 			.challenge-board {
 				position: fixed; top: 0; left: 0; right: 0; width: 100%; max-height: none;
@@ -487,12 +678,29 @@
 			}
 			.challenge-board h2 { display: none; }
 			.score-badge { grid-column: 1; grid-row: 1; margin: 0; font-size: 0.8rem; }
-			.turtle-track { grid-column: 2; grid-row: 1; display: flex; flex-direction: row-reverse; justify-content: center; gap: 3px; margin: 0; padding: 4px; }
-			.track-step { width: clamp(17px, 4.6vw, 24px); height: clamp(17px, 4.6vw, 24px); font-size: clamp(0.55rem, 2.6vw, 0.7rem); }
+			.turtle-track { grid-column: 2; grid-row: 1; width: 100%; height: 24px; min-height: 0; margin: 0; }
+			.progress-fill { left: 0; top: 0; bottom: auto; width: var(--progress); height: 100%; background: linear-gradient(90deg, #dcfce7, #fff3bf); transition: width 0.35s ease; }
+			.progress-turtle { left: var(--progress); top: 50%; bottom: auto; transform: translate(-50%, -58%) scaleX(-1); font-size: 1.2rem; }
+			.turtle-track.theme-neutral .progress-fill { background: linear-gradient(90deg, #dcfce7 0%, #fff3bf 100%); }
+			.turtle-track.theme-blue .progress-fill { background: linear-gradient(90deg, #bfe7ff 0%, #fff3bf 100%); }
+			.turtle-track.theme-purple .progress-fill { background: linear-gradient(90deg, #d8c7ff 0%, #fff3bf 100%); }
 			.challenge-text { grid-column: 1 / 3; grid-row: 2; margin: 0; font-size: 0.72rem; line-height: 1.15; }
+			.timer-panel {
+				grid-column: 1 / 3;
+				grid-row: 3;
+				width: 100%;
+				margin: 2px 0 0;
+				padding: 4px 8px;
+				font-size: 0.72rem;
+				line-height: 1.15;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
 			.choice-grid { grid-template-columns: 1fr; }
 			.focus-page { min-height: calc(100vh - 150px); }
 			button { width: 100%; }
+			.ladder-actions button { width: 100%; }
 			input { width: 84px; }
 			.achievement-popup { align-items: flex-start; padding: 8px; }
 			.certificate-card { width: 96vw; max-height: 96vh; padding: 8px; border-radius: 18px; }
@@ -525,6 +733,9 @@
 				<p>Presented to</p>
 				<div class="cert-name" id="certName">Math Ridge Champion</div>
 				<p>for completing the 10-score challenge with focus, accuracy, and perseverance.</p>
+				<div class="cert-date" id="certRaceTime"></div>
+				<div class="cert-date" id="certStage"></div>
+				<div class="cert-rank" id="certRank"></div>
 				<div class="cert-date" id="certDate"></div>
 				<div class="cert-signature">Math Ridge Studio</div>
 			</div>
@@ -533,28 +744,53 @@
 		</div>
 	</div>
 
+
+	<div class="achievement-popup" id="ladderPopup">
+		<div class="ladder-card">
+			<h2>🐢 Current Ladder</h2>
+			<div class="ladder-current" id="ladderCurrentRun">Score: 0<br>Stage: 1<br>Active Time: 0:00</div>
+			<div class="ladder-record-box">
+				<h3>🌎 Play5 World Time Records</h3>
+				<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
+			</div>
+			<div class="ladder-actions">
+				<button onclick="loadWorldRecords()">Refresh World Records</button>
+				<button onclick="closeLadder()">Close</button>
+			</div>
+		</div>
+	</div>
+
 	<div class="game">
 		<div class="challenge-board">
 			<h2>🐢 Turtle Climb</h2>
 			<div class="score-badge" id="scoreText">Score: 0</div>
+			<div class="stage-badge" id="stageText">Stage: 1</div>
 			<div class="turtle-track" id="turtleTrack"></div>
 			<div class="challenge-text" id="challengeMessage">Reduce carefully to score.</div>
+			<div class="timer-panel" id="timerPanel">⏱ Time: 0:00 | This climb: 0:00</div>
 		</div>
 
 		<h1>Fraction Reduction</h1>
-		<p class="subtitle">Find a shared group. Rewrite the top shelf. Rewrite the bottom shelf. Reduce and repeat.</p>
+		<p class="subtitle">Choose a shared group. Rewrite both shelves. Drop the matching group. Keep checking until the fraction is completely reduced.</p>
 
 		<div class="certificate-note-wide">🐢 Reach Score 10 to earn your certificate!</div>
 
-		<div class="instruction" id="instruction">Look at the current fraction. Choose how both shelves can be grouped, or choose cannot group further.</div>
+		<div class="instruction" id="instruction">Look at the current fraction. Choose a shared group for both shelves, or choose that it is completely reduced.</div>
 
 		<div class="problem-card" id="problemCard">
 			<div class="fraction-display" id="fractionDisplay"></div>
+			<div class="climb-cover" id="climbCover">
+				<div class="climb-cover-card">
+					<h3>Ready for this climb?</h3>
+					<p>The fraction stays covered until you start. The timer begins when you press START the Climb.</p>
+					<button class="start-climb-btn" onclick="startClimb()">START the Climb</button>
+				</div>
+			</div>
 			<div class="read-line" id="difficultyLine"></div>
 		</div>
 
 		<div class="step-card" id="choiceStep">
-			<h2>Both shelves can:</h2>
+			<h2 id="groupChoiceTitle">Current fraction: both shelves can...</h2>
 			<div class="choice-grid" id="groupChoices"></div>
 			<div class="hint-box" id="choiceHint"></div>
 		</div>
@@ -563,8 +799,8 @@
 			<h2>Rewrite the top shelf</h2>
 			<div class="read-line" id="topPrompt"></div>
 			<div class="blank-expression">
-				<input id="topOuterInput" type="text" inputmode="numeric" aria-label="top multiplicity">(
-				<input id="topInnerInput" type="text" inputmode="numeric" aria-label="top group size">)
+				<input id="topOuterInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="top multiplicity">(
+				<input id="topInnerInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="top group size">)
 			</div>
 			<div class="input-row"><button onclick="checkTopRewrite()">Check Top Shelf</button></div>
 			<div class="feedback" id="topFeedback"></div>
@@ -575,8 +811,8 @@
 			<h2>Rewrite the bottom shelf</h2>
 			<div class="read-line" id="bottomPrompt"></div>
 			<div class="blank-expression">
-				<input id="bottomOuterInput" type="text" inputmode="numeric" aria-label="bottom multiplicity">(
-				<input id="bottomInnerInput" type="text" inputmode="numeric" aria-label="bottom group size">)
+				<input id="bottomOuterInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="bottom multiplicity">(
+				<input id="bottomInnerInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="bottom group size">)
 			</div>
 			<div class="input-row"><button onclick="checkBottomRewrite()">Check Bottom Shelf</button></div>
 			<div class="feedback" id="bottomFeedback"></div>
@@ -584,12 +820,12 @@
 		</div>
 
 		<div class="step-card hidden" id="shrinkStep">
-			<h2>Drop the matching group size</h2>
+			<h2>Drop the matching group</h2>
 			<div class="math-flow" id="rewritePreview"></div>
-			<div class="read-line">Write the smaller fraction name.</div>
+			<div class="read-line">Write the reduced fraction after the matching group drops out.</div>
 			<div class="blank-expression">
-				<input id="newTopInput" type="text" inputmode="numeric" aria-label="new top shelf"> /
-				<input id="newBottomInput" type="text" inputmode="numeric" aria-label="new bottom shelf">
+				<input id="newTopInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="new top shelf"> /
+				<input id="newBottomInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="new bottom shelf">
 			</div>
 			<div class="input-row"><button onclick="checkShrink()">Check Smaller Name</button></div>
 			<div class="feedback" id="shrinkFeedback"></div>
@@ -599,15 +835,14 @@
 		<div class="step-card hidden" id="completeStep">
 			<h2>✅ Fraction Reduced!</h2>
 			<div class="math-flow" id="completedFlow"></div>
-			<div class="read-line" id="completeMessage">Great job. You kept reducing the name without changing the amount.</div>
+			<div class="read-line" id="completeMessage">Great job. You reduced the fraction without changing its amount.</div>
 		</div>
 
 		<div class="feedback" id="feedback"></div>
 
 		<div class="bottom-controls" id="bottomControls">
-			<button onclick="nextClimb()">Next Climb</button>
-			<button onclick="resetPracticeGame()">Reset This Problem</button>
-			<button onclick="resetChallenge()">Reset Turtle Score</button>
+			<button id="nextClimbButton" class="locked-button hidden" onclick="nextClimb()" disabled>Next Climb</button>
+			<button onclick="openLadder()">View Current Ladder</button>
 		</div>
 
 		<div class="game-footer">Math Ridge | Fraction Reduction</div>
@@ -616,6 +851,8 @@
 	<script>
 		const TOTAL_STEPS = 12;
 		const GROUPS = [2, 3, 5];
+		const GLOBAL_RECORD_URL = "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/?game=play5";
+		const GAME_KEY = "play5";
 
 		const BASE_FRACTION_PAIRS = [
 			[2, 7], [2, 9], [3, 8], [4, 7], [4, 9],
@@ -638,13 +875,209 @@
 
 		let current = null;
 		let turtleScore = 0;
+		let stage = 1;
+		let stageStarted = false;
 		let runCorrectCount = 0;
 		let mistakesThisGame = 0;
 		let gameScoreAwarded = false;
 		let achievementShown = false;
 		let confettiTimer = null;
+		let totalRaceMs = 0;
+		let climbStartMs = null;
+		let timerDisplayInterval = null;
+		let latestRaceRank = null;
+		let latestSavedRaceSeconds = null;
 
 		const feedback = document.getElementById("feedback");
+
+		function formatRaceTimeFromSeconds(totalSeconds) {
+			const safeSeconds = Math.max(0, Math.round(Number(totalSeconds) || 0));
+			const minutes = Math.floor(safeSeconds / 60);
+			const seconds = safeSeconds % 60;
+			return `${minutes}:${String(seconds).padStart(2, "0")}`;
+		}
+
+		function formatRaceTime(ms) {
+			return formatRaceTimeFromSeconds(Math.floor(Math.max(0, ms) / 1000));
+		}
+
+		function getCurrentClimbMs() {
+			return climbStartMs === null ? 0 : Date.now() - climbStartMs;
+		}
+
+		function updateTimerPanel() {
+			const panel = document.getElementById("timerPanel");
+			if (!panel) return;
+			const activeClimbMs = getCurrentClimbMs();
+			panel.textContent = `⏱ Time: ${formatRaceTime(totalRaceMs + activeClimbMs)} | This climb: ${formatRaceTime(activeClimbMs)}`;
+		}
+
+		function startClimbTimer() {
+			if (!stageStarted) return;
+			if (turtleScore >= 10) return;
+			if (climbStartMs !== null) return;
+			climbStartMs = Date.now();
+			updateTimerPanel();
+			if (!timerDisplayInterval) timerDisplayInterval = setInterval(updateTimerPanel, 250);
+		}
+
+		function stopClimbTimer(addToTotal = true) {
+			if (climbStartMs === null) return;
+			if (addToTotal) totalRaceMs += Date.now() - climbStartMs;
+			climbStartMs = null;
+			if (timerDisplayInterval) {
+				clearInterval(timerDisplayInterval);
+				timerDisplayInterval = null;
+			}
+			updateTimerPanel();
+		}
+
+		function resetRaceTimer() {
+			if (timerDisplayInterval) {
+				clearInterval(timerDisplayInterval);
+				timerDisplayInterval = null;
+			}
+			totalRaceMs = 0;
+			climbStartMs = null;
+			latestRaceRank = null;
+			latestSavedRaceSeconds = null;
+			updateTimerPanel();
+		}
+
+		function rankText(rank) {
+			if (rank === 1) return "🥇 1st Place World Time Champion";
+			if (rank === 2) return "🥈 2nd Place World Time";
+			if (rank === 3) return "🥉 3rd Place World Time";
+			return "";
+		}
+
+		function setNextClimbLocked(isLocked) {
+			const button = document.getElementById("nextClimbButton");
+			if (!button) return;
+			button.disabled = isLocked;
+			button.classList.toggle("locked-button", isLocked);
+			button.classList.toggle("hidden", isLocked);
+		}
+
+		function unlockNextClimb() {
+			setNextClimbLocked(false);
+		}
+
+		function keepDigitsOnly(input, maxLength = null) {
+			let cleaned = input.value.replace(/\D/g, "");
+			if (maxLength !== null) cleaned = cleaned.slice(0, maxLength);
+			input.value = cleaned;
+			return cleaned;
+		}
+
+		function focusNextField(nextInput) {
+			if (!nextInput) return;
+			setTimeout(() => {
+				nextInput.focus();
+				nextInput.select();
+			}, 40);
+		}
+
+		function configurePairInputs(firstId, secondId, firstExpected, secondExpected, doneSelector = null) {
+			const firstInput = document.getElementById(firstId);
+			const secondInput = document.getElementById(secondId);
+			if (!firstInput || !secondInput) return;
+
+			const firstLength = String(firstExpected || "").length;
+			const secondLength = String(secondExpected || "").length;
+
+			firstInput.maxLength = firstLength;
+			secondInput.maxLength = secondLength;
+
+			firstInput.oninput = () => {
+				startClimbTimer();
+				const raw = firstInput.value.replace(/\D/g, "");
+				if (raw.length > firstLength) {
+					firstInput.value = raw.slice(0, firstLength);
+					secondInput.value = raw.slice(firstLength, firstLength + secondLength);
+					focusNextField(secondInput);
+					return;
+				}
+				firstInput.value = raw.slice(0, firstLength);
+				if (firstInput.value.length >= firstLength) focusNextField(secondInput);
+			};
+
+			secondInput.oninput = () => {
+				startClimbTimer();
+				keepDigitsOnly(secondInput, secondLength);
+				if (secondInput.value.length >= secondLength && doneSelector) {
+					setTimeout(() => document.querySelector(doneSelector)?.focus(), 40);
+				}
+			};
+		}
+
+		async function loadWorldRecords() {
+			const list = document.getElementById("ladderRecordList") || document.getElementById("recordList");
+			if (list) {
+				list.className = "record-list empty";
+				list.textContent = "Loading world records...";
+			}
+
+			try {
+				const response = await fetch(GLOBAL_RECORD_URL, { method: "GET" });
+				const data = await response.json();
+
+				if (!data.ok) throw new Error(data.error || "Could not load records.");
+
+				renderWorldRecords(data.records || []);
+			} catch (error) {
+				if (list) {
+					list.className = "record-list empty";
+					list.textContent = "World records could not load. Try Refresh World Records.";
+				}
+			}
+		}
+
+		function renderWorldRecords(records) {
+			const list = document.getElementById("ladderRecordList") || document.getElementById("recordList");
+			if (!list) return;
+
+			if (!records.length) {
+				list.className = "record-list empty";
+				list.textContent = "No world records yet.";
+				return;
+			}
+
+			list.className = "record-list";
+			list.innerHTML = records.slice(0, 10).map((record, index) => {
+				const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
+				const time = record.timeDisplay || formatRaceTimeFromSeconds(record.timeSeconds);
+				const stageText = record.stage ? ` — Stage ${record.stage}` : "";
+				return `<div>${medal} ${record.name} — ${time}${stageText}</div>`;
+			}).join("");
+		}
+
+		async function submitWorldRecord(name, timeSeconds) {
+			const response = await fetch(GLOBAL_RECORD_URL, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					game: GAME_KEY,
+					name,
+					timeSeconds,
+					stage
+				})
+			});
+
+			const data = await response.json();
+			if (!data.ok) throw new Error(data.error || "Could not save world record.");
+			renderWorldRecords(data.records || []);
+			return data;
+		}
+
+		function prepareCurrentInputFlow() {
+			if (!current || !current.chosenGroup) return;
+			const group = current.chosenGroup;
+			configurePairInputs("topOuterInput", "topInnerInput", current.top / group, group, "#topStep button");
+			configurePairInputs("bottomOuterInput", "bottomInnerInput", current.bottom / group, group, "#bottomStep button");
+			configurePairInputs("newTopInput", "newBottomInput", current.top / group, current.bottom / group, "#shrinkStep button");
+		}
+
 
 		function gcd(a, b) {
 			while (b !== 0) {
@@ -768,11 +1201,11 @@
 		}
 
 		function updateHints() {
-			setHint("choiceHint", "Try to spot whether both shelves can group by 2, 3, or 5. If none work, choose cannot group further.");
+			setHint("choiceHint", "Check both shelves. Can both group by 2, by 3, or by 5? If none work, choose “It\'s completely reduced.”");
 			if (current.chosenGroup) {
 				setHint("topHint", `${current.top} should be written as something(${current.chosenGroup}).`);
 				setHint("bottomHint", `${current.bottom} should be written as something(${current.chosenGroup}).`);
-				setHint("shrinkHint", `After dropping the matching (${current.chosenGroup}), keep the outside numbers.`);
+				setHint("shrinkHint", `After the matching (${current.chosenGroup}) drops out, keep the outside numbers.`);
 			}
 		}
 
@@ -783,7 +1216,7 @@
 				{ text: "Group by 2s", value: 2 },
 				{ text: "Group by 3s", value: 3 },
 				{ text: "Group by 5s", value: 5 },
-				{ text: "Cannot group further", value: null }
+				{ text: "It\'s completely reduced", value: null }
 			];
 
 			choices.forEach(item => {
@@ -796,6 +1229,8 @@
 		}
 
 		function handleGroupChoice(choice, selected) {
+			if (!stageStarted) { feedback.textContent = "Press START the Climb first. The timer begins when the question is uncovered."; return; }
+			startClimbTimer();
 			if (choice.classList.contains("correct-flash")) return;
 			const possibleGroups = sharedGroups();
 			const noGroupLeft = possibleGroups.length === 0;
@@ -820,9 +1255,9 @@
 
 			choice.classList.add("wrong-flash");
 			if (selected === null) {
-				feedback.textContent = "Not yet. This fraction can still group by 2, 3, or 5.";
+				feedback.textContent = "Not yet. Both shelves can still share a group of 2, 3, or 5.";
 			} else {
-				feedback.textContent = `Not yet. Both shelves must fit into ${selected}s. Try a different choice.`;
+				feedback.textContent = `Not yet. Both shelves must fit into groups of ${selected}. Try another choice.`;
 			}
 			feedback.className = "feedback bad-text";
 			markMistake();
@@ -840,19 +1275,22 @@
 
 		function prepareRewriteSteps() {
 			document.getElementById("topPrompt").innerHTML = `
-				How many groups of <strong>${current.chosenGroup}</strong> are in the top shelf number: <b class="focus-number">${current.top}</b>?
-				Write it mathematically.
+				Rewrite the top shelf number: <b class="focus-number">${current.top}</b>.
+				How many groups of <strong>${current.chosenGroup}</strong> are inside it?
 				${exampleGuideHTML()}
 			`;
 			document.getElementById("bottomPrompt").innerHTML = `
-				How many groups of <strong>${current.chosenGroup}</strong> are in the bottom shelf number: <b class="focus-number">${current.bottom}</b>?
-				Write it mathematically.
+				Rewrite the bottom shelf number: <b class="focus-number">${current.bottom}</b>.
+				How many groups of <strong>${current.chosenGroup}</strong> are inside it?
 				${exampleGuideHTML()}
 			`;
 			updateHints();
+			prepareCurrentInputFlow();
 		}
 
 		function checkTopRewrite() {
+			if (!stageStarted) { feedback.textContent = "Press START the Climb first."; return; }
+			startClimbTimer();
 			const outer = Number(document.getElementById("topOuterInput").value.trim());
 			const inner = Number(document.getElementById("topInnerInput").value.trim());
 			const box = document.getElementById("topFeedback");
@@ -870,6 +1308,8 @@
 		}
 
 		function checkBottomRewrite() {
+			if (!stageStarted) { feedback.textContent = "Press START the Climb first."; return; }
+			startClimbTimer();
 			const outer = Number(document.getElementById("bottomOuterInput").value.trim());
 			const inner = Number(document.getElementById("bottomInnerInput").value.trim());
 			const box = document.getElementById("bottomFeedback");
@@ -896,9 +1336,12 @@
 				${fractionHTML("?", "?")}
 			`;
 			updateHints();
+			prepareCurrentInputFlow();
 		}
 
 		function checkShrink() {
+			if (!stageStarted) { feedback.textContent = "Press START the Climb first."; return; }
+			startClimbTimer();
 			const newTop = Number(document.getElementById("newTopInput").value.trim());
 			const newBottom = Number(document.getElementById("newBottomInput").value.trim());
 			const box = document.getElementById("shrinkFeedback");
@@ -916,13 +1359,14 @@
 				updateFractionDisplay();
 				renderGroupChoices();
 				updateHints();
-				document.getElementById("instruction").textContent = "Nice reduction. Keep checking the current fraction: 2s, 3s, 5s, or cannot group further.";
+				document.getElementById("instruction").textContent = "Nice reduction. Check the new fraction again: group by 2, group by 3, group by 5, or completely reduced.";
+				document.getElementById("groupChoiceTitle").textContent = "After simplifying, both shelves can still...";
 				showActiveChoiceArea();
 				feedback.textContent = "✅ Smaller name found. Keep checking until no shared group remains.";
 				feedback.className = "feedback good-text";
 				return;
 			}
-			box.textContent = "Not yet. Drop the matching group size and keep the outside numbers.";
+			box.textContent = "Not yet. Drop the matching group and keep the outside numbers.";
 			box.className = "feedback bad-text";
 			markMistake();
 		}
@@ -1057,21 +1501,28 @@
 		}
 
 		function startNewProblem(options = { focus: true }) {
+			stageStarted = false;
+			document.getElementById("problemCard")?.classList.add("climb-locked");
 			makeProblem();
 			resetProblemOnly({ keepClimbProgress: true });
 			updateFractionDisplay();
 			renderGroupChoices();
 			updateHints();
-			document.getElementById("instruction").textContent = "Look at the current fraction. Choose how both shelves can be grouped, or choose cannot group further.";
+			document.getElementById("instruction").textContent = "Look at the current fraction. Choose a shared group for both shelves, or choose that it is completely reduced.";
 			showActiveChoiceArea({ focus: options.focus });
+			feedback.textContent = "Press START the Climb when you are ready. The timer is paused until then.";
+			feedback.className = "feedback";
 		}
 
 		function nextClimb() {
+			stopClimbTimer(false);
+			stage++;
+			setNextClimbLocked(true);
 			runCorrectCount = 0;
 			mistakesThisGame = 0;
 			gameScoreAwarded = false;
 			startNewProblem();
-			document.getElementById("challengeMessage").textContent = `New climb started. Reduce carefully to score.`;
+			document.getElementById("challengeMessage").textContent = `Timer paused. Press START the Climb when ready.`;
 			updateTurtleBoard();
 			showActiveChoiceArea();
 		}
@@ -1093,51 +1544,88 @@
 			showActiveChoiceArea();
 		}
 
+		function getProgressThemeForScore(score) {
+			if (score >= 7) return "purple";
+			if (score >= 4) return "blue";
+			return "neutral";
+		}
+
+		function fadeCompletionTurtle() {
+			const turtle = document.querySelector(".progress-turtle");
+			if (!turtle) return;
+			turtle.classList.remove("turtle-fade-away");
+			void turtle.offsetWidth;
+			turtle.classList.add("turtle-fade-away");
+		}
+
 		function updateTurtleBoard() {
 			const scoreText = document.getElementById("scoreText");
+			const stageText = document.getElementById("stageText");
 			const turtleTrack = document.getElementById("turtleTrack");
 			const challengeMessage = document.getElementById("challengeMessage");
 			scoreText.textContent = `Score: ${turtleScore}`;
-			turtleTrack.innerHTML = "";
+			if (stageText) stageText.textContent = `Stage: ${stage}`;
 
-			const nextScore = Math.min(10, turtleScore + 1);
-			const progressIcon = nextScore <= 3 ? "🌱" : nextScore <= 6 ? "🌿" : "🌳";
-
-			for (let i = 1; i <= TOTAL_STEPS; i++) {
-				const step = document.createElement("div");
-				step.className = "track-step";
-				if (i <= runCorrectCount) {
-					step.classList.add("done");
-					step.textContent = progressIcon;
-				} else if (i === runCorrectCount + 1) {
-					step.classList.add("active");
-					step.textContent = "🐢";
-				} else {
-					step.textContent = "•";
-				}
-				turtleTrack.appendChild(step);
-			}
+			const progressPercent = Math.min(100, Math.round((runCorrectCount / TOTAL_STEPS) * 100));
+			turtleTrack.style.setProperty("--progress", `${progressPercent}%`);
+			turtleTrack.classList.remove("theme-neutral", "theme-blue", "theme-purple");
+			turtleTrack.classList.add(`theme-${getProgressThemeForScore(turtleScore)}`);
+			turtleTrack.innerHTML = `<div class="progress-fill"></div><div class="progress-turtle">🐢</div>`;
 
 			if (turtleScore >= 10) {
 				challengeMessage.textContent = "🎁 10 scores! Certificate unlocked. Extra climbs may be harder.";
 				if (!achievementShown) showAchievementPopup();
-			} else if (nextScore >= 7) {
-				challengeMessage.textContent = "🌳 Tree level: keep using the same reduction loop.";
-			} else if (nextScore >= 4) {
-				challengeMessage.textContent = "🌿 Vine level: reduce one step at a time.";
-			} else {
-				challengeMessage.textContent = "🌱 Leaf level: build the pattern carefully.";
+			} else if (!stageStarted) {
+				challengeMessage.textContent = "Timer paused. Press START the Climb when ready.";
+			} else if (turtleScore >= 7) {
+				challengeMessage.textContent = "Purple level: reduce with focus and speed.";
+			} else if (turtleScore >= 4) {
+				challengeMessage.textContent = "Blue level: same pattern, smoother pace.";
+			} else if (mistakesThisGame === 0) {
+				challengeMessage.textContent = "Leaf level: choose a shared group and reduce carefully.";
 			}
 		}
 
+		function startClimb() {
+			if (stageStarted || gameScoreAwarded) return;
+			stageStarted = true;
+			document.getElementById("problemCard")?.classList.remove("climb-locked");
+			startClimbTimer();
+			feedback.textContent = "Climb started. Choose the shared group for both shelves.";
+			feedback.className = "feedback good-text";
+			updateTurtleBoard();
+			showActiveChoiceArea();
+		}
+
+		function openLadder() {
+			const popup = document.getElementById("ladderPopup");
+			const currentRun = document.getElementById("ladderCurrentRun");
+			if (currentRun) {
+				currentRun.innerHTML = `Score: ${turtleScore}<br>Stage: ${stage}<br>Active Time: ${formatRaceTime(totalRaceMs + getCurrentClimbMs())}`;
+			}
+			popup.style.display = "flex";
+			loadWorldRecords();
+		}
+
+		function closeLadder() {
+			document.getElementById("ladderPopup").style.display = "none";
+		}
+
+		
 		function markCorrectStep(amount = 1, allowScore = false) {
 			if (gameScoreAwarded) return;
 			runCorrectCount = Math.min(TOTAL_STEPS, runCorrectCount + amount);
 
 			if (allowScore && runCorrectCount >= TOTAL_STEPS && mistakesThisGame === 0) {
+				stopClimbTimer(true);
 				turtleScore++;
 				gameScoreAwarded = true;
+				unlockNextClimb();
 				document.getElementById("challengeMessage").textContent = "🏁 Clean reduction path! +1 score. Press Next Climb for another run.";
+				fadeCompletionTurtle();
+			} else if (allowScore && runCorrectCount >= TOTAL_STEPS) {
+				unlockNextClimb();
+				document.getElementById("challengeMessage").textContent = "Run complete. Because this run had a mistake, press Next Climb for a new scoring chance.";
 			} else if (runCorrectCount >= TOTAL_STEPS && mistakesThisGame === 0) {
 				document.getElementById("challengeMessage").textContent = "Almost there. Check whether the fraction can group further.";
 			} else if (mistakesThisGame === 0) {
@@ -1151,6 +1639,7 @@
 		}
 
 		function markMistake() {
+			stopClimbTimer(true);
 			mistakesThisGame++;
 			runCorrectCount = 0;
 			if (mistakesThisGame > 1 && turtleScore > 0) {
@@ -1163,7 +1652,11 @@
 		}
 
 		function resetChallenge() {
+			resetRaceTimer();
+			setNextClimbLocked(true);
 			turtleScore = 0;
+			stage = 1;
+			stageStarted = false;
 			runCorrectCount = 0;
 			mistakesThisGame = 0;
 			Object.values(usedProblemKeysByDepth).forEach(usedSet => usedSet.clear());
@@ -1209,14 +1702,31 @@
 			setTimeout(() => nameInput.focus(), 200);
 		}
 
-		function createCertificateFromName() {
+		async function createCertificateFromName() {
 			const nameInput = document.getElementById("playerNameInput");
 			const finalName = nameInput.value.trim() || "Math Ridge Champion";
 			const now = new Date();
 			const formattedDate = now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 			const formattedTime = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 			const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			const raceSeconds = Math.max(1, Math.round(totalRaceMs / 1000));
+
+			let rankMessage = "";
+			latestSavedRaceSeconds = raceSeconds;
+
+			try {
+				const result = await submitWorldRecord(finalName, raceSeconds);
+				latestRaceRank = result.rank;
+				rankMessage = result.topThree ? rankText(result.rank) : "";
+			} catch (error) {
+				latestRaceRank = null;
+				rankMessage = "World record save is offline. Certificate time is still shown.";
+			}
+
 			document.getElementById("certName").textContent = finalName;
+			document.getElementById("certRaceTime").textContent = `World Time Completion: ${formatRaceTimeFromSeconds(raceSeconds)}`;
+			document.getElementById("certStage").textContent = `Completed Score 10 at Stage ${stage}.`;
+			document.getElementById("certRank").textContent = rankMessage;
 			document.getElementById("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime} (${timezone})`;
 			document.getElementById("namePopup").style.display = "none";
 			document.getElementById("certificatePopup").style.display = "flex";
@@ -1230,6 +1740,9 @@
 function saveCertificateImage() {
 	const name = document.getElementById("certName").textContent;
 	const date = document.getElementById("certDate").textContent;
+	const raceTime = document.getElementById("certRaceTime").textContent;
+	const rank = document.getElementById("certRank").textContent;
+	const certStage = document.getElementById("certStage").textContent;
 
 	const canvas = document.createElement("canvas");
 	canvas.width = 1200;
@@ -1273,12 +1786,23 @@ function saveCertificateImage() {
 	ctx.fillText("for completing the 10-score challenge", 600, 550);
 	ctx.fillText("with focus, accuracy, and perseverance.", 600, 590);
 
-	ctx.font = "bold 26px Georgia";
-	ctx.fillText(date, 600, 665);
+	ctx.font = "bold 28px Georgia";
+	ctx.fillText(raceTime, 600, 635);
+	ctx.fillText(certStage, 600, 675);
+
+	if (rank) {
+		ctx.fillStyle = "#b87900";
+		ctx.font = "bold 32px Georgia";
+		ctx.fillText(rank, 600, 715);
+	}
+
+	ctx.fillStyle = "#24304f";
+	ctx.font = "bold 24px Georgia";
+	ctx.fillText(date, 600, rank ? 755 : 715);
 
 	ctx.fillStyle = "#7a4b00";
 	ctx.font = "36px cursive";
-	ctx.fillText("Math Ridge Studio", 600, 735);
+	ctx.fillText("Math Ridge Studio", 600, 780);
 
 	canvas.toBlob(function(blob) {
 		if (!blob) {
@@ -1303,8 +1827,12 @@ function saveCertificateImage() {
 	}, "image/png");
 }
 
+		updateTimerPanel();
+		setNextClimbLocked(true);
+		loadWorldRecords();
 		updateTurtleBoard();
 		startNewProblem({ focus: false });
+		setNextClimbLocked(true);
 		window.scrollTo({ top: 0, behavior: "auto" });
 	</script>
 </body>
