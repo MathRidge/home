@@ -3,707 +3,622 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Negative Sign Pairs Note | Math Ridge</title>
+<title>Math Ridge | Note 3 - Negative Sign Pairs</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-        background: linear-gradient(180deg, #fff7e6, #eef7ff);
-        color: #2d2d2d;
-        line-height: 1.6;
-    }
-
-    .page {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 24px;
-    }
-
-    .hero {
-        background: #fff;
-        border: 4px solid #ffd27d;
-        border-radius: 24px;
-        padding: 28px;
-        text-align: center;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        margin-bottom: 24px;
-    }
-
-    .hero h1 {
-        margin: 0;
-        font-size: 2.2rem;
-        color: #d97800;
-    }
-
-    .hero p {
-        font-size: 1.15rem;
-        margin: 12px auto 0;
-        max-width: 740px;
-    }
-
-    .card {
-        background: #fff;
-        border-radius: 20px;
-        padding: 22px;
-        margin-bottom: 22px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-        border: 2px solid #e8f2ff;
-    }
-
-    .card h2 {
-        margin-top: 0;
-        color: #2466a8;
-    }
-
-    .math-box {
-        background: #f8fbff;
-        border: 2px dashed #8ec5ff;
-        border-radius: 16px;
-        padding: 16px;
-        font-size: 1.25rem;
-        margin: 14px 0;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .sign-row {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        margin: 16px 0;
-    }
-
-    .sign-card {
-        min-width: 110px;
-        border-radius: 18px;
-        padding: 14px;
-        text-align: center;
-        font-size: 1.3rem;
-        font-weight: bold;
-        box-shadow: 0 5px 12px rgba(0,0,0,0.1);
-    }
-.sign-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #666;
-    padding: 0 6px;
+:root {
+  --bg: #fff8ed;
+  --card: #ffffff;
+  --ink: #2d251c;
+  --muted: #6f6256;
+  --accent: #f59e0b;
+  --accent-dark: #b45309;
+  --soft: #ffedd5;
+  --green: #16a34a;
+  --blue: #2563eb;
+  --purple: #7c3aed;
+  --red: #dc2626;
+  --border: #f4d8ae;
+  --sky: #e8f2ff;
 }
 
-    .plus-card {
-        background: #fff6d6;
-        border: 2px solid #ffc94d;
-        color: #9a6100;
-    }
+* { box-sizing: border-box; }
 
-    .minus-card {
-        background: #e8f3ff;
-        border: 2px solid #7bbcff;
-        color: #1f6fb8;
-    }
+body {
+  margin: 0;
+  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+  background: linear-gradient(180deg, #fff7e6, #eef7ff);
+  color: var(--ink);
+  line-height: 1.6;
+}
 
-    .rule-list {
-        padding-left: 20px;
-    }
+.page {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 60px;
+}
 
-    .rule-list li {
-        margin-bottom: 10px;
-    }
+.hero {
+  background: white;
+  border: 4px solid #ffd27d;
+  border-radius: 28px;
+  padding: clamp(24px, 5vw, 54px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
 
-    .practice-problem {
-        background: #fffdf8;
-        border: 2px solid #ffe1a8;
-        border-radius: 18px;
-        padding: 18px;
-        margin-bottom: 18px;
-    }
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -80px;
+  top: -80px;
+  border-radius: 999px;
+  background: rgba(245,158,11,0.14);
+}
 
-    .problem-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #8a5200;
-        margin-bottom: 10px;
-    }
+.eyebrow {
+  display: inline-flex;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--accent-dark);
+  font-weight: 800;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
 
-    input {
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 2px solid #ccc;
-        font-size: 1rem;
-        width: 150px;
-        max-width: 100%;
-    }
+h1, h2, h3 { margin: 0; line-height: 1.15; }
 
-    button {
-        border: none;
-        border-radius: 12px;
-        padding: 10px 14px;
-        margin: 6px 4px;
-        font-size: 1rem;
-        cursor: pointer;
-        font-weight: bold;
-        background: #ffbf47;
-        color: #3b2700;
-    }
+h1 {
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  max-width: 920px;
+  position: relative;
+  z-index: 1;
+}
 
-    button:hover {
-        background: #ffa91f;
-    }
+.subtitle {
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  color: var(--muted);
+  max-width: 900px;
+  margin: 18px 0 0;
+  position: relative;
+  z-index: 1;
+}
 
-    .solution-btn {
-        background: #8ec5ff;
-        color: #07345c;
-    }
+.hero-note {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
 
-    .solution-btn:hover {
-        background: #69b2ff;
-    }
+.mini-card {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  font-weight: 800;
+}
 
-    .feedback {
-        margin-top: 10px;
-        font-weight: bold;
-    }
+.mini-card span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
 
-    .solution {
-        display: none;
-        margin-top: 12px;
-        background: #f4fbff;
-        border-left: 5px solid #5aaeff;
-        border-radius: 12px;
-        padding: 14px;
-    }
+.section {
+  margin-top: 24px;
+  background: white;
+  border: 2px solid var(--sky);
+  border-radius: 24px;
+  padding: clamp(20px, 4vw, 34px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+}
 
-    .correct {
-        color: #16803c;
-    }
+.section h2 {
+  font-size: clamp(1.55rem, 3.5vw, 2.25rem);
+  margin-bottom: 12px;
+  color: var(--ink);
+}
 
-    .wrong {
-        color: #c0392b;
-    }
+.section h3 {
+  margin-top: 18px;
+  color: var(--accent-dark);
+}
 
-    .footer-note {
-        text-align: center;
-        padding: 20px;
-        color: #555;
-        font-size: 1rem;
-        font-weight: bold;
-    }
+.section p {
+  color: var(--muted);
+  font-size: 1.06rem;
+  margin: 10px 0 0;
+}
 
-    @media (max-width: 700px) {
-        .page {
-            padding: 14px;
-        }
+.math-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 18px;
+  background: #f8fbff;
+  border: 2px dashed #8ec5ff;
+  border-radius: 20px;
+  font-size: clamp(1.35rem, 4vw, 2.35rem);
+  font-weight: 900;
+  text-align: center;
+}
 
-        .hero h1 {
-            font-size: 1.7rem;
-        }
+.read-box {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: #fff6d6;
+  border-left: 5px solid #ffc94d;
+  border-radius: 16px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
 
-        input {
-            width: 100%;
-            margin-bottom: 8px;
-        }
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
 
-        button {
-            width: 100%;
-            margin: 5px 0;
-        }
+.panel {
+  background: #f8fbff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+}
 
-        .sign-card {
-            width: 100%;
-        }
-    }
+.panel h3 {
+  margin: 0 0 10px;
+  color: var(--accent-dark);
+}
+
+.sign-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.sign-card {
+  min-width: 110px;
+  border-radius: 18px;
+  padding: 14px;
+  text-align: center;
+  font-size: 1.55rem;
+  font-weight: 900;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+.sign-arrow {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--muted);
+}
+
+.plus-card {
+  background: #fff6d6;
+  border: 2px solid #ffc94d;
+  color: #9a6100;
+}
+
+.minus-card {
+  background: #e8f3ff;
+  border: 2px solid #7bbcff;
+  color: #1f6fb8;
+}
+
+.rule-list {
+  padding-left: 22px;
+  margin-bottom: 0;
+}
+
+.rule-list li {
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+}
+
+.rule-split {
+  display: grid;
+  grid-template-columns: 1.35fr 0.9fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.rule-panel {
+  background: #f8fbff;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.rule-panel h3 {
+  margin: 0 0 12px;
+  color: var(--accent-dark);
+}
+
+.rule-panel.quick {
+  background: #fff6d6;
+  border-color: #ffc94d;
+}
+
+.practice-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.practice-card {
+  background: #fffdf8;
+  border: 2px solid #ffe1a8;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.problem-title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.18rem;
+  font-weight: 900;
+  color: #8a5200;
+}
+
+.problem-expression {
+  color: var(--ink);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+}
+
+.toggle-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffd56a, #8cc9ff);
+  color: #24304f;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.13);
+}
+
+.toggle-btn:hover { transform: translateY(-1px); }
+
+.solution {
+  display: none;
+  margin-top: 14px;
+  background: #f4fbff;
+  border-left: 5px solid #5aaeff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--ink);
+}
+
+.solution.show { display: block; }
+
+.solution strong { color: var(--accent-dark); }
+
+.final-quote {
+  margin-top: 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #fff0b8, #dff0ff);
+  border: 2px solid var(--border);
+  border-radius: 22px;
+  padding: 16px 20px;
+  color: var(--ink);
+  font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  font-weight: 900;
+}
+
+.final-quote em { font-style: italic; }
+.final-quote span { color: var(--accent-dark); white-space: nowrap; }
+
+.footer-note {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px 10px 0;
+  font-weight: 800;
+}
+
+@media(max-width:820px){
+  .hero-note, .two-col, .rule-split { grid-template-columns: 1fr; }
+  .page { width: min(100% - 22px, 1100px); padding-top: 14px; }
+  .math-line { padding: 14px; }
+  .sign-card { min-width: 86px; }
+  .problem-title { align-items: flex-start; }
+  .toggle-btn { width: 100%; }
+}
 </style>
 </head>
 
 <body>
-<div class="page">
+<main class="page">
 
-    <section class="hero">
-        <h1>Negative Sign Pairs</h1>
-        <p>
-            This note helps you manage signs.
-            We will keep the numbers small, so your brain can focus on the signs.
-        </p>
-    </section>
+  <section class="hero">
+    <div class="eyebrow">Math Ridge | Note 3</div>
+    <h1>Negative Sign Pairs</h1>
+    <p class="subtitle">
+      This note helps you manage signs. We will keep the numbers small, so your brain can focus on the signs.
+    </p>
+    <div class="hero-note">
+      <div class="mini-card">Hidden Positive<span>A positive sign can be hidden.</span></div>
+      <div class="mini-card">Pair Negatives<span>Two negative signs make a positive.</span></div>
+      <div class="mini-card">Count First<span>Odd is negative. Even is positive.</span></div>
+    </div>
+  </section>
 
-    <section class="card">
-        <h2>Big Idea: Positive Signs Can Be Hidden, a product of 1 can also be hidden!</h2>
+  <section class="section">
+    <h2>Big Idea: Positive Signs Can Be Hidden, a product of 1 can also be hidden!</h2>
 
-<p>
-    Multiplying by 1 does not change the number.
-</p>
+    <p>Multiplying by 1 does not change the number.</p>
+    <div class="math-line">1 × (+5) = +5</div>
 
-<div class="math-box">
-    1 × (+5) = +5
-</div>
+    <p>Positive signs are usually hidden in math.</p>
+    <div class="math-line">+5 = 5</div>
 
-<p>
-    Positive signs are usually hidden in math.
-</p>
+    <p>So the number 5 secretly means:</p>
+    <div class="math-line">1 × (+5)</div>
 
-<div class="math-box">
-    +5 = 5
-</div>
-
-<p>
-    So the number 5 secretly means:
-</p>
-
-<div class="math-box">
-    1 × (+5)
-</div>
-
-<p>
-    The hidden 1 means one group of the number.
-    The hidden + means the number is positive.
-</p>
-<p>
-    Therefore, a negative sign in front of a term can also mean multiplication by negative one.
-</p>
-
-<div class="math-box">
-    -1 × (-5) = -(-5)
-</div>
-
-<p>
-    So the expression:
-</p>
-
-<div class="math-box">
-    -(-5)
-</div>
-
-<p>
-    can be seen as:
-</p>
-
-<div class="math-box">
-    (-1) × (-5)
-</div>
-    </section>
-
-    <section class="card">
-        <h2>Two Negative Signs Make a Positive</h2>
-
-        <p>
-            When two negative signs are inside the same term, they can pair together.
-            A pair of negative signs makes a positive sign.
-        </p>
-
-<div class="sign-row">
-    <div class="sign-card minus-card">−</div>
-
-    <div class="sign-card minus-card">−</div>
-
-    <div class="sign-arrow">→</div>
-
-    <div class="sign-card plus-card">+</div>
-</div>
-
-        <div class="math-box">
-            −(−2) = +2 = 2
-        </div>
-
-        <p>
-            After the plus sign is formed, the plus sign becomes hidden.
-            That is why the answer is written as <strong>2</strong>, not always <strong>+2</strong>.
-        </p>
-    </section>
-
-    <section class="card">
-        <h2>Odd or Even Negative Signs</h2>
-
-        <p>
-            Count only the negative signs that belong to the same term.
-        </p>
-
-        <div class="math-box">
-            Even number of negative signs → positive
-        </div>
-
-        <div class="math-box">
-            Odd number of negative signs → negative
-        </div>
-
-        <p>
-            This is only about the sign first.
-            After the sign is clear, then we solve the number.
-        </p>
-    </section>
-
-    <section class="card">
-        <h2>Worked Example 1: Double Negative</h2>
-
-        <div class="math-box">
-            3 − (−2)
-        </div>
-
-        <p>
-            The part <strong>−(−2)</strong> has two negative signs.
-        </p>
-
-        <div class="math-box">
-            −(−2) = +2 = 2
-        </div>
-
-        <p>Now the problem becomes:</p>
-
-        <div class="math-box">
-            3 + 2 = 5
-        </div>
-
-        <p>
-            Final answer:
-        </p>
-
-        <div class="math-box">
-            5
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>Worked Example 2: Negative Plus Negative</h2>
-
-        <div class="math-box">
-            −4 + (−2)
-        </div>
-
-        <p>
-            The plus sign tells us to add the next term.
-            The next term is negative.
-        </p>
-
-        <div class="math-box">
-            −4 + (−2) = −4 − 2
-        </div>
-
-        <p>
-            Both terms are negative, so they are on the same team.
-            Add the sizes and keep the negative sign.
-        </p>
-
-        <div class="math-box">
-            −(4 + 2) = −6
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>Worked Example 3: Three Negative Signs</h2>
-
-        <div class="math-box">
-            −(−(−2))
-        </div>
-
-        <p>
-            Count the negative signs in the same term.
-        </p>
-
-        <div class="math-box">
-            3 negative signs → odd → negative
-        </div>
-
-        <p>
-            Two negative signs pair up and become a hidden positive.
-            One negative sign is left.
-        </p>
-
-        <div class="math-box">
-            −(−(−2)) = +(−2) = -2
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>Math Ridge Rules</h2>
-
-        <ol class="rule-list">
-            <li>A positive sign can be hidden.</li>
-            <li>A hidden positive number is still positive.</li>
-            <li>Two negative signs pair together to make positive.</li>
-            <li>After a positive sign is made, it can become hidden.</li>
-            <li>Odd negative signs make the term negative.</li>
-            <li>Even negative signs make the term positive.</li>
-            <li>After the sign is clear, use Build the Box if you need to combine terms.</li>
-        </ol>
-
-        <h3>Quick Version</h3>
-
-        <ol class="rule-list">
-            <li>Count the negative signs.</li>
-            <li>Even means positive.</li>
-            <li>Odd means negative.</li>
-            <li>Then finish the problem.</li>
-        </ol>
-    </section>
-
-    <section class="card">
-        <h2>Practice Problems</h2>
-        <p>
-            Type your answer. Positive answers can be written with or without the plus sign.
-            Example: <strong>5</strong> and <strong>+5</strong> are both correct.
-        </p>
-
-        <div id="practice-area"></div>
-    </section>
-
-    <div class="footer-note">
-        Math Ridge Note 3 | Negative Sign Pairs
+    <div class="read-box">
+      The hidden 1 means one group of the number. The hidden + means the number is positive.
     </div>
 
-</div>
+    <p>Therefore, a negative sign in front of a term can also mean multiplication by negative one.</p>
+    <div class="math-line">-1 × (-5) = -(-5)</div>
+
+    <p>So the expression:</p>
+    <div class="math-line">-(-5)</div>
+
+    <p>can be seen as:</p>
+    <div class="math-line">(-1) × (-5)</div>
+  </section>
+
+  <section class="section">
+    <h2>Two Negative Signs Make a Positive</h2>
+
+    <p>
+      When two negative signs are inside the same term, they can pair together.
+      A pair of negative signs makes a positive sign.
+    </p>
+
+    <div class="sign-row">
+      <div class="sign-card minus-card">−</div>
+      <div class="sign-card minus-card">−</div>
+      <div class="sign-arrow">→</div>
+      <div class="sign-card plus-card">+</div>
+    </div>
+
+    <div class="math-line">−(−2) = +2 = 2</div>
+
+    <div class="read-box">
+      After the plus sign is formed, the plus sign becomes hidden. That is why the answer is written as <strong>2</strong>, not always <strong>+2</strong>.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Odd or Even Negative Signs</h2>
+
+    <p>Count only the negative signs that belong to the same term.</p>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Even number of negative signs</h3>
+        <div class="math-line">positive</div>
+      </div>
+      <div class="panel">
+        <h3>Odd number of negative signs</h3>
+        <div class="math-line">negative</div>
+      </div>
+    </div>
+
+    <div class="read-box">
+      This is only about the sign first. After the sign is clear, then we solve the number.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Worked Example 1: Double Negative</h2>
+
+    <div class="math-line">3 − (−2)</div>
+
+    <p>The part <strong>−(−2)</strong> has two negative signs.</p>
+    <div class="math-line">−(−2) = +2 = 2</div>
+
+    <p>Now the problem becomes:</p>
+    <div class="math-line">3 + 2 = 5</div>
+
+    <p>Final answer:</p>
+    <div class="math-line">5</div>
+  </section>
+
+  <section class="section">
+    <h2>Worked Example 2: Negative Plus Negative</h2>
+
+    <div class="math-line">−4 + (−2)</div>
+
+    <p>The plus sign tells us to add the next term. The next term is negative.</p>
+    <div class="math-line">−4 + (−2) = −4 − 2</div>
+
+    <p>Both terms are negative, so they are on the same team. Add the sizes and keep the negative sign.</p>
+    <div class="math-line">−(4 + 2) = −6</div>
+  </section>
+
+  <section class="section">
+    <h2>Worked Example 3: Three Negative Signs</h2>
+
+    <div class="math-line">−(−(−2))</div>
+
+    <p>Count the negative signs in the same term.</p>
+    <div class="math-line">3 negative signs → odd → negative</div>
+
+    <p>Two negative signs pair up and become a hidden positive. One negative sign is left.</p>
+    <div class="math-line">−(−(−2)) = +(−2) = -2</div>
+  </section>
+
+  <section class="section">
+    <h2>Math Ridge Rules</h2>
+
+    <div class="rule-split">
+      <div class="rule-panel">
+        <h3>Full Rules</h3>
+        <ol class="rule-list">
+          <li>A positive sign can be hidden.</li>
+          <li>A hidden positive number is still positive.</li>
+          <li>Two negative signs pair together to make positive.</li>
+          <li>After a positive sign is made, it can become hidden.</li>
+          <li>Odd negative signs make the term negative.</li>
+          <li>Even negative signs make the term positive.</li>
+          <li>After the sign is clear, use Build the Box if you need to combine terms.</li>
+        </ol>
+      </div>
+
+      <div class="rule-panel quick">
+        <h3>Quick Version</h3>
+        <ol class="rule-list">
+          <li>Count the negative signs.</li>
+          <li>Even means positive.</li>
+          <li>Odd means negative.</li>
+          <li>Then Build the Box to finish the problem.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Practice Problems</h2>
+    <p>
+      Click each problem to show the answer and quick explanation steps. Click again to hide it.
+    </p>
+
+    <div class="practice-list" id="practice-area"></div>
+  </section>
+
+  <div class="final-quote">
+    <em>“Math is pattern. Pattern builds logic. Logic builds confidence.”</em> <span>— Math Ridge</span>
+  </div>
+
+  <p class="footer-note">Math Ridge Note 3 | Negative Sign Pairs</p>
+
+</main>
 
 <script>
 const problems = [
-    {
-        expression: "−(−2)",
-        answer: "2",
-        steps: `
-            <strong>Problem:</strong><br>
-            −(−2)<br><br>
+  {
+    expression: "−(−3)",
+    answer: "3",
+    steps: `
+      <strong>Problem:</strong><br>
+      −(−3)<br><br>
 
-            <strong>Count the negative signs:</strong><br>
-            There are 2 negative signs.<br><br>
+      <strong>Count the negative signs:</strong><br>
+      There are 2 negative signs.<br><br>
 
-            <strong>2 is even:</strong><br>
-            Even negative signs make positive.<br><br>
+      <strong>2 is even:</strong><br>
+      The result is positive.<br><br>
 
-            <strong>Answer: 2</strong>
-        `
-    },
-    {
-        expression: "−(−3)",
-        answer: "3",
-        steps: `
-            <strong>Problem:</strong><br>
-            −(−3)<br><br>
+      <strong>+3 is written as 3.</strong><br><br>
 
-            <strong>Count the negative signs:</strong><br>
-            There are 2 negative signs.<br><br>
+      <strong>Answer: 3</strong>
+    `
+  },
+  {
+    expression: "−(−(−2))",
+    answer: "-2",
+    steps: `
+      <strong>Problem:</strong><br>
+      −(−(−2))<br><br>
 
-            <strong>2 is even:</strong><br>
-            The result is positive.<br><br>
+      <strong>Count the negative signs:</strong><br>
+      There are 3 negative signs.<br><br>
 
-            <strong>+3 is written as 3.</strong><br><br>
+      <strong>3 is odd:</strong><br>
+      Odd negative signs make negative.<br><br>
 
-            <strong>Answer: 3</strong>
-        `
-    },
-    {
-        expression: "−(−(−2))",
-        answer: "-2",
-        steps: `
-            <strong>Problem:</strong><br>
-            −(−(−2))<br><br>
+      <strong>Answer: -2</strong>
+    `
+  },
+  {
+    expression: "3 − (−2)",
+    answer: "5",
+    steps: `
+      <strong>Problem:</strong><br>
+      3 − (−2)<br><br>
 
-            <strong>Count the negative signs:</strong><br>
-            There are 3 negative signs.<br><br>
+      <strong>Fix the signs first:</strong><br>
+      −(−2) has 2 negative signs.<br>
+      2 negative signs make positive.<br><br>
 
-            <strong>3 is odd:</strong><br>
-            Odd negative signs make negative.<br><br>
+      <strong>So:</strong><br>
+      3 − (−2) = 3 + 2<br><br>
 
-            <strong>Answer: -2</strong>
-        `
-    },
-    {
-        expression: "3 − (−2)",
-        answer: "5",
-        steps: `
-            <strong>Problem:</strong><br>
-            3 − (−2)<br><br>
+      <strong>Build the Box:</strong><br>
+      +(3 + 2) = 5<br><br>
 
-            <strong>Fix the signs first:</strong><br>
-            −(−2) has 2 negative signs.<br>
-            2 negative signs make positive.<br><br>
+      <strong>Answer: 5</strong>
+    `
+  },
+  {
+    expression: "−4 − (−2)",
+    answer: "-2",
+    steps: `
+      <strong>Problem:</strong><br>
+      −4 − (−2)<br><br>
 
-            <strong>So:</strong><br>
-            3 − (−2) = 3 + 2<br><br>
+      <strong>Fix the signs first:</strong><br>
+      −(−2) becomes +2.<br><br>
 
-            <strong>Finish:</strong><br>
-            3 + 2 = 5<br><br>
+      <strong>So:</strong><br>
+      −4 − (−2) = −4 + 2<br><br>
 
-            <strong>Answer: 5</strong>
-        `
-    },
-    {
-        expression: "−4 − (−2)",
-        answer: "-2",
-        steps: `
-            <strong>Problem:</strong><br>
-            −4 − (−2)<br><br>
+      <strong>Build the Box:</strong><br>
+      Different signs. Compare 4 and 2.<br>
+      4 is bigger, and it is negative.<br>
+      -(4 − 2) = -2<br><br>
 
-            <strong>Fix the signs first:</strong><br>
-            −(−2) becomes +2.<br><br>
-
-            <strong>So:</strong><br>
-            −4 − (−2) = −4 + 2<br><br>
-
-            <strong>Build the Box:</strong><br>
-            Different signs. Compare 4 and 2.<br>
-            4 is bigger, and it is negative.<br>
-            4 − 2 = 2<br><br>
-
-            <strong>Answer: -2</strong>
-        `
-    },
-    {
-        expression: "−4 + (−2)",
-        answer: "-6",
-        steps: `
-            <strong>Problem:</strong><br>
-            −4 + (−2)<br><br>
-
-            <strong>See the signed terms:</strong><br>
-            −4 and −2<br><br>
-
-            <strong>Same team:</strong><br>
-            Both are negative.<br>
-            Add the sizes: 4 + 2 = 6<br>
-            Keep the negative sign.<br><br>
-
-            <strong>Answer: -6</strong>
-        `
-    },
-    {
-        expression: "2 × (−3)",
-        answer: "-6",
-        steps: `
-            <strong>Problem:</strong><br>
-            2 × (−3)<br><br>
-
-            <strong>Count the negative signs:</strong><br>
-            There is 1 negative sign.<br><br>
-
-            <strong>1 is odd:</strong><br>
-            The answer is negative.<br><br>
-
-            <strong>Number part:</strong><br>
-            2 × 3 = 6<br><br>
-
-            <strong>Answer: -6</strong>
-        `
-    },
-    {
-        expression: "2 × (−2)",
-        answer: "-4",
-        steps: `
-            <strong>Problem:</strong><br>
-            2 × (−2)<br><br>
-
-            <strong>Count the negative signs:</strong><br>
-            There is 1 negative sign.<br><br>
-
-            <strong>1 is odd:</strong><br>
-            The answer is negative.<br><br>
-
-            <strong>Number part:</strong><br>
-            2 × 2 = 4<br><br>
-
-            <strong>Answer: -4</strong>
-        `
-    },
-    {
-        expression: "(−2) × (−3)",
-        answer: "6",
-        steps: `
-            <strong>Problem:</strong><br>
-            (−2) × (−3)<br><br>
-
-            <strong>Count the negative signs:</strong><br>
-            There are 2 negative signs.<br><br>
-
-            <strong>2 is even:</strong><br>
-            The answer is positive.<br><br>
-
-            <strong>Number part:</strong><br>
-            2 × 3 = 6<br><br>
-
-            <strong>Answer: 6</strong>
-        `
-    },
-    {
-        expression: "5 + (−2)",
-        answer: "3",
-        steps: `
-            <strong>Problem:</strong><br>
-            5 + (−2)<br><br>
-
-            <strong>See the signed terms:</strong><br>
-            +5 and −2<br><br>
-
-            <strong>Build the Box:</strong><br>
-            Different signs. Compare 5 and 2.<br>
-            5 is bigger, and it is positive.<br>
-            5 − 2 = 3<br><br>
-
-            <strong>Answer: 3</strong>
-        `
-    }
+      <strong>Answer: -2</strong>
+    `
+  }
 ];
 
 const practiceArea = document.getElementById("practice-area");
 
 problems.forEach((problem, index) => {
-    const box = document.createElement("div");
-    box.className = "practice-problem";
+  const box = document.createElement("div");
+  box.className = "practice-card";
 
-    box.innerHTML = `
-        <div class="problem-title">Problem ${index + 1}: ${problem.expression}</div>
+  box.innerHTML = `
+    <div class="problem-title">
+      <span>Problem ${index + 2}: <span class="problem-expression">${problem.expression}</span></span>
+      <button class="toggle-btn" type="button" aria-expanded="false" aria-controls="solution-${index}" onclick="toggleSolution(${index}, this)">Show Answer</button>
+    </div>
+    <div class="solution" id="solution-${index}">
+      ${problem.steps}
+    </div>
+  `;
 
-        <input 
-            type="text" 
-            id="answer-${index}" 
-            placeholder="Type answer"
-            autocomplete="off"
-        >
-
-        <button onclick="checkAnswer(${index})">Check Answer</button>
-        <button class="solution-btn" onclick="showSolution(${index})">Show Steps and Solution</button>
-
-        <div class="feedback" id="feedback-${index}"></div>
-        <div class="solution" id="solution-${index}">
-            ${problem.steps}
-        </div>
-    `;
-
-    practiceArea.appendChild(box);
+  practiceArea.appendChild(box);
 });
 
-function cleanAnswer(value) {
-    return value
-        .trim()
-        .replace(/\s+/g, "")
-        .replace("−", "-")
-        .replace("+", "")
-        .toLowerCase();
-}
-
-function checkAnswer(index) {
-    const input = document.getElementById(`answer-${index}`);
-    const feedback = document.getElementById(`feedback-${index}`);
-    const userAnswer = cleanAnswer(input.value);
-    const correctAnswer = cleanAnswer(problems[index].answer);
-
-    if (userAnswer === correctAnswer) {
-        feedback.className = "feedback correct";
-        feedback.innerHTML = "Correct! You managed the signs first.";
-        document.getElementById(`solution-${index}`).style.display = "block";
-    } else {
-        feedback.className = "feedback wrong";
-        feedback.innerHTML = "Not yet. Count the negative signs first.";
-    }
-}
-
-function showSolution(index) {
-    document.getElementById(`solution-${index}`).style.display = "block";
+function toggleSolution(index, button) {
+  const solution = document.getElementById(`solution-${index}`);
+  const isOpen = solution.classList.toggle("show");
+  button.textContent = isOpen ? "Hide Answer" : "Show Answer";
+  button.setAttribute("aria-expanded", isOpen ? "true" : "false");
 }
 </script>
-
 </body>
 </html>
