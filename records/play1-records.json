@@ -1,5 +1,14 @@
 [
   {
+    "name": "Tom S.",
+    "timeSeconds": 196,
+    "timeDisplay": "3:16",
+    "game": "Play1 - Build the Box",
+    "gameKey": "play1",
+    "stage": 12,
+    "date": "2026-05-21T09:47:59.386Z"
+  },
+  {
     "name": "Math Ridge Champion",
     "timeSeconds": 206,
     "timeDisplay": "3:26",
