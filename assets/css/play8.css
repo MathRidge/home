@@ -1,0 +1,472 @@
+/* Math Ridge Play 2-4 local game styles: Exponent Shelf Packing.
+   The global shell owns the trail background, progress shelf, timer, ladder,
+   certificate modal, buttons, and bottom navigation. */
+
+:root {
+  --p8-ink: #24304f;
+  --p8-warm: rgba(255, 248, 219, 0.94);
+  --p8-gold: #ffd36e;
+  --p8-orange: #d97800;
+  --p8-blue: #2563eb;
+  --p8-blue-soft: #dbeafe;
+  --p8-green: #16a34a;
+  --p8-green-soft: #dcfce7;
+  --p8-purple: #7c3aed;
+  --p8-purple-soft: #f5f3ff;
+  --p8-card: rgba(255, 250, 239, 0.94);
+}
+
+body.play-8 .game {
+  width: min(920px, 100%);
+  max-width: 920px;
+}
+
+.instruction,
+.problem-card,
+.step-card,
+.feedback {
+  width: min(100%, 860px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.instruction,
+.read-line,
+.hint-box {
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255,247,232,0.94), rgba(255,225,150,0.82));
+  border: 1px solid rgba(242,184,75,0.56);
+  border-radius: 18px;
+  padding: 12px;
+  font-weight: 900;
+  color: #6b4300;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.62);
+}
+
+.instruction {
+  margin-bottom: 14px;
+  font-size: 1.05rem;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.70);
+}
+
+.problem-card,
+.step-card {
+  margin-top: 14px;
+  padding: clamp(16px, 3vw, 22px);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255,250,239,0.94), rgba(255,247,232,0.86));
+  border: 1px solid rgba(255,247,232,0.64);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.70);
+  scroll-margin-top: 150px;
+}
+
+.problem-card h2,
+.step-card h2 {
+  text-align: center;
+  font-size: clamp(1.25rem, 3.2vw, 1.55rem);
+  margin-bottom: 12px;
+  color: #1b2b46;
+}
+
+.problem-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.problem-card.climb-locked .center,
+.problem-card.climb-locked .fraction-display {
+  visibility: hidden;
+}
+
+.center { text-align: center; }
+
+.stage-label {
+  display: inline-block;
+  background: rgba(238,246,255,0.92);
+  border: 1px solid rgba(31,111,184,0.28);
+  border-radius: 999px;
+  padding: 7px 12px;
+  margin: 5px auto 10px;
+  font-weight: 900;
+  color: #1f6fb8;
+}
+
+.fraction-display {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 3px dashed var(--p8-gold);
+  border-radius: 26px;
+  padding: 18px;
+  margin: 14px auto;
+  font-size: clamp(1.75rem, 7vw, 4.2rem);
+  font-weight: 950;
+  color: var(--p8-orange);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 12px 26px rgba(31, 45, 75, 0.10);
+}
+
+.operator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35em;
+  min-height: 1.35em;
+  border-radius: 16px;
+  background: var(--p8-warm);
+  border: 2px solid var(--p8-gold);
+  color: var(--p8-orange);
+  font-weight: 950;
+}
+
+.fraction {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: center;
+  line-height: 1;
+  min-width: 1.25em;
+  vertical-align: middle;
+}
+
+.fraction .top {
+  border-bottom: 0.11em solid currentColor;
+  padding: 0 0.18em 0.1em;
+  color: var(--p8-blue);
+}
+
+.fraction .bottom {
+  padding: 0.1em 0.18em 0;
+  color: var(--p8-green);
+}
+
+.input-row,
+.answer-row,
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.factor-input {
+  width: 54px;
+  height: 50px;
+  padding: 5px;
+  font-size: 1.45rem;
+  border-radius: 14px;
+  border: 3px solid #b9dcff;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 950;
+  background: white;
+}
+
+.exp-input {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  font-size: 0.58rem;
+  line-height: 1;
+  border-radius: 5px;
+  border: 1.5px solid #b9dcff;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 950;
+  background: white;
+  vertical-align: middle;
+}
+
+.answer-input {
+  width: 94px;
+  padding: 10px;
+  font-size: 1.45rem;
+  border-radius: 14px;
+  border: 3px solid #b9dcff;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 950;
+  background: white;
+}
+
+.factor-input:focus,
+.exp-input:focus,
+.answer-input:focus,
+.name-card input:focus {
+  outline: none;
+  border-color: var(--p8-gold);
+  box-shadow: 0 0 0 4px rgba(255, 211, 110, 0.35);
+}
+
+.step-reference,
+.prime-form,
+.pack-form,
+.compare-form,
+.final-preview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 12px auto;
+  padding: 14px;
+  background: white;
+  border: 3px dashed #8ec5ff;
+  border-radius: 18px;
+  font-size: clamp(1.05rem, 4vw, 1.55rem);
+  font-weight: 950;
+  max-width: 100%;
+}
+
+.factor-chip,
+.mini-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 32px;
+  padding: 5px 8px;
+  border-radius: 12px;
+  background: white;
+  border: 2px solid var(--p8-gold);
+  font-weight: 950;
+  font-size: 1rem;
+}
+
+.top-chip {
+  background: var(--p8-blue-soft);
+  border-color: var(--p8-blue);
+  color: #1d4ed8;
+}
+
+.bottom-chip {
+  background: var(--p8-green-soft);
+  border-color: var(--p8-green);
+  color: #15803d;
+}
+
+.group-box {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px;
+  border-radius: 16px;
+  border: 3px dashed;
+  background: white;
+}
+
+.top-group-box { border-color: var(--p8-blue); }
+.bottom-group-box { border-color: var(--p8-green); }
+
+.group-label {
+  flex-basis: 100%;
+  text-align: center;
+  font-weight: 950;
+  color: #7a4b00;
+}
+
+.pow {
+  display: inline-block;
+  position: relative;
+  padding-right: 1.05em;
+  line-height: 1;
+  font-weight: 950;
+  margin: 0 0.28em;
+}
+
+.pow .base { display: inline-block; }
+
+.pow .exp {
+  position: absolute;
+  left: 1.19em;
+  top: -0.42em;
+  font-size: 0.46em;
+  line-height: 1;
+  white-space: nowrap;
+  color: #cb7f57;
+  font-weight: 950;
+}
+
+.power-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  border: 2px solid #c4b5fd;
+  background: var(--p8-purple-soft);
+  color: #5b21b6;
+  font-weight: 950;
+  font-size: 1.16rem;
+}
+
+.base-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 1fr 1fr 1.6fr;
+  gap: 8px;
+  align-items: center;
+  background: white;
+  border: 1px solid #e6eef8;
+  border-radius: 18px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.base-pill {
+  justify-self: center;
+  min-width: 52px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--p8-purple-soft);
+  border: 2px solid #c4b5fd;
+  color: #5b21b6;
+  font-size: 1.35rem;
+  font-weight: 950;
+  text-align: center;
+}
+
+.compare-btn {
+  background: white;
+  color: #1b2b46;
+  border: 3px solid #b9dcff;
+  box-shadow: 0 6px 16px rgba(31,45,75,0.12);
+}
+
+.compare-btn.selectedTop {
+  background: var(--p8-blue-soft);
+  border-color: var(--p8-blue);
+}
+
+.compare-btn.selectedBottom {
+  background: var(--p8-green-soft);
+  border-color: var(--p8-green);
+}
+
+.compare-btn.selectedSame {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.compare-text {
+  font-weight: 950;
+  text-align: center;
+  color: #7a4b00;
+}
+
+.location-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.location-card {
+  background: white;
+  border: 1px solid #e6eef8;
+  border-radius: 18px;
+  padding: 12px;
+  text-align: center;
+  font-weight: 950;
+}
+
+.location-card .baseLine {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.mini-pack-layout {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.55fr) 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.mini-reference {
+  background: white;
+  border: 3px dashed var(--p8-gold);
+  border-radius: 18px;
+  padding: 10px;
+  text-align: center;
+  font-weight: 950;
+  color: #7a4b00;
+  position: sticky;
+  top: 14px;
+}
+
+.mini-reference-title {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.mini-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.pack-side-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: white;
+  border: 3px dashed #8ec5ff;
+  border-radius: 18px;
+}
+
+#completeFlow {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+#completeFlow .fraction-display {
+  margin: 4px auto;
+}
+
+#completeFlow .pow {
+  margin-right: 0.48em;
+}
+
+#completeFlow .pow .exp {
+  left: 1.19em;
+}
+
+.feedback {
+  text-align: center;
+  margin-top: 14px;
+  font-weight: 950;
+  font-size: 1.12rem;
+  min-height: 30px;
+}
+
+.good-text { color: #248a2f; }
+.bad-text { color: #c0392b; }
+.neutral-text { color: #7a4b00; }
+
+@media (max-width: 760px) {
+  body.play-8 .game { width: 100%; }
+
+  .mini-pack-layout { grid-template-columns: 1fr; }
+  .mini-reference { position: static; }
+  .base-row { grid-template-columns: 1fr; }
+  .location-grid { grid-template-columns: 1fr; }
+  .choice-btn,
+  .compare-btn,
+  .step-card button,
+  .problem-card button { width: 100%; }
+  .fraction-display { gap: 7px; padding: 12px; }
+  .operator { min-width: 1.15em; min-height: 1.15em; border-radius: 12px; }
+}

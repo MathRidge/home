@@ -1,0 +1,357 @@
+/* Math Ridge Play 1-4 local game styles: Chunking Repeated Values.
+   The global shell owns the background, shelf, timer, buttons, bottom controls,
+   ladder, certificate modal, and shared responsive layout. */
+
+.instruction,
+.problem-card,
+.step-card,
+.feedback {
+	width: min(100%, 820px);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.instruction {
+	text-align: center;
+	padding: 12px 14px;
+	margin-bottom: 18px;
+	border-radius: 18px;
+	background: linear-gradient(135deg, rgba(255,247,232,0.93), rgba(255,225,150,0.82));
+	border: 1px solid rgba(242,184,75,0.56);
+	box-shadow: 0 18px 50px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.70);
+	color: #5d3600;
+	font-weight: 900;
+	font-size: 1.05rem;
+}
+
+.problem-card,
+.step-card,
+.feedback {
+	border-radius: 24px;
+	background: linear-gradient(180deg, var(--mr-paper-strong), var(--mr-paper-soft));
+	border: 1px solid rgba(255,247,232,0.64);
+	box-shadow: 0 18px 50px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.70);
+}
+
+.problem-card {
+	margin-bottom: 18px;
+	padding: clamp(16px, 3vw, 24px);
+}
+
+.step-card {
+	margin-top: 18px;
+	padding: clamp(14px, 3vw, 20px);
+}
+
+.step-card h2 {
+	text-align: center;
+	font-size: clamp(1.25rem, 3vw, 1.55rem);
+	line-height: 1.18;
+	font-weight: 950;
+	margin-bottom: 12px;
+	color: #16233a;
+}
+
+.repeated-line {
+	/* Generated repeated-addition problem: keep it in one clean row.
+	   JS sets --play4-item-count to the number of visible tokens so long
+	   problems shrink instead of wrapping into multiple rows. */
+	--play4-item-count: 13;
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	gap: clamp(2px, calc(30px / var(--play4-item-count)), 8px);
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	background: rgba(255, 255, 255, 0.72);
+	border: 3px dashed rgba(242,184,75,0.58);
+	border-radius: 26px;
+	padding: clamp(12px, 2.6vw, 18px) clamp(8px, 2vw, 16px);
+	margin: 4px auto 14px;
+	font-size: clamp(0.92rem, calc(72vw / var(--play4-item-count)), 2.65rem);
+	font-weight: 950;
+	line-height: 1.02;
+	color: #d97800;
+	box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.repeated-line > span {
+	flex: 0 0 auto;
+}
+
+.repeated-line.is-compact .num {
+	min-width: 1.08em;
+	padding-inline: 0.12em;
+}
+
+.repeated-line .num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	min-width: 1.14em;
+	padding: 0.045em 0.15em;
+	border-radius: 0.38em;
+	background: #fff8db;
+	border: max(1px, 0.045em) solid #ffd36e;
+	box-shadow: 0 5px 12px rgba(75, 43, 11, 0.08);
+}
+
+.repeated-line .op {
+	flex: 0 0 auto;
+	font-size: 0.82em;
+	line-height: 1;
+	color: #9b5b00;
+}
+
+.read-line,
+.hint-box {
+	text-align: center;
+	font-size: 1.03rem;
+	font-weight: 900;
+	line-height: 1.35;
+	color: #6f4300;
+	background: rgba(255, 248, 219, 0.86);
+	border-radius: 16px;
+	padding: 11px 12px;
+	margin-top: 12px;
+	border: 1px dashed rgba(242,184,75,0.58);
+}
+
+.hint-box.hidden-hint {
+	display: none;
+}
+
+.hint-box.focus-hint {
+	background: transparent;
+	border-color: transparent;
+	padding: 5px 4px;
+	margin-top: 6px;
+	font-size: 0.94rem;
+	opacity: 0.92;
+}
+
+.hint-toggle,
+.example-toggle {
+	display: block;
+	width: auto;
+	min-height: 0;
+	margin: 8px auto 0;
+	padding: 4px 6px;
+	border: none;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	color: #355f89;
+	font-size: 0.84rem;
+	font-weight: 900;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.hint-toggle:hover,
+.example-toggle:hover {
+	transform: none;
+	box-shadow: none;
+	color: #1f4f82;
+}
+
+.hidden-toggle {
+	display: none;
+}
+
+.step-example {
+	max-width: 620px;
+	margin: 10px auto 0;
+}
+
+.choice-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 14px;
+	margin-top: 14px;
+}
+
+.choice {
+	background: linear-gradient(180deg, rgba(255,252,239,0.98), rgba(255,238,199,0.92));
+	border: 1px solid rgba(242,184,75,0.58);
+	border-radius: 20px;
+	padding: 16px 10px;
+	text-align: center;
+	font-size: clamp(1.05rem, 3vw, 1.7rem);
+	font-weight: 950;
+	cursor: pointer;
+	box-shadow: 0 10px 22px rgba(45, 28, 12, 0.14), inset 0 1px 0 rgba(255,255,255,0.72);
+	transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+	user-select: none;
+}
+
+.choice:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 14px 26px rgba(45, 28, 12, 0.18), inset 0 1px 0 rgba(255,255,255,0.78);
+}
+
+.choice.correct-flash {
+	background: linear-gradient(180deg, #ecfff2, #c7f4d2);
+	border-color: #6cc070;
+}
+
+.choice.wrong-flash {
+	background: linear-gradient(180deg, #fff1f1, #ffd4d4);
+	border-color: #ef7777;
+	animation: play4Shake 0.35s;
+}
+
+@keyframes play4Shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-6px); }
+	50% { transform: translateX(6px); }
+	75% { transform: translateX(-6px); }
+	100% { transform: translateX(0); }
+}
+
+.math-flow {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	margin-top: 14px;
+	padding: 14px;
+	background: rgba(255,255,255,0.72);
+	border: 1px dashed rgba(111, 168, 220, 0.68);
+	border-radius: 18px;
+	font-size: clamp(1.05rem, 4vw, 1.8rem);
+	font-weight: 950;
+	line-height: 1.18;
+}
+
+.flow-piece {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 12px;
+	border-radius: 14px;
+	background: #fff8db;
+	border: 1px solid rgba(242,184,75,0.58);
+	box-shadow: 0 5px 14px rgba(75, 43, 11, 0.08);
+}
+
+.input-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+	margin-top: 16px;
+	font-weight: 900;
+}
+
+.blank-expression {
+	text-align: center;
+	font-size: clamp(2rem, 8vw, 4rem);
+	font-weight: 950;
+	margin: 16px 0;
+	color: #16233a;
+}
+
+.blank-expression input {
+	width: clamp(78px, 17vw, 116px);
+	margin: 0 4px;
+}
+
+.feedback {
+	text-align: center;
+	margin-top: 14px;
+	padding: 10px 12px;
+	font-weight: 900;
+	font-size: 1.08rem;
+	min-height: 30px;
+}
+
+.step-card .feedback {
+	box-shadow: none;
+	background: transparent;
+	border: 0;
+	padding: 8px 4px 0;
+}
+
+.play-area.hidden {
+	display: none !important;
+}
+
+#completeStep .math-flow {
+	font-size: clamp(0.92rem, 2.7vw, 1.35rem);
+}
+
+#completeStep {
+	scroll-margin-top: 150px;
+}
+
+#completeStep h2 {
+	font-size: clamp(1.45rem, 4.2vw, 2rem);
+	color: #14532d;
+}
+
+@media (max-width: 760px) {
+	.instruction,
+	.problem-card,
+	.step-card,
+	.feedback {
+		width: min(100%, calc(100vw - 20px));
+	}
+
+	.instruction {
+		font-size: 0.94rem;
+		padding: 10px 12px;
+	}
+
+	.problem-card,
+	.step-card {
+		border-radius: 20px;
+	}
+
+	.choice-grid {
+		grid-template-columns: 1fr;
+		gap: 10px;
+	}
+
+	.choice {
+		padding: 13px 10px;
+	}
+
+	.input-row {
+		gap: 10px;
+	}
+
+	.input-row button {
+		width: 100%;
+	}
+
+	.input-row input {
+		width: 96px;
+	}
+
+	.repeated-line {
+		font-size: clamp(0.84rem, calc(86vw / var(--play4-item-count)), 2.05rem);
+		gap: clamp(2px, calc(22px / var(--play4-item-count)), 5px);
+		padding: 12px 7px;
+	}
+
+	.math-flow {
+		font-size: clamp(1rem, 5vw, 1.45rem);
+		gap: 7px;
+		padding: 12px 8px;
+	}
+
+	.flow-piece {
+		padding: 7px 9px;
+	}
+
+	.hint-toggle,
+	.example-toggle {
+		width: auto !important;
+	}
+}

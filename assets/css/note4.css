@@ -1,0 +1,402 @@
+/* note4.css — local polish for Note 1-4 only. Shared shell, shared note layout, and shared practice engine stay reusable. */
+
+body[data-note-id="1_4"] .note4-hero {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(242,184,75,0.24), transparent 34%),
+    radial-gradient(circle at 12% 86%, rgba(107,209,138,0.14), transparent 34%),
+    linear-gradient(135deg, rgba(16,32,51,0.86), rgba(16,32,51,0.50));
+}
+
+body[data-note-id="1_4"] .subtitle strong { color: #ffe3a8; }
+
+body[data-note-id="1_4"] .focus-route .mini-card {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-note-id="1_4"] .focus-route .mini-card::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 10px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(242,184,75,0.12), rgba(242,184,75,0.72), rgba(242,184,75,0.12));
+}
+
+.repeat-focus-card,
+.compress-board,
+.split-grid,
+.chunk-flow,
+.chunk-solve-board,
+.open-close-grid,
+.rhythm-strip {
+  margin-top: 18px;
+}
+
+.repeat-focus-card,
+.compress-side,
+.split-card,
+.flow-card,
+.solve-card,
+.open-close-card,
+.rhythm-card {
+  border-radius: 24px;
+  border: 1px solid rgba(255,247,232,0.18);
+  background: rgba(255,247,232,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.repeat-focus-card {
+  padding: clamp(16px, 3vw, 24px);
+  text-align: center;
+  overflow: hidden;
+}
+
+.focus-label,
+.focus-caption,
+.board-label,
+.copy-count {
+  color: rgba(255,247,232,0.70);
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-size: .78rem;
+}
+
+.repeat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5px, 1.4vw, 10px);
+  margin: 14px auto 10px;
+  max-width: 100%;
+}
+
+.repeat-row.single-line {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.repeat-chip,
+.operator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.repeat-chip {
+  min-width: clamp(28px, 7vw, 54px);
+  min-height: clamp(28px, 7vw, 54px);
+  padding: clamp(5px, 1.6vw, 10px);
+  border-radius: clamp(10px, 2vw, 17px);
+  border: 1px solid rgba(242,184,75,0.54);
+  background: linear-gradient(180deg, rgba(255,250,238,0.98), rgba(255,234,184,0.94));
+  color: #102033;
+  font-size: clamp(1rem, 5.5vw, 2rem);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.76);
+}
+
+.operator {
+  color: #ffe3a8;
+  font-size: clamp(.9rem, 4vw, 1.6rem);
+}
+
+.focus-callout,
+.memory-line {
+  margin-top: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(242,184,75,0.34);
+  background: rgba(242,184,75,0.12);
+  color: rgba(255,247,232,0.90);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 30px rgba(0,0,0,0.16);
+}
+
+.focus-callout {
+  padding: 15px 17px;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.compress-board,
+.chunk-flow {
+  display: grid;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.compress-board {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, .78fr);
+}
+
+.compress-side {
+  min-height: 160px;
+  padding: 18px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.strong-side {
+  border-color: rgba(242,184,75,0.42);
+  background: rgba(242,184,75,0.14);
+}
+
+.compress-arrow,
+.flow-arrow {
+  display: grid;
+  place-items: center;
+  color: #ffe3a8;
+  font-size: clamp(1.65rem, 4vw, 2.5rem);
+  font-weight: 950;
+}
+
+.mini-repeat-line {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  color: #fff7e8;
+  font-weight: 950;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.chunk-expression-large,
+.chunk-practice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  border: 1px solid rgba(242,184,75,0.52);
+  background: linear-gradient(180deg, rgba(255,250,238,0.98), rgba(255,234,184,0.94));
+  color: #102033;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.76);
+  font-weight: 950;
+}
+
+.chunk-expression-large {
+  min-width: 140px;
+  min-height: 72px;
+  padding: 12px 18px;
+  font-size: clamp(2rem, 7vw, 3.4rem);
+}
+
+.chunk-practice {
+  margin-left: 6px;
+  padding: 6px 10px;
+  font-size: clamp(1.02rem, 2.6vw, 1.25rem);
+}
+
+.split-grid,
+.open-close-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.open-close-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.split-card,
+.open-close-card {
+  padding: 18px;
+  text-align: center;
+}
+
+.split-card strong {
+  display: inline-flex;
+  margin: 10px auto 8px;
+  min-height: 56px;
+  padding: 10px 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: rgba(255,247,232,0.94);
+  color: #102033;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  font-weight: 950;
+}
+
+.split-card p,
+.open-close-card p {
+  margin: 0;
+  color: rgba(255,247,232,0.78);
+  font-weight: 750;
+}
+
+.chunk-flow {
+  grid-template-columns: minmax(0, .8fr) auto minmax(0, 1fr) auto minmax(0, 1.1fr);
+}
+
+.flow-card {
+  min-height: 150px;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.flow-card span,
+.solve-card span {
+  color: rgba(255,247,232,0.70);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 900;
+}
+
+.flow-card strong,
+.solve-card strong {
+  color: #fff7e8;
+  font-size: clamp(1.05rem, 3.4vw, 1.55rem);
+  font-weight: 950;
+}
+
+.chunk-solve-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.solve-card {
+  min-height: 150px;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.five-card { border-color: rgba(242,184,75,0.42); background: rgba(242,184,75,0.13); }
+.leftover-card { border-color: rgba(140,201,255,0.36); background: rgba(140,201,255,0.13); }
+.total-card { border-color: rgba(107,209,138,0.44); background: rgba(107,209,138,0.13); }
+
+.total-card strong { color: #d8ffd6; }
+
+.open-close-card h3 {
+  margin-bottom: 12px;
+}
+
+.open-close-card .math-line {
+  margin-top: 10px;
+  padding: 14px;
+}
+
+.rhythm-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rhythm-card {
+  min-height: 118px;
+  padding: 15px 10px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.rhythm-card strong {
+  color: #ffe3a8;
+  font-size: clamp(1rem, 2.8vw, 1.25rem);
+  font-weight: 950;
+}
+
+.rhythm-card span {
+  color: rgba(255,247,232,0.70);
+  font-size: .86rem;
+  font-weight: 800;
+}
+
+.memory-line {
+  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.memory-line strong {
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(242,184,75,0.22);
+  color: #ffe3a8;
+}
+
+body[data-note-id="1_4"] .note4-practice .problem-title {
+  line-height: 1.5;
+}
+
+body[data-note-id="1_4"] .note4-practice .answer-input {
+  width: 104px;
+}
+
+@media (max-width: 860px) {
+  .compress-board,
+  .chunk-flow,
+  .split-grid,
+  .chunk-solve-board,
+  .open-close-grid,
+  .rhythm-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .compress-arrow,
+  .flow-arrow {
+    transform: rotate(90deg);
+    min-height: 36px;
+  }
+
+  .repeat-row.single-line {
+    gap: 5px;
+  }
+}
+
+@media (max-width: 560px) {
+  .repeat-focus-card,
+  .compress-side,
+  .split-card,
+  .flow-card,
+  .solve-card,
+  .open-close-card {
+    border-radius: 20px;
+  }
+
+  .repeat-row.single-line {
+    gap: 3px;
+  }
+
+  .repeat-chip {
+    min-width: 26px;
+    min-height: 26px;
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  .operator {
+    font-size: .95rem;
+  }
+
+  .chunk-practice {
+    display: flex;
+    margin: 8px 0 0;
+    width: fit-content;
+    max-width: 100%;
+  }
+}

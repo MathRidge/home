@@ -1,0 +1,368 @@
+
+/* Play 1-1 Local Game: Build the Box
+   Owns only the Play1 game board, Build-the-Box steps, and answer builder. */
+
+.motto,
+.problem-card,
+.step,
+.answer-area,
+.feedback,
+.rule-box {
+	width: min(100%, 820px);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.motto {
+	text-align: center;
+	padding: 12px 14px;
+	margin-bottom: 18px;
+	border-radius: 18px;
+	background: rgba(255,247,232,0.86);
+	border: 1px solid rgba(242,184,75,0.38);
+	box-shadow: 0 18px 50px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.68);
+	color: #1c2d48;
+	font-weight: 900;
+	backdrop-filter: blur(3px);
+}
+
+.play-area.hidden {
+	display: none !important;
+}
+
+.problem-card,
+.step,
+.answer-area,
+.feedback,
+.rule-box {
+	background: linear-gradient(180deg, rgba(255,250,239,0.94), rgba(255,244,218,0.88));
+	border: 1px solid rgba(255,247,232,0.64);
+	border-radius: 24px;
+	box-shadow: 0 20px 48px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.34);
+	color: #102033;
+	backdrop-filter: blur(7px) saturate(1.04);
+}
+
+.problem-card {
+	text-align: center;
+	padding: clamp(18px, 3vw, 30px);
+	margin-bottom: 18px;
+}
+
+.problem-card p,
+.step p,
+.answer-area p,
+.rule-box {
+	font-weight: 850;
+	line-height: 1.35;
+}
+
+.problem {
+	font-size: clamp(2.2rem, 8vw, 4rem);
+	font-weight: 950;
+	margin: 12px 0;
+}
+
+.term {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 82px;
+	min-height: 66px;
+	padding: 12px 16px;
+	border-radius: 18px;
+	margin: 6px;
+	box-shadow: 0 10px 22px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.52);
+	font-weight: 950;
+	line-height: 1;
+}
+
+.plus {
+	background: linear-gradient(135deg, #fff3bf, #ffd56a);
+	color: #7a4b00;
+	border: 2px solid #ffd56a;
+}
+
+.minus {
+	background: linear-gradient(135deg, #dff0ff, #86c7ff);
+	color: #143f70;
+	border: 2px solid #86c7ff;
+}
+
+.step {
+	margin-top: 18px;
+	padding: clamp(14px, 2vw, 20px);
+}
+
+.step h2,
+.answer-area h2 {
+	font-size: clamp(1.18rem, 3vw, 1.45rem);
+	line-height: 1.18;
+	margin-bottom: 10px;
+	text-align: center;
+	font-weight: 950;
+	color: #1b2b46;
+}
+
+.options,
+.sign-picker {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.choice-btn,
+.sign-btn,
+.op-btn,
+.final-sign-btn,
+.size-btn {
+	border: 1px solid rgba(255,255,255,0.22);
+	box-shadow: 0 10px 20px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.choice-btn.selected,
+.sign-btn.selected,
+.op-btn.selected,
+.final-sign-btn.selected {
+	outline: 4px solid rgba(255,247,232,0.88);
+	box-shadow: 0 0 0 6px rgba(242,184,75,0.22), 0 16px 28px rgba(0,0,0,0.24);
+	transform: scale(1.04);
+}
+
+.choice-btn.wrong,
+.sign-btn.wrong,
+.op-btn.wrong,
+.final-sign-btn.wrong {
+	animation: play1Shake 0.35s;
+	outline: 5px solid #ef7777;
+}
+
+@keyframes play1Shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-6px); }
+	50% { transform: translateX(6px); }
+	75% { transform: translateX(-6px); }
+	100% { transform: translateX(0); }
+}
+
+.builder {
+	text-align: center;
+}
+
+.mini-problem {
+	margin: 10px auto;
+	padding: 6px;
+	border-radius: 14px;
+	background: transparent;
+	border: none;
+	font-size: 1.4rem;
+	font-weight: 900;
+	display: inline-block;
+}
+
+.quick-pick-box {
+	background: rgba(16,32,51,0.06);
+	border: 1px solid rgba(16,32,51,0.12);
+	border-radius: 18px;
+	padding: 12px;
+	margin: 10px auto;
+	max-width: 560px;
+}
+
+.quick-pick-title {
+	font-weight: 950;
+	text-align: center;
+	margin-bottom: 8px;
+}
+
+.builder-labels {
+	display: grid;
+	grid-template-columns: 70px 70px 70px 70px;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 14px;
+	font-size: 0.8rem;
+	font-weight: 950;
+	color: #3f4a5d;
+}
+
+.box-builder {
+	margin: 18px auto;
+	font-size: clamp(1.6rem, 6vw, 3rem);
+	font-weight: 950;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.num-input {
+	width: 70px;
+	padding: 8px;
+	font-size: 1.4rem;
+	text-align: center;
+	border-radius: 12px;
+	border: 3px solid #bbb;
+	font-weight: 950;
+	font-family: inherit;
+}
+
+.sign-display,
+.op-display {
+	width: 70px;
+	min-height: 52px;
+	padding: 8px;
+	font-size: 1.6rem;
+	text-align: center;
+	border-radius: 12px;
+	border: 3px solid #bbb;
+	font-weight: 950;
+	background: white;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sign-display.filled,
+.op-display.filled {
+	border-color: #6cc070;
+	background: #f3fff2;
+}
+
+.ring-box {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	border: 5px solid #333;
+	border-radius: 20px;
+	padding: 12px 18px;
+	background: white;
+}
+
+.feedback {
+	text-align: center;
+	margin-top: 14px;
+	padding: 10px 14px;
+	font-weight: 950;
+	font-size: 1.15rem;
+	min-height: 30px;
+	background: rgba(255,247,232,0.88);
+}
+
+.game:not(.climb-active) #feedback {
+	display: none;
+}
+
+.answer-area {
+	margin-top: 18px;
+	padding: 16px;
+	text-align: center;
+}
+
+.answer-area input {
+	width: 120px;
+	margin: 8px;
+}
+
+.final-answer-builder {
+	margin-top: 10px;
+}
+
+.final-answer-row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	margin: 10px 0;
+	flex-wrap: wrap;
+}
+
+.final-sign-picker {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.final-answer-preview {
+	min-width: 150px;
+	min-height: 58px;
+	padding: 8px 14px;
+	font-size: 1.55rem;
+	font-weight: 950;
+	border-radius: 16px;
+	border: 3px solid #ffd36e;
+	background: #fff8db;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+}
+
+.final-answer-preview .preview-label {
+	font-size: 0.8rem;
+	color: #7a4b00;
+	margin-right: 4px;
+}
+
+.final-answer-preview.filled {
+	border-color: #6cc070;
+	background: #f3fff2;
+}
+
+.rule-box {
+	display: block;
+	margin-top: 18px;
+	padding: 14px;
+	text-align: center;
+	background: rgba(18,34,54,0.82);
+	color: rgba(255,247,232,0.88);
+	border: 1px solid rgba(242,184,75,0.24);
+}
+
+@media (max-width: 760px) {
+	.problem-card,
+	.step,
+	.answer-area,
+	.feedback,
+	.rule-box,
+	.motto {
+		max-width: calc(100vw - 20px);
+	}
+
+	.term {
+		min-width: 62px;
+		min-height: 56px;
+		font-size: 1.45rem;
+		padding: 10px 12px;
+	}
+
+	.builder-labels {
+		grid-template-columns: repeat(4, 58px);
+		font-size: 0.7rem;
+	}
+
+	.num-input,
+	.sign-display,
+	.op-display {
+		width: 58px;
+		font-size: 1.2rem;
+	}
+
+	.ring-box {
+		padding: 10px;
+	}
+
+	.options button,
+	.sign-picker button,
+	.answer-area button,
+	.builder > button {
+		width: 100%;
+	}
+
+	#secondNumInput::placeholder {
+		font-size: 0.78rem;
+		letter-spacing: -0.06em;
+	}
+}

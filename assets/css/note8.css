@@ -1,0 +1,315 @@
+/* note8.css — local Note 2-4 Exponent Shelf Packing polish only. */
+
+.note8-page .subtitle { max-width: 900px; }
+
+.note8-hero .mini-card:nth-child(1) { border-color: rgba(242,184,75,0.34); }
+.note8-hero .mini-card:nth-child(2) { border-color: rgba(140,201,255,0.34); }
+.note8-hero .mini-card:nth-child(3) { border-color: rgba(107,209,138,0.34); }
+
+.note8-problem-strip,
+.note8-route-line,
+.power-line,
+.compare-line,
+.copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.note8-problem-strip,
+.note8-route-line {
+  margin-top: 18px;
+  padding: clamp(16px, 3vw, 24px);
+  border: 1px solid rgba(242,184,75,0.30);
+  border-radius: 26px;
+  background: linear-gradient(135deg, rgba(255,247,232,0.14), rgba(140,201,255,0.10));
+  color: #fff7e8;
+  font-size: clamp(1.45rem, 4vw, 2.5rem);
+  font-weight: 950;
+  text-align: center;
+}
+
+.note8-pause-card,
+.copy-pack-card,
+.note8-shelf,
+.packed-shelf,
+.compare-count-card,
+.shelf-sign-card,
+.rebuild-side,
+.packing-rhythm > div {
+  border: 1px solid rgba(255,247,232,0.17);
+  border-radius: 22px;
+  background: rgba(255,247,232,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.note8-pause-card {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-color: rgba(242,184,75,0.30);
+  background: linear-gradient(135deg, rgba(242,184,75,0.16), rgba(255,247,232,0.09));
+  color: rgba(255,247,232,0.90);
+  font-weight: 800;
+  line-height: 1.52;
+}
+
+.note8-shelf-board,
+.copy-pack-grid,
+.packed-shelf-grid,
+.compare-count-grid,
+.shelf-sign-grid,
+.rebuild-board,
+.packing-rhythm {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.note8-shelf-board,
+.packed-shelf-grid,
+.compare-count-grid,
+.rebuild-board {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.copy-pack-grid,
+.shelf-sign-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.packing-rhythm { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.note8-shelf,
+.packed-shelf,
+.compare-count-card,
+.copy-pack-card,
+.shelf-sign-card,
+.rebuild-side,
+.packing-rhythm > div {
+  padding: 17px;
+}
+
+.note8-shelf strong,
+.packed-shelf strong,
+.compare-count-card strong,
+.copy-pack-card strong,
+.shelf-sign-card strong,
+.rebuild-side strong,
+.packing-rhythm strong {
+  color: #ffe3a8;
+  font-size: clamp(1.04rem, 2vw, 1.22rem);
+}
+
+.note8-shelf p,
+.packed-shelf p,
+.compare-count-card p,
+.shelf-sign-card span,
+.packing-rhythm p {
+  margin: 8px 0 0;
+  color: rgba(255,247,232,0.76);
+  line-height: 1.45;
+  font-weight: 750;
+}
+
+.top-shelf { border-color: rgba(140,201,255,0.38); background: rgba(140,201,255,0.12); }
+.bottom-shelf { border-color: rgba(107,209,138,0.34); background: rgba(107,209,138,0.10); }
+
+.piece,
+.power-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 40px;
+  padding: 7px 10px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,247,232,0.24);
+  background: rgba(255,247,232,0.92);
+  color: #102033;
+  font-size: 1.15rem;
+  font-weight: 950;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+}
+
+.power-chip {
+  min-width: 50px;
+  color: #5b21b6;
+  background: rgba(245,243,255,0.94);
+  border-color: rgba(196,181,253,0.88);
+}
+
+.pow {
+  display: inline-block;
+  position: relative;
+  padding-right: 1.05em;
+  line-height: 1;
+  font-weight: 950;
+  margin: 0 0.1em;
+}
+
+.pow .base { display: inline-block; }
+
+.pow .exp {
+  position: absolute;
+  left: 1.15em;
+  top: -0.46em;
+  font-size: 0.48em;
+  line-height: 1;
+  white-space: nowrap;
+  color: #ffd27f;
+  font-weight: 950;
+}
+
+.power-chip .pow .exp { color: #7c3aed; }
+
+.join-word {
+  color: rgba(255,247,232,0.72);
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.copy-pack-card {
+  min-height: 138px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.packed-shelf .power-line {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(255,247,232,0.22);
+  background: rgba(255,247,232,0.08);
+  font-size: clamp(1.08rem, 3vw, 1.45rem);
+  color: #fff7e8;
+  font-weight: 950;
+}
+
+.compare-count-card .compare-line {
+  margin-top: 12px;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(255,247,232,0.09);
+  border: 1px dashed rgba(255,247,232,0.20);
+  color: rgba(255,247,232,0.90);
+  font-weight: 950;
+  font-size: clamp(1rem, 2.5vw, 1.24rem);
+}
+
+.shelf-sign-card {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.positive-card { border-color: rgba(242,184,75,0.38); background: rgba(242,184,75,0.13); }
+.negative-card { border-color: rgba(140,201,255,0.38); background: rgba(140,201,255,0.12); }
+.zero-card { border-color: rgba(255,247,232,0.28); background: rgba(255,247,232,0.11); }
+
+.rebuild-board {
+  align-items: stretch;
+}
+
+.rebuild-side {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.rebuild-side strong {
+  flex-basis: 100%;
+}
+
+.note8-final-fraction {
+  margin-top: 16px;
+}
+
+.packing-rhythm > div {
+  text-align: center;
+}
+
+.packing-rhythm span {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 10px;
+  border-radius: 999px;
+  background: rgba(242,184,75,0.18);
+  border: 1px solid rgba(242,184,75,0.42);
+  color: #ffe3a8;
+  font-weight: 950;
+}
+
+.note8-practice .problem-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.note8-practice .fraction-answer-label {
+  color: #ffe3a8;
+  font-weight: 950;
+}
+
+.note8-practice .problem-row-fraction .check-one,
+.note8-practice .problem-row .check-one {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 980px) {
+  .packing-rhythm { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 820px) {
+  .copy-pack-grid,
+  .shelf-sign-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .note8-shelf-board,
+  .packed-shelf-grid,
+  .compare-count-grid,
+  .rebuild-board,
+  .packing-rhythm { grid-template-columns: 1fr; }
+
+  .note8-problem-strip,
+  .note8-route-line {
+    gap: 8px;
+    padding: 14px 10px;
+  }
+
+  .copy-pack-card,
+  .note8-shelf,
+  .packed-shelf,
+  .compare-count-card,
+  .shelf-sign-card,
+  .rebuild-side,
+  .packing-rhythm > div {
+    padding: 14px 12px;
+    border-radius: 18px;
+  }
+
+  .piece,
+  .power-chip { min-width: 38px; min-height: 38px; font-size: 1.04rem; }
+}
+
+@media (max-width: 430px) {
+  .copy-row { gap: 7px; }
+  .join-word { flex-basis: 100%; }
+  .compare-line { gap: 8px; }
+}

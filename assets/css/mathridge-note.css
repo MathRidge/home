@@ -1,0 +1,1683 @@
+/* mathridge-note.css
+   Shared note-page lesson + practice styling.
+   Keep stage-specific content in HTML; keep all repeated note visuals here.
+*/
+
+.hero {
+  padding: clamp(24px, 4vw, 42px);
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: calc(var(--radius-xl) - 10px);
+  border: 1px solid rgba(255,247,232,0.08);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -92px;
+  top: -94px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(242,184,75,.28), transparent 68%);
+  z-index: 0;
+}
+
+.hero > * { position: relative; z-index: 1; }
+
+h1 {
+  font-size: clamp(2rem, 4.2vw, 3.65rem);
+  letter-spacing: -0.035em;
+  max-width: 820px;
+}
+
+.subtitle {
+  max-width: 820px;
+  margin: 16px 0 0;
+  color: rgba(255,247,232,0.82);
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
+  line-height: 1.62;
+}
+
+.hero-note {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.mini-card {
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,247,232,0.17);
+  background: rgba(255,247,232,0.11);
+  font-weight: 900;
+}
+
+.mini-card span {
+  display: block;
+  margin-top: 5px;
+  color: rgba(255,247,232,0.68);
+  font-size: .88rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.section {
+  margin-top: 22px;
+  padding: clamp(20px, 3.5vw, 34px);
+  position: relative;
+  overflow: hidden;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242,184,75,0.45), transparent);
+  opacity: .75;
+}
+
+.section h2 {
+  font-size: clamp(1.35rem, 2.6vw, 2.05rem);
+  color: #ffe3a8;
+}
+
+.section h3,
+.compare-box h3 {
+  font-size: clamp(1.18rem, 2.2vw, 1.35rem);
+  color: #ffe3a8;
+}
+
+.section p,
+.read-box,
+.step-card,
+.hint,
+.unlock-dock span,
+.rule-list {
+  font-size: clamp(0.94rem, 1.25vw, 1.03rem);
+  line-height: 1.55;
+}
+
+.section p {
+  color: rgba(255,247,232,0.76);
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 32px;
+  margin-right: 8px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(242,184,75,0.42);
+  background: rgba(242,184,75,0.13);
+  color: #ffe3a8;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  vertical-align: middle;
+}
+
+.term-row,
+.example-row,
+.math-line,
+.team-wrap,
+.two-col,
+.compare-area {
+  margin-top: 18px;
+}
+
+.term-row,
+.example-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.math-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255,247,232,0.18);
+  border-radius: 22px;
+  background: rgba(255,247,232,0.09);
+  color: #fff7e8;
+  font-size: clamp(1.3rem, 4vw, 2.1rem);
+  font-weight: 950;
+  text-align: center;
+}
+
+.big-line {
+  font-size: clamp(1.3rem, 4vw, 2.1rem);
+  font-weight: 950;
+  text-align: center;
+  margin: 16px 0;
+  color: #fff7e8;
+}
+
+.term, .outside-sign, .box-method {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 18px;
+  font-weight: 950;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+}
+
+.term {
+  min-width: 82px;
+  padding: 10px 17px;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  border: 2px solid rgba(255,247,232,0.28);
+  background: rgba(255,247,232,0.95);
+  color: var(--ink);
+}
+
+.plus { color: #8a4b08; background: #fff3bf; border-color: #ffd56a; }
+.minus { color: #185b93; background: #dff0ff; border-color: #86c7ff; }
+.hidden { color: #444; background: #eeeeee; border-style: dashed; }
+
+.arrow {
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  font-weight: 950;
+  color: #ffe3a8;
+}
+
+.outside-sign {
+  min-width: 54px;
+  min-height: 54px;
+  font-size: clamp(1.7rem, 5vw, 3rem);
+  border: 2px solid currentColor;
+}
+
+.box-method {
+  padding: 12px 20px;
+  border: 3px solid rgba(255,247,232,0.80);
+  background: rgba(255,247,232,0.96);
+  color: var(--ink);
+  font-size: clamp(1.25rem, 4vw, 2.45rem);
+}
+
+.read-box, .step-card {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(242,184,75,0.28);
+  background: rgba(255,247,232,0.12);
+  color: rgba(255,247,232,0.88);
+  font-weight: 750;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.team-wrap,
+.two-col,
+.compare-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.team,
+.panel,
+.compare-box {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,247,232,0.17);
+  background: rgba(255,247,232,0.10);
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.team strong,
+.panel strong {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #ffe3a8;
+}
+
+.positive {
+  border-color: rgba(242,184,75,0.36);
+  background: rgba(242,184,75,0.13);
+}
+
+.negative {
+  border-color: rgba(140,201,255,0.36);
+  background: rgba(140,201,255,0.13);
+}
+
+.rule-list {
+  margin: 12px 0 0;
+  padding-left: 1.35rem;
+  color: rgba(255,247,232,0.76);
+  font-weight: 750;
+}
+
+.rule-list li { margin: 8px 0; }
+
+/* Practice system */
+.practice-progress {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+  padding: 0 2px;
+}
+
+.progress-bar {
+  width: 100%;
+  min-height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,247,232,0.18);
+  background: rgba(255,247,232,0.10);
+  overflow: hidden;
+}
+
+.progress-bar span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sun-gold), #ffe09a);
+  transition: width .3s ease;
+}
+
+.progress-bar.done span { width: 100%; }
+
+.practice-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.problem-card {
+  border: 1px solid rgba(255,247,232,0.18);
+  border-radius: 22px;
+  background: rgba(255,247,232,0.10);
+  padding: 17px;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.problem-card:focus-within {
+  transform: translateY(-1px);
+  border-color: rgba(242,184,75,0.50);
+  background: rgba(255,247,232,0.13);
+}
+
+.problem-card.correct {
+  border-color: rgba(107,209,138,0.8);
+  background: rgba(107,209,138,0.13);
+}
+
+.problem-card.wrong {
+  border-color: rgba(248,113,113,0.78);
+  background: rgba(248,113,113,0.10);
+}
+
+.problem-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.problem-title {
+  font-weight: 950;
+  font-size: clamp(1.1rem, 3vw, 1.35rem);
+}
+
+.problem-title::before {
+  content: "Practice";
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,247,232,0.16);
+  background: rgba(255,247,232,0.09);
+  color: rgba(255,247,232,0.72);
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .05em;
+  vertical-align: middle;
+}
+
+.problem-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.answer-input {
+  width: 116px;
+  border: 2px solid rgba(255,247,232,0.25);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(16,32,51,0.56);
+  color: var(--warm-cream);
+  font-size: 1.24rem;
+  font-weight: 900;
+  text-align: center;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.answer-input:focus {
+  border-color: var(--sun-gold);
+  box-shadow: 0 0 0 4px rgba(242,184,75,0.18);
+  transform: translateY(-1px);
+}
+
+.check-one {
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 14px;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--sun-gold), #ffe09a);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.feedback {
+  font-weight: 900;
+  color: rgba(255,247,232,0.84);
+}
+
+.hint {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(140,201,255,0.16);
+  border: 1px solid rgba(140,201,255,0.35);
+  color: rgba(255,247,232,0.88);
+  font-weight: 750;
+}
+
+.hint.show { display: block; }
+
+/* Unlock dock */
+.unlock-dock {
+  margin-top: 22px;
+  padding: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.unlock-dock strong {
+  display: block;
+  color: #ffe3a8;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.35rem;
+}
+
+.unlock-dock span { color: rgba(255,247,232,0.70); }
+
+.footer-rule {
+  margin: 24px auto 0;
+  text-align: center;
+  color: rgba(255,247,232,0.86);
+  font-weight: 850;
+  font-style: italic;
+}
+
+.footer-note {
+  text-align: center;
+  color: rgba(255,247,232,0.58);
+  padding: 22px 10px 0;
+  font-weight: 750;
+}
+
+@media (max-width: 820px) {
+  .hero-note,
+  .team-wrap,
+  .two-col,
+  .compare-area {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .section-kicker {
+    min-width: 36px;
+    height: 28px;
+    font-size: .7rem;
+    margin-right: 6px;
+  }
+
+  .problem-title::before { display: none; }
+
+  .practice-progress {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    padding: 0 4px;
+  }
+}
+
+@media (max-width: 430px) {
+  .practice-progress { gap: 6px; padding: 0 2px; }
+  .progress-bar { min-height: 10px; }
+}
+
+/* === Note 1-3 sign-pair visual cards === */
+.sign-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.sign-card {
+  min-width: 92px;
+  border-radius: 18px;
+  padding: 14px;
+  text-align: center;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-weight: 950;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.18);
+}
+
+.sign-arrow {
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  font-weight: 950;
+  color: #ffe3a8;
+}
+
+.plus-card {
+  background: #fff3bf;
+  border: 2px solid #ffd56a;
+  color: #8a4b08;
+}
+
+.minus-card {
+  background: #dff0ff;
+  border: 2px solid #86c7ff;
+  color: #185b93;
+}
+
+.quick-panel {
+  border-color: rgba(242,184,75,0.42) !important;
+  background: rgba(242,184,75,0.13) !important;
+}
+
+@media (max-width: 560px) {
+  .sign-card {
+    min-width: 72px;
+    padding: 11px;
+  }
+}
+/* === Note 1-4 chunking visual additions === */
+.math-small {
+  font-size: clamp(1.05rem, 3vw, 1.55rem);
+}
+
+.chunk-a {
+  color: #8cc9ff;
+}
+
+.chunk-b {
+  color: #6bd18a;
+}
+
+.answer {
+  color: #ffe09a;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.example-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.example-card {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,247,232,0.17);
+  background: rgba(255,247,232,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.steps {
+  counter-reset: step;
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.step {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid rgba(255,247,232,0.17);
+  border-radius: 18px;
+  background: rgba(255,247,232,0.10);
+}
+
+.step::before {
+  content: counter(step);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--sun-gold), #ffe09a);
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.step strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #ffe3a8;
+}
+
+@media (max-width: 680px) {
+  .example-grid,
+  .example-grid.three {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Note 2-1 fraction visuals === */
+.fraction {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: center;
+  min-width: 1.5em;
+  line-height: 1;
+  vertical-align: middle;
+  color: inherit;
+}
+
+.fraction .top {
+  border-bottom: 3px solid currentColor;
+  padding: 0 .22em .14em;
+  color: #8cc9ff;
+}
+
+.fraction .bottom {
+  padding: .14em .22em 0;
+  color: #6bd18a;
+}
+
+.story-box,
+.fraction-visual {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.story-box.two {
+  grid-template-columns: 1fr 1fr;
+}
+
+.visual-card {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255,247,232,0.17);
+  background: rgba(255,247,232,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.visual-card h3,
+.panel h3 {
+  color: #ffe3a8;
+  margin: 0 0 8px;
+}
+
+.pringles-can {
+  min-height: 220px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255,224,154,0.96), rgba(217,143,63,0.88));
+  border: 2px solid rgba(255,247,232,0.45);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  text-align: center;
+  font-weight: 950;
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  color: var(--ink);
+  box-shadow: inset 0 -16px 0 rgba(16,32,51,0.12), 0 18px 40px rgba(0,0,0,0.22);
+}
+
+.row-stack {
+  display: grid;
+  grid-template-rows: repeat(10, auto);
+  gap: 5px;
+  margin: 12px auto 0;
+  width: fit-content;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255,247,232,0.12);
+  border: 2px dashed rgba(242,184,75,0.45);
+}
+
+.chip-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(14px, 23px));
+  gap: 5px;
+  width: fit-content;
+}
+
+.chip {
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #ffe09a;
+  border: 2px solid rgba(242,184,75,0.92);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.18);
+}
+
+.chip-row.mine-row .chip {
+  background: #8cc9ff;
+  border-color: #dff0ff;
+}
+
+.chip-row.whole-row .chip {
+  opacity: .58;
+}
+
+.chip-row.break-after {
+  margin-bottom: 10px;
+}
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(16px, 1fr));
+  gap: 6px;
+  align-items: end;
+  margin-top: 12px;
+}
+
+.stack-column {
+  display: grid;
+  grid-template-rows: repeat(5, 10px);
+  gap: 3px;
+  justify-items: center;
+  padding: 6px 4px;
+  border-radius: 12px;
+  background: rgba(255,224,154,0.25);
+  border: 1px solid rgba(242,184,75,0.52);
+}
+
+.stack-column.mine-stack {
+  background: rgba(140,201,255,0.25);
+  border-color: rgba(140,201,255,0.65);
+}
+
+.stack-bit {
+  width: 100%;
+  border-radius: 999px;
+  background: rgba(242,184,75,0.55);
+}
+
+.mine-stack .stack-bit {
+  background: rgba(140,201,255,0.75);
+}
+
+.half-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.half-block {
+  min-height: 150px;
+  border-radius: 18px;
+  border: 2px solid rgba(242,184,75,0.62);
+  background: rgba(255,224,154,0.18);
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  text-align: center;
+  font-weight: 950;
+}
+
+.half-block.mine-half {
+  border-color: rgba(140,201,255,0.75);
+  background: rgba(140,201,255,0.22);
+}
+
+.big-half {
+  display: block;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  line-height: 1;
+  color: #ffe3a8;
+}
+
+.mini-caption {
+  margin-top: 10px;
+  text-align: center;
+  font-size: .92rem;
+  font-weight: 850;
+  color: rgba(255,247,232,0.68);
+}
+
+.divide-symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 1.2em;
+  height: 1.2em;
+  color: #ffe3a8;
+}
+
+.top-shelf {
+  color: #8cc9ff;
+}
+
+.bottom-shelf {
+  color: #6bd18a;
+}
+
+.warning {
+  color: var(--danger);
+}
+
+@media (max-width: 680px) {
+  .story-box,
+  .story-box.two,
+  .fraction-visual {
+    grid-template-columns: 1fr;
+  }
+
+  .stack-grid {
+    grid-template-columns: repeat(5, minmax(16px, 1fr));
+  }
+}
+
+/* === Note 2-2 Prime Factor Tree additions === */
+.tree-wrap {
+  margin-top: 18px;
+  background: rgba(255,247,232,0.10);
+  border: 1px solid rgba(242,184,75,0.28);
+  border-radius: 22px;
+  padding: 22px;
+  overflow-x: auto;
+}
+
+.tree {
+  display: flex;
+  justify-content: center;
+  min-width: 260px;
+}
+
+.tree ul {
+  padding-top: 26px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 0;
+  padding-left: 0;
+}
+
+.tree li {
+  list-style-type: none;
+  text-align: center;
+  position: relative;
+  padding: 26px 8px 0;
+}
+
+.tree li::before,
+.tree li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 26px;
+  border-top: 3px solid rgba(242,184,75,0.72);
+}
+
+.tree li::before {
+  right: 50%;
+  border-right: 3px solid rgba(242,184,75,0.72);
+}
+
+.tree li::after {
+  left: 50%;
+  border-left: 3px solid rgba(242,184,75,0.72);
+}
+
+.tree li:only-child::before,
+.tree li:only-child::after {
+  display: none;
+}
+
+.tree li:only-child {
+  padding-top: 0;
+}
+
+.tree li:first-child::before,
+.tree li:last-child::after {
+  border: 0 none;
+}
+
+.tree li:last-child::before {
+  border-radius: 0 12px 0 0;
+}
+
+.tree li:first-child::after {
+  border-radius: 12px 0 0 0;
+}
+
+.tree ul ul::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-left: 3px solid rgba(242,184,75,0.72);
+  width: 0;
+  height: 26px;
+}
+
+.node {
+  display: inline-grid;
+  place-items: center;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 7px 13px;
+  background: rgba(255,247,232,0.94);
+  color: var(--ink);
+  border: 2px solid rgba(242,184,75,0.62);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.18);
+  font-size: clamp(1.15rem, 3.2vw, 1.6rem);
+  font-weight: 950;
+}
+
+.node.prime {
+  border-color: rgba(140,201,255,0.86);
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.result-strip {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 14px;
+  background: rgba(255,247,232,0.10);
+  border-radius: 18px;
+  border: 1px solid rgba(255,247,232,0.18);
+  font-weight: 900;
+  font-size: clamp(1.05rem, 2.6vw, 1.42rem);
+}
+
+.factor-chip {
+  display: inline-grid;
+  place-items: center;
+  min-width: 40px;
+  min-height: 38px;
+  padding: 5px 10px;
+  border-radius: 13px;
+  background: rgba(255,247,232,0.94);
+  color: var(--ink);
+  border: 2px solid rgba(242,184,75,0.58);
+}
+
+.factor-chip.match {
+  background: #dbeafe;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.factor-chip.left {
+  background: #ede9fe;
+  border-color: #7c3aed;
+  color: #6d28d9;
+}
+
+.cross {
+  text-decoration: line-through;
+  opacity: 0.62;
+}
+
+.blue { color: #8cc9ff; }
+.green { color: #a7f3c3; }
+.purple { color: #d8b4fe; }
+.orange { color: #ffe3a8; }
+
+@media(max-width: 820px) {
+  .tree-wrap {
+    padding: 16px 8px;
+  }
+
+  .tree ul {
+    gap: 8px;
+  }
+
+  .tree li {
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+
+  .node {
+    min-width: 42px;
+    min-height: 38px;
+    padding: 6px 9px;
+  }
+}
+
+/* === Note 2-3 fraction multiplication/division additions === */
+.times {
+  color: #c9a7ff;
+}
+
+.divide {
+  color: #ff9b9b;
+}
+
+.tag {
+  display: inline-grid;
+  place-items: center;
+  min-height: auto;
+  min-width: auto;
+  padding: 5px 10px;
+  border-radius: 13px;
+  color: #ffe3a8;
+  border: 1px solid rgba(242,184,75,.42);
+  background: rgba(242,184,75,.13);
+  font-size: .85rem;
+  font-weight: 900;
+}
+
+.practice-card {
+  border-color: rgba(255,247,232,.18);
+  background: rgba(255,247,232,.10);
+}
+
+.practice-card.correct {
+  border-color: rgba(107,209,138,.8);
+  background: rgba(107,209,138,.13);
+}
+
+.practice-card.wrong {
+  border-color: rgba(248,113,113,.78);
+  background: rgba(248,113,113,.10);
+}
+/* === Note 2-4 exponent packing additions === */
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.sign-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.sign-card {
+  border-radius: 20px;
+  padding: 16px;
+  border: 1px solid rgba(255,247,232,.18);
+  background: rgba(255,247,232,.10);
+  font-weight: 850;
+}
+
+.sign-card .big {
+  display: block;
+  font-size: clamp(1.18rem, 2.7vw, 1.55rem);
+  color: #ffe3a8;
+  margin-bottom: 6px;
+}
+
+.power-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  min-height: 42px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(201,167,255,.42);
+  background: rgba(201,167,255,.13);
+  color: #efe2ff;
+  font-weight: 950;
+}
+
+.pow {
+  display: inline-block;
+  position: relative;
+  padding-right: .48em;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.pow .base {
+  display: inline-block;
+}
+
+.pow .exp {
+  position: absolute;
+  left: 1.05em;
+  top: -.46em;
+  font-size: .52em;
+  line-height: 1;
+  white-space: nowrap;
+  color: #ffd28a;
+  font-weight: 950;
+}
+
+.exp-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(242,184,75,.13);
+  border: 1px solid rgba(242,184,75,.42);
+  color: #ffe3a8;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.shelf-board {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.shelf {
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,247,232,.18);
+  background: rgba(255,247,232,.09);
+}
+
+.shelf.top-shelf {
+  border-color: rgba(140,201,255,.42);
+  background: rgba(140,201,255,.11);
+}
+
+.shelf.bottom-shelf {
+  border-color: rgba(107,209,138,.42);
+  background: rgba(107,209,138,.10);
+}
+
+.shelf-title {
+  font-weight: 950;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.top-chip {
+  background: rgba(140,201,255,.18);
+  border-color: rgba(140,201,255,.50);
+  color: #dbeeff;
+}
+
+.bottom-chip {
+  background: rgba(107,209,138,.16);
+  border-color: rgba(107,209,138,.50);
+  color: #dfffe8;
+}
+
+.warning-box {
+  margin-top: 16px;
+  padding: 16px 18px;
+  background: rgba(248,113,113,.10);
+  border: 1px solid rgba(248,113,113,.38);
+  border-radius: 18px;
+  color: rgba(255,247,232,.88);
+  font-weight: 800;
+}
+
+@media (max-width: 680px) {
+  .three-col,
+  .sign-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
+/* === Shared fraction notepad answer input ===
+   Used by Note 2-1 and any future note that sets inputLayout: "fraction".
+   Gives phone users two numeric boxes instead of a text slash entry. */
+.problem-row.problem-row-fraction {
+  align-items: center;
+  gap: 12px;
+}
+
+.fraction-answer-label {
+  font-weight: 950;
+  color: rgba(255,247,232,0.86);
+}
+
+.fraction-notepad {
+  --pad-line: rgba(31, 58, 86, 0.14);
+  display: inline-grid;
+  grid-template-columns: minmax(62px, 92px) auto minmax(62px, 92px);
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(242,184,75,0.48);
+  background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.98) 0 25px, var(--pad-line) 26px),
+    linear-gradient(180deg, #fffdf4, #fff3cf);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.74),
+    0 12px 28px rgba(0,0,0,0.18);
+}
+
+.fraction-notepad .answer-input,
+.fraction-piece {
+  width: 100%;
+  min-width: 0;
+  border: 2px solid rgba(31,58,86,0.22);
+  border-radius: 14px;
+  padding: 10px 9px;
+  background: rgba(255,255,255,0.78);
+  color: #102033;
+  font-size: clamp(1.12rem, 3.6vw, 1.45rem);
+  font-weight: 950;
+  text-align: center;
+  outline: none;
+  box-shadow: inset 0 1px 4px rgba(16,32,51,0.08);
+}
+
+.fraction-notepad .answer-input:focus,
+.fraction-piece:focus {
+  border-color: var(--sun-gold);
+  box-shadow: 0 0 0 4px rgba(242,184,75,0.22), inset 0 1px 4px rgba(16,32,51,0.08);
+  transform: translateY(-1px);
+}
+
+.fraction-slash {
+  color: #102033;
+  font-size: clamp(1.45rem, 5vw, 2.1rem);
+  font-weight: 950;
+  opacity: 0.74;
+}
+
+.fraction-notepad-caption {
+  grid-column: 1 / -1;
+  margin-top: -2px;
+  color: rgba(16,32,51,0.66);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: .03em;
+  text-align: center;
+}
+
+.problem-card.correct .fraction-notepad {
+  border-color: rgba(107,209,138,0.72);
+  background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.98) 0 25px, rgba(107,209,138,0.16) 26px),
+    linear-gradient(180deg, #f7fff9, #e7fbe9);
+}
+
+.problem-card.wrong .fraction-notepad {
+  border-color: rgba(248,113,113,0.62);
+}
+
+.answer-hidden-value {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 620px) {
+  .problem-row.problem-row-fraction {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .fraction-answer-label {
+    text-align: center;
+  }
+
+  .fraction-notepad {
+    width: min(100%, 360px);
+    justify-self: center;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .problem-row.problem-row-fraction .check-one {
+    width: min(100%, 360px);
+    justify-self: center;
+  }
+
+  .problem-row.problem-row-fraction .feedback {
+    text-align: center;
+  }
+}
+
+
+/* === Math Ridge Notes Global Premium Background + Index Blend Patch ===
+   Add this to shared mathridge-note.css so every note page can share the
+   same calm study-room atmosphere without editing note1.css, note2.css, etc.
+   Expected art path: assets/images/notes/note-study-room-bg.webp
+*/
+body[data-note-id] {
+  background:
+    radial-gradient(circle at 76% 14%, rgba(242, 184, 75, 0.20), transparent 34%),
+    radial-gradient(circle at 16% 86%, rgba(140, 201, 255, 0.10), transparent 34%),
+    linear-gradient(135deg, rgba(16, 32, 51, 0.88), rgba(16, 32, 51, 0.50)),
+    url("../images/notes/note-study-room-bg.webp") center / cover no-repeat,
+    url("../images/notes/note-study-room-bg.png") center / cover no-repeat,
+    url("../../note-study-room-bg.webp") center / cover no-repeat,
+    var(--ridge-navy);
+  background-attachment: fixed;
+}
+
+body[data-note-id]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 8%, transparent 0 28%, rgba(3, 10, 18, 0.16) 62%, rgba(3, 10, 18, 0.42) 100%),
+    linear-gradient(180deg, rgba(5, 12, 22, 0.08), rgba(5, 12, 22, 0.30));
+}
+
+body[data-note-id] .hero,
+body[data-note-id] .section,
+body[data-note-id] .unlock-dock {
+  border-color: rgba(255, 231, 168, 0.24);
+  background:
+    linear-gradient(135deg, rgba(255, 247, 232, 0.075), rgba(255, 247, 232, 0.025)),
+    linear-gradient(135deg, rgba(16, 32, 51, 0.80), rgba(16, 32, 51, 0.48));
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 247, 232, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+}
+
+body[data-note-id] .section {
+  background:
+    linear-gradient(135deg, rgba(255, 247, 232, 0.065), rgba(255, 247, 232, 0.018)),
+    linear-gradient(135deg, rgba(16, 32, 51, 0.74), rgba(16, 32, 51, 0.43));
+}
+
+body[data-note-id] .hero::before,
+body[data-note-id] .section::after,
+body[data-note-id] .unlock-dock::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: calc(var(--radius-xl) - 10px);
+  border: 1px solid rgba(255, 231, 168, 0.10);
+  pointer-events: none;
+}
+
+body[data-note-id] .mini-card,
+body[data-note-id] .team,
+body[data-note-id] .panel,
+body[data-note-id] .compare-box,
+body[data-note-id] .example-card,
+body[data-note-id] .visual-card,
+body[data-note-id] .problem-card,
+body[data-note-id] .read-box,
+body[data-note-id] .step-card,
+body[data-note-id] .rhythm-card,
+body[data-note-id] .concept-card,
+body[data-note-id] .sign-size-card {
+  border-color: rgba(255, 231, 168, 0.20);
+  background:
+    linear-gradient(135deg, rgba(255, 247, 232, 0.12), rgba(255, 247, 232, 0.055));
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+body[data-note-id] .problem-card:focus-within,
+body[data-note-id] .mini-card:hover,
+body[data-note-id] .concept-card:hover,
+body[data-note-id] .rhythm-card:hover,
+body[data-note-id] .sign-size-card:hover {
+  border-color: rgba(242, 184, 75, 0.52);
+  background:
+    linear-gradient(135deg, rgba(255, 247, 232, 0.15), rgba(255, 247, 232, 0.07));
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.24),
+    0 0 24px rgba(242, 184, 75, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+body[data-note-id] .check-one,
+body[data-note-id] .pill-btn,
+body[data-note-id] .gold-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-note-id] .check-one {
+  border: 1px solid rgba(255, 231, 168, 0.64);
+  background: linear-gradient(180deg, #ffe7ad, var(--sun-gold) 58%, #c77a2f);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -2px 0 rgba(93, 53, 13, 0.28);
+}
+
+body[data-note-id] .check-one:hover,
+body[data-note-id] .check-one:focus-visible {
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.26),
+    0 0 22px rgba(242, 184, 75, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -2px 0 rgba(93, 53, 13, 0.28);
+  outline: none;
+}
+
+body[data-note-id] .practice-progress {
+  padding: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 231, 168, 0.16);
+  background: rgba(5, 12, 22, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+body[data-note-id] .progress-bar {
+  min-height: 10px;
+  background: rgba(255, 247, 232, 0.12);
+}
+
+body[data-note-id] .hint.show {
+  border-color: rgba(140, 201, 255, 0.42);
+  background:
+    linear-gradient(135deg, rgba(140, 201, 255, 0.18), rgba(140, 201, 255, 0.08));
+}
+
+/* Mobile keeps the premium cards but removes fixed background for smoother scrolling. */
+@media (max-width: 820px) {
+  body[data-note-id] {
+    background-attachment: scroll;
+  }
+
+  body[data-note-id] .hero,
+  body[data-note-id] .section,
+  body[data-note-id] .unlock-dock {
+    backdrop-filter: blur(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-note-id] *,
+  body[data-note-id] *::before,
+  body[data-note-id] *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* === Math Ridge Global Note Gloss / Glass Shell Upgrade ===
+   Apply to Note 1-1 through Note 2-4 because every note uses body[data-note-id].
+   The style is calm: glossy borders, readable glass, no full-page fade. */
+body[data-note-id] {
+  background:
+    radial-gradient(circle at 76% 16%, rgba(242, 184, 75, 0.22), transparent 34%),
+    linear-gradient(135deg, rgba(16, 32, 51, 0.88), rgba(16, 32, 51, 0.50)),
+    url("../images/notes/note-study-room-bg.webp") center / cover no-repeat,
+    url("../../note-study-room-bg.webp") center / cover no-repeat,
+    var(--ridge-navy);
+  background-attachment: fixed;
+}
+
+body[data-note-id] .page {
+  position: relative;
+}
+
+body[data-note-id] .hero,
+body[data-note-id] .section,
+body[data-note-id] .unlock-dock,
+body[data-note-id] .modal-card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(135deg, rgba(255,247,232,.115), rgba(255,247,232,.04)) padding-box,
+    linear-gradient(135deg, rgba(255,231,168,.42), rgba(154,101,52,.16), rgba(111,165,120,.16)) border-box;
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,247,232,.10),
+    inset 0 -1px 0 rgba(0,0,0,.25);
+}
+
+body[data-note-id] .hero::before,
+body[data-note-id] .section::after,
+body[data-note-id] .unlock-dock::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: calc(var(--radius-xl) - 12px);
+  border: 1px solid rgba(255,247,232,.10);
+  box-shadow: inset 0 0 28px rgba(242,184,75,.055);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body[data-note-id] .hero > *,
+body[data-note-id] .section > *,
+body[data-note-id] .unlock-dock > * {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-note-id] .hero {
+  background:
+    radial-gradient(circle at 82% 10%, rgba(246,201,108,.22), transparent 30%) padding-box,
+    linear-gradient(135deg, rgba(255,247,232,.12), rgba(255,247,232,.04)) padding-box,
+    linear-gradient(135deg, rgba(255,231,168,.50), rgba(111,165,120,.18), rgba(140,201,255,.16)) border-box;
+}
+
+body[data-note-id] .section {
+  background:
+    linear-gradient(135deg, rgba(16,32,51,.76), rgba(16,32,51,.48)) padding-box,
+    linear-gradient(135deg, rgba(255,231,168,.34), rgba(154,101,52,.12), rgba(140,201,255,.12)) border-box;
+}
+
+body[data-note-id] .hero-note .mini-card,
+body[data-note-id] .mini-card,
+body[data-note-id] .read-box,
+body[data-note-id] .step-card,
+body[data-note-id] .team,
+body[data-note-id] .panel,
+body[data-note-id] .compare-box,
+body[data-note-id] .example-card,
+body[data-note-id] .visual-card,
+body[data-note-id] .sign-card,
+body[data-note-id] .shelf,
+body[data-note-id] .problem-card,
+body[data-note-id] .hint {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,231,168,.22);
+  background:
+    linear-gradient(145deg, rgba(255,247,232,.14), rgba(255,247,232,.055)),
+    linear-gradient(180deg, rgba(13,31,51,.78), rgba(7,17,31,.70));
+  box-shadow:
+    0 16px 38px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+body[data-note-id] .mini-card::after,
+body[data-note-id] .read-box::after,
+body[data-note-id] .step-card::after,
+body[data-note-id] .compare-box::after,
+body[data-note-id] .example-card::after,
+body[data-note-id] .visual-card::after,
+body[data-note-id] .problem-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.10), transparent 28%, transparent 74%, rgba(255,255,255,.055)),
+    radial-gradient(circle at 0 0, rgba(246,201,108,.16), transparent 22%);
+  opacity: .72;
+}
+
+body[data-note-id] .problem-card > *,
+body[data-note-id] .mini-card > *,
+body[data-note-id] .read-box > *,
+body[data-note-id] .step-card > *,
+body[data-note-id] .compare-box > *,
+body[data-note-id] .example-card > *,
+body[data-note-id] .visual-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+body[data-note-id] .problem-card:focus-within,
+body[data-note-id] .problem-card:hover,
+body[data-note-id] .mini-card:hover,
+body[data-note-id] .read-box:hover,
+body[data-note-id] .compare-box:hover,
+body[data-note-id] .visual-card:hover,
+body[data-note-id] .example-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(246,201,108,.54);
+  box-shadow:
+    0 22px 50px rgba(0,0,0,.28),
+    0 0 24px rgba(246,201,108,.12),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+body[data-note-id] .problem-card.correct {
+  border-color: rgba(107,209,138,.82);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(107,209,138,.16), transparent 30%),
+    linear-gradient(145deg, rgba(107,209,138,.17), rgba(255,247,232,.055));
+}
+
+body[data-note-id] .problem-card.wrong {
+  border-color: rgba(248,113,113,.78);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(248,113,113,.14), transparent 30%),
+    linear-gradient(145deg, rgba(248,113,113,.12), rgba(255,247,232,.045));
+}
+
+body[data-note-id] .answer-input,
+body[data-note-id] .fraction-piece,
+body[data-note-id] .prime-piece-cell,
+body[data-note-id] .signed-size-input {
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+body[data-note-id] .answer-input:focus,
+body[data-note-id] .fraction-piece:focus,
+body[data-note-id] .prime-piece-cell:focus,
+body[data-note-id] .signed-size-input:focus {
+  border-color: rgba(246,201,108,.78);
+  box-shadow:
+    0 0 0 4px rgba(246,201,108,.20),
+    0 0 22px rgba(246,201,108,.16),
+    inset 0 1px 4px rgba(16,32,51,.08);
+}
+
+body[data-note-id] .progress-bar {
+  border-color: rgba(255,231,168,.22);
+  background: rgba(255,247,232,.12);
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,.24),
+    0 8px 18px rgba(0,0,0,.12);
+}
+
+body[data-note-id] .progress-bar span {
+  background: linear-gradient(90deg, #e7a93d, #ffe7a8 54%, #f6c96c);
+  box-shadow: 0 0 18px rgba(246,201,108,.28);
+}
+
+body[data-note-id] .section-kicker,
+body[data-note-id] .tag,
+body[data-note-id] .cert-status {
+  border-color: rgba(246,201,108,.42);
+  background: rgba(246,201,108,.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+body[data-note-id] .footer-rule {
+  width: min(760px, calc(100% - 24px));
+  padding: 13px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(246,201,108,.20);
+  background: linear-gradient(135deg, rgba(8,49,22,.78), rgba(9,42,22,.66));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 16px 38px rgba(0,0,0,.24);
+}
+
+@media (max-width: 820px) {
+  body[data-note-id] {
+    background-attachment: scroll;
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-note-id] .hero,
+  body[data-note-id] .section,
+  body[data-note-id] .unlock-dock {
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-note-id] .problem-card,
+  body[data-note-id] .mini-card,
+  body[data-note-id] .read-box,
+  body[data-note-id] .compare-box,
+  body[data-note-id] .visual-card,
+  body[data-note-id] .example-card,
+  body[data-note-id] .answer-input,
+  body[data-note-id] .fraction-piece,
+  body[data-note-id] .prime-piece-cell,
+  body[data-note-id] .signed-size-input {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,328 @@
+/* Math Ridge Play 1-6 local game styles: Prime Factor Trees.
+   The global shell owns the trail background, shelf, timer, buttons,
+   bottom controls, ladder, certificate modal, and shared responsive layout. */
+
+.instruction,
+.problem-card,
+.step-card,
+.feedback {
+	width: min(100%, 820px);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.instruction {
+	text-align: center;
+	padding: 12px 14px;
+	margin-bottom: 18px;
+	border-radius: 18px;
+	background: linear-gradient(135deg, rgba(255,247,232,0.93), rgba(255,225,150,0.82));
+	border: 1px solid rgba(242,184,75,0.56);
+	box-shadow: 0 18px 50px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.70);
+	color: #5d3600;
+	font-weight: 900;
+	font-size: 1.05rem;
+}
+
+.problem-card,
+.step-card {
+	margin-top: 14px;
+	padding: clamp(16px, 3vw, 22px);
+	border-radius: 24px;
+	background: linear-gradient(180deg, rgba(255,250,239,0.96), rgba(255,247,232,0.88));
+	border: 1px solid rgba(255,247,232,0.64);
+	box-shadow: 0 18px 50px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.70);
+	color: #102033;
+	scroll-margin-top: 140px;
+}
+
+.problem-card h2,
+.step-card h2 {
+	text-align: center;
+	font-size: clamp(1.25rem, 3.5vw, 1.55rem);
+	font-weight: 950;
+	line-height: 1.16;
+	margin: 0 0 12px;
+	color: #102033;
+}
+
+.fraction-display {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 12px;
+	background: rgba(255, 255, 255, 0.72);
+	border: 3px dashed rgba(242,184,75,0.62);
+	border-radius: 26px;
+	padding: clamp(16px, 4vw, 22px);
+	margin: 14px auto 4px;
+	font-size: clamp(2.7rem, 11vw, 5.4rem);
+	font-weight: 950;
+	color: #d97800;
+	box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.fraction {
+	display: inline-grid;
+	grid-template-rows: auto auto;
+	align-items: center;
+	justify-items: center;
+	line-height: 1;
+	min-width: 1.35em;
+	vertical-align: middle;
+}
+
+.fraction .top {
+	border-bottom: 0.11em solid currentColor;
+	padding: 0 0.18em 0.1em;
+	color: #2563eb;
+}
+
+.fraction .bottom {
+	padding: 0.1em 0.18em 0;
+	color: #16a34a;
+}
+
+.read-line,
+.hint-box {
+	text-align: center;
+	background: rgba(255,248,219,0.88);
+	border: 2px dashed rgba(242,184,75,0.62);
+	border-radius: 18px;
+	padding: 12px;
+	font-weight: 900;
+	color: #6b3e00;
+	line-height: 1.35;
+}
+
+.hint-box {
+	margin-top: 14px;
+	font-size: 0.96rem;
+}
+
+.focus-value {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.7em;
+	padding: 0.05em 0.35em;
+	margin-left: 6px;
+	border-radius: 12px;
+	background: white;
+	border: 3px solid #ffd36e;
+	color: #d97800;
+	font-size: 1.28rem;
+	box-shadow: 0 4px 12px rgba(91, 54, 0, 0.10);
+}
+
+.input-row,
+.answer-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	margin-top: 16px;
+}
+
+.factor-input-row {
+	padding: 6px 4px;
+}
+
+.factor-input {
+	width: 54px;
+	height: 58px;
+	padding: 6px;
+	font-size: 1.6rem;
+	border-radius: 15px;
+	border: 3px solid #b9dcff;
+	text-align: center;
+	font-family: inherit;
+	font-weight: 950;
+	background: white;
+	color: #102033;
+	box-shadow: inset 0 2px 6px rgba(0,0,0,0.06), 0 8px 16px rgba(16,32,51,0.08);
+}
+
+.factor-input:focus,
+.answer-input:focus {
+	outline: none;
+	border-color: #ffd36e;
+	box-shadow: 0 0 0 4px rgba(255, 211, 110, 0.35), inset 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.answer-input {
+	width: 92px;
+	padding: 10px;
+	font-size: 1.5rem;
+	border-radius: 14px;
+	border: 3px solid #b9dcff;
+	text-align: center;
+	font-family: inherit;
+	font-weight: 950;
+	background: white;
+	color: #102033;
+}
+
+.answer-fraction {
+	font-size: clamp(1.8rem, 6vw, 2.6rem);
+	padding: 8px 14px;
+	border-radius: 20px;
+	background: rgba(255,255,255,0.64);
+	border: 1px solid rgba(255,255,255,0.75);
+}
+
+.prime-form {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 10px 8px;
+	margin-top: 14px;
+	padding: 14px;
+	background: rgba(255,255,255,0.72);
+	border: 3px dashed rgba(142,197,255,0.82);
+	border-radius: 18px;
+	font-size: clamp(1.1rem, 4vw, 1.7rem);
+	font-weight: 950;
+	line-height: 1.25;
+}
+
+.prime-form strong {
+	color: #5d3600;
+	margin-right: 2px;
+}
+
+.factor-chip {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 48px;
+	min-height: 44px;
+	padding: 6px 10px;
+	border-radius: 14px;
+	background: white;
+	border: 2px solid #ffd36e;
+	font-weight: 950;
+	font-size: 1.24rem;
+	cursor: pointer;
+	user-select: none;
+	box-shadow: 0 7px 16px rgba(16,32,51,0.11), inset 0 1px 0 rgba(255,255,255,0.72);
+	transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.factor-chip:hover {
+	transform: translateY(-1px);
+}
+
+.top-chip {
+	background: #dbeafe;
+	border-color: #2563eb;
+	color: #1d4ed8;
+}
+
+.bottom-chip {
+	background: #dcfce7;
+	border-color: #16a34a;
+	color: #15803d;
+}
+
+.factor-chip.crossed {
+	position: relative;
+	opacity: 0.58;
+	transform: scale(0.96);
+}
+
+.factor-chip.crossed::after {
+	content: "";
+	position: absolute;
+	left: 8%;
+	right: 8%;
+	top: 50%;
+	height: 4px;
+	border-radius: 999px;
+	background: rgba(194, 31, 31, 0.82);
+	transform: rotate(-10deg);
+}
+
+.break-line {
+	flex-basis: 100%;
+	height: 0;
+}
+
+.complete-flow {
+	font-size: clamp(1.15rem, 5vw, 2rem);
+	gap: 12px;
+	border-color: rgba(242,184,75,0.58);
+}
+
+.feedback {
+	text-align: center;
+	margin-top: 14px;
+	padding: 10px 14px;
+	border-radius: 18px;
+	background: rgba(255,247,232,0.76);
+	border: 1px solid rgba(255,247,232,0.58);
+	box-shadow: 0 14px 34px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.56);
+	font-weight: 900;
+	font-size: 1.08rem;
+	min-height: 24px;
+	color: #5d3600;
+}
+
+.feedback:empty {
+	display: none;
+}
+
+.good-text { color: #248a2f; }
+.bad-text { color: #c0392b; }
+.neutral-text { color: #7a4b00; }
+
+.hidden {
+	display: none !important;
+}
+
+button#showMatchBtn.hidden {
+	display: none !important;
+}
+
+@media (max-width: 760px) {
+	.problem-card,
+	.step-card {
+		padding: 14px 12px;
+		border-radius: 21px;
+	}
+
+	.fraction-display {
+		padding: 14px 10px;
+		font-size: clamp(2.4rem, 16vw, 4.2rem);
+	}
+
+	.input-row,
+	.answer-row {
+		gap: 8px;
+	}
+
+	.factor-input {
+		width: 46px;
+		height: 50px;
+		font-size: 1.42rem;
+	}
+
+	.factor-chip {
+		min-width: 42px;
+		min-height: 40px;
+		padding: 5px 8px;
+		font-size: 1.08rem;
+	}
+
+	.answer-input {
+		width: 78px;
+		font-size: 1.28rem;
+	}
+
+	.prime-form {
+		padding: 12px 8px;
+		gap: 8px 6px;
+	}
+}

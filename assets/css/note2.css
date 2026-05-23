@@ -1,0 +1,415 @@
+/* note2.css — local visuals for Note 1-2 only.
+   Shared glossy shell and practice styling live in math-ridge-shell.css and mathridge-note.css. */
+
+body[data-note-id="1_2"] .note2-hero {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(242,184,75,0.22), transparent 33%) padding-box,
+    radial-gradient(circle at 12% 86%, rgba(140,201,255,0.16), transparent 34%) padding-box,
+    linear-gradient(135deg, rgba(16,32,51,0.82), rgba(16,32,51,0.50)) padding-box,
+    linear-gradient(135deg, rgba(255,231,168,.48), rgba(140,201,255,.18), rgba(107,209,138,.16)) border-box;
+}
+
+body[data-note-id="1_2"] .subtitle strong {
+  color: #ffe3a8;
+}
+
+body[data-note-id="1_2"] .focus-route .mini-card {
+  position: relative;
+  overflow: hidden;
+}
+
+body[data-note-id="1_2"] .focus-route .mini-card::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 10px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(242,184,75,0.15), rgba(242,184,75,0.70), rgba(242,184,75,0.15));
+}
+
+.expression-strip,
+.showdown-board,
+.compare-showdown,
+.zero-board,
+.showdown-rhythm {
+  margin-top: 18px;
+}
+
+.expression-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,247,232,0.18);
+  background: rgba(255,247,232,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.prompt-term {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  margin: 0 2px;
+  padding: 5px 10px;
+  border-radius: 13px;
+  font-weight: 950;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+}
+
+.problem-title .prompt-term {
+  transform: translateY(-1px);
+}
+
+.showdown-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.team-card,
+.winner-card,
+.focus-callout,
+.memory-line,
+.rhythm-card {
+  border-radius: 24px;
+  border: 1px solid rgba(255,247,232,0.18);
+  background: rgba(255,247,232,0.10);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
+}
+
+.team-card {
+  min-height: 170px;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.team-label {
+  color: #ffe3a8;
+  font-weight: 950;
+  letter-spacing: .02em;
+}
+
+.team-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.team-total {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 12px;
+  border-radius: 15px;
+  border: 1px solid rgba(255,247,232,0.18);
+  background: rgba(16,32,51,0.38);
+  color: #fff7e8;
+  font-weight: 950;
+}
+
+.positive-card {
+  border-color: rgba(242,184,75,0.36);
+  background: rgba(242,184,75,0.13);
+}
+
+.negative-card {
+  border-color: rgba(140,201,255,0.36);
+  background: rgba(140,201,255,0.13);
+}
+
+.focus-callout {
+  margin-top: 16px;
+  padding: 15px 17px;
+  border-color: rgba(242,184,75,0.34);
+  background: rgba(242,184,75,0.12);
+  color: rgba(255,247,232,0.90);
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.compare-showdown,
+.zero-board {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.score-pill,
+.vs-pill,
+.balance-symbol,
+.zero-result {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,247,232,0.22);
+  background: rgba(255,247,232,0.10);
+  color: rgba(255,247,232,0.92);
+  font-weight: 950;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 12px 26px rgba(0,0,0,0.16);
+}
+
+.positive-score {
+  border-color: rgba(242,184,75,0.46);
+  background: rgba(242,184,75,0.14);
+  color: #ffe3a8;
+}
+
+.negative-score {
+  border-color: rgba(140,201,255,0.46);
+  background: rgba(140,201,255,0.14);
+  color: #dff0ff;
+}
+
+.vs-pill,
+.balance-symbol {
+  min-width: 54px;
+  color: #ffe3a8;
+  background: rgba(16,32,51,0.42);
+}
+
+.zero-result {
+  min-width: 72px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--sun-gold), #ffe09a);
+  color: var(--ink);
+  font-size: 1.55rem;
+}
+
+.winner-card {
+  margin-top: 16px;
+  padding: 18px;
+  text-align: center;
+}
+
+.winner-card h3 {
+  color: #ffe3a8;
+  margin: 0 0 10px;
+}
+
+.showdown-rhythm {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rhythm-card {
+  min-height: 128px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.rhythm-card strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #ffe3a8;
+  font-size: 1.08rem;
+  font-weight: 950;
+}
+
+.rhythm-card span {
+  color: rgba(255,247,232,0.72);
+  font-weight: 750;
+  line-height: 1.42;
+}
+
+.memory-line {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 16px;
+  text-align: center;
+  border-color: rgba(242,184,75,0.34);
+  background: rgba(242,184,75,0.12);
+}
+
+.memory-line span,
+.memory-line strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,247,232,0.16);
+  background: rgba(255,247,232,0.09);
+  font-weight: 900;
+}
+
+.memory-line strong {
+  color: #102033;
+  background: linear-gradient(135deg, var(--sun-gold), #ffe09a);
+}
+
+/* Phone-friendly signed answer notepad mirrors Note 1-1 so Note 1-2 practice feels consistent. */
+.problem-row.problem-row-signed {
+  align-items: center;
+  gap: 12px;
+}
+
+.signed-answer-label {
+  font-weight: 950;
+  color: rgba(255,247,232,0.86);
+}
+
+.signed-notepad {
+  display: inline-grid;
+  grid-template-columns: auto minmax(72px, 102px);
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 19px;
+  border: 1px solid rgba(242,184,75,0.48);
+  background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.98) 0 25px, rgba(31,58,86,0.12) 26px),
+    linear-gradient(180deg, #fffdf4, #fff3cf);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.74), 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.signed-choice-row {
+  display: inline-flex;
+  gap: 7px;
+}
+
+.signed-sign-btn {
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 15px;
+  border: 2px solid rgba(31,58,86,0.18);
+  background: rgba(255,255,255,0.82);
+  color: #102033;
+  font-size: 1.65rem;
+  font-weight: 950;
+  box-shadow: inset 0 1px 3px rgba(16,32,51,0.08), 0 6px 12px rgba(0,0,0,0.10);
+}
+
+.signed-sign-btn.selected {
+  border-color: rgba(31,58,86,0.38);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(242,184,75,0.22), inset 0 1px 3px rgba(16,32,51,0.08);
+}
+
+.signed-plus.selected {
+  background: #fff3bf;
+  color: #8a4b08;
+}
+
+.signed-minus.selected {
+  background: #dff0ff;
+  color: #185b93;
+}
+
+.signed-size-input {
+  width: 100%;
+  min-width: 0;
+  border: 2px solid rgba(31,58,86,0.22);
+  border-radius: 14px;
+  padding: 10px 9px;
+  background: rgba(255,255,255,0.82);
+  color: #102033;
+  font-size: clamp(1.15rem, 3.8vw, 1.45rem);
+  font-weight: 950;
+  text-align: center;
+  outline: none;
+  box-shadow: inset 0 1px 4px rgba(16,32,51,0.08);
+}
+
+.signed-notepad-caption {
+  grid-column: 1 / -1;
+  margin-top: -2px;
+  color: rgba(16,32,51,0.66);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: .03em;
+  text-align: center;
+}
+
+.problem-card.correct .signed-notepad {
+  border-color: rgba(107,209,138,0.72);
+  background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.98) 0 25px, rgba(107,209,138,0.16) 26px),
+    linear-gradient(180deg, #f7fff9, #e7fbe9);
+}
+
+.problem-card.wrong .signed-notepad {
+  border-color: rgba(248,113,113,0.62);
+}
+
+@media (max-width: 920px) {
+  .showdown-rhythm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .showdown-board,
+  .showdown-rhythm {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  body[data-note-id="1_2"] .problem-row.problem-row-signed {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .signed-answer-label {
+    text-align: center;
+  }
+
+  .signed-notepad {
+    width: min(100%, 360px);
+    justify-self: center;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .problem-row.problem-row-signed .check-one {
+    width: min(100%, 360px);
+    justify-self: center;
+  }
+
+  .problem-row.problem-row-signed .feedback {
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .signed-notepad {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .signed-sign-btn {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+}
