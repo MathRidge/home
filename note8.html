@@ -2,873 +2,194 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Math Ridge | Note 8 - Packing Prime Copies with Exponents</title>
-
-<style>
-:root {
-  --bg: #fff8ed;
-  --card: #ffffff;
-  --ink: #2d251c;
-  --muted: #6f6256;
-  --accent: #f59e0b;
-  --accent-dark: #b45309;
-  --soft: #ffedd5;
-  --green: #16a34a;
-  --blue: #2563eb;
-  --purple: #7c3aed;
-  --red: #dc2626;
-  --border: #f4d8ae;
-  --top-soft: #dbeafe;
-  --bottom-soft: #dcfce7;
-  --zero-soft: #f3f4f6;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-  background: linear-gradient(180deg, #fff7e6, #eef7ff);
-  color: var(--ink);
-  line-height: 1.6;
-}
-
-.page {
-  width: min(1100px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 60px;
-}
-
-.hero {
-  background: white;
-  border: 4px solid #ffd27d;
-  border-radius: 28px;
-  padding: clamp(24px, 5vw, 54px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  right: -80px;
-  top: -80px;
-  border-radius: 999px;
-  background: rgba(245,158,11,0.14);
-}
-
-.eyebrow {
-  display: inline-flex;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: var(--soft);
-  color: var(--accent-dark);
-  font-weight: 800;
-  margin-bottom: 14px;
-}
-
-h1,h2,h3 { margin: 0; line-height: 1.15; }
-
-h1 {
-  font-size: clamp(2.1rem, 6vw, 4.35rem);
-  max-width: 900px;
-}
-
-.subtitle {
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  color: var(--muted);
-  max-width: 900px;
-  margin-top: 18px;
-}
-
-.hero-note {
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 12px;
-  position: relative;
-  z-index: 1;
-}
-
-.mini-card {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  font-weight: 800;
-}
-
-.mini-card span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.section {
-  margin-top: 24px;
-  background: white;
-  border: 2px solid #e8f2ff;
-  border-radius: 24px;
-  padding: clamp(20px, 4vw, 34px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-}
-
-.section h2 {
-  font-size: clamp(1.55rem, 3.5vw, 2.25rem);
-  margin-bottom: 12px;
-}
-
-.section p {
-  color: var(--muted);
-  font-size: 1.06rem;
-  margin: 10px 0 0;
-}
-
-.math-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-top: 18px;
-  padding: 18px;
-  background: #f8fbff;
-  border: 2px dashed #8ec5ff;
-  border-radius: 20px;
-  font-size: clamp(1.25rem, 4vw, 2.15rem);
-  font-weight: 900;
-}
-
-.arrow { color: var(--accent-dark); }
-.times { color: var(--purple); }
-
-.read-box {
-  margin-top: 16px;
-  padding: 16px 18px;
-  background: #fff6d6;
-  border-left: 5px solid #ffc94d;
-  border-radius: 16px;
-  font-size: 1.05rem;
-  font-weight: 800;
-}
-
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.three-col {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.panel {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 18px;
-}
-
-.panel h3 {
-  margin-bottom: 10px;
-  color: var(--accent-dark);
-}
-
-.fraction {
-  display: inline-grid;
-  grid-template-rows: auto auto;
-  align-items: center;
-  justify-items: center;
-  line-height: 1;
-  vertical-align: middle;
-}
-
-.fraction .top {
-  border-bottom: 4px solid currentColor;
-  padding: 0 0.2em 0.12em;
-  color: var(--blue);
-}
-
-.fraction .bottom {
-  padding: 0.12em 0.2em 0;
-  color: var(--green);
-}
-
-.blue { color: var(--blue); }
-.green { color: var(--green); }
-.red { color: var(--red); }
-.purple { color: var(--purple); }
-.orange { color: var(--accent-dark); }
-
-.step-card {
-  background: #fffaf0;
-  border: 2px dashed #f0b55f;
-  border-radius: 22px;
-  padding: 18px;
-  margin-top: 18px;
-}
-
-.step-card h3 {
-  color: var(--accent-dark);
-  margin-bottom: 8px;
-}
-
-.result-strip {
-  margin-top: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  padding: 14px;
-  background: #f8fbff;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  font-weight: 900;
-  font-size: clamp(1.05rem, 3vw, 1.42rem);
-}
-
-.factor-chip {
-  display: inline-grid;
-  place-items: center;
-  min-width: 40px;
-  min-height: 38px;
-  padding: 5px 10px;
-  border-radius: 13px;
-  background: white;
-  border: 2px solid #f0b55f;
-}
-
-.top-chip {
-  background: var(--top-soft);
-  border-color: var(--blue);
-  color: #1d4ed8;
-}
-
-.bottom-chip {
-  background: var(--bottom-soft);
-  border-color: var(--green);
-  color: #15803d;
-}
-
-.power-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 58px;
-  min-height: 44px;
-  padding: 6px 12px;
-  border-radius: 14px;
-  border: 2px solid #c4b5fd;
-  background: #f5f3ff;
-  color: #5b21b6;
-  font-weight: 900;
-}
-
-.power-chip sup {
-  font-size: 0.62em;
-  margin-left: 3px;
-  color: #8b7fc7;
-}
-
-
-.pow {
-  display: inline-block;
-  position: relative;
-  padding-right: 0.38em;
-  line-height: 1;
-  font-weight: 900;
-}
-
-.pow .base {
-  display: inline-block;
-}
-
-.pow .exp {
-  position: absolute;
-  left: 1.19em;
-  top: -0.42em;
-
-  font-size: 0.50em;
-  line-height: 1;
-  white-space: nowrap;
-
-  color: #cb7f57;
-  font-weight: 900;
-}
-
-.power-chip .pow {
-  padding-right: 0.45em;
-}
-
-.exp-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: #fff7ed;
-  border: 2px solid #fed7aa;
-  color: #9a6a24;
-  font-weight: 900;
-  white-space: nowrap;
-}
-
-
-.shelf-board {
-  margin-top: 18px;
-  display: grid;
-  gap: 12px;
-}
-
-.shelf {
-  padding: 16px;
-  border-radius: 20px;
-  border: 2px solid;
-  background: white;
-}
-
-.shelf.top-shelf {
-  border-color: var(--blue);
-  background: #eff6ff;
-}
-
-.shelf.bottom-shelf {
-  border-color: var(--green);
-  background: #f0fdf4;
-}
-
-.shelf-title {
-  font-weight: 900;
-  margin-bottom: 10px;
-  font-size: 1.15rem;
-}
-
-.exponent-word {
-  display: inline-flex;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: #ede9fe;
-  color: #6d28d9;
-  font-weight: 900;
-}
-
-.sign-board {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 14px;
-  margin-top: 18px;
-}
-
-.sign-card {
-  border-radius: 20px;
-  padding: 16px;
-  border: 2px solid var(--border);
-  background: #fffaf0;
-  font-weight: 900;
-}
-
-.sign-card .big {
-  font-size: clamp(1.45rem, 4vw, 2.2rem);
-  display: block;
-  margin-bottom: 4px;
-}
-
-.practice-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.practice-row {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px 16px;
-  font-weight: 900;
-}
-
-details { margin-top: 8px; }
-
-summary {
-  cursor: pointer;
-  color: var(--accent-dark);
-  font-weight: 900;
-}
-
-.answer-line {
-  margin-top: 8px;
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: #ede9fe;
-  color: #6d28d9;
-  font-size: 0.85rem;
-  font-weight: 900;
-  margin-right: 6px;
-}
-
-.warning-box {
-  margin-top: 16px;
-  padding: 16px 18px;
-  background: #fff1f2;
-  border-left: 5px solid #fb7185;
-  border-radius: 16px;
-  font-size: 1.05rem;
-  font-weight: 800;
-}
-
-.footer-note {
-  text-align: center;
-  color: var(--muted);
-  padding: 30px 10px 0;
-  font-weight: 800;
-}
-
-@media(max-width:820px){
-  .hero-note,
-  .two-col,
-  .three-col,
-  .sign-board {
-    grid-template-columns: 1fr;
-  }
-
-  .page {
-    width: min(100% - 22px, 1100px);
-    padding-top: 14px;
-  }
-
-  .math-line {
-    padding: 14px;
-  }
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math Ridge | Note 2-4 — Packing Prime Copies with Exponents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/math-ridge-shell.css">
+<link rel="stylesheet" href="assets/css/mathridge-note.css">
+<link rel="stylesheet" href="assets/css/note8.css">
 </head>
+<body class="note-page note-8" data-note-id="2_4">
+<nav class="topbar" aria-label="Math Ridge main navigation">
+  <a class="brand" href="index.html" onclick="goToIndexSection('home'); return false;" aria-label="Math Ridge Home">
+    <img class="brand-logo" src="assets/images/brand/math-ridge-logo.png" alt="Math Ridge logo" />
+    <div class="brand-text"><strong>Math Ridge</strong><span>Climb Higher. Achieve More.</span></div>
+  </a>
+  <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false"><span class="hamburger-lines" aria-hidden="true"></span></button>
+  <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+    <button class="pill-btn" type="button" onclick="goToIndexSection('home')">Home</button>
+    <button class="pill-btn active-section" type="button" onclick="goToIndexSection('quest')">Trail</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('cabin')">Cabin</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('message')">Message</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('quick')">Menu</button>
+    <button id="topClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 2-4</button>
+  </div>
+</nav>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleNoteMenu(false)" aria-hidden="true"></div>
+<div class="reading-progress" aria-hidden="true"></div>
 
-<body>
-
-<main class="page">
-
-  <section class="hero">
-    <div class="eyebrow">Math Ridge | Note 8</div>
-
+<main class="page note8-page">
+  <section class="hero note8-hero">
+    <p class="eyebrow">Math Ridge | Note 2-4</p>
     <h1>Packing Prime Copies with Exponents</h1>
-
-    <p class="subtitle">
-      In the previous note, Fraction Multiplication and Division Through Factor Trees, we crossed out matching prime copies one by one. Now we learn a cleaner way to count repeated prime copies.
-    </p>
-
-    <div class="hero-note">
-      <div class="mini-card">Same Prime Pieces<span>Collect repeated copies of 2, 3, 5, and 7</span></div>
-      <div class="mini-card">Exponent Count<span>The small number above tells how many copies</span></div>
-      <div class="mini-card">Shelf Location<span>Positive count stays upstairs. Negative count means downstairs.</span></div>
+    <p class="subtitle">When prime pieces repeat, the work can get crowded. Exponents help us pack repeated copies, compare the top shelf with the bottom shelf, and rebuild the simplified fraction without losing focus.</p>
+    <div class="hero-note" aria-label="lesson focus">
+      <div class="mini-card">Pack copies<span>The exponent counts how many matching prime copies appear.</span></div>
+      <div class="mini-card">Compare shelves<span>Use top count minus bottom count for each prime base.</span></div>
+      <div class="mini-card">Place leftovers<span>Positive stays upstairs. Negative moves downstairs. Zero becomes 1.</span></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>8.a Start From a Familiar Previous-Note Problem</h2>
-
-    <p>
-      This problem still uses the same top shelf and bottom shelf idea.
-      We are not learning a brand-new world yet. We are only making the prime pieces easier to read.
-    </p>
-
-    <div class="math-line">
+    <h2><span class="section-kicker">01</span> Start with the Crowded Line</h2>
+    <p>We are still using top shelf and bottom shelf thinking. The new goal is to count repeated prime pieces without staring at a long line.</p>
+    <div class="note8-problem-strip" aria-label="fraction multiplication example">
       <span class="fraction"><span class="top">56</span><span class="bottom">45</span></span>
       <span class="times">×</span>
       <span class="fraction"><span class="top">54</span><span class="bottom">162</span></span>
     </div>
+    <div class="note8-pause-card"><strong>Focus checkpoint:</strong> do not multiply the big numbers first. Break into prime pieces, then pack the repeated copies.</div>
+  </section>
 
-    <div class="read-box">
-      Main idea: when the prime copies become crowded, we need a cleaner way to count them.
+  <section class="section">
+    <h2><span class="section-kicker">02</span> Break First, Then Pack</h2>
+    <p>After factoring, each shelf has a stack of prime copies. Exponents make that stack easier to read.</p>
+    <div class="note8-shelf-board" aria-label="top and bottom prime pieces">
+      <div class="note8-shelf top-shelf">
+        <strong>Top shelf</strong>
+        <p>56 gives 2, 2, 2, 7. Then 54 gives 2, 3, 3, 3.</p>
+        <div class="copy-row"><span class="piece">2</span><span class="piece">2</span><span class="piece">2</span><span class="piece">7</span><span class="join-word">and</span><span class="piece">2</span><span class="piece">3</span><span class="piece">3</span><span class="piece">3</span></div>
+      </div>
+      <div class="note8-shelf bottom-shelf">
+        <strong>Bottom shelf</strong>
+        <p>45 gives 3, 3, 5. Then 162 gives 2, 3, 3, 3, 3.</p>
+        <div class="copy-row"><span class="piece">3</span><span class="piece">3</span><span class="piece">5</span><span class="join-word">and</span><span class="piece">2</span><span class="piece">3</span><span class="piece">3</span><span class="piece">3</span><span class="piece">3</span></div>
+      </div>
+    </div>
+    <div class="read-box">The pieces are correct, but the line is busy. This is when exponent packing helps.</div>
+  </section>
+
+  <section class="section">
+    <h2><span class="section-kicker">03</span> Exponent Means Copy Count</h2>
+    <p>An exponent is a copy counter. It tells how many times the same prime base appears.</p>
+    <div class="copy-pack-grid" aria-label="copy count examples">
+      <div class="copy-pack-card"><strong>Four copies of 2</strong><div><span class="piece">2</span><span class="piece">2</span><span class="piece">2</span><span class="piece">2</span><span class="arrow">→</span><span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">4</span></span></span></div></div>
+      <div class="copy-pack-card"><strong>Three copies of 3</strong><div><span class="piece">3</span><span class="piece">3</span><span class="piece">3</span><span class="arrow">→</span><span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">3</span></span></span></div></div>
+      <div class="copy-pack-card"><strong>One copy of 7</strong><div><span class="piece">7</span><span class="arrow">→</span><span class="power-chip"><span class="pow"><span class="base">7</span><span class="exp">1</span></span></span></div></div>
+    </div>
+    <div class="read-box">Read <span class="pow"><span class="base">2</span><span class="exp">4</span></span> as “four copies of 2.”</div>
+  </section>
+
+  <section class="section">
+    <h2><span class="section-kicker">04</span> Pack Each Shelf</h2>
+    <p>Now the shelves are clean. Each prime base appears once, and the exponent records the number of copies.</p>
+    <div class="packed-shelf-grid" aria-label="packed exponent shelves">
+      <div class="packed-shelf top-shelf">
+        <strong>Top shelf packed</strong>
+        <div class="power-line"><span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">4</span></span></span><span>×</span><span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">3</span></span></span><span>×</span><span class="power-chip"><span class="pow"><span class="base">7</span><span class="exp">1</span></span></span></div>
+        <p>Four 2s, three 3s, and one 7 remain listed upstairs.</p>
+      </div>
+      <div class="packed-shelf bottom-shelf">
+        <strong>Bottom shelf packed</strong>
+        <div class="power-line"><span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">1</span></span></span><span>×</span><span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">6</span></span></span><span>×</span><span class="power-chip"><span class="pow"><span class="base">5</span><span class="exp">1</span></span></span></div>
+        <p>One 2, six 3s, and one 5 remain listed downstairs.</p>
+      </div>
+    </div>
+    <div class="note8-pause-card"><strong>Say it:</strong> the amount did not change. We only changed crowded copies into cleaner counts.</div>
+  </section>
+
+  <section class="section">
+    <h2><span class="section-kicker">05</span> Compare One Base at a Time</h2>
+    <p>Use the same calm comparison for each prime base: top count minus bottom count.</p>
+    <div class="compare-count-grid" aria-label="compare exponent counts">
+      <div class="compare-count-card">
+        <strong>Base 2</strong>
+        <div class="compare-line"><span>top 4</span><span>−</span><span>bottom 1</span><span class="arrow">→</span><span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">3</span></span></span></div>
+        <p>Three copies of 2 stay on the top shelf.</p>
+      </div>
+      <div class="compare-count-card">
+        <strong>Base 3</strong>
+        <div class="compare-line"><span>top 3</span><span>−</span><span>bottom 6</span><span class="arrow">→</span><span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">−3</span></span></span></div>
+        <p>Three copies of 3 stay on the bottom shelf.</p>
+      </div>
+    </div>
+    <div class="read-box">A negative exponent is not a new mystery. It means the leftover copies are downstairs.</div>
+  </section>
+
+  <section class="section">
+    <h2><span class="section-kicker">06</span> Use the Sign as the Shelf Label</h2>
+    <p>The exponent sign tells where the leftover copies belong.</p>
+    <div class="shelf-sign-grid" aria-label="exponent sign meaning">
+      <div class="shelf-sign-card positive-card"><strong>Positive count</strong><span>leftover copies stay on the top shelf</span></div>
+      <div class="shelf-sign-card negative-card"><strong>Negative count</strong><span>leftover copies move to the bottom shelf</span></div>
+      <div class="shelf-sign-card zero-card"><strong>Zero count</strong><span>all matching copies cancel into 1</span></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>8.b Break Into Prime Copies First</h2>
-
-    <p>
-      Like the previous note, we break each number apart before multiplying. Then we count the copies of each prime number.
-    </p>
-
-    <div class="shelf-board">
-      <div class="shelf top-shelf">
-        <div class="shelf-title blue">Top Shelf</div>
-        <div class="result-strip">
-          56 gives
-          <span class="factor-chip top-chip">2</span>
-          <span class="factor-chip top-chip">2</span>
-          <span class="factor-chip top-chip">2</span>
-          <span class="factor-chip top-chip">7</span>
-          <span class="times">and</span>
-          54 gives
-          <span class="factor-chip top-chip">2</span>
-          <span class="factor-chip top-chip">3</span>
-          <span class="factor-chip top-chip">3</span>
-          <span class="factor-chip top-chip">3</span>
-        </div>
-      </div>
-
-      <div class="shelf bottom-shelf">
-        <div class="shelf-title green">Bottom Shelf</div>
-        <div class="result-strip">
-          45 gives
-          <span class="factor-chip bottom-chip">3</span>
-          <span class="factor-chip bottom-chip">3</span>
-          <span class="factor-chip bottom-chip">5</span>
-          <span class="times">and</span>
-          162 gives
-          <span class="factor-chip bottom-chip">2</span>
-          <span class="factor-chip bottom-chip">3</span>
-          <span class="factor-chip bottom-chip">3</span>
-          <span class="factor-chip bottom-chip">3</span>
-          <span class="factor-chip bottom-chip">3</span>
-        </div>
-      </div>
+    <h2><span class="section-kicker">07</span> Rebuild the Simplified Fraction</h2>
+    <p>After comparison, place the leftovers back onto the correct shelf.</p>
+    <div class="note8-route-line" aria-label="rebuild simplified fraction">
+      <span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">3</span></span></span>
+      <span>×</span>
+      <span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">−3</span></span></span>
+      <span>×</span>
+      <span class="power-chip"><span class="pow"><span class="base">7</span><span class="exp">1</span></span></span>
+      <span>×</span>
+      <span class="power-chip"><span class="pow"><span class="base">5</span><span class="exp">−1</span></span></span>
     </div>
-
-    <div class="warning-box">
-      Notice: the copies are correct, but the line is crowded. This is the moment where exponent notation becomes useful.
+    <div class="rebuild-board" aria-label="positive exponents on top and negative exponents on bottom">
+      <div class="rebuild-side top-shelf"><strong>Top leftovers</strong><span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">3</span></span></span><span class="power-chip"><span class="pow"><span class="base">7</span><span class="exp">1</span></span></span></div>
+      <div class="rebuild-side bottom-shelf"><strong>Bottom leftovers</strong><span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">3</span></span></span><span class="power-chip"><span class="pow"><span class="base">5</span><span class="exp">1</span></span></span></div>
     </div>
+    <div class="math-line note8-final-fraction"><span class="fraction"><span class="top">2³ × 7</span><span class="bottom">3³ × 5</span></span><span class="arrow">→</span><span class="fraction"><span class="top">56</span><span class="bottom">135</span></span></div>
   </section>
 
   <section class="section">
-    <h2>8.c New Tool: The Exponent Count</h2>
-
-    <p>
-      When the same prime number repeats, we can pack the repeated copies together.
-      The small number above is the <span class="exponent-word">exponent count</span>.
-    </p>
-
-    <div class="three-col">
-      <div class="panel">
-        <h3>Four copies of 2</h3>
-        <div class="result-strip">
-          <span class="factor-chip">2</span>
-          <span class="factor-chip">2</span>
-          <span class="factor-chip">2</span>
-          <span class="factor-chip">2</span>
-          <span class="arrow">→</span>
-          <span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">4</span></span></span>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h3>Three copies of 3</h3>
-        <div class="result-strip">
-          <span class="factor-chip">3</span>
-          <span class="factor-chip">3</span>
-          <span class="factor-chip">3</span>
-          <span class="arrow">→</span>
-          <span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">3</span></span></span>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h3>One copy of 7</h3>
-        <div class="result-strip">
-          <span class="factor-chip">7</span>
-          <span class="arrow">→</span>
-          <span class="power-chip"><span class="pow"><span class="base">7</span><span class="exp">1</span></span></span>
-        </div>
-      </div>
+    <h2><span class="section-kicker">08</span> The Packing Rhythm</h2>
+    <p>Use this short path when the problem starts to feel crowded.</p>
+    <div class="packing-rhythm" aria-label="exponent packing rhythm">
+      <div><span>1</span><strong>Factor</strong><p>Break each number into prime pieces.</p></div>
+      <div><span>2</span><strong>Pack</strong><p>Count repeated copies with exponents.</p></div>
+      <div><span>3</span><strong>Compare</strong><p>Top count minus bottom count.</p></div>
+      <div><span>4</span><strong>Place</strong><p>Positive on top, negative on bottom.</p></div>
+      <div><span>5</span><strong>Finish</strong><p>Multiply only the leftovers.</p></div>
     </div>
-
-    <div class="read-box">
-      Read <span class="pow"><span class="base">2</span><span class="exp">4</span></span> as: four copies of 2 are packed together.
-    </div>
+    <div class="read-box">Short version: factor → pack → compare → place → finish.</div>
   </section>
 
-  <section class="section">
-    <h2>8.d Pack the Top Shelf and Bottom Shelf</h2>
-
-    <p>
-      Now we collect identical prime copies on each shelf.
-    </p>
-
-    <div class="two-col">
-      <div class="panel">
-        <h3 class="blue">Top Shelf Packed</h3>
-        <div class="math-line">
-          <span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">4</span></span></span>
-          ×
-          <span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">3</span></span></span>
-          ×
-          <span class="power-chip"><span class="pow"><span class="base">7</span><span class="exp">1</span></span></span>
-        </div>
-        <p>
-          The top shelf has four copies of 2, three copies of 3, and one copy of 7.
-        </p>
-      </div>
-
-      <div class="panel">
-        <h3 class="green">Bottom Shelf Packed</h3>
-        <div class="math-line">
-          <span class="power-chip"><span class="pow"><span class="base">2</span><span class="exp">1</span></span></span>
-          ×
-          <span class="power-chip"><span class="pow"><span class="base">3</span><span class="exp">6</span></span></span>
-          ×
-          <span class="power-chip"><span class="pow"><span class="base">5</span><span class="exp">1</span></span></span>
-        </div>
-        <p>
-          The bottom shelf has one copy of 2, six copies of 3, and one copy of 5.
-        </p>
-      </div>
+  <section class="section practice note8-practice" id="practice">
+    <h2><span class="section-kicker">09</span> Unlock Practice</h2>
+    <p>Complete four packing checks. Whole-number answers use one number box. Fraction answers use the two-box fraction notepad.</p>
+    <div class="practice-progress" aria-label="Practice progress">
+      <div class="progress-bar" id="bar0"><span></span></div>
+      <div class="progress-bar" id="bar1"><span></span></div>
+      <div class="progress-bar" id="bar2"><span></span></div>
+      <div class="progress-bar" id="bar3"><span></span></div>
     </div>
-
-    <div class="read-box">
-      The fraction is the same. The writing is just cleaner.
-    </div>
+    <div class="practice-list" id="practiceList"></div>
   </section>
 
-  <section class="section">
-    <h2>8.e Compare Counts Instead of Crossing One at a Time</h2>
-
-    <p>
-      In the previous note, we crossed out matching copies one at a time. Now we compare the exponent counts.
-    </p>
-
-    <div class="step-card">
-      <h3>For the copies of 2</h3>
-      <div class="math-line">
-        Top has <span class="pow"><span class="base">2</span><span class="exp">4</span></span>, bottom has <span class="pow"><span class="base">2</span><span class="exp">1</span></span>
-        <span class="arrow">→</span>
-        <span class="pow"><span class="base">2</span><span class="exp">(4−1)</span></span>
-        <span class="arrow">→</span>
-        <span class="pow"><span class="base">2</span><span class="exp">3</span></span>
-      </div>
-      <div class="read-box">
-        Parentheses show the action: <span class="exp-action">(4−1)</span>. After the action is done, the answer becomes a sign: <span class="pow"><span class="base">2</span><span class="exp">3</span></span>. Three copies of 2 remain on the top shelf.
-      </div>
-    </div>
-
-    <div class="step-card">
-      <h3>For the copies of 3</h3>
-      <div class="math-line">
-        Top has <span class="pow"><span class="base">3</span><span class="exp">3</span></span>, bottom has <span class="pow"><span class="base">3</span><span class="exp">6</span></span>
-        <span class="arrow">→</span>
-        <span class="pow"><span class="base">3</span><span class="exp">(3−6)</span></span>
-        <span class="arrow">→</span>
-        <span class="pow"><span class="base">3</span><span class="exp">−(6−3)</span></span>
-        <span class="arrow">→</span>
-        <span class="pow"><span class="base">3</span><span class="exp">−3</span></span>
-      </div>
-      <div class="read-box">
-        Parentheses show the first action: <span class="exp-action">(3−6)</span>. Then we rewrite it as <span class="exp-action">−(6−3)</span>: the parentheses still show the count action, and the outside negative sign shows bottom-shelf direction. After the action is done, the answer becomes <span class="pow"><span class="base">3</span><span class="exp">−3</span></span>. That means three copies of 3 remain on the bottom shelf.
-      </div>
-    </div>
-
-    <div class="step-card">
-      <h3>For the copy of 7 and copy of 5</h3>
-      <div class="math-line">
-        7 with count 1 stays upstairs
-        <span class="arrow">and</span>
-        <span class="pow"><span class="base">5</span><span class="exp">−1</span></span> means one copy of 5 stays downstairs
-      </div>
-    </div>
+  <section class="unlock-dock" aria-label="Next climb unlock">
+    <div><strong>Ready for the next climb: 2-4 Play</strong><span id="unlockText">Locked until all four practice checks are correct.</span></div>
+    <button id="dockClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 2-4</button>
   </section>
-
-  <section class="section">
-    <h2>8.f The Shelf Meaning of the Sign</h2>
-
-    <p>
-      The exponent sign is a location label.
-    </p>
-
-    <div class="sign-board">
-      <div class="sign-card">
-        <span class="big blue">Positive exponent</span>
-        The prime copies remain on the top shelf.
-      </div>
-
-      <div class="sign-card">
-        <span class="big green">Negative exponent</span>
-        The prime copies remain on the bottom shelf.
-      </div>
-
-      <div class="sign-card">
-        <span class="big orange">Zero exponent</span>
-        No copies remain. They hide away as 1.
-      </div>
-    </div>
-
-    <div class="read-box">
-      This is the big idea: negative exponent does not need to feel mysterious. It means the leftover copies are downstairs.
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>8.g Rebuild the Simplified Fraction</h2>
-
-    <p>
-      From our comparison, we found:
-    </p>
-
-    <div class="math-line">
-      <span class="pow"><span class="base">2</span><span class="exp">3</span></span> × <span class="pow"><span class="base">3</span><span class="exp">−3</span></span> × <span class="pow"><span class="base">7</span><span class="exp">1</span></span> × <span class="pow"><span class="base">5</span><span class="exp">−1</span></span>
-    </div>
-
-    <div class="read-box">
-      Positive counts go on the top shelf. Negative counts go on the bottom shelf.
-    </div>
-
-    <div class="math-line">
-      <span class="fraction">
-        <span class="top"><span class="pow"><span class="base">2</span><span class="exp">3</span></span> × <span class="pow"><span class="base">7</span><span class="exp">1</span></span></span>
-        <span class="bottom"><span class="pow"><span class="base">3</span><span class="exp">3</span></span> × <span class="pow"><span class="base">5</span><span class="exp">1</span></span></span>
-      </span>
-      <span class="arrow">→</span>
-      <span class="fraction">
-        <span class="top">8 × 7</span>
-        <span class="bottom">27 × 5</span>
-      </span>
-      <span class="arrow">→</span>
-      <span class="fraction">
-        <span class="top">56</span>
-        <span class="bottom">135</span>
-      </span>
-    </div>
-
-    <div class="read-box">
-      Final answer: 56/45 × 54/162 reduces to 56/135.
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>8.h What Does Zero Exponent Mean?</h2>
-
-    <p>
-      Sometimes the top shelf and bottom shelf have the same count.
-      Then every copy pairs away.
-    </p>
-
-    <div class="math-line">
-      <span class="fraction">
-        <span class="top"><span class="pow"><span class="base">2</span><span class="exp">1</span></span></span>
-        <span class="bottom"><span class="pow"><span class="base">2</span><span class="exp">1</span></span></span>
-      </span>
-      <span class="arrow">→</span>
-      <span class="pow"><span class="base">2</span><span class="exp">(1−1)</span></span>
-      <span class="arrow">→</span>
-      <span class="pow"><span class="base">2</span><span class="exp">0</span></span>
-    </div>
-
-    <div class="math-line">
-      <span class="fraction">
-        <span class="top">2</span>
-        <span class="bottom">2</span>
-      </span>
-      <span class="arrow">→</span>
-      1
-    </div>
-
-    <div class="read-box">
-      Zero exponent means no matching copy is left to show. The repeated copy is hidden away as a product of 1.
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>8.i Practice: Pack the Pieces</h2>
-
-    <p>
-      First pack repeated prime pieces. Then compare the shelf counts.
-    </p>
-
-    <div class="practice-list">
-
-      <div class="practice-row">
-        <span class="fraction">
-          <span class="top">2 × 2 × 3 × 3 × 3</span>
-          <span class="bottom">2 × 3</span>
-        </span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Pack</span> Top: <span class="pow"><span class="base">2</span><span class="exp">2</span></span> × <span class="pow"><span class="base">3</span><span class="exp">3</span></span>, Bottom: <span class="pow"><span class="base">2</span><span class="exp">1</span></span> × <span class="pow"><span class="base">3</span><span class="exp">1</span></span></div>
-          <div class="answer-line"><span class="tag">Compare</span> <span class="pow"><span class="base">2</span><span class="exp">(2−1)</span></span> × <span class="pow"><span class="base">3</span><span class="exp">(3−1)</span></span></div>
-          <div class="answer-line"><span class="tag">Remaining</span> <span class="pow"><span class="base">2</span><span class="exp">1</span></span> × <span class="pow"><span class="base">3</span><span class="exp">2</span></span> = 18</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction">
-          <span class="top">2 × 5 × 5</span>
-          <span class="bottom">2 × 2 × 5</span>
-        </span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Pack</span> Top: <span class="pow"><span class="base">2</span><span class="exp">1</span></span> × <span class="pow"><span class="base">5</span><span class="exp">2</span></span>, Bottom: <span class="pow"><span class="base">2</span><span class="exp">2</span></span> × <span class="pow"><span class="base">5</span><span class="exp">1</span></span></div>
-          <div class="answer-line"><span class="tag">Compare</span> <span class="pow"><span class="base">2</span><span class="exp">(1−2)</span></span> → <span class="pow"><span class="base">2</span><span class="exp">−(2−1)</span></span>, and <span class="pow"><span class="base">5</span><span class="exp">(2−1)</span></span></div>
-          <div class="answer-line"><span class="tag">Remaining</span> 5/2</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction">
-          <span class="top">3 × 3 × 7</span>
-          <span class="bottom">3 × 7 × 7</span>
-        </span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Pack</span> Top: <span class="pow"><span class="base">3</span><span class="exp">2</span></span> × <span class="pow"><span class="base">7</span><span class="exp">1</span></span>, Bottom: <span class="pow"><span class="base">3</span><span class="exp">1</span></span> × <span class="pow"><span class="base">7</span><span class="exp">2</span></span></div>
-          <div class="answer-line"><span class="tag">Compare</span> <span class="pow"><span class="base">3</span><span class="exp">(2−1)</span></span>, and <span class="pow"><span class="base">7</span><span class="exp">(1−2)</span></span> → <span class="pow"><span class="base">7</span><span class="exp">−(2−1)</span></span></div>
-          <div class="answer-line"><span class="tag">Remaining</span> 3/7</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction">
-          <span class="top">2 × 2 × 2 × 3</span>
-          <span class="bottom">2 × 2 × 2 × 3</span>
-        </span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Pack</span> Top: <span class="pow"><span class="base">2</span><span class="exp">3</span></span> × <span class="pow"><span class="base">3</span><span class="exp">1</span></span>, Bottom: <span class="pow"><span class="base">2</span><span class="exp">3</span></span> × <span class="pow"><span class="base">3</span><span class="exp">1</span></span></div>
-          <div class="answer-line"><span class="tag">Compare</span> <span class="pow"><span class="base">2</span><span class="exp">(3−3)</span></span> × <span class="pow"><span class="base">3</span><span class="exp">(1−1)</span></span></div>
-          <div class="answer-line"><span class="tag">Remaining</span> <span class="pow"><span class="base">2</span><span class="exp">0</span></span> × <span class="pow"><span class="base">3</span><span class="exp">0</span></span> = 1</div>
-        </details>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>Final Memory</h2>
-
-    <div class="two-col">
-      <div class="panel">
-        <h3>Packing Copies</h3>
-        <p>Repeated prime copies can be packed with an exponent count. For example, four copies of 2 become <span class="pow"><span class="base">2</span><span class="exp">4</span></span>.</p>
-      </div>
-
-      <div class="panel">
-        <h3>Shelf Location</h3>
-        <p>Positive exponent count means top shelf. Negative exponent count means bottom shelf. Zero exponent count means nothing is left except 1.</p>
-      </div>
-    </div>
-
-    <div class="read-box">
-      One big idea: exponents are a cleaner way to count repeated prime copies after using factor trees.
-    </div>
-  </section>
-
-  <p class="footer-note">
-    Math Ridge | Note 8 · Exponents help pack repeated prime copies and track shelf leftovers.
-  </p>
-
+  <section class="footer-rule" aria-label="Math Ridge quote">“Math is pattern. Pattern builds logic. Logic builds confidence.” — Math Ridge</section>
+  <p class="footer-note">Math Ridge Note 2-4 | Packing Prime Copies with Exponents</p>
 </main>
 
+<div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <h2 id="modalTitle">2-4 Play Unlocked!</h2>
+    <p>You have unlocked 2-4 Play. Would you like to begin the next climb now?</p>
+    <div class="modal-actions"><button class="gold-btn ready" type="button" onclick="goToPlay()">Yes</button><button class="pill-btn" type="button" onclick="closeModal()">No</button></div>
+  </div>
+</div>
+
+<script src="assets/js/mathridge-note-data.js" defer></script>
+<script src="assets/js/math-ridge-shell.js" defer></script>
+<script src="assets/js/mathridge-note.js" defer></script>
 </body>
 </html>

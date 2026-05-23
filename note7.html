@@ -2,674 +2,168 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Math Ridge | Note 7 - Fraction Multiplication and Division</title>
-
-<style>
-:root {
-  --bg: #fff8ed;
-  --card: #ffffff;
-  --ink: #2d251c;
-  --muted: #6f6256;
-  --accent: #f59e0b;
-  --accent-dark: #b45309;
-  --soft: #ffedd5;
-  --green: #16a34a;
-  --blue: #2563eb;
-  --purple: #7c3aed;
-  --red: #dc2626;
-  --border: #f4d8ae;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-  background: linear-gradient(180deg, #fff7e6, #eef7ff);
-  color: var(--ink);
-  line-height: 1.6;
-}
-
-.page {
-  width: min(1100px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 60px;
-}
-
-.hero {
-  background: white;
-  border: 4px solid #ffd27d;
-  border-radius: 28px;
-  padding: clamp(24px, 5vw, 54px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  right: -80px;
-  top: -80px;
-  border-radius: 999px;
-  background: rgba(245,158,11,0.14);
-}
-
-.eyebrow {
-  display: inline-flex;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: var(--soft);
-  color: var(--accent-dark);
-  font-weight: 800;
-  margin-bottom: 14px;
-}
-
-h1,h2,h3 { margin: 0; line-height: 1.15; }
-
-h1 {
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  max-width: 900px;
-}
-
-.subtitle {
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  color: var(--muted);
-  max-width: 900px;
-  margin-top: 18px;
-}
-
-.hero-note {
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 12px;
-  position: relative;
-  z-index: 1;
-}
-
-.mini-card {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  font-weight: 800;
-}
-
-.mini-card span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.section {
-  margin-top: 24px;
-  background: white;
-  border: 2px solid #e8f2ff;
-  border-radius: 24px;
-  padding: clamp(20px, 4vw, 34px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-}
-
-.section h2 {
-  font-size: clamp(1.55rem, 3.5vw, 2.25rem);
-  margin-bottom: 12px;
-}
-
-.section p {
-  color: var(--muted);
-  font-size: 1.06rem;
-  margin: 10px 0 0;
-}
-
-.math-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  margin-top: 18px;
-  padding: 18px;
-  background: #f8fbff;
-  border: 2px dashed #8ec5ff;
-  border-radius: 20px;
-  font-size: clamp(1.35rem, 4vw, 2.35rem);
-  font-weight: 900;
-}
-
-.arrow { color: var(--accent-dark); }
-.times { color: var(--purple); }
-.divide { color: var(--red); }
-
-.read-box {
-  margin-top: 16px;
-  padding: 16px 18px;
-  background: #fff6d6;
-  border-left: 5px solid #ffc94d;
-  border-radius: 16px;
-  font-size: 1.05rem;
-  font-weight: 800;
-}
-
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.panel {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 18px;
-}
-
-.panel h3 {
-  margin-bottom: 10px;
-  color: var(--accent-dark);
-}
-
-.fraction {
-  display: inline-grid;
-  grid-template-rows: auto auto;
-  align-items: center;
-  justify-items: center;
-  line-height: 1;
-  vertical-align: middle;
-}
-
-.fraction .top {
-  border-bottom: 4px solid currentColor;
-  padding: 0 0.2em 0.12em;
-  color: var(--blue);
-}
-
-.fraction .bottom {
-  padding: 0.12em 0.2em 0;
-  color: var(--green);
-}
-
-.blue { color: var(--blue); }
-.green { color: var(--green); }
-.red { color: var(--red); }
-.purple { color: var(--purple); }
-.orange { color: var(--accent-dark); }
-
-.cross {
-  text-decoration: line-through;
-  opacity: 0.55;
-}
-
-.result-strip {
-  margin-top: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  padding: 14px;
-  background: #f8fbff;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  font-weight: 900;
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
-}
-
-.factor-chip {
-  display: inline-grid;
-  place-items: center;
-  min-width: 40px;
-  min-height: 38px;
-  padding: 5px 10px;
-  border-radius: 13px;
-  background: white;
-  border: 2px solid #f0b55f;
-}
-
-.factor-chip.match {
-  background: #dbeafe;
-  border-color: #2563eb;
-  color: #1d4ed8;
-}
-
-.factor-chip.left {
-  background: #ede9fe;
-  border-color: #7c3aed;
-  color: #6d28d9;
-}
-
-.factor-chip.bottom-left {
-  background: #dcfce7;
-  border-color: #16a34a;
-  color: #15803d;
-}
-
-.step-card {
-  background: #fffaf0;
-  border: 2px dashed #f0b55f;
-  border-radius: 22px;
-  padding: 18px;
-  margin-top: 18px;
-}
-
-.step-card h3 {
-  color: var(--accent-dark);
-  margin-bottom: 8px;
-}
-
-.practice-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.practice-row {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px 16px;
-  font-weight: 900;
-}
-
-details { margin-top: 8px; }
-
-summary {
-  cursor: pointer;
-  color: var(--accent-dark);
-  font-weight: 900;
-}
-
-.answer-line {
-  margin-top: 8px;
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: #ede9fe;
-  color: #6d28d9;
-  font-size: 0.85rem;
-  font-weight: 900;
-  margin-right: 6px;
-}
-
-.footer-note {
-  text-align: center;
-  color: var(--muted);
-  padding: 30px 10px 0;
-  font-weight: 800;
-}
-
-@media(max-width:820px){
-  .hero-note,
-  .two-col {
-    grid-template-columns: 1fr;
-  }
-
-  .page {
-    width: min(100% - 22px, 1100px);
-    padding-top: 14px;
-  }
-
-  .math-line {
-    padding: 14px;
-  }
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math Ridge | Note 2-3 — Fraction Multiplication and Division with Factor Trees</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/math-ridge-shell.css">
+<link rel="stylesheet" href="assets/css/mathridge-note.css">
+<link rel="stylesheet" href="assets/css/note7.css">
 </head>
+<body class="note-page note-7" data-note-id="2_3">
+<nav class="topbar" aria-label="Math Ridge main navigation">
+  <a class="brand" href="index.html" onclick="goToIndexSection('home'); return false;" aria-label="Math Ridge Home">
+    <img class="brand-logo" src="assets/images/brand/math-ridge-logo.png" alt="Math Ridge logo" />
+    <div class="brand-text"><strong>Math Ridge</strong><span>Climb Higher. Achieve More.</span></div>
+  </a>
+  <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false"><span class="hamburger-lines" aria-hidden="true"></span></button>
+  <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+    <button class="pill-btn" type="button" onclick="goToIndexSection('home')">Home</button>
+    <button class="pill-btn active-section" type="button" onclick="goToIndexSection('quest')">Trail</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('cabin')">Cabin</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('message')">Message</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('quick')">Menu</button>
+    <button id="topClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 2-3</button>
+  </div>
+</nav>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleNoteMenu(false)" aria-hidden="true"></div>
+<div class="reading-progress" aria-hidden="true"></div>
 
-<body>
-
-<main class="page">
-
-  <section class="hero">
-    <div class="eyebrow">Math Ridge | Note 7</div>
-
-    <h1>Fraction Multiplication and Division Through Factor Trees</h1>
-
-    <p class="subtitle">
-      Before we multiply big numbers, we break them into prime pieces. Then we cross out matching pieces from the top shelf and bottom shelf.
-    </p>
-
-    <div class="hero-note">
-      <div class="mini-card">Factor First<span>Break numbers into 2, 3, 5, and 7 pieces</span></div>
-      <div class="mini-card">Reduce Early<span>Cross out matching pieces before multiplying</span></div>
-      <div class="mini-card">Flip to Divide<span>Division turns into the same multiplication process</span></div>
+<main class="page note7-page">
+  <section class="hero note7-hero">
+    <p class="eyebrow">Math Ridge | Note 2-3</p>
+    <h1>Fraction Multiplication and Division with Factor Trees</h1>
+    <p class="subtitle">Use one calm path: turn division into multiplication, stack the shelves, break the numbers into prime pieces, cross matching pieces, then multiply only what remains.</p>
+    <div class="hero-note" aria-label="lesson focus">
+      <div class="mini-card">Flip only for division<span>Only the second fraction changes.</span></div>
+      <div class="mini-card">Factor before multiplying<span>Keep big numbers small by using prime pieces.</span></div>
+      <div class="mini-card">Reduce early<span>Cross matching top and bottom pieces first.</span></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>7.a Multiply Fractions: Break Apart Before Multiplying</h2>
+    <h2><span class="section-kicker">01</span> Start with One Calm Question</h2>
+    <p>Before solving, ask: is this multiplication or division? Multiplication is ready to stack. Division must be changed first.</p>
+    <div class="note7-choice-strip" aria-label="multiplication or division decision">
+      <div class="note7-choice-card"><strong>If you see ×</strong><span>Stack the top shelves and bottom shelves.</span></div>
+      <div class="note7-choice-card flip-card"><strong>If you see ÷</strong><span>Flip only the second fraction, then change to ×.</span></div>
+    </div>
+    <div class="note7-pause-card"><strong>Focus checkpoint:</strong> do not multiply yet. First choose the correct setup.</div>
+  </section>
 
-    <p>
-      When multiplying fractions, the top shelves multiply together and the bottom shelves multiply together. But we do not need to multiply right away.
-    </p>
-
-    <div class="math-line">
+  <section class="section">
+    <h2><span class="section-kicker">02</span> Multiplication: Stack the Shelves</h2>
+    <p>When fractions multiply, the top shelves join together and the bottom shelves join together.</p>
+    <div class="note7-route-line" aria-label="fraction multiplication setup">
       <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span>
       <span class="times">×</span>
       <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span>
       <span class="arrow">→</span>
       <span class="fraction"><span class="top">2 × 25</span><span class="bottom">5 × 6</span></span>
     </div>
-
-    <div class="read-box">
-      Main idea: do not rush into 50/30. Break the numbers apart first.
-    </div>
+    <div class="read-box">The setup is correct, but it is not finished. The next move is to factor, not to rush into 50/30.</div>
   </section>
 
   <section class="section">
-    <h2>Guided Example for 7.a</h2>
-
-    <div class="math-line">
-      <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span>
-      <span class="times">×</span>
-      <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span>
-    </div>
-
-    <div class="step-card">
-      <h3>Step 1: Put the top shelves together and bottom shelves together.</h3>
-      <div class="result-strip">
-        <span class="fraction"><span class="top">2 × 25</span><span class="bottom">5 × 6</span></span>
+    <h2><span class="section-kicker">03</span> Factor First, Then Cross Matches</h2>
+    <p>Break each shelf into prime pieces. Matching top and bottom pieces can cross out before you multiply.</p>
+    <div class="note7-prime-board" aria-label="prime pieces reduce before multiplying">
+      <div class="prime-shelf top-shelf">
+        <strong>Top shelf</strong>
+        <div class="piece-row"><span class="piece matched">2</span><span class="piece matched">5</span><span class="piece">5</span></div>
+      </div>
+      <div class="prime-divider"></div>
+      <div class="prime-shelf bottom-shelf">
+        <strong>Bottom shelf</strong>
+        <div class="piece-row"><span class="piece matched">5</span><span class="piece matched">2</span><span class="piece">3</span></div>
       </div>
     </div>
-
-    <div class="step-card">
-      <h3>Step 2: Break into prime pieces.</h3>
-      <div class="result-strip">
-        Top:
-        <span class="factor-chip match">(2)</span>
-        <span class="factor-chip match">(5)</span>
-        <span class="factor-chip left">(5)</span>
-      </div>
-      <div class="result-strip">
-        Bottom:
-        <span class="factor-chip match">(5)</span>
-        <span class="factor-chip match">(2)</span>
-        <span class="factor-chip bottom-left">(3)</span>
-      </div>
-    </div>
-
-    <div class="step-card">
-      <h3>Step 3: Cross out matching pieces.</h3>
-      <div class="math-line">
-        Top:
-        <span class="cross blue">(2)</span>
-        <span class="cross red">(5)</span>
-        <span class="purple">(5)</span>
-      </div>
-      <div class="math-line">
-        Bottom:
-        <span class="cross red">(5)</span>
-        <span class="cross blue">(2)</span>
-        <span class="green">(3)</span>
-      </div>
-      <div class="math-line">
-        Remaining:
-        <span class="fraction"><span class="top">5</span><span class="bottom">3</span></span>
-      </div>
-    </div>
-
-    <div class="read-box">
-      Answer: 2/5 × 25/6 reduces to 5/3. We used the same prime factor tree thinking from Note 6.
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>7.a Practice</h2>
-
-    <p>
-      Break the numbers into prime pieces first. Then cross out matching pieces before multiplying what is left.
-    </p>
-
-    <div class="practice-list">
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">2</span><span class="bottom">3</span></span>
-        ×
-        <span class="fraction"><span class="top">9</span><span class="bottom">4</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(3)(3)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (3)(2)(2)</div>
-          <div class="answer-line"><span class="tag">Cross out</span> Remove (2) and (3).</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 3/2</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">8</span><span class="bottom">9</span></span>
-        ×
-        <span class="fraction"><span class="top">27</span><span class="bottom">4</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(2)(2)(3)(3)(3)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (3)(3)(2)(2)</div>
-          <div class="answer-line"><span class="tag">Cross out</span> Remove (2)(2) and (3)(3).</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 2 × 3 = 6</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">10</span><span class="bottom">21</span></span>
-        ×
-        <span class="fraction"><span class="top">49</span><span class="bottom">25</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(5)(7)(7)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (3)(7)(5)(5)</div>
-          <div class="answer-line"><span class="tag">Cross out</span> Remove (5) and (7).</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 14/15</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">15</span><span class="bottom">14</span></span>
-        ×
-        <span class="fraction"><span class="top">21</span><span class="bottom">10</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (3)(5)(3)(7)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (2)(7)(2)(5)</div>
-          <div class="answer-line"><span class="tag">Cross out</span> Remove (5) and (7).</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 9/4</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">18</span><span class="bottom">35</span></span>
-        ×
-        <span class="fraction"><span class="top">49</span><span class="bottom">12</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(3)(3)(7)(7)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (5)(7)(2)(2)(3)</div>
-          <div class="answer-line"><span class="tag">Cross out</span> Remove (2), (3), and (7).</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 21/10</div>
-        </details>
-      </div>
-
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>7.b Divide Fractions: Flip the Second Shelf</h2>
-
-    <p>
-      Dividing by a fraction changes the second fraction. Flip the second fraction's shelves, then continue exactly like 7.a.
-    </p>
-
-    <div class="math-line">
-      <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span>
-      <span class="divide">÷</span>
-      <span class="fraction"><span class="top">6</span><span class="bottom">25</span></span>
+    <div class="math-line note7-final-line">
+      <span>Leftover pieces</span>
       <span class="arrow">→</span>
-      <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span>
-      <span class="times">×</span>
-      <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span>
+      <span class="fraction"><span class="top">5</span><span class="bottom">3</span></span>
     </div>
+    <div class="note7-pause-card"><strong>Say it:</strong> factor first, cross matches, multiply leftovers.</div>
+  </section>
 
-    <div class="read-box">
-      Only the fraction after the division sign flips. After that, the problem becomes multiplication through factor trees.
+  <section class="section">
+    <h2><span class="section-kicker">04</span> Division: Flip Only the Second Fraction</h2>
+    <p>Dividing by a fraction means multiply by its flipped version. The first fraction stays the same.</p>
+    <div class="division-flip-board" aria-label="division changes to multiplication">
+      <div class="flip-step"><strong>Start</strong><div class="math-line math-small"><span class="fraction"><span class="top">2</span><span class="bottom">5</span></span><span class="divide">÷</span><span class="fraction"><span class="top">6</span><span class="bottom">25</span></span></div></div>
+      <div class="flip-arrow">→</div>
+      <div class="flip-step"><strong>Flip the second fraction</strong><div class="math-line math-small"><span class="fraction"><span class="top">2</span><span class="bottom">5</span></span><span class="times">×</span><span class="fraction"><span class="top">25</span><span class="bottom">6</span></span></div></div>
+    </div>
+    <div class="read-box">Only the fraction after the division sign flips. Then the problem follows the multiplication path.</div>
+  </section>
+
+  <section class="section">
+    <h2><span class="section-kicker">05</span> Division Uses the Same Finish</h2>
+    <p>After the flip, continue exactly the same way: stack, factor, cross, finish.</p>
+    <div class="note7-step-grid" aria-label="division finish path">
+      <div class="note7-step-card"><span>1</span><strong>Flip</strong><p><span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> ÷ <span class="fraction"><span class="top">6</span><span class="bottom">25</span></span> becomes <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> × <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span>.</p></div>
+      <div class="note7-step-card"><span>2</span><strong>Factor</strong><p>Top: 2 × 5 × 5<br>Bottom: 5 × 2 × 3</p></div>
+      <div class="note7-step-card"><span>3</span><strong>Cross</strong><p>Cross a 2 with a 2. Cross a 5 with a 5.</p></div>
+      <div class="note7-step-card"><span>4</span><strong>Finish</strong><p>The leftover fraction is <span class="fraction"><span class="top">5</span><span class="bottom">3</span></span>.</p></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>Guided Example for 7.b</h2>
-
-    <div class="math-line">
-      <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span>
-      <span class="divide">÷</span>
-      <span class="fraction"><span class="top">6</span><span class="bottom">25</span></span>
+    <h2><span class="section-kicker">06</span> Watch the Common Trap</h2>
+    <p>The most common mistake is flipping too much. Keep the first fraction still. Flip only the fraction after the division sign.</p>
+    <div class="trap-grid" aria-label="division flip mistakes and correct setup">
+      <div class="trap-card wrong-trap"><strong>Do not flip both</strong><span class="fraction"><span class="top">5</span><span class="bottom">2</span></span> × <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span></div>
+      <div class="trap-card wrong-trap"><strong>Do not keep ÷</strong><span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> ÷ <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span></div>
+      <div class="trap-card correct-trap"><strong>Correct setup</strong><span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> × <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span></div>
     </div>
-
-    <div class="step-card">
-      <h3>Step 1: Flip the second shelf.</h3>
-      <div class="result-strip">
-        <span class="fraction"><span class="top">2</span><span class="bottom">5</span></span>
-        ×
-        <span class="fraction"><span class="top">25</span><span class="bottom">6</span></span>
-      </div>
-    </div>
-
-    <div class="step-card">
-      <h3>Step 2: Continue like 7.a.</h3>
-      <div class="result-strip">
-        Top:
-        <span class="factor-chip match">(2)</span>
-        <span class="factor-chip match">(5)</span>
-        <span class="factor-chip left">(5)</span>
-      </div>
-      <div class="result-strip">
-        Bottom:
-        <span class="factor-chip match">(5)</span>
-        <span class="factor-chip match">(2)</span>
-        <span class="factor-chip bottom-left">(3)</span>
-      </div>
-    </div>
-
-    <div class="step-card">
-      <h3>Step 3: Remove matching pieces.</h3>
-      <div class="math-line">
-        Remaining:
-        <span class="fraction"><span class="top">5</span><span class="bottom">3</span></span>
-      </div>
-    </div>
-
-    <div class="read-box">
-      Answer: 2/5 ÷ 6/25 becomes 2/5 × 25/6, then reduces to 5/3.
-    </div>
+    <div class="note7-pause-card"><strong>Memory line:</strong> first stays, second flips, division becomes multiplication.</div>
   </section>
 
   <section class="section">
-    <h2>7.b Practice</h2>
-
-    <p>
-      First flip the fraction after the division sign. Then use the same prime factor tree method from 7.a.
-    </p>
-
-    <div class="practice-list">
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">3</span><span class="bottom">7</span></span>
-        ÷
-        <span class="fraction"><span class="top">9</span><span class="bottom">14</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Flip</span> 3/7 × 14/9</div>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (3)(2)(7)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (7)(3)(3)</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 2/3</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">10</span><span class="bottom">21</span></span>
-        ÷
-        <span class="fraction"><span class="top">25</span><span class="bottom">49</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Flip</span> 10/21 × 49/25</div>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(5)(7)(7)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (3)(7)(5)(5)</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 14/15</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">15</span><span class="bottom">8</span></span>
-        ÷
-        <span class="fraction"><span class="top">5</span><span class="bottom">12</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Flip</span> 15/8 × 12/5</div>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (3)(5)(2)(2)(3)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (2)(2)(2)(5)</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 9/2</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">18</span><span class="bottom">35</span></span>
-        ÷
-        <span class="fraction"><span class="top">6</span><span class="bottom">49</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Flip</span> 18/35 × 49/6</div>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(3)(3)(7)(7)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (5)(7)(2)(3)</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 21/5</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <span class="fraction"><span class="top">14</span><span class="bottom">15</span></span>
-        ÷
-        <span class="fraction"><span class="top">21</span><span class="bottom">25</span></span>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Flip</span> 14/15 × 25/21</div>
-          <div class="answer-line"><span class="tag">Factor</span> Top: (2)(7)(5)(5)</div>
-          <div class="answer-line"><span class="tag">Factor</span> Bottom: (3)(5)(3)(7)</div>
-          <div class="answer-line"><span class="tag">Remaining</span> 10/9</div>
-        </details>
-      </div>
-
+    <h2><span class="section-kicker">07</span> The Fraction Tree Rhythm</h2>
+    <p>Use this short path whenever your attention starts to drift.</p>
+    <div class="fraction-rhythm" aria-label="fraction tree rhythm">
+      <div><span>1</span><strong>Notice</strong><p>Is it × or ÷?</p></div>
+      <div><span>2</span><strong>Flip</strong><p>Only if it is division.</p></div>
+      <div><span>3</span><strong>Stack</strong><p>Top with top. Bottom with bottom.</p></div>
+      <div><span>4</span><strong>Factor</strong><p>Break into prime pieces.</p></div>
+      <div><span>5</span><strong>Cross</strong><p>Remove matching pieces.</p></div>
+      <div><span>6</span><strong>Finish</strong><p>Multiply what remains.</p></div>
     </div>
+    <div class="read-box">Short version: notice → flip if needed → stack → factor → cross → finish.</div>
   </section>
 
-  <section class="section">
-    <h2>Final Memory</h2>
-
-    <div class="two-col">
-      <div class="panel">
-        <h3>7.a Multiplication</h3>
-        <p>Put top shelves together. Put bottom shelves together. Break into prime pieces. Cross out matching pieces.</p>
-      </div>
-
-      <div class="panel">
-        <h3>7.b Division</h3>
-        <p>Flip the fraction after the division sign. Then continue using the same 7.a multiplication method.</p>
-      </div>
+  <section class="section practice note7-practice" id="practice">
+    <h2><span class="section-kicker">08</span> Unlock Practice</h2>
+    <p>Complete four division checks. Use the two-box fraction notepad. The answer must be the simplest fraction, so reduce before you press check.</p>
+    <div class="practice-progress" aria-label="Practice progress">
+      <div class="progress-bar" id="bar0"><span></span></div>
+      <div class="progress-bar" id="bar1"><span></span></div>
+      <div class="progress-bar" id="bar2"><span></span></div>
+      <div class="progress-bar" id="bar3"><span></span></div>
     </div>
-
-    <div class="read-box">
-      One big idea: factor first, reduce early, then multiply only what is left.
-    </div>
+    <div class="practice-list" id="practiceList"></div>
   </section>
 
-  <p class="footer-note">
-    Math Ridge | Note 7 · Fraction multiplication and division use the same prime factor pieces.
-  </p>
-
+  <section class="unlock-dock" aria-label="Next climb unlock">
+    <div><strong>Ready for the next climb: 2-3 Play</strong><span id="unlockText">Locked until all four fraction checks are correct.</span></div>
+    <button id="dockClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 2-3</button>
+  </section>
+  <section class="footer-rule" aria-label="Math Ridge quote">“Math is pattern. Pattern builds logic. Logic builds confidence.” — Math Ridge</section>
+  <p class="footer-note">Math Ridge Note 2-3 | Fraction Multiplication and Division with Factor Trees</p>
 </main>
 
+<div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <h2 id="modalTitle">2-3 Play Unlocked!</h2>
+    <p>You have unlocked 2-3 Play. Would you like to begin the next climb now?</p>
+    <div class="modal-actions"><button class="gold-btn ready" type="button" onclick="goToPlay()">Yes</button><button class="pill-btn" type="button" onclick="closeModal()">No</button></div>
+  </div>
+</div>
+
+<script src="assets/js/mathridge-note-data.js" defer></script>
+<script src="assets/js/math-ridge-shell.js" defer></script>
+<script src="assets/js/mathridge-note.js" defer></script>
 </body>
 </html>

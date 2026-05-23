@@ -3,601 +3,15 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Math Ridge | Play 4 - Chunking Repeated Values</title>
-
-	<style>
-		* { box-sizing: border-box; margin: 0; padding: 0; }
-
-		body {
-			font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-			background: linear-gradient(180deg, #fff7df, #eaf6ff);
-			color: #24304f;
-			padding: 16px;
-			min-height: 100vh;
-		}
-
-		.game {
-			max-width: 1000px;
-			margin: auto;
-			background: white;
-			border: 4px solid #ffe2a8;
-			border-radius: 28px;
-			padding: 20px;
-			box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-		}
-
-		h1 {
-			text-align: center;
-			font-size: clamp(2rem, 6vw, 4rem);
-			margin-bottom: 8px;
-			color: #d97800;
-		}
-
-		.subtitle {
-			text-align: center;
-			font-size: 1.1rem;
-			margin-bottom: 18px;
-			font-weight: bold;
-		}
-
-		.challenge-board {
-			position: fixed;
-			top: 70px;
-			right: 14px;
-			width: clamp(82px, 9vw, 118px);
-			max-height: calc(100vh - 90px);
-			z-index: 50;
-			background: #fff8db;
-			border: 3px solid #ffd36e;
-			border-radius: 22px;
-			padding: clamp(6px, 1vw, 10px) clamp(4px, 0.8vw, 8px);
-			text-align: center;
-			box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-			overflow: visible;
-		}
-
-		.challenge-board.shake-board {
-			animation: boardShake 0.42s ease;
-		}
-
-		@keyframes boardShake {
-			0%, 100% { transform: translateX(0); }
-			20% { transform: translateX(-6px); }
-			40% { transform: translateX(6px); }
-			60% { transform: translateX(-4px); }
-			80% { transform: translateX(4px); }
-		}
-
-		.challenge-board h2 {
-			font-size: clamp(0.68rem, 1.2vw, 0.95rem);
-			line-height: 1.05;
-			margin-bottom: 5px;
-		}
-
-		.score-badge {
-			position: relative;
-			overflow: visible;
-			background: white;
-			border: 2px solid #ffd36e;
-			border-radius: 14px;
-			padding: 5px 3px;
-			font-weight: bold;
-			font-size: clamp(0.72rem, 1.2vw, 0.95rem);
-			margin-bottom: 6px;
-		}
-
-		.turtle-track {
-			--progress: 0%;
-			position: relative;
-			width: 34px;
-			height: min(44vh, 330px);
-			min-height: 190px;
-			margin: 8px auto 6px;
-			border-radius: 999px;
-			background: #ffffff;
-			border: 3px solid #dcecff;
-			overflow: visible;
-			box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
-		}
-
-		.progress-fill {
-			position: absolute;
-			left: 0;
-			bottom: 0;
-			width: 100%;
-			height: var(--progress);
-			border-radius: 999px;
-			background: linear-gradient(0deg, #b7f5d4 0%, #fff3bf 100%);
-			box-shadow: 0 0 10px rgba(118, 220, 160, 0.65), 0 0 18px rgba(255, 211, 110, 0.45);
-			transition: height 0.35s ease, background 0.5s ease, box-shadow 0.5s ease;
-		}
-
-		.turtle-track.theme-blue .progress-fill {
-			background: linear-gradient(0deg, #8ec5ff 0%, #fff3bf 100%);
-			box-shadow: 0 0 10px rgba(142, 197, 255, 0.75), 0 0 20px rgba(142, 197, 255, 0.45);
-		}
-
-		.turtle-track.theme-purple .progress-fill {
-			background: linear-gradient(0deg, #c7a8ff 0%, #fff3bf 100%);
-			box-shadow: 0 0 10px rgba(199, 168, 255, 0.78), 0 0 22px rgba(199, 168, 255, 0.46);
-		}
-
-		.progress-turtle {
-			position: absolute;
-			left: 50%;
-			bottom: var(--progress);
-			transform: translate(-50%, 50%);
-			font-size: 1.35rem;
-			line-height: 1;
-			z-index: 2;
-			transition: bottom 0.35s ease, left 0.35s ease;
-			filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
-		}
-
-		.progress-turtle.turtle-fade-away {
-			animation: turtleFadeAway 2s ease forwards;
-		}
-
-		@keyframes turtleFadeAway {
-			0% { opacity: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); }
-			100% { opacity: 0; filter: drop-shadow(0 10px 10px rgba(0,0,0,0)); }
-		}
-
-		.score-pop {
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			z-index: 5;
-			pointer-events: none;
-			font-size: clamp(1.05rem, 2vw, 1.55rem);
-			font-weight: 900;
-			text-shadow: 0 2px 0 white, 0 3px 8px rgba(0,0,0,0.18);
-		}
-
-		.score-pop.plus-pop { color: #248a2f; animation: scoreFloatUp 2s ease-out forwards; }
-		.score-pop.minus-pop { color: #c0392b; animation: scoreFloatDown 2s ease-out forwards; }
-
-		@keyframes scoreFloatUp {
-			0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
-			15% { opacity: 1; transform: translate(-50%, -90%) scale(1.28); }
-			100% { opacity: 0; transform: translate(-50%, -190%) scale(0.9); }
-		}
-
-		@keyframes scoreFloatDown {
-			0% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
-			15% { opacity: 1; transform: translate(-50%, -15%) scale(1.28); }
-			100% { opacity: 0; transform: translate(-50%, 120%) scale(0.9); }
-		}
-
-		.challenge-text {
-			margin-top: 6px;
-			font-weight: bold;
-			font-size: clamp(0.58rem, 1vw, 0.78rem);
-			line-height: 1.15;
-		}
-
-
-		.timer-panel {
-			grid-column: 1 / 3;
-			font-weight: bold;
-			font-size: clamp(0.62rem, 1vw, 0.82rem);
-			line-height: 1.2;
-			background: white;
-			border: 2px solid #ffd36e;
-			border-radius: 14px;
-			padding: 5px 6px;
-			color: #7a4b00;
-		}
-
-		.world-record-board {
-			margin-top: 18px;
-			padding: 14px;
-			border-radius: 18px;
-			background: #f7fbff;
-			border: 3px solid #b9dcff;
-			text-align: center;
-		}
-
-		.world-record-board h2 {
-			font-size: 1.2rem;
-			margin-bottom: 8px;
-		}
-
-		.record-list {
-			max-width: 480px;
-			margin: 8px auto 0;
-			text-align: left;
-			font-weight: bold;
-			line-height: 1.5;
-		}
-
-		.record-list.empty {
-			text-align: center;
-			color: #777;
-		}
-
-		.cert-rank {
-			margin-top: 8px;
-			font-size: clamp(1rem, 3vw, 1.35rem);
-			font-weight: bold;
-			color: #b87900;
-		}
-
-		.certificate-note-wide {
-			text-align: center;
-			max-width: 660px;
-			margin: 0 auto 16px;
-			padding: 10px 14px;
-			border-radius: 16px;
-			background: #fff8db;
-			border: 3px dashed #ffd36e;
-			color: #7a4b00;
-			font-weight: bold;
-			font-size: 1rem;
-		}
-
-		.instruction {
-			text-align: center;
-			background: #fff8db;
-			border: 3px solid #ffd36e;
-			border-radius: 18px;
-			padding: 12px;
-			margin-bottom: 18px;
-			font-weight: bold;
-			font-size: 1.1rem;
-		}
-
-		.problem-card, .step-card {
-			margin-top: 18px;
-			padding: 16px;
-			border-radius: 22px;
-			background: #f7fbff;
-			border: 3px solid #b9dcff;
-		}
-
-		.problem-card h2, .step-card h2 {
-			text-align: center;
-			font-size: 1.5rem;
-			margin-bottom: 12px;
-		}
-
-		.repeated-line {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			gap: 8px;
-			background: white;
-			border: 4px dashed #ffd36e;
-			border-radius: 26px;
-			padding: 18px;
-			margin: 14px auto;
-			font-size: clamp(1.65rem, 7vw, 3.5rem);
-			font-weight: bold;
-			color: #d97800;
-		}
-
-		.repeated-line .num {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			min-width: 1.35em;
-			padding: 0.05em 0.2em;
-			border-radius: 14px;
-			background: #fff8db;
-			border: 2px solid #ffd36e;
-		}
-
-		.read-line, .hint-box {
-			text-align: center;
-			font-size: 1.08rem;
-			font-weight: bold;
-			color: #7a4b00;
-			background: #fff8db;
-			border-radius: 16px;
-			padding: 12px;
-			margin-top: 12px;
-			border: 2px dashed #ffd36e;
-		}
-
-		.hint-box.hidden-hint { display: none; }
-
-		.hint-box.focus-hint {
-			border: none;
-			background: transparent;
-			padding: 6px 4px;
-			margin-top: 6px;
-			font-size: 0.95rem;
-			opacity: 0.9;
-		}
-
-		.hint-toggle {
-			display: block;
-			margin: 8px auto 0;
-			padding: 4px 6px;
-			border: none;
-			border-radius: 0;
-			background: transparent;
-			box-shadow: none;
-			color: #6d87a8;
-			font-size: 0.82rem;
-			font-weight: bold;
-			text-decoration: underline;
-			cursor: pointer;
-		}
-
-		.hint-toggle:hover {
-			transform: none;
-			color: #4f6f96;
-		}
-
-		.hidden-toggle { display: none; }
-
-		.choice-grid {
-			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 14px;
-			margin-top: 14px;
-		}
-
-		.choice {
-			background: white;
-			border: 3px solid #ffd36e;
-			border-radius: 20px;
-			padding: 16px 10px;
-			text-align: center;
-			font-size: clamp(1.1rem, 3.6vw, 1.8rem);
-			font-weight: bold;
-			cursor: pointer;
-			box-shadow: 0 5px 12px rgba(0,0,0,0.14);
-			transition: 0.18s;
-			user-select: none;
-		}
-
-		.choice:hover { transform: translateY(-3px); }
-		.choice.correct-flash { background: #dcfce7; border-color: #6cc070; }
-		.choice.wrong-flash { background: #fee2e2; border-color: #ef7777; animation: shake 0.35s; }
-
-		@keyframes shake {
-			0% { transform: translateX(0); }
-			25% { transform: translateX(-6px); }
-			50% { transform: translateX(6px); }
-			75% { transform: translateX(-6px); }
-			100% { transform: translateX(0); }
-		}
-
-		.math-flow {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-items: center;
-			gap: 10px;
-			margin-top: 14px;
-			padding: 14px;
-			background: white;
-			border: 3px dashed #8ec5ff;
-			border-radius: 18px;
-			font-size: clamp(1.2rem, 4vw, 2rem);
-			font-weight: bold;
-		}
-
-		.flow-piece {
-			padding: 8px 12px;
-			border-radius: 14px;
-			background: #fff8db;
-			border: 2px solid #ffd36e;
-		}
-
-		.input-row {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-items: center;
-			gap: 12px;
-			margin-top: 16px;
-		}
-
-		.blank-expression {
-			text-align: center;
-			font-size: clamp(2rem, 8vw, 4rem);
-			font-weight: bold;
-			margin: 16px 0;
-		}
-
-		input {
-			width: 110px;
-			padding: 10px;
-			font-size: 1.3rem;
-			border-radius: 12px;
-			border: 3px solid #b9dcff;
-			text-align: center;
-			font-family: inherit;
-			font-weight: bold;
-		}
-
-		button {
-			border: none;
-			border-radius: 16px;
-			padding: 12px 18px;
-			font-size: 1rem;
-			font-weight: bold;
-			cursor: pointer;
-			background: linear-gradient(135deg, #ffe28a, #9ed8ff);
-			color: #24304f;
-			box-shadow: 0 5px 12px rgba(0,0,0,0.16);
-			font-family: inherit;
-		}
-
-		button:hover { transform: translateY(-2px); }
-
-		button:disabled,
-		button.locked-button {
-			cursor: not-allowed;
-			opacity: 0.45;
-			filter: grayscale(0.75);
-			box-shadow: none;
-			transform: none;
-		}
-
-		.example-toggle {
-			display: block;
-			margin: 8px auto 0;
-			padding: 4px 6px;
-			border: none;
-			border-radius: 0;
-			background: transparent;
-			box-shadow: none;
-			color: #6d87a8;
-			font-size: 0.82rem;
-			font-weight: bold;
-			text-decoration: underline;
-			cursor: pointer;
-		}
-
-		.example-toggle:hover {
-			transform: none;
-			color: #4f6f96;
-		}
-
-		.example-toggle.focus-toggle {
-			background: transparent;
-		}
-
-		.step-example {
-			margin-top: 10px;
-		}
-
-		.feedback {
-			text-align: center;
-			margin-top: 14px;
-			font-weight: bold;
-			font-size: 1.2rem;
-			min-height: 30px;
-		}
-
-		.good-text { color: #248a2f; }
-		.bad-text { color: #c0392b; }
-		.hidden { display: none; }
-
-		.play-footer-label {
-			text-align: center;
-			margin-top: 28px;
-			font-size: 0.9rem;
-			color: #7a7a7a;
-			font-style: italic;
-			font-weight: bold;
-		}
-
-		.bottom-controls {
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			gap: 12px;
-			margin-top: 24px;
-			padding-top: 18px;
-			border-top: 3px dashed #ffd36e;
-		}
-
-		.confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 90; }
-		.confetti-piece { position: absolute; top: -20px; width: 10px; height: 16px; border-radius: 3px; animation: confettiFall linear forwards; }
-
-		@keyframes confettiFall {
-			0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-			100% { transform: translateY(110vh) rotate(720deg); opacity: 0.95; }
-		}
-
-		.achievement-popup {
-			position: fixed;
-			inset: 0;
-			display: none;
-			align-items: center;
-			justify-content: center;
-			background: rgba(36, 48, 79, 0.35);
-			z-index: 100;
-			padding: 12px;
-			overflow: auto;
-		}
-
-		.name-card {
-			max-width: 460px;
-			width: min(92vw, 460px);
-			background: #fff8db;
-			border: 5px solid #ffd36e;
-			border-radius: 28px;
-			padding: 24px;
-			text-align: center;
-			box-shadow: 0 16px 35px rgba(0,0,0,0.25);
-			animation: popIn 0.35s ease;
-		}
-
-		.name-card h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); margin-bottom: 10px; }
-		.name-card p { font-size: 1.05rem; font-weight: bold; line-height: 1.4; margin: 10px 0; }
-		.proof-note { background: white; border: 3px dashed #ffd36e; border-radius: 16px; padding: 10px; color: #7a4b00; }
-		.name-card label { display: block; font-weight: bold; margin-top: 14px; margin-bottom: 8px; }
-		.name-card input { width: 100%; max-width: 320px; margin-bottom: 14px; }
-
-		.certificate-card {
-			width: min(92vw, 900px);
-			max-height: 96vh;
-			background: #fffdf2;
-			border: 5px solid #d4a73c;
-			border-radius: 24px;
-			padding: 12px;
-			text-align: center;
-			box-shadow: 0 18px 40px rgba(0,0,0,0.3);
-			overflow: auto;
-		}
-
-		.cert-border { border: 7px double #d4a73c; border-radius: 18px; padding: clamp(14px, 3vh, 28px) clamp(14px, 4vw, 32px); background: linear-gradient(180deg, #fffaf0, #fff3cf); }
-		.cert-school { font-size: clamp(1.4rem, 4vw, 2.5rem); font-weight: bold; margin-bottom: 6px; color: #7a4b00; }
-		.cert-leaves { font-size: clamp(1.2rem, 3vw, 2rem); color: #7a9a3a; margin-bottom: 4px; }
-		.cert-border h2 { font-size: clamp(1.3rem, 4vw, 2.3rem); margin-bottom: 4px; color: #24304f; }
-		.cert-border h3 { font-size: clamp(1.1rem, 3.5vw, 1.8rem); margin-bottom: 10px; color: #b87900; }
-		.cert-border p { font-size: clamp(0.85rem, 2.4vw, 1.1rem); line-height: 1.3; margin: 6px 0; }
-		.cert-name { font-size: clamp(1.5rem, 5vw, 2.8rem); font-weight: bold; margin: 8px 0; color: #1f6fb8; border-bottom: 3px solid #d4a73c; display: inline-block; padding: 2px 20px; max-width: 100%; word-break: break-word; }
-		.cert-date { margin-top: 10px; font-weight: bold; font-size: clamp(0.85rem, 2.3vw, 1rem); }
-		.cert-signature { margin-top: 12px; font-family: cursive; font-size: clamp(1rem, 3vw, 1.35rem); color: #7a4b00; }
-		.certificate-card button { margin-top: 10px; width: auto; min-width: 150px; }
-
-		@keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
-		@media (max-width: 900px) {
-			.challenge-board { right: 6px; width: 78px; top: 60px; max-height: calc(100vh - 70px); padding: 6px 4px; }
-		}
-
-		@media (max-width: 700px) {
-			body { padding: 8px; padding-top: 148px; }
-			.game { padding: 14px; border-radius: 20px; margin-right: 0; }
-			.challenge-board {
-				position: fixed; top: 0; left: 0; right: 0; width: 100%; max-height: none;
-				border-radius: 0 0 18px 18px; padding: 6px 8px;
-				display: grid; grid-template-columns: 1fr 74px; grid-template-rows: auto auto auto;
-				gap: 4px 8px; align-items: center;
-			}
-			.challenge-board h2 { display: none; }
-			.score-badge { grid-column: 2; grid-row: 1; margin: 0; font-size: 0.8rem; }
-			.turtle-track { grid-column: 1; grid-row: 1; width: 100%; height: 24px; min-height: 0; margin: 0; }
-			.progress-fill {
-				left: 0; top: 0; bottom: auto; width: var(--progress); height: 100%;
-				background: linear-gradient(90deg, #b7f5d4 0%, #fff3bf 100%);
-				transition: width 0.35s ease, background 0.5s ease, box-shadow 0.5s ease;
-			}
-			.turtle-track.theme-blue .progress-fill { background: linear-gradient(90deg, #8ec5ff 0%, #fff3bf 100%); }
-			.turtle-track.theme-purple .progress-fill { background: linear-gradient(90deg, #c7a8ff 0%, #fff3bf 100%); }
-			.progress-turtle { left: var(--progress); top: 50%; bottom: auto; transform: translate(-50%, -58%) scaleX(-1); font-size: 1.2rem; }
-			.challenge-text { grid-column: 1 / 3; grid-row: 2; margin: 0; font-size: 0.72rem; line-height: 1.15; }
-			.timer-panel { grid-column: 1 / 3; grid-row: 3; font-size: 0.72rem; padding: 4px 6px; }
-			.choice-grid { grid-template-columns: 1fr; }
-			button { width: 100%; }
-			input { width: 86px; }
-			.achievement-popup { align-items: flex-start; padding: 8px; }
-			.certificate-card { width: 96vw; max-height: 96vh; padding: 8px; border-radius: 18px; }
-			.cert-border { border-width: 5px; padding: 12px 10px; }
-			.certificate-card button { width: 100%; margin-top: 8px; padding: 10px 12px; }
-		}
-	</style>
+	<title>Math Ridge | Play 1-4 Chunking Repeated Values</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/mathridge-play.css" />
+	<link rel="stylesheet" href="assets/css/play4.css" />
 </head>
 
-<body>
+<body class="play-page play-4" data-play-id="1_4">
 	<div class="confetti-layer" id="confettiLayer"></div>
 
 	<div class="achievement-popup" id="namePopup">
@@ -605,16 +19,19 @@
 			<h2>🎉 Lesson Complete!</h2>
 			<p>You reached Score 10 in Chunking Repeated Values.</p>
 			<p class="proof-note">Be sure to save your certificate as proof of completing this lesson.</p>
+
 			<label for="playerNameInput">Name on Certificate</label>
 			<input id="playerNameInput" type="text" placeholder="Math Ridge Champion">
-			<button onclick="createCertificateFromName()">Create My Certificate</button>
+
+			<button class="primary-action" onclick="createCertificateFromName()">Create My Certificate</button>
 		</div>
 	</div>
 
 	<div class="achievement-popup" id="certificatePopup">
 		<div class="certificate-card" id="certificateCard">
-			<div class="cert-school">Math Ridge Academy</div>
+			<div class="cert-school">Math Ridge</div>
 			<div class="cert-border">
+				<div class="cert-watermark">MATH RIDGE</div>
 				<div class="cert-leaves">❦ ❦ ❦</div>
 				<h2>Certificate of Achievement</h2>
 				<h3>Chunking Repeated Values</h3>
@@ -624,1024 +41,151 @@
 				<div class="cert-date" id="certRaceTime"></div>
 				<div class="cert-rank" id="certRank"></div>
 				<div class="cert-date" id="certDate"></div>
-				<div class="cert-signature">Math Ridge Studio</div>
+				<div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
 			</div>
-			<button onclick="saveCertificateImage()">Save Certificate</button>
-			<button onclick="closeCertificatePopup()">Close</button>
+
+			<div class="unlock-note">✅ 1-5 is unlocked! Continue to the next trail when you are ready.</div>
+			<div class="trail-complete-actions">
+				<button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
+				<a class="trail-button primary-action" href="note5.html">Continue to 1-5 Note</a>
+				<a class="trail-button secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
+				<button class="secondary-action" onclick="closeCertificatePopup()">Close</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="achievement-popup" id="ladderPopup">
+		<div class="ladder-card">
+			<h2>🐢 Trail Ladder</h2>
+			<p class="proof-note">Your current climb record and the Play 1-4 world time ladder.</p>
+			<div class="ladder-run-box" id="ladderRunBox"></div>
+			<h3>🌎 World Time Ladder</h3>
+			<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
+			<div class="ladder-actions">
+				<button class="secondary-action" onclick="loadLadderRecords(false)">Refresh Top 3</button>
+				<button class="secondary-action" onclick="loadLadderRecords(true)">View All Records</button>
+				<button class="secondary-action" onclick="closeLadderPopup()">Close</button>
+			</div>
 		</div>
 	</div>
 
 	<div class="game">
-		<div class="challenge-board">
+		<div class="challenge-board" id="challengeBoard">
 			<h2>🐢 Progress Bar</h2>
+			<div class="stage-badge" id="stageText">Stage: 1</div>
 			<div class="score-badge" id="scoreText">Score: 0</div>
-			<div class="turtle-track" id="turtleTrack"></div>
-			<div class="challenge-text" id="challengeMessage">Complete one clean progress bar to score.</div>
+			<div class="turtle-track theme-neutral" id="turtleTrack">
+				<div class="progress-fill"></div>
+				<div class="progress-turtle">🐢</div>
+			</div>
+			<div class="challenge-text" id="challengeMessage">Press START the Climb when you are ready.</div>
 			<div class="timer-panel" id="timerPanel">⏱ Time: 0:00 | This climb: 0:00</div>
 		</div>
 
 		<h1>Chunking Repeated Values</h1>
 		<p class="subtitle">Turn repeated addition into a short chunk plan: count, write, split by 5, then add.</p>
 
-		<div class="certificate-note-wide">🐢 Reach Score 10 to earn your certificate!</div>
+		<div class="certificate-note-wide">🐢 Reach the finish line at Score 10 to earn your certificate!</div>
 
-		<div class="instruction" id="instruction">Step 1: Count how many copies of the same value you see.</div>
-
-		<div class="problem-card">
-			<div class="repeated-line" id="repeatedLine"></div>
-			<div class="read-line" id="difficultyLine"></div>
-		</div>
-
-		<div class="step-card" id="countStep">
-			<h2>Step 1: Count the repeated values.</h2>
-			<div class="choice-grid" id="countChoices"></div>
-			<div class="hint-box" id="countHint"></div>
-		</div>
-
-		<div class="step-card hidden" id="notationStep">
-			<h2>Step 2: Write the shortcut form.</h2>
-			<button class="example-toggle" type="button" onclick="toggleNotationExample()" id="notationExampleToggle">Show Example</button>
-			<div class="read-line step-example hidden" id="notationExample">Use this form: number of copies(value). Example: seven 4s becomes 7(4).</div>
-			<div class="blank-expression">
-				<input id="outerInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="multiplicity">(
-				<input id="innerInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="repeated value">)
-			</div>
-			<div class="input-row"><button onclick="checkNotation()">Check Math Form</button></div>
-			<div class="feedback" id="notationFeedback"></div>
-			<div class="hint-box" id="notationHint"></div>
-		</div>
-
-		<div class="step-card hidden" id="splitStep">
-			<h2>Step 3: Split into a 5-chunk and a leftover chunk.</h2>
-			<div class="choice-grid" id="splitChoices"></div>
-			<div class="hint-box" id="splitHint"></div>
-		</div>
-
-		<div class="step-card hidden" id="chunkVisualStep">
-			<h2>Step 4: Solve the 5-chunk.</h2>
-			<div class="math-flow" id="chunkVisual"></div>
-			<div class="input-row">
-				<label><strong id="chunkALabel">5(4)</strong> = </label>
-				<input id="chunkAInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?">
-				<button onclick="checkChunkA()">Check 5-Chunk</button>
-			</div>
-			<div class="feedback" id="chunkAFeedback"></div>
-			<div class="hint-box" id="chunkAHint"></div>
-		</div>
-
-		<div class="step-card hidden" id="chunkBStep">
-			<h2>Step 5: Solve the leftover chunk.</h2>
-			<div class="input-row">
-				<label><strong id="chunkBLabel">4(4)</strong> = </label>
-				<input id="chunkBInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?">
-				<button onclick="checkChunkB()">Check Second Chunk</button>
-			</div>
-			<div class="feedback" id="chunkBFeedback"></div>
-			<div class="hint-box" id="chunkBHint"></div>
-		</div>
-
-		<div class="step-card hidden" id="finalStep">
-			<h2>Step 6: Add the two chunk totals.</h2>
-			<div class="math-flow" id="finalPreview"></div>
-			<div class="input-row">
-				<input id="finalInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="total">
-				<button onclick="checkFinalAnswer()">Check Final Answer</button>
-			</div>
-			<div class="feedback" id="finalFeedback"></div>
-			<div class="hint-box" id="finalHint"></div>
-		</div>
-
-		<div class="step-card hidden" id="completeStep">
-			<h2>✅ Chunking Complete!</h2>
-			<div class="math-flow" id="completedFlow"></div>
-			<div class="read-line">Great job. You changed long repeated addition into a short chunk plan.</div>
-		</div>
-
-		<div class="feedback" id="feedback"></div>
-		<div class="bottom-controls" id="bottomControls">
-			<button id="nextClimbBtn" onclick="nextClimb()" disabled class="locked-button">Next Climb</button>
-			<button onclick="resetPracticeGame()">Reset This Problem</button>
-			<button onclick="resetChallenge()">Reset Turtle Score</button>
-		</div>
-		<div class="world-record-board">
-			<h2>🏁 Play4 World Time Records</h2>
-			<div id="recordList" class="record-list empty">Loading world records...</div>
-			<div class="bottom-controls" style="border-top:none; padding-top:8px; margin-top:10px;">
-				<button onclick="loadWorldRecords()">Refresh World Records</button>
+		<div class="climb-gate" id="climbStartGate">
+			<div class="climb-cover-card">
+				<div class="gate-kicker">Math Ridge Trail 1-4</div>
+				<h3>Chunking Repeated Values</h3>
+				<p>Turn long repeated addition into a shorter chunk plan. Count the copies, write the shortcut form, split by 5, and add the chunk totals. Start when you are ready — the climb timer begins after you press the button.</p>
+				<button class="primary-action start-climb-btn" onclick="startClimbFromGate()">START the Climb</button>
 			</div>
 		</div>
-		<div class="play-footer-label">Math Ridge | Chunking Repeated Values</div>
+
+		<div class="play-area hidden" id="playArea">
+			<div class="instruction" id="instruction">Step 1: Count how many copies of the same value you see.</div>
+
+			<div class="problem-card" id="problemCard">
+				<div class="repeated-line" id="repeatedLine"></div>
+				<div class="read-line" id="difficultyLine"></div>
+			</div>
+
+			<div class="step-card" id="countStep">
+				<h2>Step 1: Count the repeated values.</h2>
+				<div class="choice-grid" id="countChoices"></div>
+				<div class="hint-box" id="countHint"></div>
+			</div>
+
+			<div class="step-card hidden" id="notationStep">
+				<h2>Step 2: Write the shortcut form.</h2>
+				<button class="example-toggle" type="button" onclick="toggleNotationExample()" id="notationExampleToggle">Show Example</button>
+				<div class="read-line step-example hidden" id="notationExample">Use this form: number of copies(value). Example: seven 4s becomes 7(4).</div>
+				<div class="blank-expression">
+					<input id="outerInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="multiplicity">(
+					<input id="innerInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="repeated value">)
+				</div>
+				<div class="input-row"><button class="primary-action" onclick="checkNotation()">Check Math Form</button></div>
+				<div class="feedback" id="notationFeedback"></div>
+				<div class="hint-box" id="notationHint"></div>
+			</div>
+
+			<div class="step-card hidden" id="splitStep">
+				<h2>Step 3: Split into a 5-chunk and a leftover chunk.</h2>
+				<div class="choice-grid" id="splitChoices"></div>
+				<div class="hint-box" id="splitHint"></div>
+			</div>
+
+			<div class="step-card hidden" id="chunkVisualStep">
+				<h2>Step 4: Solve the 5-chunk.</h2>
+				<div class="math-flow" id="chunkVisual"></div>
+				<div class="input-row">
+					<label><strong id="chunkALabel">5(4)</strong> = </label>
+					<input id="chunkAInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?">
+					<button class="primary-action" onclick="checkChunkA()">Check 5-Chunk</button>
+				</div>
+				<div class="feedback" id="chunkAFeedback"></div>
+				<div class="hint-box" id="chunkAHint"></div>
+			</div>
+
+			<div class="step-card hidden" id="chunkBStep">
+				<h2>Step 5: Solve the leftover chunk.</h2>
+				<div class="input-row">
+					<label><strong id="chunkBLabel">4(4)</strong> = </label>
+					<input id="chunkBInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="?">
+					<button class="primary-action" onclick="checkChunkB()">Check Second Chunk</button>
+				</div>
+				<div class="feedback" id="chunkBFeedback"></div>
+				<div class="hint-box" id="chunkBHint"></div>
+			</div>
+
+			<div class="step-card hidden" id="finalStep">
+				<h2>Step 6: Add the two chunk totals.</h2>
+				<div class="math-flow" id="finalPreview"></div>
+				<div class="input-row">
+					<input id="finalInput" class="number-only" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="total">
+					<button class="primary-action" onclick="checkFinalAnswer()">Check Final Answer</button>
+				</div>
+				<div class="feedback" id="finalFeedback"></div>
+				<div class="hint-box" id="finalHint"></div>
+			</div>
+
+			<div class="step-card hidden" id="completeStep">
+				<h2>✅ Chunking Complete!</h2>
+				<div class="math-flow" id="completedFlow"></div>
+				<div class="read-line">Great job. You changed long repeated addition into a short chunk plan.</div>
+			</div>
+
+			<div class="feedback" id="feedback"></div>
+		</div>
+
+		<div class="bottom-controls controls" id="bottomControls">
+			<a class="trail-button note-return secondary-action" href="note4.html">← Back to 1-4 Note</a>
+			<div class="center-controls">
+				<button id="nextClimbButton" class="primary-action locked-button hidden" onclick="nextClimb()" disabled>Next Climb</button>
+				<button class="secondary-action" onclick="showLadderPopup()">View Current Ladder</button>
+			</div>
+			<a class="trail-button trail-return secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
+		</div>
+
+		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
+		<div class="game-footer">Math Ridge | Play 1-4 Chunking Repeated Values</div>
 	</div>
 
-	<script>
-		const TOTAL_STEPS = 6;
-		let current = null;
-		let turtleScore = 0;
-		let runCorrectCount = 0;
-		let mistakesThisGame = 0;
-		let gameScoreAwarded = false;
-		let achievementShown = false;
-		let confettiTimer = null;
-		let progressTheme = "theme-neutral";
-		let themeDelayTimer = null;
-
-		const numberWords = {
-	2:"two", 3:"three", 4:"four", 5:"five", 6:"six",
-	7:"seven", 8:"eight", 9:"nine", 10:"ten", 11:"eleven", 12:"twelve"
-};
-		const feedback = document.getElementById("feedback");
-		const GLOBAL_RECORD_URL = "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/?game=play4";
-		let totalRaceMs = 0;
-		let climbStartMs = null;
-		let timerDisplayInterval = null;
-		let latestRaceRank = null;
-		let latestSavedRaceSeconds = null;
-
-
-
-		function formatRaceTime(ms) {
-			const totalSeconds = Math.max(0, Math.round(ms / 1000));
-			const minutes = Math.floor(totalSeconds / 60);
-			const seconds = totalSeconds % 60;
-			return `${minutes}:${String(seconds).padStart(2, "0")}`;
-		}
-
-		function formatRecordSeconds(seconds) {
-			return formatRaceTime(Number(seconds || 0) * 1000);
-		}
-
-		function getCurrentClimbMs() {
-			return climbStartMs === null ? 0 : Date.now() - climbStartMs;
-		}
-
-		function updateTimerPanel() {
-			const panel = document.getElementById("timerPanel");
-			if (!panel) return;
-			const activeClimbMs = getCurrentClimbMs();
-			panel.textContent = `⏱ Time: ${formatRaceTime(totalRaceMs + activeClimbMs)} | This climb: ${formatRaceTime(activeClimbMs)}`;
-		}
-
-		function startClimbTimer() {
-			if (turtleScore >= 10) return;
-			if (climbStartMs !== null) return;
-			climbStartMs = Date.now();
-			updateTimerPanel();
-			if (!timerDisplayInterval) {
-				timerDisplayInterval = setInterval(updateTimerPanel, 250);
-			}
-		}
-
-		function stopClimbTimer(addToTotal = true) {
-			if (climbStartMs === null) return;
-			if (addToTotal) totalRaceMs += Date.now() - climbStartMs;
-			climbStartMs = null;
-			if (timerDisplayInterval) {
-				clearInterval(timerDisplayInterval);
-				timerDisplayInterval = null;
-			}
-			updateTimerPanel();
-		}
-
-		function resetRaceTimer() {
-			if (timerDisplayInterval) clearInterval(timerDisplayInterval);
-			timerDisplayInterval = null;
-			totalRaceMs = 0;
-			climbStartMs = null;
-			latestRaceRank = null;
-			latestSavedRaceSeconds = null;
-			updateTimerPanel();
-		}
-
-		function rankText(rank) {
-			if (rank === 1) return "🥇 1st Place World Time Champion";
-			if (rank === 2) return "🥈 2nd Place World Time";
-			if (rank === 3) return "🥉 3rd Place World Time";
-			return "";
-		}
-
-		function renderWorldRecords(records = []) {
-			const list = document.getElementById("recordList");
-			if (!list) return;
-			if (!Array.isArray(records) || records.length === 0) {
-				list.className = "record-list empty";
-				list.textContent = "No world records yet.";
-				return;
-			}
-			list.className = "record-list";
-			list.innerHTML = records.slice(0, 10).map((record, index) => {
-				const medal = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `${index + 1}.`;
-				const safeName = String(record.name || "Math Ridge Champion").replace(/[<>]/g, "");
-				const time = record.timeDisplay || formatRecordSeconds(record.timeSeconds);
-				return `<div>${medal} ${safeName} — ${time}</div>`;
-			}).join("");
-		}
-
-		async function loadWorldRecords() {
-			const list = document.getElementById("recordList");
-			if (list) {
-				list.className = "record-list empty";
-				list.textContent = "Loading world records...";
-			}
-			try {
-				const response = await fetch(GLOBAL_RECORD_URL, { method: "GET" });
-				const data = await response.json();
-				if (!data.ok) throw new Error(data.error || "World records failed to load.");
-				renderWorldRecords(data.records || []);
-			} catch (error) {
-				if (list) {
-					list.className = "record-list empty";
-					list.textContent = "World records could not load. Local certificate still works.";
-				}
-			}
-		}
-
-		async function submitWorldRecord(name, timeMs) {
-			const timeSeconds = Math.max(1, Math.round(timeMs / 1000));
-			const response = await fetch(GLOBAL_RECORD_URL, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ name, timeSeconds, game: "play4" })
-			});
-			const data = await response.json();
-			if (!data.ok) throw new Error(data.error || "World record did not save.");
-			renderWorldRecords(data.records || []);
-			return data;
-		}
-
-		function getProgressTheme(score = turtleScore) {
-			if (score >= 7) return "theme-purple";
-			if (score >= 4) return "theme-blue";
-			return "theme-neutral";
-		}
-
-		function setProgressTheme(theme) {
-			progressTheme = theme;
-			const track = document.getElementById("turtleTrack");
-			if (track) {
-				track.classList.remove("theme-neutral", "theme-blue", "theme-purple");
-				track.classList.add(progressTheme);
-			}
-		}
-
-		function scheduleProgressThemeChange() {
-			clearTimeout(themeDelayTimer);
-			setProgressTheme("theme-neutral");
-			themeDelayTimer = setTimeout(() => {
-				setProgressTheme(getProgressTheme());
-			}, 2000);
-		}
-
-		function popScoreChange(text, type) {
-			const scoreText = document.getElementById("scoreText");
-			if (!scoreText) return;
-			const pop = document.createElement("span");
-			pop.className = `score-pop ${type === "plus" ? "plus-pop" : "minus-pop"}`;
-			pop.textContent = text;
-			scoreText.appendChild(pop);
-			setTimeout(() => pop.remove(), 2100);
-		}
-
-		function shakeScoreBoard() {
-			const board = document.querySelector(".challenge-board");
-			if (!board) return;
-			board.classList.remove("shake-board");
-			void board.offsetWidth;
-			board.classList.add("shake-board");
-		}
-
-		function animateTurtleFinish() {
-			const turtle = document.querySelector(".progress-turtle");
-			if (turtle) turtle.classList.add("turtle-fade-away");
-		}
-
-		function setNextClimbLocked(isLocked) {
-			const button = document.getElementById("nextClimbBtn");
-			if (!button) return;
-			button.disabled = isLocked;
-			button.classList.toggle("locked-button", isLocked);
-		}
-
-		function unlockNextClimb() {
-			setNextClimbLocked(false);
-		}
-
-		function keepNumbersOnly(input, maxLength = null) {
-			let cleaned = input.value.replace(/\D/g, "");
-			if (maxLength !== null) {
-				cleaned = cleaned.slice(0, maxLength);
-			}
-			input.value = cleaned;
-			return cleaned;
-		}
-
-		function focusNextField(nextInput) {
-			if (!nextInput) return;
-			setTimeout(() => {
-				nextInput.focus();
-				nextInput.select();
-			}, 40);
-		}
-
-		function prepareNumberOnlyInputs() {
-			document.querySelectorAll(".number-only").forEach(input => {
-				input.oninput = () => {
-					startClimbTimer();
-					keepNumbersOnly(input);
-				};
-			});
-		}
-
-		function prepareSmartNotationInputs() {
-			const outerInput = document.getElementById("outerInput");
-			const innerInput = document.getElementById("innerInput");
-			if (!outerInput || !innerInput || !current) return;
-
-			const outerLength = String(current.multiplicity).length;
-			const innerLength = String(current.value).length;
-			outerInput.maxLength = outerLength;
-			innerInput.maxLength = innerLength;
-
-			outerInput.oninput = () => {
-				startClimbTimer();
-				const value = keepNumbersOnly(outerInput, outerLength);
-				if (value.length >= outerLength) focusNextField(innerInput);
-			};
-
-			innerInput.oninput = () => {
-				startClimbTimer();
-				const value = keepNumbersOnly(innerInput, innerLength);
-				if (value.length >= innerLength) {
-					setTimeout(() => {
-						document.querySelector("#notationStep button[onclick='checkNotation()']")?.focus();
-					}, 40);
-				}
-			};
-		}
-
-		function toggleNotationExample() {
-			const example = document.getElementById("notationExample");
-			const toggle = document.getElementById("notationExampleToggle");
-			const isHidden = example.classList.toggle("hidden");
-			toggle.textContent = isHidden ? "Show Example" : "Hide Example";
-		}
-
-		function updateNotationExampleMode() {
-			const example = document.getElementById("notationExample");
-			const toggle = document.getElementById("notationExampleToggle");
-			if (!example || !toggle) return;
-			example.classList.add("hidden");
-			toggle.textContent = "Show Example";
-			toggle.classList.add("focus-toggle");
-		}
-
-		function isHintLevel() { return turtleScore <= 3; }
-		function isMiddleLevel() { return turtleScore >= 4 && turtleScore <= 6; }
-		function isHardLevel() { return turtleScore >= 7; }
-		function randomItem(list) {
-			return list[Math.floor(Math.random() * list.length)];
-		}
-			const problemBanks = {};
-			const usedProblemKeys = {};
-
-function shuffleList(list) {
-	const copy = [...list];
-	for (let i = copy.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[copy[i], copy[j]] = [copy[j], copy[i]];
-	}
-	return copy;
-}
-
-function getDeckLevel() {
-	if (turtleScore <= 3) return "hint";
-	if (turtleScore <= 6) return "middle";
-	return "hard";
-}
-
-function getPoolsForLevel(level) {
-	if (level === "hint") {
-		return { valuePool: [2, 3, 4], multiplicityPool: [6, 7, 8] };
-	}
-
-	if (level === "middle") {
-		return { valuePool: [2, 3, 4], multiplicityPool: [7, 8, 9] };
-	}
-
-	return { valuePool: [6, 7, 8], multiplicityPool: [6, 7, 8, 9] };
-}
-
-function buildProblemDeck(level) {
-	const deck = [];
-	const { valuePool, multiplicityPool } = getPoolsForLevel(level);
-
-	multiplicityPool.forEach(multiplicity => {
-		valuePool.forEach(value => {
-			deck.push({ multiplicity, value });
-		});
-	});
-
-	return shuffleList(deck);
-}
-
-function problemKey(problem) {
-	return `${problem.multiplicity}x${problem.value}`;
-}
-
-function makeProblem() {
-	const currentLevel = getDeckLevel();
-
-	if (!problemBanks[currentLevel]) {
-		problemBanks[currentLevel] = buildProblemDeck(currentLevel);
-		usedProblemKeys[currentLevel] = new Set();
-	}
-
-	const bank = problemBanks[currentLevel];
-	const used = usedProblemKeys[currentLevel];
-
-	if (used.size >= bank.length) {
-		used.clear();
-		problemBanks[currentLevel] = buildProblemDeck(currentLevel);
-	}
-
-	const activeBank = problemBanks[currentLevel];
-	let available = activeBank.filter(problem => !used.has(problemKey(problem)));
-
-	if (available.length === 0) {
-		used.clear();
-		available = activeBank;
-	}
-
-	const picked = randomItem(available);
-	used.add(problemKey(picked));
-
-	const multiplicity = picked.multiplicity;
-	const value = picked.value;
-	const secondChunk = multiplicity - 5;
-
-	current = {
-		multiplicity,
-		value,
-		secondChunk,
-		chunkA: 5 * value,
-		chunkB: secondChunk * value,
-		answer: multiplicity * value
-	};
-}
-		
-
-		function repeatedAdditionText(count, value) {
-			return Array(count).fill(String(value)).join("+");
-		}
-
-		function repeatedAdditionHTML(count, value) {
-			return Array(count).fill(0).map((_, index) => {
-				const plus = index < count - 1 ? "<span>+</span>" : "";
-				return `<span class="num">${value}</span>${plus}`;
-			}).join("");
-		}
-
-		function chunkVisualHTML() {
-			return `
-				<span class="flow-piece">(${repeatedAdditionText(5, current.value)})</span>
-				<span>+</span>
-				<span class="flow-piece">(${repeatedAdditionText(current.secondChunk, current.value)})</span>
-			`;
-		}
-
-		function notationText() {
-			return `${current.multiplicity}(${current.value})`;
-		}
-
-		function splitText() {
-			return `5(${current.value})+${current.secondChunk}(${current.value})`;
-		}
-
-		function setHint(id, text) {
-			const box = document.getElementById(id);
-			if (!box) return;
-
-			box.textContent = text;
-			const focusMode = !isHintLevel();
-			box.classList.toggle("focus-hint", focusMode);
-			box.classList.toggle("hidden-hint", focusMode);
-
-			let toggle = document.getElementById(`${id}Toggle`);
-			if (!toggle) {
-				toggle = document.createElement("button");
-				toggle.id = `${id}Toggle`;
-				toggle.type = "button";
-				toggle.className = "hint-toggle";
-				box.parentNode.insertBefore(toggle, box);
-			}
-
-			toggle.classList.toggle("hidden-toggle", !focusMode);
-			toggle.textContent = box.classList.contains("hidden-hint") ? "Show hint" : "Hide hint";
-			toggle.onclick = () => {
-				box.classList.toggle("hidden-hint");
-				toggle.textContent = box.classList.contains("hidden-hint") ? "Show hint" : "Hide hint";
-			};
-		}
-
-		function updateProblemText() {
-			document.getElementById("repeatedLine").innerHTML = repeatedAdditionHTML(current.multiplicity, current.value);
-			const levelText = isHardLevel()
-				? "Challenge level: hints are tucked away so you can focus."
-				: isMiddleLevel()
-					? "Practice level: hints are tucked away so you can focus."
-					: "Hint level: values are 2, 3, or 4. Hints are shown.";
-			const difficultyLine = document.getElementById("difficultyLine");
-			difficultyLine.textContent = levelText;
-			difficultyLine.classList.toggle("hidden-hint", !isHintLevel());
-
-			setHint("countHint", `Count each ${current.value}. The total count is the multiplicity.`);
-			setHint("notationHint", `Write the number of copies first. Put the repeated value inside parentheses.`);
-			setHint("splitHint", `Split ${current.multiplicity} copies into 5 copies and ${current.secondChunk} leftover copies.`);
-			setHint("chunkAHint", `5(${current.value}) means ${current.value}+${current.value}+${current.value}+${current.value}+${current.value}.`);
-			setHint("chunkBHint", `${current.secondChunk}(${current.value}) means ${numberWords[current.secondChunk]} ${current.value}s.`);
-			setHint("finalHint", `Add the two chunk totals: ${current.chunkA}+${current.chunkB}.`);
-			updateNotationExampleMode();
-		}
-
-		function makeChoice(text, isCorrect, onCorrect, wrongMessage) {
-			const choice = document.createElement("div");
-			choice.className = "choice";
-			choice.textContent = text;
-			choice.onclick = () => {
-				startClimbTimer();
-				if (choice.classList.contains("correct-flash")) return;
-				if (isCorrect) {
-					choice.classList.add("correct-flash");
-					feedback.textContent = "✅ Correct. Keep going.";
-					feedback.className = "feedback good-text";
-					markCorrectStep();
-					onCorrect();
-				} else {
-					choice.classList.add("wrong-flash");
-					feedback.textContent = wrongMessage;
-					feedback.className = "feedback bad-text";
-					markMistake();
-					setTimeout(() => choice.classList.remove("wrong-flash"), 550);
-				}
-			};
-			return choice;
-		}
-
-function getCountChoiceOptions() {
-	const correct = current.multiplicity;
-	let options = [correct];
-
-	while (options.length < 3) {
-		const nearby = correct + randomItem([-2, -1, 1, 2]);
-		if (nearby >= 6 && nearby <= 12 && !options.includes(nearby)) {
-			options.push(nearby);
-		}
-	}
-
-	return options;
-}
-		function renderCountChoices() {
-			const box = document.getElementById("countChoices");
-			box.innerHTML = "";
-			const options = getCountChoiceOptions().map(num => ({
-				text: `${numberWords[num]} ${current.value}s`,
-				correct: num === current.multiplicity
-			})).sort(() => Math.random() - 0.5);
-
-			options.forEach(item => {
-				box.appendChild(makeChoice(
-					item.text,
-					item.correct,
-					() => showStep("notationStep", "outerInput"),
-					`Not yet. Count how many ${current.value}s appear in the addition line.`
-				));
-			});
-		}
-
-		function checkNotation() {
-			startClimbTimer();
-			const outer = Number(keepNumbersOnly(document.getElementById("outerInput")));
-			const inner = Number(keepNumbersOnly(document.getElementById("innerInput")));
-			const note = document.getElementById("notationFeedback");
-
-			if (outer === current.multiplicity && inner === current.value) {
-				note.textContent = `✅ Correct. ${notationText()} means ${numberWords[current.multiplicity]} ${current.value}s.`;
-				note.className = "feedback good-text";
-				markCorrectStep();
-				showStep("splitStep", "splitChoices");
-				return;
-			}
-
-			if (outer === current.value && inner === current.multiplicity) {
-				note.textContent = "Almost. The result is still true, but for this lesson we read multiplicity first. Try rearranging the values.";
-				note.className = "feedback bad-text";
-				markMistake();
-				return;
-			}
-
-			note.textContent = `Not yet. How many copies first? What value is repeated inside?`;
-			note.className = "feedback bad-text";
-			markMistake();
-		}
-
-		function renderSplitChoices() {
-			const box = document.getElementById("splitChoices");
-			box.innerHTML = "";
-			const correct = splitText();
-			const choices = [
-				{ text: correct, correct: true },
-				{ text: `5(${current.value})+${current.secondChunk}`, correct: false },
-				{ text: `${current.secondChunk}(${current.value})+5(${current.secondChunk})`, correct: false }
-			].sort(() => Math.random() - 0.5);
-
-			choices.forEach(item => {
-				box.appendChild(makeChoice(
-					item.text,
-					item.correct,
-					() => {
-						document.getElementById("chunkVisual").innerHTML = chunkVisualHTML();
-						document.getElementById("chunkALabel").textContent = `5(${current.value})`;
-						document.getElementById("chunkBLabel").textContent = `${current.secondChunk}(${current.value})`;
-						showStep("chunkVisualStep", "chunkAInput");
-					},
-					`Not yet. Keep the repeated value ${current.value} in both chunks.`
-				));
-			});
-		}
-
-		function checkChunkA() {
-			startClimbTimer();
-			const input = document.getElementById("chunkAInput");
-			const box = document.getElementById("chunkAFeedback");
-			if (Number(keepNumbersOnly(input)) === current.chunkA) {
-				box.textContent = `✅ Correct. 5(${current.value})=${current.chunkA}.`;
-				box.className = "feedback good-text";
-				input.style.borderColor = "#6cc070";
-				markCorrectStep();
-				showStep("chunkBStep", "chunkBInput");
-				return;
-			}
-			box.textContent = `Not yet. Use the first visual chunk and add five ${current.value}s.`;
-			box.className = "feedback bad-text";
-			input.style.borderColor = "#ef7777";
-			markMistake();
-		}
-
-		function checkChunkB() {
-			startClimbTimer();
-			const input = document.getElementById("chunkBInput");
-			const box = document.getElementById("chunkBFeedback");
-			if (Number(keepNumbersOnly(input)) === current.chunkB) {
-				box.textContent = `✅ Correct. ${current.secondChunk}(${current.value})=${current.chunkB}.`;
-				box.className = "feedback good-text";
-				input.style.borderColor = "#6cc070";
-				markCorrectStep();
-				document.getElementById("finalPreview").innerHTML = `<span class="flow-piece">${current.chunkA}</span><span>+</span><span class="flow-piece">${current.chunkB}</span><span>=</span><span class="flow-piece">?</span>`;
-				showStep("finalStep", "finalInput");
-				return;
-			}
-			box.textContent = `Not yet. Add ${numberWords[current.secondChunk]} ${current.value}s.`;
-			box.className = "feedback bad-text";
-			input.style.borderColor = "#ef7777";
-			markMistake();
-		}
-
-		function checkFinalAnswer() {
-			startClimbTimer();
-			const input = document.getElementById("finalInput");
-			const box = document.getElementById("finalFeedback");
-			if (Number(keepNumbersOnly(input)) === current.answer) {
-				box.textContent = `✅ Correct! ${current.chunkA}+${current.chunkB}=${current.answer}.`;
-				box.className = "feedback good-text";
-				input.style.borderColor = "#6cc070";
-				markCorrectStep();
-				showCompleteStep();
-				unlockNextClimb();
-				scrollToCenter("completeStep");
-				return;
-			}
-			box.textContent = `Not yet. Add ${current.chunkA}+${current.chunkB}.`;
-			box.className = "feedback bad-text";
-			input.style.borderColor = "#ef7777";
-			markMistake();
-		}
-
-		function showCompleteStep() {
-			unlockNextClimb();
-			document.getElementById("completedFlow").innerHTML = `
-				<span class="flow-piece">${repeatedAdditionText(current.multiplicity, current.value)}</span>
-				<span>=</span>
-				<span class="flow-piece">${notationText()}</span>
-				<span>=</span>
-				<span class="flow-piece">${splitText()}</span>
-				<span>=</span>
-				<span class="flow-piece">${current.chunkA}+${current.chunkB}</span>
-				<span>=</span>
-				<span class="flow-piece">${current.answer}</span>
-			`;
-			document.getElementById("completeStep").classList.remove("hidden");
-		}
-
-		function showStep(stepId, focusId) {
-			document.getElementById(stepId).classList.remove("hidden");
-			if (stepId === "splitStep") renderSplitChoices();
-			scrollToCenter(stepId);
-			setTimeout(() => {
-				const target = document.getElementById(focusId);
-				if (target && target.focus) target.focus();
-			}, 300);
-		}
-
-		function scrollToCenter(id) {
-			const element = document.getElementById(id);
-			if (!element) return;
-			setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }), 160);
-		}
-
-		function resetProblemOnly(options = { keepClimbProgress: false }) {
-			if (!options.keepClimbProgress) {
-				runCorrectCount = 0;
-				mistakesThisGame = 0;
-				gameScoreAwarded = false;
-				updateTurtleBoard();
-			}
-
-			feedback.textContent = "";
-			feedback.className = "feedback";
-			["notationFeedback", "chunkAFeedback", "chunkBFeedback", "finalFeedback"].forEach(id => {
-				document.getElementById(id).textContent = "";
-				document.getElementById(id).className = "feedback";
-			});
-
-			["outerInput", "innerInput", "chunkAInput", "chunkBInput", "finalInput"].forEach(id => {
-				const input = document.getElementById(id);
-				input.value = "";
-				input.style.borderColor = "#b9dcff";
-			});
-
-			["notationStep", "splitStep", "chunkVisualStep", "chunkBStep", "finalStep", "completeStep"].forEach(id => {
-				document.getElementById(id).classList.add("hidden");
-			});
-
-			document.getElementById("splitChoices").innerHTML = "";
-			document.getElementById("chunkVisual").innerHTML = "";
-			document.getElementById("finalPreview").innerHTML = "";
-			document.getElementById("completedFlow").innerHTML = "";
-		}
-
-function startNewProblem() {
-	setNextClimbLocked(true);
-	makeProblem();
-	resetProblemOnly({ keepClimbProgress: true });
-	prepareSmartNotationInputs();
-	updateProblemText();
-	renderCountChoices();
-	document.getElementById("instruction").textContent = "Step 1: Count how many copies of the same value you see.";
-	updateNotationExampleMode();
-}
-
-		function nextClimb() {
-			stopClimbTimer(false);
-			runCorrectCount = 0;
-			mistakesThisGame = 0;
-			gameScoreAwarded = false;
-			setNextClimbLocked(true);
-			startNewProblem();
-			document.getElementById("challengeMessage").textContent = `New climb started. Complete one clean progress bar to score.`;
-			scheduleProgressThemeChange();
-			updateTurtleBoard();
-			setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 160);
-		}
-
-		function resetPracticeGame() {
-			stopClimbTimer(false);
-			setNextClimbLocked(true);
-			resetProblemOnly({ keepClimbProgress: true });
-			renderCountChoices();
-			feedback.textContent = "Practice reset. Turtle score and climb progress did not change.";
-			feedback.className = "feedback good-text";
-			scrollToCenter("countStep");
-		}
-
-		function updateTurtleBoard() {
-			const scoreText = document.getElementById("scoreText");
-			const turtleTrack = document.getElementById("turtleTrack");
-			const challengeMessage = document.getElementById("challengeMessage");
-
-			scoreText.textContent = `Score: ${turtleScore}`;
-
-			const progressPercent = Math.min(100, Math.round((runCorrectCount / TOTAL_STEPS) * 100));
-			turtleTrack.style.setProperty("--progress", `${progressPercent}%`);
-			turtleTrack.classList.remove("theme-neutral", "theme-blue", "theme-purple");
-			turtleTrack.classList.add(progressTheme);
-			turtleTrack.innerHTML = `
-				<div class="progress-fill"></div>
-				<div class="progress-turtle">🐢</div>
-			`;
-
-			if (turtleScore >= 10) {
-				challengeMessage.textContent = "🎁 10 scores! Certificate unlocked.";
-				if (!achievementShown) showAchievementPopup();
-			} else if (isHardLevel()) {
-				challengeMessage.textContent = "🔥 Hard level: values 6–8, no hints.";
-			} else if (isMiddleLevel()) {
-				challengeMessage.textContent = "🏆 Middle level: hints removed.";
-			} else {
-				challengeMessage.textContent = "🌟 Hint level: build the structure carefully.";
-			}
-		}
-
-		function markCorrectStep() {
-			if (gameScoreAwarded) return;
-			runCorrectCount++;
-
-			if (runCorrectCount >= TOTAL_STEPS && mistakesThisGame === 0) {
-				stopClimbTimer(true);
-				turtleScore++;
-				gameScoreAwarded = true;
-				document.getElementById("challengeMessage").textContent = "🏁 Flawless chunking path! +1 score. Press Next Climb for another run.";
-				updateTurtleBoard();
-				setTimeout(() => {
-					animateTurtleFinish();
-					popScoreChange("+1", "plus");
-				}, 120);
-				unlockNextClimb();
-				if (turtleScore >= 10 && !achievementShown) showAchievementPopup();
-				return;
-			} else if (mistakesThisGame === 0) {
-				document.getElementById("challengeMessage").textContent = "Good. Keep the turtle moving.";
-			} else {
-				document.getElementById("challengeMessage").textContent = "Keep practicing. This run already has an error, so finish it and use Next Climb for a fresh score chance.";
-			}
-
-			updateTurtleBoard();
-		}
-
-		function markMistake() {
-			stopClimbTimer(true);
-			mistakesThisGame++;
-			runCorrectCount = 0;
-			shakeScoreBoard();
-
-			if (mistakesThisGame > 1 && turtleScore > 0) {
-				turtleScore--;
-				document.getElementById("challengeMessage").textContent = "Second mistake in the same run. Turtle loses 1 score, but score cannot go below 0.";
-				setTimeout(() => popScoreChange("−1", "minus"), 80);
-			} else {
-				document.getElementById("challengeMessage").textContent = "Mistake made. Climb cleared. This run cannot earn a score now. Finish it, then press Next Climb.";
-			}
-			updateTurtleBoard();
-		}
-
-		function resetChallenge() {
-			stopClimbTimer(false);
-			resetRaceTimer();
-			turtleScore = 0;
-			runCorrectCount = 0;
-			mistakesThisGame = 0;
-			gameScoreAwarded = false;
-			achievementShown = false;
-			stopConfetti();
-			setProgressTheme("theme-neutral");
-			setNextClimbLocked(true);
-			document.getElementById("challengeMessage").textContent = `Complete one clean progress bar to earn +1 point.`;
-			updateTurtleBoard();
-			updateProblemText();
-			Object.keys(usedProblemKeys).forEach(level => usedProblemKeys[level].clear());
-		}
-
-		function startConfetti() {
-			const layer = document.getElementById("confettiLayer");
-			const colors = ["#ffd36e", "#86c7ff", "#ff8fab", "#95d5b2", "#cdb4db"];
-			stopConfetti();
-			confettiTimer = setInterval(() => {
-				for (let i = 0; i < 8; i++) {
-					const piece = document.createElement("div");
-					piece.className = "confetti-piece";
-					piece.style.left = `${Math.random() * 100}%`;
-					piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-					piece.style.animationDuration = `${2.5 + Math.random() * 2.5}s`;
-					layer.appendChild(piece);
-					setTimeout(() => piece.remove(), 5200);
-				}
-			}, 180);
-		}
-
-		function stopConfetti() {
-			if (confettiTimer) {
-				clearInterval(confettiTimer);
-				confettiTimer = null;
-			}
-			const layer = document.getElementById("confettiLayer");
-			if (layer) layer.innerHTML = "";
-		}
-
-		function showAchievementPopup() {
-			stopClimbTimer(false);
-			achievementShown = true;
-			startConfetti();
-			const nameInput = document.getElementById("playerNameInput");
-			nameInput.value = "";
-			document.getElementById("namePopup").style.display = "flex";
-			setTimeout(() => nameInput.focus(), 200);
-		}
-
-		async function createCertificateFromName() {
-			const nameInput = document.getElementById("playerNameInput");
-			const finalName = nameInput.value.trim() || "Math Ridge Champion";
-			const now = new Date();
-			const formattedDate = now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-			const formattedTime = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-			const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-			let rankMessage = "";
-			let recordTimeMs = totalRaceMs;
-			try {
-				const saved = await submitWorldRecord(finalName, totalRaceMs);
-				latestRaceRank = saved.rank;
-				latestSavedRaceSeconds = saved.record && saved.record.timeSeconds;
-				if (latestSavedRaceSeconds) recordTimeMs = latestSavedRaceSeconds * 1000;
-				rankMessage = saved.topThree ? rankText(saved.rank) : "";
-			} catch (error) {
-				rankMessage = "World record could not save. Certificate time is still shown.";
-			}
-
-			document.getElementById("certName").textContent = finalName;
-			document.getElementById("certRaceTime").textContent = `World Time Completion: ${formatRaceTime(recordTimeMs)}`;
-			document.getElementById("certRank").textContent = rankMessage;
-			document.getElementById("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime} (${timezone})`;
-			document.getElementById("namePopup").style.display = "none";
-			document.getElementById("certificatePopup").style.display = "flex";
-		}
-
-		function closeCertificatePopup() {
-			document.getElementById("certificatePopup").style.display = "none";
-			stopConfetti();
-		}
-
-		function saveCertificateImage() {
-			const name = document.getElementById("certName").textContent;
-			const date = document.getElementById("certDate").textContent;
-			const raceTime = document.getElementById("certRaceTime").textContent;
-			const rank = document.getElementById("certRank").textContent;
-			const canvas = document.createElement("canvas");
-			canvas.width = 1200;
-			canvas.height = 850;
-			const ctx = canvas.getContext("2d");
-			ctx.fillStyle = "#fff8db";
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
-			ctx.strokeStyle = "#d4a73c";
-			ctx.lineWidth = 18;
-			ctx.strokeRect(45, 45, 1110, 760);
-			ctx.lineWidth = 5;
-			ctx.strokeRect(85, 85, 1030, 680);
-			ctx.fillStyle = "#7a4b00";
-			ctx.font = "bold 54px Georgia";
-			ctx.textAlign = "center";
-			ctx.fillText("Math Ridge Academy", 600, 150);
-			ctx.fillStyle = "#24304f";
-			ctx.font = "bold 48px Georgia";
-			ctx.fillText("Certificate of Achievement", 600, 245);
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 42px Georgia";
-			ctx.fillText("Chunking Repeated Values", 600, 315);
-			ctx.fillStyle = "#24304f";
-			ctx.font = "30px Georgia";
-			ctx.fillText("Presented to", 600, 390);
-			ctx.fillStyle = "#1f6fb8";
-			ctx.font = "bold 60px Georgia";
-			ctx.fillText(name, 600, 470);
-			ctx.fillStyle = "#24304f";
-			ctx.font = "28px Georgia";
-			ctx.fillText("for completing the 10-score challenge", 600, 535);
-			ctx.fillText("with focus, accuracy, and perseverance.", 600, 575);
-			ctx.font = "bold 30px Georgia";
-			ctx.fillText(raceTime, 600, 625);
-
-			if (rank) {
-				ctx.fillStyle = "#b87900";
-				ctx.font = "bold 34px Georgia";
-				ctx.fillText(rank, 600, 675);
-			}
-
-			ctx.fillStyle = "#24304f";
-			ctx.font = "bold 26px Georgia";
-			ctx.fillText(date, 600, rank ? 720 : 680);
-			ctx.fillStyle = "#7a4b00";
-			ctx.font = "36px cursive";
-			ctx.fillText("Math Ridge Studio", 600, 765);
-			const link = document.createElement("a");
-			link.download = "math-ridge-play4-certificate.png";
-			link.href = canvas.toDataURL("image/png");
-			link.click();
-		}
-
-		prepareNumberOnlyInputs();
-		updateTimerPanel();
-		loadWorldRecords();
-		setProgressTheme("theme-neutral");
-		setNextClimbLocked(true);
-		updateTurtleBoard();
-		startNewProblem();
-	</script>
+	<script src="assets/js/mathridge-play.js" defer></script>
+	<script src="assets/js/play4.js" defer></script>
 </body>
 </html>

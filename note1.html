@@ -3,734 +3,144 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Math Ridge | Note 1 - The Sign Outside the Box</title>
-
-<style>
-:root {
-  --bg: #fff8ed;
-  --card: #ffffff;
-  --ink: #2d251c;
-  --muted: #6f6256;
-  --accent: #f59e0b;
-  --accent-dark: #b45309;
-  --soft: #ffedd5;
-  --green: #16a34a;
-  --blue: #2563eb;
-  --purple: #7c3aed;
-  --red: #dc2626;
-  --border: #f4d8ae;
-  --sky: #e8f2ff;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-  background: linear-gradient(180deg, #fff7e6, #eef7ff);
-  color: var(--ink);
-  line-height: 1.6;
-}
-
-.page {
-  width: min(1100px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 60px;
-}
-
-.hero {
-  background: white;
-  border: 4px solid #ffd27d;
-  border-radius: 28px;
-  padding: clamp(24px, 5vw, 54px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  right: -80px;
-  top: -80px;
-  border-radius: 999px;
-  background: rgba(245,158,11,0.14);
-}
-
-.eyebrow {
-  display: inline-flex;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: var(--soft);
-  color: var(--accent-dark);
-  font-weight: 800;
-  margin-bottom: 14px;
-  position: relative;
-  z-index: 1;
-}
-
-h1, h2, h3 {
-  margin: 0;
-  line-height: 1.15;
-}
-
-h1 {
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  max-width: 900px;
-  position: relative;
-  z-index: 1;
-}
-
-.subtitle {
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  color: var(--muted);
-  max-width: 900px;
-  margin: 18px 0 0;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-note {
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  position: relative;
-  z-index: 1;
-}
-
-.mini-card {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  font-weight: 800;
-}
-
-.mini-card span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.section {
-  margin-top: 24px;
-  background: white;
-  border: 2px solid var(--sky);
-  border-radius: 24px;
-  padding: clamp(20px, 4vw, 34px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-}
-
-.section h2 {
-  font-size: clamp(1.55rem, 3.5vw, 2.25rem);
-  margin-bottom: 12px;
-}
-
-.section p {
-  color: var(--muted);
-  font-size: 1.06rem;
-  margin: 10px 0 0;
-}
-
-.term-row,
-.example-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: center;
-  align-items: center;
-  margin: 18px 0;
-}
-
-.term {
-  min-width: 86px;
-  padding: 12px 18px;
-  border-radius: 18px;
-  font-size: clamp(1.45rem, 4vw, 2rem);
-  font-weight: 900;
-  text-align: center;
-  background: #f9fbff;
-  border: 2px solid #ddd;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-}
-
-.plus {
-  color: var(--accent-dark);
-  background: #fff3bf;
-  border-color: #ffd56a;
-}
-
-.minus {
-  color: #1f6fb8;
-  background: #dff0ff;
-  border-color: #86c7ff;
-}
-
-.hidden {
-  color: #555;
-  background: #f5f5f5;
-  border-style: dashed;
-}
-
-.arrow {
-  font-size: clamp(1.7rem, 5vw, 2.4rem);
-  font-weight: 900;
-  color: var(--accent-dark);
-}
-
-.big-line {
-  font-size: clamp(1.25rem, 4vw, 2rem);
-  font-weight: 900;
-  text-align: center;
-  margin: 16px 0;
-}
-
-.math-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 18px;
-  padding: 18px;
-  background: #f8fbff;
-  border: 2px dashed #8ec5ff;
-  border-radius: 20px;
-  font-size: clamp(1.35rem, 4vw, 2.35rem);
-  font-weight: 900;
-}
-
-.outside-sign {
-  display: inline-grid;
-  place-items: center;
-  min-width: 54px;
-  min-height: 54px;
-  border-radius: 16px;
-  font-size: clamp(1.7rem, 5vw, 3rem);
-  font-weight: 900;
-  border: 2px solid currentColor;
-}
-
-.box-method {
-  display: inline-block;
-  padding: 12px 20px;
-  border: 4px solid #333;
-  border-radius: 16px;
-  background: #fff;
-  font-size: clamp(1.35rem, 5vw, 3rem);
-  font-weight: 900;
-}
-
-.read-box,
-.explanation {
-  margin-top: 16px;
-  padding: 16px 18px;
-  background: #fff6d6;
-  border-left: 5px solid #ffc94d;
-  border-radius: 16px;
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.step-card,
-.rule-card {
-  background: #fffaf0;
-  border: 2px dashed #f0b55f;
-  border-radius: 22px;
-  padding: 18px;
-  margin-top: 18px;
-}
-
-.step-card h3,
-.rule-card h3 {
-  color: var(--accent-dark);
-  margin-bottom: 8px;
-  font-size: clamp(1.25rem, 3vw, 1.55rem);
-}
-
-.rule-card p {
-  font-weight: 800;
-}
-
-.compare-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 20px;
-}
-
-.compare-box,
-.panel {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 18px;
-  text-align: center;
-}
-
-.compare-box h3,
-.panel h3 {
-  margin-bottom: 10px;
-  color: var(--accent-dark);
-}
-
-.practice-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-
-.practice-row {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px 16px;
-  font-weight: 900;
-  font-size: clamp(1.05rem, 3vw, 1.25rem);
-}
-
-details {
-  margin-top: 8px;
-}
-
-summary {
-  cursor: pointer;
-  color: var(--accent-dark);
-  font-weight: 900;
-}
-
-.answer-line {
-  margin-top: 10px;
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: #ede9fe;
-  color: #6d28d9;
-  font-size: 0.85rem;
-  font-weight: 900;
-  margin-right: 6px;
-}
-
-.problem-check {
-  background: #f8fbff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px 16px;
-  font-weight: 900;
-}
-
-.problem-check label {
-  display: inline-block;
-  font-weight: 900;
-  font-size: clamp(1.05rem, 3vw, 1.25rem);
-}
-
-.problem-check input {
-  width: 110px;
-  padding: 8px 10px;
-  font-size: 1.2rem;
-  border-radius: 12px;
-  border: 2px solid #bbb;
-  text-align: center;
-  margin: 6px;
-  font-family: inherit;
-  font-weight: 900;
-}
-
-.problem-check input:focus {
-  outline: 4px solid rgba(245,158,11,0.24);
-  border-color: var(--accent);
-}
-
-.problem-check.correct {
-  border-color: #6cc070;
-  background: #f0fff1;
-}
-
-.problem-check.wrong {
-  border-color: #ef7777;
-  background: #fff1f1;
-}
-
-.feedback {
-  display: inline-block;
-  font-weight: 900;
-  margin-left: 8px;
-}
-
-.solution {
-  margin-top: 12px;
-  padding: 10px;
-  background: #fff8db;
-  border-radius: 12px;
-  border: 2px solid #ffd36e;
-  display: none;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.solution.show {
-  display: block;
-}
-
-.solution-btn,
-.check-btn {
-  border: none;
-  border-radius: 16px;
-  font-family: inherit;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.13);
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-
-.solution-btn {
-  margin-top: 12px;
-  padding: 8px 14px;
-  background: #8cc9ff;
-  color: #24304f;
-  font-size: 1rem;
-}
-
-.check-btn {
-  display: block;
-  margin: 24px auto 10px;
-  padding: 14px 28px;
-  font-size: 1.2rem;
-  background: linear-gradient(135deg, #ffd56a, #8cc9ff);
-  color: #24304f;
-}
-
-.solution-btn:hover,
-.check-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.03);
-}
-
-.score-box {
-  text-align: center;
-  font-size: 1.4rem;
-  font-weight: 900;
-  margin-top: 18px;
-  color: var(--accent-dark);
-}
-
-.footer-rule {
-  margin: 24px auto 0;
-  background: linear-gradient(135deg, #fff8db, #eef7ff);
-  border: 2px solid #f4d8ae;
-  border-radius: 24px;
-  padding: 18px 22px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-  text-align: center;
-}
-
-.footer-quote {
-  margin: 0;
-  color: var(--ink);
-  font-size: clamp(1.15rem, 2.6vw, 1.75rem);
-  font-weight: 900;
-  font-style: italic;
-  line-height: 1.35;
-}
-
-.footer-quote::before {
-  content: "\201C";
-  color: var(--accent-dark);
-  font-size: 1.35em;
-  line-height: 0;
-  vertical-align: -0.12em;
-}
-
-.footer-quote::after {
-  content: "\201D";
-  color: var(--accent-dark);
-  font-size: 1.35em;
-  line-height: 0;
-  vertical-align: -0.12em;
-}
-
-.quote-author {
-  display: inline-block;
-  margin-left: 10px;
-  color: var(--accent-dark);
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  font-weight: 900;
-  font-style: normal;
-  white-space: nowrap;
-}
-
-.footer-note {
-  text-align: center;
-  color: var(--muted);
-  padding: 30px 10px 0;
-  font-weight: 800;
-}
-
-@media (max-width: 820px) {
-  .hero-note,
-  .compare-area {
-    grid-template-columns: 1fr;
-  }
-
-  .page {
-    width: min(100% - 22px, 1100px);
-    padding-top: 14px;
-  }
-
-  .math-line {
-    padding: 14px;
-  }
-
-  .term-row,
-  .example-row {
-    gap: 10px;
-  }
-
-  .problem-check input {
-    width: 92px;
-  }
-}
-</style>
+<title>Math Ridge | Note 1-1 — The Sign Outside the Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/math-ridge-shell.css">
+<link rel="stylesheet" href="assets/css/mathridge-note.css">
+<link rel="stylesheet" href="assets/css/note1.css">
 </head>
+<body data-note-id="1_1" class="math-ridge-note-page">
+<nav class="topbar" aria-label="Math Ridge main navigation">
+  <a class="brand" href="index.html" onclick="goToIndexSection('home'); return false;" aria-label="Math Ridge Home">
+    <img class="brand-logo" src="assets/images/brand/math-ridge-logo.png" alt="Math Ridge logo" onerror="this.onerror=null; this.src='math-ridge-logo.png';" />
+    <div class="brand-text"><strong>Math Ridge</strong><span>Climb Higher. Achieve More.</span></div>
+  </a>
+  <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false"><span class="hamburger-lines" aria-hidden="true"></span></button>
+  <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+    <button class="pill-btn" type="button" onclick="goToIndexSection('home')">Home</button>
+    <button class="pill-btn active-section" type="button" onclick="goToIndexSection('quest')">Trail</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('cabin')">Cabin</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('message')">Message</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('quick')">Menu</button>
+    <button id="topClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 1-1</button>
+  </div>
+</nav>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleNoteMenu(false)" aria-hidden="true"></div>
+<div class="reading-progress" aria-hidden="true"></div>
 
-<body>
-
-<main class="page">
-
-  <section class="hero">
-    <div class="eyebrow">Math Ridge | Note 1</div>
-
+<main class="page note1-page">
+  <section class="hero note1-hero">
+    <p class="eyebrow">Math Ridge | Note 1-1</p>
     <h1>The Sign Outside the Box</h1>
-
-    <p class="subtitle">
-      A special note about signs, size, and clear thinking.
-    </p>
-
-    <div class="hero-note">
-      <div class="mini-card">Keep Sign + Number<span>A term is both pieces together</span></div>
-      <div class="mini-card">Compare Size<span>The bigger size leads when signs differ</span></div>
-      <div class="mini-card">Box the Work<span>The outside sign becomes the answer sign</span></div>
+    <p class="subtitle">One focus: every answer has an <strong>outside sign</strong> and an <strong>inside size</strong>. Slow down, choose the sign, then build the box.</p>
+    <div class="hero-note focus-route" aria-label="focus route">
+      <div class="mini-card">1. Find the sign<span>Is the final answer positive or negative?</span></div>
+      <div class="mini-card">2. Find the size<span>Add same teams. Subtract different teams.</span></div>
+      <div class="mini-card">3. Say the answer<span>Outside sign + inside size.</span></div>
     </div>
   </section>
 
-  <section class="section">
-    <h2>1. What is a Term?</h2>
-    <p>A <strong>term</strong> is a sign and a number together.</p>
-
-    <div class="term-row">
-      <div class="term plus">+4</div>
-      <div class="term minus">−3</div>
-      <div class="term plus">+8</div>
+  <section class="section note1-section">
+    <h2><span class="section-kicker">01</span> Start with One Term</h2>
+    <p>A <strong>term</strong> has two parts. The <strong>sign</strong> tells the direction. The <strong>number</strong> tells the size.</p>
+    <div class="sign-size-board" aria-label="term pieces">
+      <div class="sign-size-card positive-card"><span class="piece-label">sign</span><strong>+</strong><span>positive direction</span></div>
+      <div class="sign-size-card size-card"><span class="piece-label">size</span><strong>4</strong><span>how far</span></div>
+      <div class="sign-size-card answer-card"><span class="piece-label">term</span><strong>+4</strong><span>keep them together</span></div>
     </div>
-
-    <div class="read-box">
-      Do not separate the sign from the number. The sign tells the direction. The number tells the size.
-    </div>
+    <div class="focus-callout"><strong>Focus cue:</strong> do not separate the sign from the number. Read <span class="prompt-term minus">−3</span> as “negative three,” not just “three.”</div>
   </section>
 
-  <section class="section">
-    <h2>2. Hidden Plus</h2>
-    <p>If the first number has no sign, it is positive.</p>
-
-    <div class="math-line">
-      <div class="term hidden">4</div>
-      <div class="arrow">→</div>
-      <div class="term plus">+4</div>
-    </div>
-
-    <div class="math-line">
-      <div class="term hidden">7</div>
-      <div class="arrow">→</div>
-      <div class="term plus">+7</div>
-    </div>
-
-    <div class="step-card">
-      <h3>Remember</h3>
-      <p>The leading plus sign may be hidden, but it is still there.</p>
-    </div>
+  <section class="section note1-section">
+    <h2><span class="section-kicker">02</span> The First Plus Can Hide</h2>
+    <p>If the first number has no sign, it is still positive. The plus sign is quiet, not missing.</p>
+    <div class="math-line calm-line"><span class="term hidden">4</span><span class="arrow">→</span><span class="term plus">+4</span></div>
+    <div class="math-line calm-line"><span class="term hidden">7</span><span class="arrow">→</span><span class="term plus">+7</span></div>
+    <div class="read-box">Before solving, give every term a sign in your head. This keeps the next step calmer.</div>
   </section>
 
-  <section class="section">
-    <h2>3. Same Sign Means Add Inside the Box</h2>
-    <p>If both signs are the same, add the sizes inside the box.</p>
-
-    <div class="step-card">
-      <h3>Positive + Positive</h3>
-      <div class="big-line">4 + 5</div>
-
-      <div class="math-line">
-        <span class="outside-sign plus">+</span>
-        <span class="box-method">4 + 5</span>
-        <span class="arrow">=</span>
-        <span class="term plus">+9</span>
+  <section class="section note1-section">
+    <h2><span class="section-kicker">03</span> Same Signs Stay on One Team</h2>
+    <p>When both signs match, the terms move the same direction. Add the sizes. Keep the shared sign outside the box.</p>
+    <div class="same-diff-grid">
+      <div class="concept-card positive-card">
+        <h3>Positive team</h3>
+        <div class="big-line">+4 +5</div>
+        <div class="box-path"><span class="outside-sign plus">+</span><span class="box-method">4 + 5</span><span class="arrow">→</span><span class="term plus">+9</span></div>
+      </div>
+      <div class="concept-card negative-card">
+        <h3>Negative team</h3>
+        <div class="big-line">−2 −3</div>
+        <div class="box-path"><span class="outside-sign minus">−</span><span class="box-method">2 + 3</span><span class="arrow">→</span><span class="term minus">−5</span></div>
       </div>
     </div>
-
-    <div class="step-card">
-      <h3>Negative + Negative</h3>
-      <div class="big-line">−2 − 3</div>
-
-      <div class="math-line">
-        <span class="outside-sign minus">−</span>
-        <span class="box-method">2 + 3</span>
-        <span class="arrow">=</span>
-        <span class="term minus">−5</span>
-      </div>
-    </div>
-
-    <div class="read-box">
-      Same sign means they are on the same team. They add their sizes together. Their shared sign stays outside the box.
-    </div>
+    <div class="memory-line"><span>Same signs</span><strong>add sizes</strong><span>keep the outside sign</span></div>
   </section>
 
-  <section class="section">
-    <h2>4. Different Signs Means Bigger Size Leads</h2>
-    <p>If signs are different, compare the sizes.</p>
-
-    <div class="compare-area">
+  <section class="section note1-section">
+    <h2><span class="section-kicker">04</span> Different Signs: Bigger Size Leads</h2>
+    <p>When signs are different, compare the sizes first. The bigger size gives the final outside sign.</p>
+    <div class="compare-area note1-compare">
       <div class="compare-box">
         <h3>Example A</h3>
-        <div class="big-line">3 − 8</div>
-        <p>3 means <strong>+3</strong>.</p>
-        <p>8 is bigger than 3.</p>
-        <p>The 8 has a negative sign.</p>
-
-        <div class="math-line">
-          <span class="outside-sign minus">−</span>
-          <span class="box-method">8 − 3</span>
-        </div>
-
-        <div class="big-line">= −5</div>
+        <div class="big-line">+3 −8</div>
+        <p>8 is larger than 3. The 8 is negative, so the outside sign is negative.</p>
+        <div class="box-path"><span class="outside-sign minus">−</span><span class="box-method">8 − 3</span><span class="arrow">→</span><span class="term minus">−5</span></div>
       </div>
-
       <div class="compare-box">
         <h3>Example B</h3>
-        <div class="big-line">−4 + 6</div>
-        <p>6 is bigger than 4.</p>
-        <p>The 6 has a positive sign.</p>
-
-        <div class="math-line">
-          <span class="outside-sign plus">+</span>
-          <span class="box-method">6 − 4</span>
-        </div>
-
-        <div class="big-line">= +2</div>
+        <div class="big-line">−4 +6</div>
+        <p>6 is larger than 4. The 6 is positive, so the outside sign is positive.</p>
+        <div class="box-path"><span class="outside-sign plus">+</span><span class="box-method">6 − 4</span><span class="arrow">→</span><span class="term plus">+2</span></div>
       </div>
     </div>
-
-    <div class="read-box">
-      The bigger size leads. Its sign stays outside the box. Inside the box, subtract big minus small.
-    </div>
+    <div class="memory-line"><span>Different signs</span><strong>subtract sizes</strong><span>bigger sign goes outside</span></div>
   </section>
 
-  <section class="section">
-    <h2>5. The Sign Outside Becomes the Answer Sign</h2>
-
-    <div class="math-line">
-      <span class="outside-sign minus">−</span>
-      <span class="box-method">8 − 3</span>
-      <span class="arrow">=</span>
-      <span class="term minus">−5</span>
+  <section class="section note1-section">
+    <h2><span class="section-kicker">05</span> The Box Method Rhythm</h2>
+    <p>Use this short rhythm every time. It keeps your eyes from jumping around the page.</p>
+    <div class="box-rhythm" aria-label="box method rhythm">
+      <div class="rhythm-card"><strong>Look</strong><span>Are the signs same or different?</span></div>
+      <div class="rhythm-card"><strong>Choose</strong><span>Pick the outside sign.</span></div>
+      <div class="rhythm-card"><strong>Build</strong><span>Put the size work inside the box.</span></div>
+      <div class="rhythm-card"><strong>Answer</strong><span>Say sign first, then size.</span></div>
     </div>
-
-    <div class="math-line">
-      <span class="outside-sign plus">+</span>
-      <span class="box-method">6 − 4</span>
-      <span class="arrow">=</span>
-      <span class="term plus">+2</span>
-    </div>
-
-    <div class="step-card">
-      <h3>Big Rule</h3>
-      <p>The sign outside the box becomes the sign of the result.</p>
-    </div>
+    <div class="read-box premium-rule">Pattern: <strong>outside sign</strong> + <strong>inside size work</strong> = clean final answer.</div>
   </section>
 
-  <section class="section practice">
-    <h2>6. Practice Pattern</h2>
-    <p>Ask these questions every time:</p>
-
-    <div class="step-card">
-      <p><strong>1.</strong> Same sign or different sign?</p>
-      <p><strong>2.</strong> Who has the bigger size?</p>
-      <p><strong>3.</strong> What sign stays outside?</p>
-      <p><strong>4.</strong> Do we add or subtract inside the box?</p>
+  <section class="section practice note1-practice" id="practice">
+    <h2><span class="section-kicker">06</span> Unlock Practice</h2>
+    <p>Use the sign buttons and the number pad. Pick <strong>+</strong> or <strong>−</strong>, then type only the size. This matches the Build the Box thinking in 1-1 Play.</p>
+    <div class="practice-progress" aria-label="Practice progress">
+      <div class="progress-bar" id="bar0"><span></span></div>
+      <div class="progress-bar" id="bar1"><span></span></div>
+      <div class="progress-bar" id="bar2"><span></span></div>
+      <div class="progress-bar" id="bar3"><span></span></div>
     </div>
-
-    <div class="practice-list">
-
-      <div class="practice-row">
-        <div>1) 5 + 2 = ?</div>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Same sign</span> Both numbers are positive.</div>
-          <div class="answer-line"><span class="tag">Box</span> +(5 + 2)</div>
-          <div class="answer-line"><span class="tag">Answer</span> +7</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <div>2) −4 − 3 = ?</div>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Same sign</span> Both numbers are negative.</div>
-          <div class="answer-line"><span class="tag">Box</span> −(4 + 3)</div>
-          <div class="answer-line"><span class="tag">Answer</span> −7</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <div>3) 6 − 9 = ?</div>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Different signs</span> Compare 6 and 9.</div>
-          <div class="answer-line"><span class="tag">Bigger size</span> 9 is bigger, and 9 has the negative sign.</div>
-          <div class="answer-line"><span class="tag">Box</span> −(9 − 6)</div>
-          <div class="answer-line"><span class="tag">Answer</span> −3</div>
-        </details>
-      </div>
-
-      <div class="practice-row">
-        <div>4) −5 + 8 = ?</div>
-        <details>
-          <summary>Answer</summary>
-          <div class="answer-line"><span class="tag">Different signs</span> Compare 5 and 8.</div>
-          <div class="answer-line"><span class="tag">Bigger size</span> 8 is bigger, and 8 has the positive sign.</div>
-          <div class="answer-line"><span class="tag">Box</span> +(8 − 5)</div>
-          <div class="answer-line"><span class="tag">Answer</span> +3</div>
-        </details>
-      </div>
-
-    </div>
+    <div class="practice-list" id="practiceList"></div>
   </section>
 
-  <section class="footer-rule" aria-label="Math Ridge quote">
-    <blockquote class="footer-quote">
-      Math is pattern. Pattern builds logic. Logic builds confidence.
-      <cite class="quote-author">— Math Ridge</cite>
-    </blockquote>
+  <section class="unlock-dock" aria-label="Next climb unlock">
+    <div><strong>Ready for the next climb: 1-1 Play</strong><span id="unlockText">Locked until all four sign-size checks are correct.</span></div>
+    <button id="dockClimbBtn" class="gold-btn" type="button" disabled onclick="goToPlay()">Start Climb 1-1</button>
   </section>
 
-  <p class="footer-note">
-    Math Ridge Note 1 | The Sign Outside the Box
-  </p>
-
+  <section class="footer-rule" aria-label="Math Ridge quote">“Math is pattern. Pattern builds logic. Logic builds confidence.” — Math Ridge</section>
+  <p class="footer-note">Math Ridge Note 1-1 | The Sign Outside the Box</p>
 </main>
 
+<div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <h2 id="modalTitle">1-1 Play Unlocked!</h2>
+    <p>You have unlocked 1-1 Play. Would you like to begin the next climb now?</p>
+    <div class="modal-actions"><button class="gold-btn ready" type="button" onclick="goToPlay()">Yes</button><button class="pill-btn" type="button" onclick="closeModal()">No</button></div>
+  </div>
+</div>
+<script src="assets/js/mathridge-note-data.js" defer></script>
+<script src="assets/js/math-ridge-shell.js" defer></script>
+<script src="assets/js/mathridge-note.js" defer></script>
 </body>
 </html>

@@ -3,607 +3,146 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Math Ridge | Note 2 - Positive Negative Showdown</title>
-
-<style>
-:root {
-  --bg: #fff8ed;
-  --card: #ffffff;
-  --ink: #2d251c;
-  --muted: #6f6256;
-  --accent: #f59e0b;
-  --accent-dark: #b45309;
-  --soft: #ffedd5;
-  --green: #16a34a;
-  --blue: #2563eb;
-  --purple: #7c3aed;
-  --red: #dc2626;
-  --border: #f4d8ae;
-  --sky: #e8f2ff;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
-  background: linear-gradient(180deg, #fff7e6, #eef7ff);
-  color: var(--ink);
-  line-height: 1.6;
-}
-
-.page {
-  width: min(1100px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 60px;
-}
-
-.hero {
-  background: white;
-  border: 4px solid #ffd27d;
-  border-radius: 28px;
-  padding: clamp(24px, 5vw, 54px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  width: 260px;
-  height: 260px;
-  right: -80px;
-  top: -80px;
-  border-radius: 999px;
-  background: rgba(245,158,11,0.14);
-}
-
-.eyebrow {
-  display: inline-flex;
-  padding: 7px 13px;
-  border-radius: 999px;
-  background: var(--soft);
-  color: var(--accent-dark);
-  font-weight: 800;
-  margin-bottom: 14px;
-  position: relative;
-  z-index: 1;
-}
-
-h1, h2, h3 { margin: 0; line-height: 1.15; }
-
-h1 {
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  max-width: 920px;
-  position: relative;
-  z-index: 1;
-}
-
-.subtitle {
-  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
-  color: var(--muted);
-  max-width: 900px;
-  margin: 18px 0 0;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-note {
-  margin-top: 24px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  position: relative;
-  z-index: 1;
-}
-
-.mini-card {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  font-weight: 800;
-}
-
-.mini-card span {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.section {
-  margin-top: 24px;
-  background: white;
-  border: 2px solid var(--sky);
-  border-radius: 24px;
-  padding: clamp(20px, 4vw, 34px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-}
-
-.section h2 {
-  font-size: clamp(1.55rem, 3.5vw, 2.25rem);
-  margin-bottom: 12px;
-}
-
-.section h3 {
-  color: var(--accent-dark);
-  margin-bottom: 8px;
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-}
-
-.section p {
-  color: var(--muted);
-  font-size: 1.06rem;
-  margin: 10px 0 0;
-}
-
-.math-line,
-.math-box {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 18px;
-  padding: 18px;
-  background: #f8fbff;
-  border: 2px dashed #8ec5ff;
-  border-radius: 20px;
-  font-size: clamp(1.25rem, 4vw, 2.15rem);
-  font-weight: 900;
-  text-align: center;
-}
-
-.math-box.block {
-  display: block;
-  font-size: clamp(1.05rem, 2.8vw, 1.35rem);
-  text-align: left;
-  font-weight: 800;
-}
-
-.read-box,
-.tip-box {
-  margin-top: 16px;
-  padding: 16px 18px;
-  background: #fff6d6;
-  border-left: 5px solid #ffc94d;
-  border-radius: 16px;
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.team-wrap,
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.team,
-.panel {
-  border-radius: 20px;
-  padding: 18px;
-  border: 2px solid var(--border);
-  background: #f8fbff;
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
-.quick-panel {
-  background: #fff6d6;
-  border: 2px solid #ffc94d;
-  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.12);
-}
-
-.quick-panel h3 {
-  color: var(--accent-dark);
-}
-
-.team strong,
-.panel strong {
-  display: inline-block;
-  margin-bottom: 6px;
-  font-size: 1.1rem;
-}
-
-.positive {
-  background: #fff6d6;
-  border-color: #ffc94d;
-}
-
-.negative {
-  background: #e8f3ff;
-  border-color: #7bbcff;
-}
-
-.positive strong { color: var(--accent-dark); }
-.negative strong { color: #1f6fb8; }
-
-.step-card,
-.rule-card {
-  background: #fffaf0;
-  border: 2px dashed #f0b55f;
-  border-radius: 22px;
-  padding: 18px;
-  margin-top: 18px;
-}
-
-.rule-list {
-  margin: 12px 0 0;
-  padding-left: 1.35rem;
-  color: var(--muted);
-  font-size: 1.06rem;
-  font-weight: 800;
-}
-
-.rule-list li { margin: 8px 0; }
-
-.practice-list {
-  display: grid;
-  gap: 14px;
-  margin-top: 18px;
-}
-
-.practice-problem {
-  background: #fffdf8;
-  border: 2px solid #ffe1a8;
-  border-radius: 20px;
-  padding: 18px;
-  font-weight: 900;
-}
-
-.problem-title {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.18rem;
-  font-weight: 900;
-  color: #8a5200;
-}
-
-.problem-expression {
-  color: var(--ink);
-  font-size: clamp(1.4rem, 4vw, 2rem);
-}
-
-button,
-.toggle-btn {
-  border: none;
-  border-radius: 16px;
-  padding: 10px 14px;
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.13);
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-
-.toggle-btn {
-  background: linear-gradient(135deg, #ffd56a, #8cc9ff);
-  color: #24304f;
-}
-
-button:hover,
-.toggle-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.03);
-}
-
-.solution {
-  display: none;
-  margin-top: 14px;
-  background: #f4fbff;
-  border-left: 5px solid #5aaeff;
-  border-radius: 14px;
-  padding: 14px 16px;
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.solution.show { display: block; }
-
-.solution strong { color: var(--accent-dark); }
-
-.footer-rule {
-  margin: 24px auto 0;
-  background: linear-gradient(135deg, #fff8db, #eef7ff);
-  border: 2px solid #f4d8ae;
-  border-radius: 24px;
-  padding: 18px 22px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
-  text-align: center;
-}
-
-.footer-quote {
-  margin: 0;
-  color: var(--ink);
-  font-size: clamp(1.15rem, 2.6vw, 1.75rem);
-  font-weight: 900;
-  font-style: italic;
-  line-height: 1.35;
-}
-
-.footer-quote::before {
-  content: "\201C";
-  color: var(--accent-dark);
-  font-size: 1.35em;
-  line-height: 0;
-  vertical-align: -0.12em;
-}
-
-.footer-quote::after {
-  content: "\201D";
-  color: var(--accent-dark);
-  font-size: 1.35em;
-  line-height: 0;
-  vertical-align: -0.12em;
-}
-
-.quote-author {
-  display: inline-block;
-  margin-left: 10px;
-  color: var(--accent-dark);
-  font-size: clamp(0.95rem, 2vw, 1.1rem);
-  font-weight: 900;
-  font-style: normal;
-  white-space: nowrap;
-}
-
-.footer-note {
-  text-align: center;
-  color: var(--muted);
-  padding: 30px 10px 0;
-  font-weight: 800;
-}
-
-@media (max-width: 820px) {
-  .hero-note,
-  .team-wrap,
-  .two-col {
-    grid-template-columns: 1fr;
-  }
-
-  .page {
-    width: min(100% - 22px, 1100px);
-    padding-top: 14px;
-  }
-
-  .math-line,
-  .math-box {
-    padding: 14px;
-  }
-
-  .problem-title {
-    align-items: flex-start;
-  }
-
-  .toggle-btn {
-    width: 100%;
-  }
-}
-</style>
+<title>Math Ridge | Note 1-2 — Positive Negative Showdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/math-ridge-shell.css">
+<link rel="stylesheet" href="assets/css/mathridge-note.css">
+<link rel="stylesheet" href="assets/css/note2.css">
 </head>
+<body data-note-id="1_2">
+<nav class="topbar" aria-label="Math Ridge main navigation">
+  <a class="brand" href="index.html" onclick="goToIndexSection('home'); return false;" aria-label="Math Ridge Home">
+    <img class="brand-logo" src="assets/images/brand/math-ridge-logo.png" alt="Math Ridge logo" />
+    <div class="brand-text"><strong>Math Ridge</strong><span>Climb Higher. Achieve More.</span></div>
+  </a>
+  <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false"><span class="hamburger-lines" aria-hidden="true"></span></button>
+  <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+    <button class="pill-btn" type="button" onclick="goToIndexSection('home')">Home</button>
+    <button class="pill-btn active-section" type="button" onclick="goToIndexSection('quest')">Trail</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('cabin')">Cabin</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('message')">Message</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('quick')">Menu</button>
+    <button id="topClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 1-2</button>
+  </div>
+</nav>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleNoteMenu(false)" aria-hidden="true"></div>
+<div class="reading-progress" aria-hidden="true"></div>
 
-<body>
-<main class="page">
-
-  <section class="hero">
-    <div class="eyebrow">Math Ridge | Note 2</div>
-
+<main class="page note2-page">
+  <section class="hero note2-hero">
+    <p class="eyebrow">Math Ridge | Note 1-2</p>
     <h1>Positive Negative Showdown</h1>
-
-    <p class="subtitle">
-      Long expressions may look confusing at first. But math becomes easier when every number keeps its sign.
-      We are not solving one operation at a time. We are collecting signed terms.
-    </p>
-
-    <div class="hero-note">
-      <div class="mini-card">Keep the Sign<span>The sign belongs to the number after it</span></div>
-      <div class="mini-card">Collect Teams<span>Group positive terms and negative terms</span></div>
-      <div class="mini-card">Build the Box<span>Combine the two teams at the end</span></div>
+    <p class="subtitle">Long expressions feel easier when every number joins a team. Your job is not to chase every operation. Your job is to <strong>keep signs attached</strong>, <strong>collect teams</strong>, then <strong>compare totals</strong>.</p>
+    <div class="hero-note focus-route" aria-label="lesson focus route">
+      <div class="mini-card">1. Mark signs<span>Each number keeps its own sign.</span></div>
+      <div class="mini-card">2. Build teams<span>Add positive sizes and negative sizes separately.</span></div>
+      <div class="mini-card">3. Compare totals<span>The larger team gives the final sign.</span></div>
     </div>
   </section>
 
-  <section class="section">
-    <h2>Big Idea: Every Number Carries Its Sign</h2>
-    <p>In a long expression, the sign belongs to the number after it.</p>
-
-    <div class="math-line">+3 - 2 + 5 - 8 + 1</div>
-
-    <p>So instead of seeing one long operation, we see a list of signed terms:</p>
-
-    <div class="math-line">+3, -2, +5, -8, +1</div>
-
-    <div class="read-box">
-      Since addition is <strong><em>commutative</em></strong>, the signed terms can move around.
-      We can group all the positive terms together and all the negative terms together.
+  <section class="section note2-section">
+    <h2><span class="section-kicker">01</span> Give Every Number a Team</h2>
+    <p>Start by slowing the expression down. Read each signed number as one complete term.</p>
+    <div class="expression-strip" aria-label="example expression">
+      <span class="prompt-term plus">+3</span>
+      <span class="prompt-term minus">−2</span>
+      <span class="prompt-term plus">+5</span>
+      <span class="prompt-term minus">−8</span>
+      <span class="prompt-term plus">+1</span>
     </div>
+    <div class="focus-callout"><strong>Focus cue:</strong> the sign belongs to the number after it. Say “positive three,” “negative two,” “positive five.”</div>
   </section>
 
-  <section class="section">
-    <h2>Worked Example</h2>
-
-    <div class="math-line">+3 - 2 + 5 - 8 + 1</div>
-
-    <div class="team-wrap">
-      <div class="team positive">
-        <strong>Positive Team</strong><br>
-        +3 + 5 + 1 = +9
+  <section class="section note2-section">
+    <h2><span class="section-kicker">02</span> Sort the Two Teams</h2>
+    <p>Do not solve left to right yet. First, place the signed numbers into two calm groups.</p>
+    <div class="showdown-board" aria-label="positive and negative teams">
+      <div class="team-card positive-card">
+        <span class="team-label">☀️ Positive Team</span>
+        <div class="team-pieces"><span class="prompt-term plus">+3</span><span class="prompt-term plus">+5</span><span class="prompt-term plus">+1</span></div>
+        <strong class="team-total">3 + 5 + 1 = 9</strong>
       </div>
-
-      <div class="team negative">
-        <strong>Negative Team</strong><br>
-        -2 - 8 = -10
+      <div class="team-card negative-card">
+        <span class="team-label">🌙 Negative Team</span>
+        <div class="team-pieces"><span class="prompt-term minus">−2</span><span class="prompt-term minus">−8</span></div>
+        <strong class="team-total">2 + 8 = 10</strong>
       </div>
     </div>
+    <div class="read-box">The team signs stay on the outside. Inside each team, add the sizes only.</div>
+  </section>
 
-    <p>Now the problem becomes:</p>
-
-    <div class="math-line">+9 + (-10)</div>
-
-    <p>The signs are different, so use Build the Box.</p>
-
-    <div class="step-card">
-      <h3>Build the Box</h3>
-      <div class="math-line">-(10 - 9) = -(1)</div>
-      <p>The bigger size is <strong><em>negative</em></strong>. So the final answer is <strong>-1</strong>.</p>
+  <section class="section note2-section">
+    <h2><span class="section-kicker">03</span> Let the Bigger Team Lead</h2>
+    <p>Now compare the team sizes. The larger team gives the final outside sign.</p>
+    <div class="compare-showdown">
+      <div class="score-pill positive-score">Positive size: 9</div>
+      <div class="vs-pill">vs</div>
+      <div class="score-pill negative-score">Negative size: 10</div>
     </div>
-
-    <div class="read-box">
-      <strong>Tip:</strong> Write the <strong>negative</strong> sign first before subtracting.
-      This helps you remember the final answer is <strong>negative</strong>.
-      <br><br>
-      <strong>Common mistake:</strong> Forgetting the negative sign at the end.
+    <div class="winner-card negative-card">
+      <h3>Negative team is larger by 1</h3>
+      <div class="math-line calm-line"><span class="outside-sign minus">−</span><span class="box-method">10 − 9</span><span class="arrow">→</span><span class="term minus">−1</span></div>
     </div>
+    <div class="focus-callout"><strong>Attention anchor:</strong> choose the outside sign before doing the subtraction. This protects the final answer.</div>
   </section>
 
-  <section class="section">
-    <h2>Math Ridge Rules</h2>
-
-    <div class="two-col">
-      <div class="panel">
-        <h3>Full Version</h3>
-        <ol class="rule-list">
-          <li>The sign belongs to the number after it.</li>
-          <li>Turn subtraction into adding a negative term.</li>
-          <li>Group the positive terms together.</li>
-          <li>Group the negative terms together.</li>
-          <li>Add each team first.</li>
-          <li>Use Build the Box to combine the two teams.</li>
-        </ol>
-      </div>
-
-      <div class="panel quick-panel">
-        <h3>Quick Version</h3>
-        <ol class="rule-list">
-          <li>Collect the positive team.</li>
-          <li>Collect the negative team.</li>
-          <li>Add each team.</li>
-          <li>Use Build the Box to combine the teams.</li>
-        </ol>
-      </div>
+  <section class="section note2-section">
+    <h2><span class="section-kicker">04</span> If the Teams Match, the Answer is Zero</h2>
+    <p>Sometimes the positive and negative teams have the same size. When both teams are equal, they cancel out.</p>
+    <div class="zero-board">
+      <div class="score-pill positive-score">+9</div>
+      <div class="balance-symbol">=</div>
+      <div class="score-pill negative-score">−9</div>
+      <div class="zero-result">0</div>
     </div>
+    <div class="read-box">Zero means neither team wins. There is no positive or negative outside sign needed.</div>
   </section>
 
-  <section class="section">
-    <h2>Practice Problems</h2>
-    <p>
-      Click each problem to show the answer and quick explanation steps. Click again to hide it.
-    </p>
-
-    <div id="practice-area" class="practice-list"></div>
+  <section class="section note2-section">
+    <h2><span class="section-kicker">05</span> The Showdown Rhythm</h2>
+    <p>Use this same rhythm every time. It gives your brain one clear route through a long expression.</p>
+    <div class="showdown-rhythm" aria-label="positive negative showdown rhythm">
+      <div class="rhythm-card"><strong>Mark</strong><span>Keep every sign attached.</span></div>
+      <div class="rhythm-card"><strong>Sort</strong><span>Positive team and negative team.</span></div>
+      <div class="rhythm-card"><strong>Add</strong><span>Find each team size.</span></div>
+      <div class="rhythm-card"><strong>Compare</strong><span>Bigger team gives the sign.</span></div>
+      <div class="rhythm-card"><strong>Answer</strong><span>Sign first, then size.</span></div>
+    </div>
+    <div class="memory-line"><span>Collect teams</span><strong>compare sizes</strong><span>build the final answer</span></div>
   </section>
 
-  <section class="footer-rule">
-    <p class="footer-quote">Math is pattern. Pattern builds logic. Logic builds confidence.<span class="quote-author">— Math Ridge</span></p>
+  <section class="section practice note2-practice" id="practice">
+    <h2><span class="section-kicker">06</span> Unlock Practice</h2>
+    <p>For each expression, collect the two teams first. Then use the premium notepad: choose the final sign and type only the size.</p>
+    <div class="practice-progress" aria-label="Practice progress">
+      <div class="progress-bar" id="bar0"><span></span></div>
+      <div class="progress-bar" id="bar1"><span></span></div>
+      <div class="progress-bar" id="bar2"><span></span></div>
+      <div class="progress-bar" id="bar3"><span></span></div>
+    </div>
+    <div class="practice-list" id="practiceList"></div>
   </section>
 
-  <p class="footer-note">Math Ridge Note 2 | Positive Negative Showdown</p>
+  <section class="unlock-dock" aria-label="Next climb unlock">
+    <div><strong>Ready for the next climb: 1-2 Play</strong><span id="unlockText">Locked until all four team-showdown checks are correct.</span></div>
+    <button id="dockClimbBtn" class="gold-btn" type="button" disabled onclick="goToPlay()">Start Climb 1-2</button>
+  </section>
 
+  <section class="footer-rule" aria-label="Math Ridge quote">“Math is pattern. Pattern builds logic. Logic builds confidence.” — Math Ridge</section>
+  <p class="footer-note">Math Ridge Note 1-2 | Positive Negative Showdown</p>
 </main>
 
-<script>
-const problems = [
-  {
-    expression: "4 - 3 + 6 - 2",
-    steps: `
-      <strong>Problem:</strong><br>
-      +4 - 3 + 6 - 2<br><br>
-
-      <strong>Collect teams:</strong><br>
-      Positive team: +4 + 6 = +10<br>
-      Negative team: -3 - 2 = -5<br><br>
-
-      <strong>Build the Box:</strong><br>
-      +(10 - 5) = +(5). Bigger size is positive.<br><br>
-
-      <strong>Answer: 5</strong>
-    `
-  },
-  {
-    expression: "-5 + 8 - 4 + 1",
-    steps: `
-      <strong>Problem:</strong><br>
-      -5 + 8 - 4 + 1<br><br>
-
-      <strong>Collect teams:</strong><br>
-      Positive team: +8 + 1 = +9<br>
-      Negative team: -5 - 4 = -9<br><br>
-
-      <strong>Build the Box:</strong><br>
-      Same size teams cancel out.<br><br>
-
-      <strong>Answer: 0</strong>
-    `
-  },
-  {
-    expression: "7 - 9 + 3 - 6",
-    steps: `
-      <strong>Problem:</strong><br>
-      +7 - 9 + 3 - 6<br><br>
-
-      <strong>Collect teams:</strong><br>
-      Positive team: +7 + 3 = +10<br>
-      Negative team: -9 - 6 = -15<br><br>
-
-      <strong>Build the Box:</strong><br>
-      -(15 - 10) = -(5). Bigger size is negative.<br><br>
-
-      <strong>Answer: -5</strong>
-    `
-  },
-  {
-    expression: "2 + 5 - 10 - 1",
-    steps: `
-      <strong>Problem:</strong><br>
-      +2 + 5 - 10 - 1<br><br>
-
-      <strong>Collect teams:</strong><br>
-      Positive team: +2 + 5 = +7<br>
-      Negative team: -10 - 1 = -11<br><br>
-
-      <strong>Build the Box:</strong><br>
-      -(11 - 7) = -(4). Bigger size is negative.<br><br>
-
-      <strong>Answer: -4</strong>
-    `
-  }
-];
-
-const practiceArea = document.getElementById("practice-area");
-
-problems.forEach((problem, index) => {
-  const box = document.createElement("div");
-  box.className = "practice-problem";
-
-  box.innerHTML = `
-    <div class="problem-title">
-      <span>Problem ${index + 1}: <span class="problem-expression">${problem.expression}</span></span>
-      <button class="toggle-btn" type="button" aria-expanded="false" aria-controls="solution-${index}" onclick="toggleSolution(${index}, this)">Show Answer</button>
-    </div>
-
-    <div class="solution" id="solution-${index}">
-      ${problem.steps}
-    </div>
-  `;
-
-  practiceArea.appendChild(box);
-});
-
-function toggleSolution(index, button) {
-  const solution = document.getElementById(`solution-${index}`);
-  const isOpen = solution.classList.toggle("show");
-  button.textContent = isOpen ? "Hide Answer" : "Show Answer";
-  button.setAttribute("aria-expanded", isOpen ? "true" : "false");
-}
-</script>
-
+<div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <h2 id="modalTitle">1-2 Play Unlocked!</h2>
+    <p>You have unlocked 1-2 Play. Would you like to begin the next climb now?</p>
+    <div class="modal-actions"><button class="gold-btn ready" type="button" onclick="goToPlay()">Yes</button><button class="pill-btn" type="button" onclick="closeModal()">No</button></div>
+  </div>
+</div>
+<script src="assets/js/mathridge-note-data.js" defer></script>
+<script src="assets/js/math-ridge-shell.js" defer></script>
+<script src="assets/js/mathridge-note.js" defer></script>
 </body>
 </html>

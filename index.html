@@ -1,52 +1,207 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Math Ridge - home</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="stylesheet" href="styles.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Ridge | Journey Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/math-ridge-shell.css" />
+  <link rel="stylesheet" href="assets/css/index.css" />
+  <link rel="stylesheet" href="assets/css/math-ridge-menu-hotspot-polish.css" />
 </head>
 
-<body style="background-image: url('images/mbg.jpg');">
-<table style="width:100%">
-  <tr style="height:120px" id="top">
-    <th class="title" colspan="3">Math Ridge<br><i class="title2">Your personal Trail to Math Success Starts Here.</i></th>
-  </tr>
-  <tr>
-    <th><b><u>Home</u></b></th>
-    <th style="text-align:center;"><pre>|   <a href="dsat.html">DSAT Prep</a>   |   <a href="mathtutor.html">Math Tutoring</a>   |   <a href="resources.html">Resources</a>   |   <a href="testimonial.html">Testimonials</a>   |   <a href="about.html">About Me</a>   |   <a href="contact.html">Contact</a>   |  </pre></th>
-    <th>
-Date: <b id="datetime"></b><script src="script.js"></script>
-    </th>
-  </tr>
-  <tr style="height:50px">
-    <th rowspan="2" class="left"></th>
-    <th style="width:70%; text-align:left"><pre class="t">Announcement:   Sign up today to get a <b>Free Trial</b> session! Get discount for 1 on 3 sessions! Offer discount for bulk sessions!</pre></th>
-    <th rowspan="2" class="right"></th>
-  </tr>
-  <tr style="height:200px; text-align:center;">
-    <td>
+<body class="index-page" data-index-page="true">
+  <div class="reading-progress" aria-hidden="true"></div>
 
-<br>
-<h3>Welcome to Math Ridge: Your Math and DSAT Success Hub!</h3>
-<p> I specialize in helping students achieve academic excellence in mathematics and DSAT preparation through personalized, one-on-one tutoring.
-<br><br>
-My services include comprehensive math instruction ---<mark>covering everything from Pre-Algebra to Calculus </mark> aligned with student's school curriculum, and <mark>targeted DSAT preparation</mark> designed to build confidence and improve scores.
-<br><br>
-You'll find a curated list of resources to support our sessions, as well as testimonials from students and parents who've experienced meaningful progress.
-<br><br>
-Learn more about my journey and passion for teaching in the About Me section, and feel free to reach out through the Contact page to get started.  
-<br><br>
-Let's tackle challenges and turn them into accomplishments together!</p>
-<br><br>
+  <main class="app-shell" id="appShell">
+    <nav class="topbar" aria-label="Math Ridge main navigation">
+      <a class="brand" href="#home" onclick="showSection('home'); return false;" aria-label="Math Ridge Home">
+        <img class="brand-logo" src="assets/images/brand/math-ridge-logo.png" alt="Math Ridge logo" onerror="this.onerror=null; this.src='math-ridge-logo.png';" />
+        <div class="brand-text">
+          <strong>Math Ridge</strong>
+          <span>Climb Higher. Achieve More.</span>
+        </div>
+      </a>
 
-    </td>
-  </tr>
+      <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false">
+        <span class="hamburger-lines" aria-hidden="true"></span>
+      </button>
 
-  <tr style="height:70px">
-    <td colspan="3" style="text-align:center; font-size:11px;">© Math Ridge 2025. All rights reserved. | Administrator Address: 13209 Newcastle Way Newcastle, WA, 98059<br>
-   Text: (425) 919-0907   Email: primelearning.math.kevin@gmail.com<br>
-         Website Design by Kuan-Yuan (a.k.a Kevin) Huang</td>
-  </tr>
-</table>
+      <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+        <button class="pill-btn" type="button" onclick="showSection('home')">Home</button>
+        <button class="pill-btn" type="button" onclick="showSection('quest')">Trail</button>
+        <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+        <button class="pill-btn" type="button" onclick="showSection('message')">Message</button>
+        <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
+      </div>
+    </nav>
+
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleNoteMenu(false)" aria-hidden="true"></div>
+
+    <section id="home" class="home-hero view-section active" aria-labelledby="heroTitle">
+      <div class="hero-inner">
+        <div class="hero-card">
+          <p class="eyebrow">Build math confidence one ridge at a time</p>
+          <h1 id="heroTitle">Math Ridge</h1>
+          <p class="hero-lead">
+            Math Ridge helps students notice the structure behind each step. Students learn terms, teams, signs, prime pieces, shelves, reduction, and repeated patterns. Each climb feels clear, earned, and connected.
+          </p>
+          <div class="hero-actions">
+            <button class="gold-btn" type="button" onclick="showSection('quest')">Start Trail</button>
+            <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
+            <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+          </div>
+        </div>
+
+        <aside class="chapter-preview" aria-label="Chapter preview">
+          <article class="preview-card">
+            <h3>Chapter 1 — Term Vision</h3>
+            <p>Not traditional addition and subtraction. Students learn to recognize terms, teams, and sign behavior.</p>
+          </article>
+          <article class="preview-card">
+            <h3>Chapter 2 — Prime Element Vision</h3>
+            <p>Not traditional multiplication and division. Students learn to see values as prime pieces: 2, 3, 5, and 7.</p>
+          </article>
+        </aside>
+      </div>
+
+      <div class="home-quote" aria-label="Math Ridge quote">
+        <img class="home-quote-logo" src="assets/images/brand/logold.svg" alt="Math Ridge logo" onerror="this.onerror=null; this.src='logold.svg';" />
+        <blockquote>“The best view comes after the hardest climb.”</blockquote>
+        <div class="ridge-divider"><span>M A T H&nbsp;&nbsp;R I D G E</span></div>
+      </div>
+    </section>
+
+    <section id="quest" class="hub-section view-section" aria-labelledby="questTitle">
+      <div class="panel">
+        <header class="panel-header">
+          <div class="panel-title">
+            <h2 id="questTitle">Mountain Trail</h2>
+            <p>Follow the guided path from Note to Play. Each climb builds the next kind of math vision.</p>
+          </div>
+          <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
+        </header>
+        <div class="quest-body" id="trailChapters" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="quick" class="hub-section view-section" aria-labelledby="quickTitle">
+      <div class="panel">
+        <header class="panel-header">
+          <div class="panel-title">
+            <h2 id="quickTitle">Study Desk Menu</h2>
+            <p>For students or teachers who want direct access instead of the guided room navigation.</p>
+          </div>
+          <button class="pill-btn" type="button" onclick="showSection('home')">Home</button>
+        </header>
+
+        <div class="quick-nav">
+          <div class="room-map interactive-room-map" aria-label="Clickable study desk navigation">
+            <button class="hotspot note" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Note links from the closed book">Note</button>
+            <button class="hotspot play" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Play links from the open notebook">Play</button>
+            <button class="hotspot trail" type="button" onclick="showSection('quest')" aria-label="Go to Mountain Trail from the outdoor view">Trail</button>
+            <button class="hotspot cabin" type="button" onclick="showSection('cabin')" aria-label="Go to Cabin from the certificate wall">Cabin</button>
+            <button class="hotspot message" type="button" onclick="showSection('message')" aria-label="Go to Message Desk from the laptop">Message</button>
+          </div>
+          <div id="chapterLinks"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cabin" class="hub-section view-section" aria-labelledby="cabinTitle">
+      <div class="panel cabin-panel">
+        <header class="panel-header">
+          <div class="panel-title">
+            <h2 id="cabinTitle">The Cabin</h2>
+            <p>A calm personal space for progress, certificates, test results, and returning to the next climb.</p>
+          </div>
+          <button class="pill-btn" type="button" onclick="showSection('quest')">Trail</button>
+        </header>
+
+        <div class="escape-spots">
+          <button class="room-spot" type="button" onclick="showSection('quick')"><strong>Menu</strong><span>Open direct links to every Note and Play.</span></button>
+          <button class="room-spot" type="button" onclick="showSection('quest')"><strong>Trail</strong><span>Look outside and continue the guided mountain path.</span></button>
+          <button class="room-spot" type="button" onclick="showCabinPanel('certificates')"><strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span></button>
+          <button class="room-spot" type="button" onclick="showSection('message')"><strong>Message</strong><span>Leave a question, suggestion, thank-you note, or testimonial.</span></button>
+        </div>
+
+        <div class="cabin-slider" id="cabinSlider" data-panel="certificates">
+          <div class="cabin-track">
+            <section class="cabin-slide" aria-labelledby="certificateWallTitle">
+              <div class="slide-heading">
+                <div>
+                  <h3 id="certificateWallTitle">Certificate Wall</h3>
+                  <p>Earned certificates appear here from local device progress.</p>
+                </div>
+                <button class="pill-btn cabin-tab" id="testTab" type="button" onclick="showCabinPanel('tests')">View Test Results</button>
+              </div>
+              <div class="cert-wall" id="certWall" aria-label="Certificate wall and lesson shortcuts"></div>
+            </section>
+
+            <section class="cabin-slide test-results-slide" aria-labelledby="testResultsTitle">
+              <div class="slide-heading">
+                <div>
+                  <h3 id="testResultsTitle">Test Results</h3>
+                  <p>Chapter test snapshots can live here after each chapter checkpoint.</p>
+                </div>
+                <button class="pill-btn cabin-tab" id="certTab" type="button" onclick="showCabinPanel('certificates')">Back to Certificate Wall</button>
+              </div>
+              <div class="test-results-grid" id="testResultsGrid" aria-live="polite"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="message" class="hub-section view-section" aria-labelledby="messageTitle">
+      <div class="panel">
+        <header class="panel-header">
+          <div class="panel-title">
+            <h2 id="messageTitle">Message Desk</h2>
+            <p>Have a question, suggestion, thank-you note, or parent testimonial? Leave a note for Math Ridge.</p>
+          </div>
+          <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
+        </header>
+
+        <div class="message-body">
+          <div class="message-copy">
+            <h3>Your note can shape the next trail.</h3>
+            <p>Math Ridge grows through real student questions, parent stories, and teacher feedback. If something helped you, confused you, or gave you an idea for a better climb, this is the place to share it.</p>
+            <p class="footnote">Messages send through the Math Ridge contact form and confirm with a tone that matches the message type.</p>
+          </div>
+
+          <form id="contactForm" class="message-form" action="https://api.web3forms.com/submit" method="POST" onsubmit="sendMessage(event)">
+            <input type="hidden" name="access_key" value="80a34395-a61f-408c-9289-3be412d5f31e" />
+            <input type="hidden" name="subject" id="messageSubject" value="Math Ridge Message" />
+            <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <h3>Leave a Note</h3>
+            <div class="form-grid">
+              <div class="field"><label for="name">Name</label><input id="name" name="name" placeholder="Your name" autocomplete="name" required /></div>
+              <div class="field"><label for="email">Email <span class="optional-label">optional</span></label><input id="email" name="email" type="email" placeholder="Only if you want a reply" autocomplete="email" /></div>
+              <div class="field"><label for="role">I am a...</label><select id="role" name="role"><option>Student</option><option>Parent</option><option>Teacher</option><option>Other</option></select></div>
+              <div class="field"><label for="kind">Message type</label><select id="kind" name="kind"><option>Math Question</option><option>Suggestion</option><option>Thank You</option><option>Parent Testimonial</option><option>Bug Report</option><option>Other</option></select></div>
+              <div class="field"><label for="messageText">Message</label><textarea id="messageText" name="message" placeholder="Write your note here..." required></textarea></div>
+              <button id="sendNoteButton" class="gold-btn" type="submit">Send Note</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal-layer" id="ridgeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="ridge-modal">
+        <button class="modal-close" type="button" onclick="closeModal()" aria-label="Close popup">×</button>
+        <h3 id="modalTitle">Mountain Trail</h3>
+        <p id="modalText">Continue your climb?</p>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/math-ridge-shell.js"></script>
+  <script src="assets/js/index.js"></script>
 </body>
 </html>
