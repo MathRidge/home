@@ -97,6 +97,39 @@ function storageKeyNoteUnlocked(id) { return `mathRidge_noteUnlocked_${id}`; }
 function storageKeyPlayComplete(id) { return `mathRidge_playComplete_${id}`; }
 function storageKeyCert(id) { return `mathRidge_cert_${id}`; }
 
+const TRAIL_STATE_KEY = "mathRidge_trail_state_v1";
+
+function writeTrailStateSnapshot() {
+  try {
+    const lessonStates = lessons.map((lesson, index) => {
+      const cert = readCertificate(lesson.id);
+      return {
+        id: lesson.id,
+        section: lesson.section,
+        noteUnlocked: isNoteUnlocked(index),
+        noteComplete: hasCompletedNote(lesson.id),
+        playUnlocked: isPlayUnlocked(index),
+        playComplete: hasCompletedPlay(lesson.id),
+        certificateEarned: Boolean(cert && cert.completed),
+        certificateDate: cert?.completedAt || cert?.displayDate || ""
+      };
+    });
+
+    localStorage.setItem(TRAIL_STATE_KEY, JSON.stringify({
+      version: 1,
+      updatedAt: new Date().toISOString(),
+      lessons: lessonStates
+    }));
+  } catch (error) {
+    /* Local storage can fail in private modes. The live unlock checks still work. */
+  }
+}
+
+function readTrailStateSnapshot() {
+  try { return JSON.parse(localStorage.getItem(TRAIL_STATE_KEY)); }
+  catch (error) { return null; }
+}
+
 function readJSONStorage(key) {
   try { return JSON.parse(localStorage.getItem(key)); }
   catch (error) { return null; }
@@ -144,9 +177,10 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
-function renderTrail() {
+function renderTrail(options = {}) {
   const trail = document.getElementById("trailChapters");
   if (!trail) return;
+  if (!options.force && trail.dataset.rendered === "true") return;
 
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
 
@@ -164,6 +198,8 @@ function renderTrail() {
     `;
   }).join("");
 
+  trail.dataset.rendered = "true";
+  writeTrailStateSnapshot();
   bindStageCardInteractions();
 }
 
@@ -179,11 +215,11 @@ function renderTrailCard(lesson) {
   const imageClass = stageBackground ? "stage-image" : "";
   const interactionClass = noteUnlocked ? "stage-tappable" : "";
   const stageArt = primaryStageImage
-    ? `<div class="stage-art" aria-hidden="true"><img class="stage-art-img" src="${primaryStageImage}" data-stage-slug="${slug}" data-stage-index="0" alt="" onerror="handleStageImageFallback(this)"></div>`
+    ? `<div class="stage-art" aria-hidden="true"><img class="stage-art-img" src="${primaryStageImage}" data-stage-slug="${slug}" data-stage-index="0" alt="" loading="lazy" decoding="async" onerror="handleStageImageFallback(this)"></div>`
     : "";
 
   return `
-    <article class="node-card ${noteUnlocked ? "" : "locked"} ${imageClass} ${interactionClass}" ${imageStyle}>
+    <article class="node-card ${noteUnlocked ? "" : "locked"} ${imageClass} ${interactionClass}" data-lesson-id="${lesson.id}" data-note-unlocked="${noteUnlocked ? "true" : "false"}" data-play-unlocked="${playUnlocked ? "true" : "false"}" ${imageStyle}>
       ${stageArt}
       <div class="node-top">
         <div class="node-id">${lesson.section}</div>
@@ -223,9 +259,10 @@ function bindStageCardInteractions() {
   });
 }
 
-function renderMenuLinks() {
+function renderMenuLinks(options = {}) {
   const wrap = document.getElementById("chapterLinks");
   if (!wrap) return;
+  if (!options.force && wrap.dataset.rendered === "true") return;
 
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
 
@@ -245,6 +282,9 @@ function renderMenuLinks() {
       <button class="danger-btn reset-progress-btn" type="button" onclick="confirmResetProgress()"><span aria-hidden="true">↺</span> Reset All Progress</button>
     </div>
   `;
+
+  wrap.dataset.rendered = "true";
+  writeTrailStateSnapshot();
 }
 
 function renderMenuNotePlay(lesson) {
@@ -317,6 +357,8 @@ function renderCertificateWall() {
       </button>
     `;
   }).join("");
+
+  writeTrailStateSnapshot();
 }
 
 function readTestResultImage(test) {
@@ -405,13 +447,15 @@ function resetAllProgress() {
     localStorage.removeItem(storageKeyCert(lesson.id));
   });
 
+  try { localStorage.removeItem(TRAIL_STATE_KEY); } catch (error) {}
+
   chapterTests.forEach(test => {
     (test.storageKeys || []).forEach(key => localStorage.removeItem(key));
   });
 
   closeModal();
-  renderTrail();
-  renderMenuLinks();
+  renderTrail({ force: true });
+  renderMenuLinks({ force: true });
   renderCertificateWall();
   renderTestResults();
   showSection("quick");
@@ -478,8 +522,8 @@ function showSection(id, options = {}) {
     if (id === "message") shell.classList.add("message-bg");
   }
 
-  if (id === "quest") renderTrail();
-  if (id === "quick") renderMenuLinks();
+  if (id === "quest") renderTrail({ force: true });
+  if (id === "quick") renderMenuLinks({ force: true });
   if (id === "cabin") {
     renderCertificateWall();
     renderTestResults();
@@ -619,149 +663,190 @@ async function sendMessage(event) {
 
 
 
-/* Mobile Tap Preview
-   On coarse-pointer phones/tablets, first tap shows the same premium hover state.
-   Second tap on the same target activates it. Tapping elsewhere clears it. */
-const TAP_PREVIEW_QUERY = "(hover: none), (pointer: coarse)";
-const TAP_PREVIEW_SELECTOR = [
-  ".top-actions .pill-btn",
+
+/* Premium Mobile Selection Flow
+   - Hamburger, page header buttons, forms, and modals stay one-tap.
+   - Mobile drawer buttons use select-first/enter-second so the glossy state can be enjoyed.
+   - Mountain Trail stage cards use select-first, then Note/Play becomes active. */
+const PREMIUM_TOUCH_QUERY = "(hover: none), (pointer: coarse)";
+const MOBILE_DRAWER_QUERY = "(max-width: 680px)";
+const DIRECT_TOUCH_GLOW_SELECTOR = [
   ".hero-actions .pill-btn",
   ".hero-actions .gold-btn",
-  ".hero-actions .trail-button",
-  ".small-link",
-  ".jump-link",
+  ".panel-header .pill-btn",
   ".trail-button",
   ".room-spot",
-  ".hotspot",
   ".cabin-tab",
   ".certificate-frame",
   ".result-card-actions .pill-btn",
   ".result-card-actions .gold-btn",
-  ".reset-progress-btn"
+  ".reset-progress-btn",
+  ".hotspot"
 ].join(", ");
 
-let currentTapPreviewTarget = null;
-let tapPreviewClearTimer = null;
-let tapPreviewHint = null;
+let currentTouchPreviewTarget = null;
+let currentSelectedStageCard = null;
+let touchPreviewClearTimer = null;
 
-function isTapPreviewDevice() {
-  return Boolean(window.matchMedia && window.matchMedia(TAP_PREVIEW_QUERY).matches);
+function isPremiumTouchDevice() {
+  return Boolean(window.matchMedia && window.matchMedia(PREMIUM_TOUCH_QUERY).matches);
 }
 
-function isTapPreviewExcluded(target) {
+function isMobileDrawerOpen() {
+  return Boolean(
+    window.matchMedia &&
+    window.matchMedia(MOBILE_DRAWER_QUERY).matches &&
+    document.body.classList.contains("note-menu-open")
+  );
+}
+
+function clearPremiumTouchSelection(options = {}) {
+  const { keepStage = false } = options;
+
+  if (currentTouchPreviewTarget) {
+    currentTouchPreviewTarget.classList.remove("is-touch-preview", "is-pressed");
+    currentTouchPreviewTarget.removeAttribute("data-touch-preview-active");
+  }
+
+  if (!keepStage && currentSelectedStageCard) {
+    currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
+    currentSelectedStageCard.removeAttribute("data-stage-selected");
+    currentSelectedStageCard = null;
+  }
+
+  currentTouchPreviewTarget = null;
+
+  if (touchPreviewClearTimer) {
+    window.clearTimeout(touchPreviewClearTimer);
+    touchPreviewClearTimer = null;
+  }
+}
+
+function markPremiumTouchTarget(target, options = {}) {
+  const { asStage = false, armed = false, duration = 4200 } = options;
+  if (!target) return;
+
+  if (currentTouchPreviewTarget && currentTouchPreviewTarget !== target && currentTouchPreviewTarget !== currentSelectedStageCard) {
+    currentTouchPreviewTarget.classList.remove("is-touch-preview", "is-pressed");
+    currentTouchPreviewTarget.removeAttribute("data-touch-preview-active");
+  }
+
+  currentTouchPreviewTarget = target;
+  target.classList.add("is-touch-preview", "is-pressed");
+
+  if (armed) {
+    target.setAttribute("data-touch-preview-active", "true");
+  }
+
+  if (asStage && armed) {
+    if (currentSelectedStageCard && currentSelectedStageCard !== target) {
+      currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
+      currentSelectedStageCard.removeAttribute("data-stage-selected");
+    }
+
+    currentSelectedStageCard = target;
+    target.classList.add("is-stage-selected");
+    target.setAttribute("data-stage-selected", "true");
+  }
+
+  if (touchPreviewClearTimer) window.clearTimeout(touchPreviewClearTimer);
+  touchPreviewClearTimer = window.setTimeout(() => clearPremiumTouchSelection({ keepStage: asStage && armed }), duration);
+}
+
+function isDirectTouchGlowExcluded(target) {
   return Boolean(target.closest(
     ".hamburger-btn, .drawer-backdrop, .modal-card, #ridgeModal, form, input, textarea, select, option, [disabled], [aria-disabled='true']"
   ));
 }
 
-function getTapPreviewTarget(eventTarget) {
-  if (!isTapPreviewDevice()) return null;
-  const target = eventTarget?.closest?.(TAP_PREVIEW_SELECTOR);
+function getDirectTouchGlowTarget(eventTarget) {
+  if (!isPremiumTouchDevice()) return null;
+  const target = eventTarget?.closest?.(DIRECT_TOUCH_GLOW_SELECTOR);
   if (!target || !document.body.contains(target)) return null;
-  if (isTapPreviewExcluded(target)) return null;
+  if (isDirectTouchGlowExcluded(target)) return null;
   return target;
 }
 
-function ensureTapPreviewHint() {
-  if (tapPreviewHint) return tapPreviewHint;
+function handlePremiumPointerDown(event) {
+  if (event.pointerType === "mouse") return;
+  if (!isPremiumTouchDevice()) return;
 
-  tapPreviewHint = document.createElement("div");
-  tapPreviewHint.id = "tapPreviewHint";
-  tapPreviewHint.className = "tap-preview-hint";
-  tapPreviewHint.setAttribute("role", "status");
-  tapPreviewHint.setAttribute("aria-live", "polite");
-  tapPreviewHint.textContent = "Tap again to enter";
-  document.body.appendChild(tapPreviewHint);
-  return tapPreviewHint;
-}
-
-function placeTapPreviewHint(target) {
-  const hint = ensureTapPreviewHint();
-  const rect = target.getBoundingClientRect();
-  const hintWidth = Math.min(260, Math.max(180, rect.width));
-  const centerX = Math.min(window.innerWidth - 14 - hintWidth / 2, Math.max(14 + hintWidth / 2, rect.left + rect.width / 2));
-  const below = rect.bottom + 8;
-  const above = rect.top - 38;
-  const top = below < window.innerHeight - 42 ? below : Math.max(12, above);
-
-  hint.style.width = `${hintWidth}px`;
-  hint.style.left = `${centerX}px`;
-  hint.style.top = `${top}px`;
-  hint.classList.add("show");
-}
-
-function clearTapPreview() {
-  if (currentTapPreviewTarget) {
-    currentTapPreviewTarget.classList.remove("is-touch-preview", "is-pressed");
-    currentTapPreviewTarget.removeAttribute("data-touch-preview-active");
-  }
-
-  currentTapPreviewTarget = null;
-
-  if (tapPreviewClearTimer) {
-    window.clearTimeout(tapPreviewClearTimer);
-    tapPreviewClearTimer = null;
-  }
-
-  if (tapPreviewHint) {
-    tapPreviewHint.classList.remove("show");
-  }
-}
-
-function setTapPreview(target) {
-  if (currentTapPreviewTarget && currentTapPreviewTarget !== target) {
-    currentTapPreviewTarget.classList.remove("is-touch-preview", "is-pressed");
-    currentTapPreviewTarget.removeAttribute("data-touch-preview-active");
-  }
-
-  currentTapPreviewTarget = target;
-  target.classList.add("is-touch-preview", "is-pressed");
-  target.setAttribute("data-touch-preview-active", "true");
-
-  if (typeof target.focus === "function") {
-    try { target.focus({ preventScroll: true }); }
-    catch (error) { target.focus(); }
-  }
-
-  placeTapPreviewHint(target);
-
-  if (tapPreviewClearTimer) window.clearTimeout(tapPreviewClearTimer);
-  tapPreviewClearTimer = window.setTimeout(clearTapPreview, 5200);
-}
-
-function handleTapPreviewClick(event) {
-  const target = getTapPreviewTarget(event.target);
-
-  if (!target) {
-    clearTapPreview();
+  const stage = event.target?.closest?.(".node-card.stage-tappable:not(.locked)");
+  if (stage) {
+    markPremiumTouchTarget(stage, { asStage: true, armed: false, duration: 5200 });
     return;
   }
 
-  if (currentTapPreviewTarget === target && target.dataset.touchPreviewActive === "true") {
-    // Second tap: allow the normal link/button action to run.
-    if (tapPreviewHint) tapPreviewHint.classList.remove("show");
-    window.setTimeout(clearTapPreview, 180);
+  const drawerButton = event.target?.closest?.("#noteTopActions.open .pill-btn");
+  if (drawerButton && isMobileDrawerOpen()) {
+    markPremiumTouchTarget(drawerButton, { armed: false, duration: 5200 });
     return;
   }
 
-  // First tap: prevent navigation/action and show the hover moment.
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  setTapPreview(target);
+  const directTarget = getDirectTouchGlowTarget(event.target);
+  if (directTarget) markPremiumTouchTarget(directTarget, { armed: false, duration: 460 });
 }
 
-function bindMobileTapPreview() {
-  document.addEventListener("click", handleTapPreviewClick, true);
+function handlePremiumTouchClick(event) {
+  if (!isPremiumTouchDevice()) return;
+
+  const stageAction = event.target?.closest?.(".node-card.stage-tappable:not(.locked) .small-link");
+  const stageCard = event.target?.closest?.(".node-card.stage-tappable:not(.locked)");
+
+  if (stageCard) {
+    const stageIsReady = stageCard.dataset.stageSelected === "true";
+
+    if (!stageIsReady) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      markPremiumTouchTarget(stageCard, { asStage: true, armed: true, duration: 5200 });
+      return;
+    }
+
+    if (!stageAction) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      markPremiumTouchTarget(stageCard, { asStage: true, armed: true, duration: 5200 });
+      return;
+    }
+
+    // Card is selected and the student tapped Note/Play: allow the normal handler/navigation.
+    window.setTimeout(() => clearPremiumTouchSelection(), 220);
+    return;
+  }
+
+  const drawerButton = event.target?.closest?.("#noteTopActions.open .pill-btn");
+  if (drawerButton && isMobileDrawerOpen()) {
+    const ready = drawerButton.dataset.touchPreviewActive === "true";
+    if (!ready) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      markPremiumTouchTarget(drawerButton, { armed: true, duration: 5200 });
+      return;
+    }
+
+    window.setTimeout(() => clearPremiumTouchSelection(), 180);
+  }
+}
+
+function bindPremiumMobileSelection() {
+  document.addEventListener("pointerdown", handlePremiumPointerDown, { passive: true });
+  document.addEventListener("click", handlePremiumTouchClick, true);
+
+  document.addEventListener("pointerdown", event => {
+    if (!isPremiumTouchDevice()) return;
+    if (event.target.closest(".node-card.stage-tappable, #noteTopActions.open .pill-btn")) return;
+    if (!event.target.closest(".small-link, .jump-link, .hotspot, .room-spot, .certificate-frame, .pill-btn, .gold-btn, .danger-btn")) {
+      clearPremiumTouchSelection();
+    }
+  }, { passive: true });
 
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape") clearTapPreview();
+    if (event.key === "Escape") clearPremiumTouchSelection();
   });
 
-  window.addEventListener("resize", clearTapPreview);
-  window.addEventListener("orientationchange", clearTapPreview);
-  window.addEventListener("scroll", () => {
-    if (currentTapPreviewTarget) placeTapPreviewHint(currentTapPreviewTarget);
-  }, { passive: true });
+  window.addEventListener("resize", clearPremiumTouchSelection);
+  window.addEventListener("orientationchange", clearPremiumTouchSelection);
 }
 
 document.addEventListener("keydown", event => {
@@ -769,12 +854,11 @@ document.addEventListener("keydown", event => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderTrail();
-  renderMenuLinks();
-  renderCertificateWall();
-  renderTestResults();
+  // Lazy-render the heavier sections only when a student opens that view.
+  // This keeps the first mobile paint fast and prevents hidden Trail art from loading too early.
   openInitialSectionFromURL();
-  bindMobileTapPreview();
+  writeTrailStateSnapshot();
+  bindPremiumMobileSelection();
 });
 
 // Expose local methods for inline handlers and note/play pages that return to Index sections.
@@ -789,6 +873,8 @@ window.handlePlayClick = handlePlayClick;
 window.openCertificateFrame = openCertificateFrame;
 window.confirmResetProgress = confirmResetProgress;
 window.resetAllProgress = resetAllProgress;
+window.readTrailStateSnapshot = readTrailStateSnapshot;
+window.writeTrailStateSnapshot = writeTrailStateSnapshot;
 
 window.goToIndexSection = function(section) {
   showSection(normalizeSectionName(section), { scroll: true });
