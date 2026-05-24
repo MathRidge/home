@@ -3,15 +3,25 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Math Ridge | Play 1-6 Prime Factor Trees</title>
+	<title>Math Ridge | Play 2-2 Prime Factor Trees</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="assets/css/mathridge-play.css" />
 	<link rel="stylesheet" href="assets/css/play6.css" />
+
+	<script>
+		window.MathRidgePlayConfig = {
+			playNumber: 6,
+			playId: "2_2",
+			gameKey: "play6",
+			stageLabel: "2-2",
+			recordWorkerBase: "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/"
+		};
+	</script>
 </head>
 
-<body class="play-page play-6" data-play-id="1_6">
+<body class="play-page play-6" data-play-id="2_2">
 	<div class="confetti-layer" id="confettiLayer"></div>
 
 	<div class="achievement-popup" id="namePopup">
@@ -45,10 +55,10 @@
 				<div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
 			</div>
 
-			<div class="unlock-note">✅ 1-7 is unlocked! Continue to the next trail when you are ready.</div>
+			<div class="unlock-note">✅ 2-3 is unlocked! Continue to the next trail when you are ready.</div>
 			<div class="trail-complete-actions">
 				<button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
-				<a class="trail-button primary-action" href="note7.html">Continue to 1-7 Note</a>
+				<a class="trail-button primary-action" href="note7.html">Continue to 2-3 Note</a>
 				<a class="trail-button secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
 				<button class="secondary-action" onclick="closeCertificatePopup()">Close</button>
 			</div>
@@ -58,7 +68,7 @@
 	<div class="achievement-popup" id="ladderPopup">
 		<div class="ladder-card">
 			<h2>🐢 Trail Ladder</h2>
-			<p class="proof-note">Your current climb record and the Play 1-6 world time ladder.</p>
+			<p class="proof-note">Your current climb record and the Play 2-2 world time ladder.</p>
 			<div class="ladder-run-box" id="ladderRunBox"></div>
 			<h3>🌎 World Time Ladder</h3>
 			<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
@@ -90,7 +100,7 @@
 
 		<div class="climb-gate" id="climbStartGate">
 			<div class="climb-cover-card">
-				<div class="gate-kicker">Math Ridge Trail 1-6</div>
+				<div class="gate-kicker">Math Ridge Trail 2-2</div>
 				<h3>Prime Factor Trees</h3>
 				<p>Break the numerator and denominator into prime pieces, match equal pieces, and write the reduced fraction. Start when you are ready — the climb timer begins after you press the button.</p>
 				<button class="primary-action start-climb-btn" onclick="startClimbFromGate()">START the Climb</button>
@@ -169,7 +179,7 @@
 		</div>
 
 		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
-		<div class="game-footer">Math Ridge | Play 1-6 Prime Factor Trees</div>
+		<div class="game-footer">Math Ridge | Play 2-2 Prime Factor Trees</div>
 	</div>
 
 	<script src="assets/js/mathridge-play.js" defer></script>

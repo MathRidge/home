@@ -1265,6 +1265,20 @@
 		byId("certRank").textContent = rankMessage;
 		byId("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime}`;
 
+		if (shell && typeof shell.saveTrailProgress === "function") {
+			shell.saveTrailProgress({
+				id: "1_2",
+				studentName: finalName,
+				displayDate: formattedDate,
+				displayTime: formattedTime,
+				timeDisplay: raceTimeText,
+				rank: latestRaceRank,
+				rankText: rankMessage,
+				score: turtleScore,
+				stage
+			});
+		}
+
 		if (button) {
 			button.disabled = false;
 			button.textContent = "Create My Certificate";
@@ -1345,8 +1359,8 @@
 		ctx.fillText("Presented by Math Ridge Creator: Kuan-Yuan Huang", 600, 885);
 
 		const link = document.createElement("a");
-		link.download = "math-ridge-positive-negative-showdown-certificate.png";
-		link.href = canvas.toDataURL("image/png");
+		link.download = "math-ridge-positive-negative-showdown-certificate.webp";
+		link.href = canvas.toDataURL("image/webp", 0.92);
 		link.click();
 	}
 

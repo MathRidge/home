@@ -25,50 +25,28 @@ const stageCardThemes = {
   "2_4": "stage-2-4"
 };
 
-const STAGE_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".avif", ".PNG", ".JPG", ".JPEG", ".WEBP", ".AVIF", ""];
-const STAGE_IMAGE_FOLDERS = ["assets/images/stages/", ""];
-
 function stageImageSlug(id) {
   return stageCardThemes[id] || "";
 }
 
-function stageImageCandidates(slug) {
-  if (!slug) return [];
-  const candidates = [];
-  STAGE_IMAGE_FOLDERS.forEach(folder => {
-    STAGE_IMAGE_EXTENSIONS.forEach(ext => candidates.push(`${folder}${slug}${ext}`));
-  });
-  return candidates;
+function stageImagePath(id) {
+  const slug = stageImageSlug(id);
+  return slug ? `assets/images/stages/${slug}.webp` : "";
 }
 
 function stageImagePrimary(id) {
-  const slug = stageImageSlug(id);
-  return stageImageCandidates(slug)[0] || "";
+  return stageImagePath(id);
 }
 
 function stageImageBackgroundValue(id) {
-  const slug = stageImageSlug(id);
-  if (!slug) return "";
-
-  // This stays as CSS fallback. The real visible art is also rendered as an
-  // <img> layer so local file paths work more reliably on Windows/file://.
-  return stageImageCandidates(slug).map(url => `url('${url}')`).join(", ");
+  const primary = stageImagePath(id);
+  return primary ? `url('${primary}')` : "";
 }
 
 function handleStageImageFallback(img) {
-  const slug = img?.dataset?.stageSlug || "";
-  const candidates = stageImageCandidates(slug);
-  let nextIndex = Number(img?.dataset?.stageIndex || 0) + 1;
-
-  if (!img || !candidates.length || nextIndex >= candidates.length) {
-    const card = img?.closest?.(".node-card");
-    if (card) card.classList.add("stage-image-missing");
-    if (img) img.remove();
-    return;
-  }
-
-  img.dataset.stageIndex = String(nextIndex);
-  img.src = candidates[nextIndex];
+  const card = img?.closest?.(".node-card");
+  if (card) card.classList.add("stage-image-missing");
+  if (img) img.remove();
 }
 
 const chapterTests = [
@@ -208,14 +186,12 @@ function renderTrailCard(lesson) {
   const noteUnlocked = isNoteUnlocked(index);
   const playUnlocked = isPlayUnlocked(index);
   const earned = hasCertificate(lesson.id);
-  const stageBackground = noteUnlocked ? stageImageBackgroundValue(lesson.id) : "";
-  const slug = stageImageSlug(lesson.id);
   const primaryStageImage = noteUnlocked ? stageImagePrimary(lesson.id) : "";
-  const imageStyle = stageBackground ? `style="--stage-bg: ${stageBackground};"` : "";
-  const imageClass = stageBackground ? "stage-image" : "";
+  const imageStyle = "";
+  const imageClass = primaryStageImage ? "stage-image" : "";
   const interactionClass = noteUnlocked ? "stage-tappable" : "";
   const stageArt = primaryStageImage
-    ? `<div class="stage-art" aria-hidden="true"><img class="stage-art-img" src="${primaryStageImage}" data-stage-slug="${slug}" data-stage-index="0" alt="" loading="lazy" decoding="async" onerror="handleStageImageFallback(this)"></div>`
+    ? `<div class="stage-art" aria-hidden="true"><img class="stage-art-img" src="${primaryStageImage}" alt="" loading="lazy" decoding="async" onerror="handleStageImageFallback(this)"></div>`
     : "";
 
   return `
@@ -432,9 +408,9 @@ function showPlayNeedsNoteModal(lesson) {
 }
 
 function confirmResetProgress() {
-  showModal("Erase Device Progress?", "Are you sure you want to delete all Trail progress, Cabin achievements, and chapter test snapshots saved on this device?", [
-    { text: "Yes", className: "danger-btn", action: resetAllProgress },
-    { text: "No", className: "pill-btn", action: closeModal }
+  showModal("Erase Device Progress?", "This clears Trail unlocks, Cabin achievements, and chapter test snapshots saved on this device only.", [
+    { text: "Yes, erase device progress", className: "danger-btn", action: resetAllProgress, confirmTwice: true },
+    { text: "No, keep my progress", className: "pill-btn", action: closeModal, confirmTwice: true }
   ]);
 }
 
@@ -461,6 +437,8 @@ function resetAllProgress() {
   showSection("quick");
 }
 
+const modalActionMap = new WeakMap();
+
 function showModal(title, text, actions = []) {
   const titleEl = document.getElementById("modalTitle");
   const textEl = document.getElementById("modalText");
@@ -479,6 +457,14 @@ function showModal(title, text, actions = []) {
     button.type = "button";
     button.className = action.className || "gold-btn";
     button.textContent = action.text || "OK";
+
+    if (action.confirmTwice) {
+      button.dataset.mobileConfirm = "modal-reset";
+      button.dataset.confirmText = action.text || "Confirm";
+      button.setAttribute("aria-label", `${action.text || "Confirm"}. Tap twice on mobile to confirm.`);
+    }
+
+    modalActionMap.set(button, action.action || closeModal);
     button.addEventListener("click", action.action || closeModal);
     actionWrap.appendChild(button);
   });
@@ -499,7 +485,17 @@ function updateActiveNav(id) {
   const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", message: "Message" };
 
   document.querySelectorAll(".top-actions button").forEach(button => {
-    button.classList.toggle("active-section", button.textContent.trim() === labels[id]);
+    const isCurrent = button.textContent.trim() === labels[id];
+    button.classList.toggle("active-section", isCurrent);
+    button.classList.toggle("is-current-section", isCurrent);
+
+    if (isCurrent) {
+      button.setAttribute("aria-current", "page");
+      button.setAttribute("data-current-section", "true");
+    } else {
+      button.removeAttribute("aria-current");
+      button.removeAttribute("data-current-section");
+    }
   });
 }
 
@@ -507,6 +503,8 @@ function showSection(id, options = {}) {
   const { scroll = true, keepURL = false } = options;
 
   if (typeof toggleNoteMenu === "function") toggleNoteMenu(false);
+  if (window.MathRidgeMobileConfirm?.clear) window.MathRidgeMobileConfirm.clear();
+  if (typeof clearStageSelection === "function") clearStageSelection();
   closeModal();
 
   sections.forEach(section => section.classList.remove("active"));
@@ -522,11 +520,12 @@ function showSection(id, options = {}) {
     if (id === "message") shell.classList.add("message-bg");
   }
 
-  if (id === "quest") renderTrail({ force: true });
-  if (id === "quick") renderMenuLinks({ force: true });
+  if (id === "quest") renderTrail();
+  if (id === "quick") renderMenuLinks();
   if (id === "cabin") {
     renderCertificateWall();
     renderTestResults();
+    syncCabinPanelVisibility({ scroll: false });
   }
 
   updateActiveNav(id);
@@ -571,13 +570,68 @@ function openInitialSectionFromURL() {
   }
 }
 
-function showCabinPanel(panel) {
+let cabinWallMobileOpen = false;
+
+function isMobileMathRidgeView() {
+  return Boolean(window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
+}
+
+function getCabinPanel() {
+  return document.querySelector(".cabin-panel");
+}
+
+function scrollCabinFocus(panel = "certificates") {
+  const target = document.getElementById(panel === "tests" ? "testResultsTitle" : "certificateWallTitle");
+  if (!target) return;
+
+  window.setTimeout(() => {
+    const topbar = document.querySelector(".topbar");
+    const topbarHeight = topbar ? topbar.getBoundingClientRect().height : 72;
+    const y = window.scrollY + target.getBoundingClientRect().top - topbarHeight - 16;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+  }, 180);
+}
+
+function syncCabinPanelVisibility(options = {}) {
+  const panel = getCabinPanel();
+  if (!panel) return;
+
+  const open = !isMobileMathRidgeView() || cabinWallMobileOpen;
+  panel.classList.toggle("certificate-wall-collapsed", !open);
+
+  if (open && options.scroll) {
+    const slider = document.getElementById("cabinSlider");
+    scrollCabinFocus(slider?.dataset?.panel || "certificates");
+  }
+}
+
+function toggleCertificateWall() {
+  const slider = document.getElementById("cabinSlider");
+  const currentPanel = slider?.dataset?.panel || "certificates";
+
+  if (isMobileMathRidgeView()) {
+    if (cabinWallMobileOpen && currentPanel === "certificates") {
+      cabinWallMobileOpen = false;
+      syncCabinPanelVisibility({ scroll: false });
+      return;
+    }
+
+    cabinWallMobileOpen = true;
+    showCabinPanel("certificates", { scroll: true });
+    return;
+  }
+
+  showCabinPanel("certificates", { scroll: true });
+}
+
+function showCabinPanel(panel, options = {}) {
   const slider = document.getElementById("cabinSlider");
   const certTab = document.getElementById("certTab");
   const testTab = document.getElementById("testTab");
   if (!slider) return;
 
   const nextPanel = panel === "tests" ? "tests" : "certificates";
+  cabinWallMobileOpen = true;
   slider.dataset.panel = nextPanel;
   certTab?.classList.toggle("active", nextPanel === "certificates");
   testTab?.classList.toggle("active", nextPanel === "tests");
@@ -585,7 +639,8 @@ function showCabinPanel(panel) {
   if (nextPanel === "tests") renderTestResults();
   if (nextPanel === "certificates") renderCertificateWall();
 
-  // No auto-scroll here: switching Certificate Wall / Test Results should stay calm and instant.
+  syncCabinPanelVisibility({ scroll: false });
+  if (options.scroll !== false) scrollCabinFocus(nextPanel);
 }
 
 function messageTone(kind, name) {
@@ -646,7 +701,7 @@ async function sendMessage(event) {
     }
 
     form.reset();
-    showModal("Message Sent Successfully", messageTone(kind, name), [
+    showModal("Message Sent Successfully", `Thanks${name ? `, ${name}` : ""}. Your note has been sent to Math Ridge.`, [
       { text: "Back to Math Ridge", className: "gold-btn", action: closeModal }
     ]);
   } catch (error) {
@@ -665,189 +720,265 @@ async function sendMessage(event) {
 
 
 /* Premium Mobile Selection Flow
-   - Hamburger, page header buttons, forms, and modals stay one-tap.
-   - Mobile drawer buttons use select-first/enter-second so the glossy state can be enjoyed.
-   - Mountain Trail stage cards use select-first, then Note/Play becomes active. */
-const PREMIUM_TOUCH_QUERY = "(hover: none), (pointer: coarse)";
-const MOBILE_DRAWER_QUERY = "(max-width: 680px)";
-const DIRECT_TOUCH_GLOW_SELECTOR = [
+   Mobile only:
+   - first tap gives the premium hover/pressed state
+   - second tap confirms navigation/action
+   - stage cards first select the card, then Note/Play buttons arm separately. */
+const PREMIUM_TOUCH_QUERY = "(max-width: 760px)";
+const CONFIRMABLE_INDEX_SELECTOR = [
   ".hero-actions .pill-btn",
   ".hero-actions .gold-btn",
   ".panel-header .pill-btn",
-  ".trail-button",
   ".room-spot",
-  ".cabin-tab",
-  ".certificate-frame",
-  ".result-card-actions .pill-btn",
-  ".result-card-actions .gold-btn",
-  ".reset-progress-btn",
   ".hotspot",
-  ".jump-link"
+  ".cabin-tab",
+  "#sendNoteButton",
+  ".reset-progress-btn",
+  ".jump-link:not(.locked)",
+  "#modalActions [data-mobile-confirm='modal-reset']"
 ].join(", ");
 
-let currentTouchPreviewTarget = null;
 let currentSelectedStageCard = null;
-let touchPreviewClearTimer = null;
+let stageSelectClearTimer = null;
+let suppressNextConfirmedClickUntil = 0;
 
 function isPremiumTouchDevice() {
   return Boolean(window.matchMedia && window.matchMedia(PREMIUM_TOUCH_QUERY).matches);
 }
 
-function isMobileDrawerOpen() {
-  return Boolean(
-    window.matchMedia &&
-    window.matchMedia(MOBILE_DRAWER_QUERY).matches &&
-    document.body.classList.contains("note-menu-open")
-  );
+function mobileConfirm() {
+  return window.MathRidgeMobileConfirm || null;
 }
 
-function clearPremiumTouchSelection(options = {}) {
-  const { keepStage = false } = options;
-
-  if (currentTouchPreviewTarget) {
-    currentTouchPreviewTarget.classList.remove("is-touch-preview", "is-pressed");
-    currentTouchPreviewTarget.removeAttribute("data-touch-preview-active");
-  }
-
-  if (!keepStage && currentSelectedStageCard) {
+function clearStageSelection() {
+  if (currentSelectedStageCard) {
     currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
     currentSelectedStageCard.removeAttribute("data-stage-selected");
-    currentSelectedStageCard = null;
   }
-
-  currentTouchPreviewTarget = null;
-
-  if (touchPreviewClearTimer) {
-    window.clearTimeout(touchPreviewClearTimer);
-    touchPreviewClearTimer = null;
+  currentSelectedStageCard = null;
+  if (stageSelectClearTimer) {
+    window.clearTimeout(stageSelectClearTimer);
+    stageSelectClearTimer = null;
   }
 }
 
-function markPremiumTouchTarget(target, options = {}) {
-  const { asStage = false, armed = false, duration = 4200 } = options;
-  if (!target) return;
+function selectStageCard(card) {
+  if (!card) return;
 
-  if (currentTouchPreviewTarget && currentTouchPreviewTarget !== target && currentTouchPreviewTarget !== currentSelectedStageCard) {
-    currentTouchPreviewTarget.classList.remove("is-touch-preview", "is-pressed");
-    currentTouchPreviewTarget.removeAttribute("data-touch-preview-active");
+  mobileConfirm()?.clear?.();
+
+  if (currentSelectedStageCard && currentSelectedStageCard !== card) {
+    currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
+    currentSelectedStageCard.removeAttribute("data-stage-selected");
   }
 
-  currentTouchPreviewTarget = target;
-  target.classList.add("is-touch-preview", "is-pressed");
+  currentSelectedStageCard = card;
+  card.classList.add("is-stage-selected", "is-touch-preview", "is-pressed");
+  card.setAttribute("data-stage-selected", "true");
 
-  if (armed) {
-    target.setAttribute("data-touch-preview-active", "true");
+  if (stageSelectClearTimer) window.clearTimeout(stageSelectClearTimer);
+  stageSelectClearTimer = window.setTimeout(() => {
+    const keepSelected = document.activeElement && card.contains(document.activeElement);
+    if (!keepSelected) clearStageSelection();
+  }, 8000);
+}
+
+function isConfirmableIndexTarget(target) {
+  if (!target) return false;
+  if (target.disabled || target.hasAttribute("disabled") || target.getAttribute("aria-disabled") === "true") return false;
+  if (target.closest("#noteTopActions")) return false; // the shared shell owns the drawer.
+  if (target.closest("#ridgeModal") && target.dataset.mobileConfirm !== "modal-reset") return false;
+  if (target.classList.contains("locked")) return false; // locked Note/Play still opens its popup with one tap.
+  return true;
+}
+
+function requireIndexMobileConfirm(event, target, options = {}) {
+  if (!isPremiumTouchDevice() || !target || !isConfirmableIndexTarget(target)) return false;
+  const helper = mobileConfirm();
+  if (helper && typeof helper.require === "function") {
+    return helper.require(event, target, options);
   }
 
-  if (asStage && armed) {
-    if (currentSelectedStageCard && currentSelectedStageCard !== target) {
-      currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
-      currentSelectedStageCard.removeAttribute("data-stage-selected");
+  if (target.dataset.mobileConfirmReady === "true") {
+    target.classList.remove("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
+    target.removeAttribute("data-mobile-confirm-ready");
+    target.removeAttribute("data-touch-preview-active");
+    return false;
+  }
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  target.classList.add("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
+  target.setAttribute("data-mobile-confirm-ready", "true");
+  target.setAttribute("data-touch-preview-active", "true");
+  return true;
+}
+
+function disarmIndexConfirmTarget(target) {
+  mobileConfirm()?.clear?.(target);
+  target?.classList?.remove("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
+  target?.removeAttribute?.("data-mobile-confirm-ready");
+  target?.removeAttribute?.("data-touch-preview-active");
+}
+
+function activateConfirmedIndexTarget(target) {
+  if (!target || !isConfirmableIndexTarget(target)) return false;
+
+  const inlineAction = target.getAttribute("onclick") || "";
+  const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
+  const showCabinPanelMatch = inlineAction.match(/showCabinPanel\('([^']+)'\)/);
+
+  disarmIndexConfirmTarget(target);
+
+  if (modalActionMap.has(target)) {
+    modalActionMap.get(target)();
+    return true;
+  }
+
+  if (showSectionMatch) {
+    showSection(showSectionMatch[1]);
+    return true;
+  }
+
+  if (showCabinPanelMatch) {
+    showCabinPanel(showCabinPanelMatch[1], { scroll: true });
+    return true;
+  }
+
+  if (/toggleCertificateWall\(\)/.test(inlineAction)) {
+    toggleCertificateWall();
+    return true;
+  }
+
+  if (/confirmResetProgress\(\)/.test(inlineAction)) {
+    confirmResetProgress();
+    return true;
+  }
+
+  if (/chapterLinks/.test(inlineAction)) {
+    document.getElementById("chapterLinks")?.scrollIntoView({ behavior: "smooth" });
+    return true;
+  }
+
+  if (target.matches("#sendNoteButton")) {
+    target.form?.requestSubmit?.(target);
+    return true;
+  }
+
+  if (target.tagName === "A") {
+    const href = target.getAttribute("href");
+    if (href && href !== "#") {
+      window.location.href = target.href;
+      return true;
     }
-
-    currentSelectedStageCard = target;
-    target.classList.add("is-stage-selected");
-    target.setAttribute("data-stage-selected", "true");
   }
 
-  if (touchPreviewClearTimer) window.clearTimeout(touchPreviewClearTimer);
-  touchPreviewClearTimer = window.setTimeout(() => clearPremiumTouchSelection({ keepStage: asStage && armed }), duration);
+  return false;
 }
 
-function isDirectTouchGlowExcluded(target) {
-  return Boolean(target.closest(
-    ".hamburger-btn, .drawer-backdrop, .modal-card, #ridgeModal, form, input, textarea, select, option, [disabled], [aria-disabled='true']"
-  ));
+function handleStageMobileClick(event) {
+  if (!isPremiumTouchDevice()) return false;
+
+  const stageCard = event.target?.closest?.(".node-card.stage-tappable:not(.locked)");
+  if (!stageCard) return false;
+
+  const stageAction = event.target?.closest?.(".small-link");
+  const stageIsSelected = stageCard.dataset.stageSelected === "true";
+
+  if (!stageIsSelected) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    mobileConfirm()?.clear?.();
+    selectStageCard(stageCard);
+    return true;
+  }
+
+  if (!stageAction) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    selectStageCard(stageCard);
+    return true;
+  }
+
+  if (stageAction.classList.contains("locked")) {
+    return false;
+  }
+
+  const blocked = requireIndexMobileConfirm(event, stageAction, { duration: 6500, keepOthers: true });
+  if (!blocked) window.setTimeout(clearStageSelection, 220);
+  return blocked;
 }
 
-function getDirectTouchGlowTarget(eventTarget) {
-  if (!isPremiumTouchDevice()) return null;
-  const target = eventTarget?.closest?.(DIRECT_TOUCH_GLOW_SELECTOR);
-  if (!target || !document.body.contains(target)) return null;
-  if (isDirectTouchGlowExcluded(target)) return null;
-  return target;
+function handlePremiumMobileConfirmClick(event) {
+  if (!isPremiumTouchDevice()) return;
+
+  if (Date.now() < suppressNextConfirmedClickUntil) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    return;
+  }
+
+  if (handleStageMobileClick(event)) return;
+
+  const target = event.target?.closest?.(CONFIRMABLE_INDEX_SELECTOR);
+  if (!target || !document.body.contains(target)) return;
+
+  if (target.dataset.mobileConfirmReady === "true" && activateConfirmedIndexTarget(target)) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    return;
+  }
+
+  requireIndexMobileConfirm(event, target, { duration: 5600 });
 }
 
 function handlePremiumPointerDown(event) {
+  if (!isPremiumTouchDevice()) return;
+
+  const readyTarget = event.target?.closest?.(CONFIRMABLE_INDEX_SELECTOR);
+  if (readyTarget?.dataset?.mobileConfirmReady === "true" && activateConfirmedIndexTarget(readyTarget)) {
+    suppressNextConfirmedClickUntil = Date.now() + 450;
+    return;
+  }
+
   if (event.pointerType === "mouse") return;
-  if (!isPremiumTouchDevice()) return;
 
-  const stage = event.target?.closest?.(".node-card.stage-tappable:not(.locked)");
-  if (stage) {
-    markPremiumTouchTarget(stage, { asStage: true, armed: false, duration: 5200 });
-    return;
-  }
-
-  const drawerButton = event.target?.closest?.("#noteTopActions.open .pill-btn");
-  if (drawerButton && isMobileDrawerOpen()) {
-    markPremiumTouchTarget(drawerButton, { armed: false, duration: 5200 });
-    return;
-  }
-
-  const directTarget = getDirectTouchGlowTarget(event.target);
-  if (directTarget) markPremiumTouchTarget(directTarget, { armed: false, duration: 460 });
-}
-
-function handlePremiumTouchClick(event) {
-  if (!isPremiumTouchDevice()) return;
-
-  const stageAction = event.target?.closest?.(".node-card.stage-tappable:not(.locked) .small-link");
   const stageCard = event.target?.closest?.(".node-card.stage-tappable:not(.locked)");
-
   if (stageCard) {
-    const stageIsReady = stageCard.dataset.stageSelected === "true";
-
-    if (!stageIsReady) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      markPremiumTouchTarget(stageCard, { asStage: true, armed: true, duration: 5200 });
-      return;
-    }
-
-    if (!stageAction) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      markPremiumTouchTarget(stageCard, { asStage: true, armed: true, duration: 5200 });
-      return;
-    }
-
-    // Card is selected and the student tapped Note/Play: allow the normal handler/navigation.
-    window.setTimeout(() => clearPremiumTouchSelection(), 220);
+    stageCard.classList.add("is-pressed");
+    window.setTimeout(() => stageCard.classList.remove("is-pressed"), 280);
     return;
   }
 
-  const drawerButton = event.target?.closest?.("#noteTopActions.open .pill-btn");
-  if (drawerButton && isMobileDrawerOpen()) {
-    const ready = drawerButton.dataset.touchPreviewActive === "true";
-    if (!ready) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      markPremiumTouchTarget(drawerButton, { armed: true, duration: 5200 });
-      return;
-    }
-
-    window.setTimeout(() => clearPremiumTouchSelection(), 180);
+  const target = event.target?.closest?.(CONFIRMABLE_INDEX_SELECTOR);
+  if (target && isConfirmableIndexTarget(target)) {
+    target.classList.add("is-pressed");
+    window.setTimeout(() => target.classList.remove("is-pressed"), 280);
   }
 }
 
 function bindPremiumMobileSelection() {
   document.addEventListener("pointerdown", handlePremiumPointerDown, { passive: true });
-  document.addEventListener("click", handlePremiumTouchClick, true);
+  document.addEventListener("click", handlePremiumMobileConfirmClick, true);
 
   document.addEventListener("pointerdown", event => {
     if (!isPremiumTouchDevice()) return;
-    if (event.target.closest(".node-card.stage-tappable, #noteTopActions.open .pill-btn")) return;
-    if (!event.target.closest(".small-link, .jump-link, .hotspot, .room-spot, .certificate-frame, .pill-btn, .gold-btn, .danger-btn")) {
-      clearPremiumTouchSelection();
+    if (event.target.closest(".node-card.stage-tappable")) return;
+    if (!event.target.closest(".small-link, .jump-link, .hotspot, .room-spot, .cabin-tab, .reset-progress-btn, #sendNoteButton, #modalActions button")) {
+      clearStageSelection();
+      mobileConfirm()?.clear?.();
     }
   }, { passive: true });
 
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape") clearPremiumTouchSelection();
+    if (event.key === "Escape") {
+      clearStageSelection();
+      mobileConfirm()?.clear?.();
+    }
   });
 
-  window.addEventListener("resize", clearPremiumTouchSelection);
-  window.addEventListener("orientationchange", clearPremiumTouchSelection);
+  window.addEventListener("resize", clearStageSelection);
+  window.addEventListener("orientationchange", clearStageSelection);
 }
 
 document.addEventListener("keydown", event => {
@@ -860,12 +991,14 @@ document.addEventListener("DOMContentLoaded", () => {
   openInitialSectionFromURL();
   writeTrailStateSnapshot();
   bindPremiumMobileSelection();
+  window.addEventListener("resize", () => syncCabinPanelVisibility({ scroll: false }));
 });
 
 // Expose local methods for inline handlers and note/play pages that return to Index sections.
 window.handleStageImageFallback = handleStageImageFallback;
 window.showSection = showSection;
 window.showCabinPanel = showCabinPanel;
+window.toggleCertificateWall = toggleCertificateWall;
 window.closeModal = closeModal;
 window.showModal = showModal;
 window.sendMessage = sendMessage;

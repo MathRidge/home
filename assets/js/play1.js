@@ -783,24 +783,26 @@
 	}
 
 	function saveMathRidgeCertificate(certData) {
-		const saved = {
+		if (typeof shell().saveTrailProgress === "function") {
+			return shell().saveTrailProgress(Object.assign({ id: "1_1" }, certData));
+		}
+
+		const saved = Object.assign({
 			completed: true,
 			id: "1_1",
 			section: "1-1",
-			title: "Term Vision",
+			title: "Terms",
 			certificateTitle: "Build the Box",
-			playFile: "play1.html",
-			studentName: certData.studentName,
-			completedAt: certData.completedAt,
-			displayDate: certData.displayDate,
-			displayTime: certData.displayTime,
-			score: certData.score,
-			stage: certData.stage,
-			timeDisplay: certData.timeDisplay,
-			rank: certData.rank || null,
-			rankText: certData.rankText || ""
-		};
-		localStorage.setItem(CERT_KEY, JSON.stringify(saved));
+			playFile: "play1.html"
+		}, certData);
+
+		try {
+			localStorage.setItem("mathRidge_playComplete_1_1", "true");
+			localStorage.setItem("mathRidge_noteUnlocked_1_2", "true");
+			localStorage.setItem("mathRidge_stageUnlocked_1_2", "true");
+			localStorage.setItem(CERT_KEY, JSON.stringify(saved));
+		} catch (error) {}
+
 		return saved;
 	}
 
@@ -1140,8 +1142,8 @@
 		drawCenteredText(ctx, CERT_SIGNATURE, 700, 910, 780, 36);
 
 		const link = document.createElement("a");
-		link.download = "math-ridge-build-the-box-certificate.png";
-		link.href = canvas.toDataURL("image/png");
+		link.download = "math-ridge-build-the-box-certificate.webp";
+		link.href = canvas.toDataURL("image/webp", 0.92);
 		link.click();
 	}
 

@@ -60,56 +60,56 @@ body.play-page.play-1 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play1-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-1-1.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-2 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play2-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-1-2.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-3 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play3-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-1-3.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-4 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play4-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-1-4.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-5 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play5-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-2-1.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-6 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play6-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-2-2.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-7 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play7-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-2-3.webp") center / cover fixed no-repeat;
 }
 
 body.play-page.play-8 {
 	background:
 		radial-gradient(circle at 84% 18%, rgba(242,184,75,0.16), transparent 28%),
 		linear-gradient(180deg, rgba(7,18,32,0.22), rgba(7,18,32,0.68)),
-		url("../images/play-bg/play8-trail-bg.png") center / cover fixed no-repeat;
+		url("../images/stages/stage-2-4.webp") center / cover fixed no-repeat;
 }
 
 .hidden {

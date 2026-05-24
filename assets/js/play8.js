@@ -23,8 +23,6 @@ const PLAY_SECTION = "2-4";
 const PLAY_TITLE = "Exponent Shelf Packing";
 const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_4";
 const PLAY_CERT_KEY = "mathRidge_cert_2_4";
-const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_5";
-const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_2_5";
 const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
 
 function byId(id){ return document.getElementById(id); }
@@ -34,8 +32,6 @@ function getRaceMs(){ return shell()?.getTotalRaceMs?.() || 0; }
 function completePlayProgress(){
   try{
     localStorage.setItem(PLAY_COMPLETE_KEY, "true");
-    localStorage.setItem(NEXT_NOTE_UNLOCK_KEY, "true");
-    localStorage.setItem(NEXT_STAGE_UNLOCK_KEY, "true");
   }catch(error){}
 }
 
@@ -1467,21 +1463,35 @@ async function createCertificateFromName(){
   document.getElementById("certRank").textContent = rankMessage;
   document.getElementById("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime}`;
 
-  try{
-    localStorage.setItem(PLAY_CERT_KEY, JSON.stringify({
-      completed:true,
-      id:PLAY_ID,
-      section:PLAY_SECTION,
-      title:PLAY_TITLE,
-      studentName:name,
-      completedAt:new Date().toISOString(),
-      displayDate:formattedDate,
-      displayTime:formattedTime,
-      raceTime:raceTimeText,
-      rankText:rankMessage,
+  if(typeof shell()?.saveTrailProgress === "function"){
+    shell().saveTrailProgress({
+      id: PLAY_ID,
+      studentName: name,
+      displayDate: formattedDate,
+      displayTime: formattedTime,
+      timeDisplay: raceTimeText,
+      rank: latestRaceRank,
+      rankText: rankMessage,
+      score: turtleScore,
       stage
-    }));
-  }catch(error){}
+    });
+  }else{
+    try{
+      localStorage.setItem(PLAY_CERT_KEY, JSON.stringify({
+        completed:true,
+        id:PLAY_ID,
+        section:PLAY_SECTION,
+        title:PLAY_TITLE,
+        studentName:name,
+        completedAt:new Date().toISOString(),
+        displayDate:formattedDate,
+        displayTime:formattedTime,
+        raceTime:raceTimeText,
+        rankText:rankMessage,
+        stage
+      }));
+    }catch(error){}
+  }
 
   if(button){
     button.disabled = false;
@@ -1544,7 +1554,7 @@ function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
 function downloadCanvas(canvas, filename){
   const link = document.createElement("a");
   link.download = filename;
-  link.href = canvas.toDataURL("image/png");
+  link.href = canvas.toDataURL("image/webp", 0.92);
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -1630,9 +1640,9 @@ function saveCertificateImage(){
   ctx.fillText(CERT_SIGNATURE, canvas.width/2, 955);
 
   try {
-    downloadCanvas(canvas, "math-ridge-play8-certificate.png");
+    downloadCanvas(canvas, "math-ridge-play8-certificate.webp");
   } catch(err) {
-    const imageUrl = canvas.toDataURL("image/png");
+    const imageUrl = canvas.toDataURL("image/webp", 0.92);
     const win = window.open("");
     if(win){
       win.document.write(`<title>Math Ridge Certificate</title><img src="${imageUrl}" style="max-width:100%;">`);

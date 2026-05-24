@@ -3,13 +3,13 @@
 (function () {
 	"use strict";
 
-	const PLAY_ID = "1_6";
-	const PLAY_SECTION = "1-6";
+	const PLAY_ID = "2_2";
+	const PLAY_SECTION = "2-2";
 	const PLAY_TITLE = "Prime Factor Trees";
-	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_6";
-	const PLAY_CERT_KEY = "mathRidge_cert_1_6";
-	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_1_7";
-	const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_1_7";
+	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_2";
+	const PLAY_CERT_KEY = "mathRidge_cert_2_2";
+	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_3";
+	const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_2_3";
 	const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
 	const TOTAL_STEPS = 3;
 	const PRIMES = [2, 3, 5, 7];
@@ -820,6 +820,20 @@
 	}
 
 	function savePlayCertificateProgress({ studentName, formattedDate, formattedTime, raceTimeText, rankMessage }) {
+		if (typeof shell()?.saveTrailProgress === "function") {
+			return shell().saveTrailProgress({
+				id: PLAY_ID,
+				studentName,
+				displayDate: formattedDate,
+				displayTime: formattedTime,
+				timeDisplay: raceTimeText,
+				rank: latestRaceRank,
+				rankText: rankMessage,
+				score: turtleScore,
+				stage
+			});
+		}
+
 		try {
 			localStorage.setItem(PLAY_CERT_KEY, JSON.stringify({
 				completed: true,
@@ -1013,8 +1027,8 @@
 		ctx.fillText(CERT_SIGNATURE, 700, 905);
 
 		const link = document.createElement("a");
-		link.download = "math-ridge-play-1-6-certificate.png";
-		link.href = canvas.toDataURL("image/png");
+		link.download = "math-ridge-play-1-6-certificate.webp";
+		link.href = canvas.toDataURL("image/webp", 0.92);
 		link.click();
 	}
 

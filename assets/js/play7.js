@@ -810,6 +810,20 @@
 	}
 
 	function savePlayCertificateProgress({ studentName, formattedDate, formattedTime, raceTimeText, rankMessage }) {
+		if (typeof shell()?.saveTrailProgress === "function") {
+			return shell().saveTrailProgress({
+				id: PLAY_ID,
+				studentName,
+				displayDate: formattedDate,
+				displayTime: formattedTime,
+				timeDisplay: raceTimeText,
+				rank: latestRaceRank,
+				rankText: rankMessage,
+				score: turtleScore,
+				stage
+			});
+		}
+
 		try {
 			localStorage.setItem(PLAY_CERT_KEY, JSON.stringify({
 				completed: true,
@@ -962,8 +976,8 @@
 		ctx.fillText(CERT_SIGNATURE, 750, 925);
 
 		const link = document.createElement("a");
-		link.download = "math-ridge-play-2-3-certificate.png";
-		link.href = canvas.toDataURL("image/png");
+		link.download = "math-ridge-play-2-3-certificate.webp";
+		link.href = canvas.toDataURL("image/webp", 0.92);
 		link.click();
 	}
 

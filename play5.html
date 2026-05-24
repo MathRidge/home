@@ -3,15 +3,25 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Math Ridge | Play 1-5 Fraction Reduction</title>
+	<title>Math Ridge | Play 2-1 Fraction Reduction</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="assets/css/mathridge-play.css" />
 	<link rel="stylesheet" href="assets/css/play5.css" />
+
+	<script>
+		window.MathRidgePlayConfig = {
+			playNumber: 5,
+			playId: "2_1",
+			gameKey: "play5",
+			stageLabel: "2-1",
+			recordWorkerBase: "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/"
+		};
+	</script>
 </head>
 
-<body class="play-page play-5" data-play-id="1_5">
+<body class="play-page play-5" data-play-id="2_1">
 	<div class="confetti-layer" id="confettiLayer"></div>
 
 	<div class="achievement-popup" id="namePopup">
@@ -44,10 +54,10 @@
 				<div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
 			</div>
 
-			<div class="unlock-note">✅ 1-6 is unlocked! Continue to the next trail when you are ready.</div>
+			<div class="unlock-note">✅ 2-2 is unlocked! Continue to the next trail when you are ready.</div>
 			<div class="trail-complete-actions">
 				<button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
-				<a class="trail-button primary-action" href="note6.html">Continue to 1-6 Note</a>
+				<a class="trail-button primary-action" href="note6.html">Continue to 2-2 Note</a>
 				<a class="trail-button secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
 				<button class="secondary-action" onclick="closeCertificatePopup()">Close</button>
 			</div>
@@ -57,7 +67,7 @@
 	<div class="achievement-popup" id="ladderPopup">
 		<div class="ladder-card">
 			<h2>🐢 Trail Ladder</h2>
-			<p class="proof-note">Your current climb record and the Play 1-5 world time ladder.</p>
+			<p class="proof-note">Your current climb record and the Play 2-1 world time ladder.</p>
 			<div class="ladder-run-box" id="ladderRunBox"></div>
 			<h3>🌎 World Time Ladder</h3>
 			<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
@@ -89,7 +99,7 @@
 
 		<div class="climb-gate" id="climbStartGate">
 			<div class="climb-cover-card">
-				<div class="gate-kicker">Math Ridge Trail 1-5</div>
+				<div class="gate-kicker">Math Ridge Trail 2-1</div>
 				<h3>Fraction Reduction</h3>
 				<p>Choose a shared group for the top and bottom shelves, rewrite both numbers, drop the matching group, and repeat until the fraction is fully reduced. Start when you are ready — the climb timer begins after you press the button.</p>
 				<button class="primary-action start-climb-btn" onclick="startClimbFromGate()">START the Climb</button>
@@ -166,7 +176,7 @@
 		</div>
 
 		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
-		<div class="game-footer">Math Ridge | Play 1-5 Fraction Reduction</div>
+		<div class="game-footer">Math Ridge | Play 2-1 Fraction Reduction</div>
 	</div>
 
 	<script src="assets/js/mathridge-play.js" defer></script>

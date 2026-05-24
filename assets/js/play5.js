@@ -3,13 +3,13 @@
 (function () {
 	"use strict";
 
-	const PLAY_ID = "1_5";
-	const PLAY_SECTION = "1-5";
+	const PLAY_ID = "2_1";
+	const PLAY_SECTION = "2-1";
 	const PLAY_TITLE = "Fraction Reduction";
-	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_5";
-	const PLAY_CERT_KEY = "mathRidge_cert_1_5";
-	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_1_6";
-	const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_1_6";
+	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_1";
+	const PLAY_CERT_KEY = "mathRidge_cert_2_1";
+	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_2";
+	const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_2_2";
 	const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
 	const TOTAL_STEPS = 12;
 	const GROUPS = [2, 3, 5];
@@ -875,6 +875,20 @@
 	}
 
 	function savePlayCertificateProgress({ studentName, formattedDate, formattedTime, raceTimeText, rankMessage }) {
+		if (typeof shell()?.saveTrailProgress === "function") {
+			return shell().saveTrailProgress({
+				id: PLAY_ID,
+				studentName,
+				displayDate: formattedDate,
+				displayTime: formattedTime,
+				timeDisplay: raceTimeText,
+				rank: latestRaceRank,
+				rankText: rankMessage,
+				score: turtleScore,
+				stage
+			});
+		}
+
 		const certData = {
 			completed: true,
 			id: PLAY_ID,
@@ -1084,8 +1098,8 @@
 		ctx.fillText(CERT_SIGNATURE, 700, 890);
 
 		const link = document.createElement("a");
-		link.download = "math-ridge-play-1-5-certificate.png";
-		link.href = canvas.toDataURL("image/png");
+		link.download = "math-ridge-play-1-5-certificate.webp";
+		link.href = canvas.toDataURL("image/webp", 0.92);
 		link.click();
 	}
 

@@ -21,6 +21,17 @@
 	const config = Object.assign({}, defaultConfig, window.MathRidgePlayConfig || {});
 	window.MathRidgePlayConfig = config;
 
+	const progressMap = {
+		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Build the Box", playFile: "play1.html", nextId: "1_2" },
+		"1_2": { section: "1-2", title: "Team Terms", certificateTitle: "Positive Negative Showdown", playFile: "play2.html", nextId: "1_3" },
+		"1_3": { section: "1-3", title: "Sign Simplify", certificateTitle: "Sign Fixer Challenge", playFile: "play3.html", nextId: "1_4" },
+		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Chunking Repeated Values", playFile: "play4.html", nextId: "2_1" },
+		"2_1": { section: "2-1", title: "Fraction Shelves", certificateTitle: "Fraction Reduction", playFile: "play5.html", nextId: "2_2" },
+		"2_2": { section: "2-2", title: "Prime Pieces", certificateTitle: "Prime Factor Trees", playFile: "play6.html", nextId: "2_3" },
+		"2_3": { section: "2-3", title: "Fraction Products", certificateTitle: "Fraction Multiplication and Division with Factor Trees", playFile: "play7.html", nextId: "2_4" },
+		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponent Shelf Packing", playFile: "play8.html", nextId: "" }
+	};
+
 	let totalRaceMs = 0;
 	let climbStartMs = null;
 	let timerInterval = null;
@@ -331,6 +342,69 @@
 		}
 	}
 
+	function progressKey(kind, id = config.playId) {
+		return `mathRidge_${kind}_${id}`;
+	}
+
+	function getProgressMeta(id = config.playId) {
+		const fallback = {
+			section: config.stageLabel || id.replace("_", "-"),
+			title: config.stageLabel || "Math Ridge Trail",
+			certificateTitle: config.stageLabel || "Math Ridge Trail",
+			playFile: `${config.gameKey || "play"}.html`,
+			nextId: ""
+		};
+
+		return Object.assign({}, fallback, progressMap[id] || {});
+	}
+
+	function saveTrailProgress(data = {}) {
+		const id = data.id || config.playId;
+		const meta = getProgressMeta(id);
+		const now = data.completedAt || new Date().toISOString();
+		const timeText = data.timeDisplay || data.raceTimeText || data.raceTime || formatRaceTime(getTotalRaceMs());
+		const certData = {
+			completed: true,
+			id,
+			section: data.section || meta.section,
+			title: data.title || meta.title,
+			certificateTitle: data.certificateTitle || meta.certificateTitle,
+			playFile: data.playFile || meta.playFile,
+			studentName: data.studentName || data.name || "Math Ridge Champion",
+			completedAt: now,
+			displayDate: data.displayDate || data.formattedDate || "",
+			displayTime: data.displayTime || data.formattedTime || "",
+			score: data.score,
+			stage: data.stage,
+			timeDisplay: timeText,
+			raceTime: timeText,
+			rank: data.rank || null,
+			rankText: data.rankText || data.rankMessage || ""
+		};
+
+		try {
+			localStorage.setItem(progressKey("playComplete", id), "true");
+			localStorage.setItem(progressKey("cert", id), JSON.stringify(certData));
+
+			if (meta.nextId) {
+				localStorage.setItem(progressKey("noteUnlocked", meta.nextId), "true");
+				localStorage.setItem(progressKey("stageUnlocked", meta.nextId), "true");
+			}
+		} catch (error) {
+			// Local storage can be blocked in private or embedded previews.
+		}
+
+		return certData;
+	}
+
+	function readTrailCertificate(id = config.playId) {
+		try {
+			return JSON.parse(localStorage.getItem(progressKey("cert", id)));
+		} catch (error) {
+			return null;
+		}
+	}
+
 	function getProgressThemeNameByScore(score) {
 		score = Number(score || 0);
 		if (score >= 7) return "purple";
@@ -421,6 +495,9 @@
 		closeLadderPopup,
 		submitWorldRecord,
 		rememberMountainTrailReturn,
+		getProgressMeta,
+		saveTrailProgress,
+		readTrailCertificate,
 		getProgressThemeNameByScore,
 		applyProgressThemeByScore,
 		updateShelf

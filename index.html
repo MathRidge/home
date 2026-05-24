@@ -18,7 +18,7 @@
   <main class="app-shell" id="appShell">
     <nav class="topbar" aria-label="Math Ridge main navigation">
       <a class="brand" href="#home" onclick="showSection('home'); return false;" aria-label="Math Ridge Home">
-        <img class="brand-logo" src="assets/images/brand/math-ridge-logo.png" alt="Math Ridge logo" onerror="this.onerror=null; this.src='math-ridge-logo.png';" />
+        <img class="brand-logo" src="assets/images/logo/math-ridge-logo.webp" alt="Math Ridge logo" />
         <div class="brand-text">
           <strong>Math Ridge</strong>
           <span>Climb Higher. Achieve More.</span>
@@ -52,6 +52,7 @@
             <button class="gold-btn" type="button" onclick="showSection('quest')">Start Trail</button>
             <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
             <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+            <p class="mobile-double-tap-note">Ridge controls use two taps: first to arm, second to enter.</p>
           </div>
         </div>
 
@@ -68,7 +69,7 @@
       </div>
 
       <div class="home-quote" aria-label="Math Ridge quote">
-        <img class="home-quote-logo" src="assets/images/brand/logold.svg" alt="Math Ridge logo" onerror="this.onerror=null; this.src='logold.svg';" />
+        <img class="home-quote-logo" src="assets/images/logo/logold.svg" alt="Math Ridge logo" />
         <blockquote>“The best view comes after the hardest climb.”</blockquote>
         <div class="ridge-divider"><span>M A T H&nbsp;&nbsp;R I D G E</span></div>
       </div>
@@ -123,7 +124,7 @@
         <div class="escape-spots">
           <button class="room-spot" type="button" onclick="showSection('quick')"><strong>Menu</strong><span>Open direct links to every Note and Play.</span></button>
           <button class="room-spot" type="button" onclick="showSection('quest')"><strong>Trail</strong><span>Look outside and continue the guided mountain path.</span></button>
-          <button class="room-spot" type="button" onclick="showCabinPanel('certificates')"><strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span></button>
+          <button class="room-spot" type="button" onclick="toggleCertificateWall()"><strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span></button>
           <button class="room-spot" type="button" onclick="showSection('message')"><strong>Message</strong><span>Leave a question, suggestion, thank-you note, or testimonial.</span></button>
         </div>
 
@@ -169,7 +170,6 @@
           <div class="message-copy">
             <h3>Your note can shape the next trail.</h3>
             <p>Math Ridge grows through real student questions, parent stories, and teacher feedback. If something helped you, confused you, or gave you an idea for a better climb, this is the place to share it.</p>
-            <p class="footnote">Messages send through the Math Ridge contact form and confirm with a tone that matches the message type.</p>
           </div>
 
           <form id="contactForm" class="message-form" action="https://api.web3forms.com/submit" method="POST" onsubmit="sendMessage(event)">

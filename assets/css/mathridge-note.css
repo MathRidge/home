@@ -1297,16 +1297,14 @@ h1 {
 /* === Math Ridge Notes Global Premium Background + Index Blend Patch ===
    Add this to shared mathridge-note.css so every note page can share the
    same calm study-room atmosphere without editing note1.css, note2.css, etc.
-   Expected art path: assets/images/notes/note-study-room-bg.webp
+   Expected art path: assets/images/backgrounds/desktop/study-cabin-desktop.webp
 */
 body[data-note-id] {
   background:
     radial-gradient(circle at 76% 14%, rgba(242, 184, 75, 0.20), transparent 34%),
     radial-gradient(circle at 16% 86%, rgba(140, 201, 255, 0.10), transparent 34%),
     linear-gradient(135deg, rgba(16, 32, 51, 0.88), rgba(16, 32, 51, 0.50)),
-    url("../images/notes/note-study-room-bg.webp") center / cover no-repeat,
-    url("../images/notes/note-study-room-bg.png") center / cover no-repeat,
-    url("../../note-study-room-bg.webp") center / cover no-repeat,
+    url("../images/backgrounds/desktop/study-cabin-desktop.webp") center / cover no-repeat,
     var(--ridge-navy);
   background-attachment: fixed;
 }
@@ -1462,8 +1460,7 @@ body[data-note-id] {
   background:
     radial-gradient(circle at 76% 16%, rgba(242, 184, 75, 0.22), transparent 34%),
     linear-gradient(135deg, rgba(16, 32, 51, 0.88), rgba(16, 32, 51, 0.50)),
-    url("../images/notes/note-study-room-bg.webp") center / cover no-repeat,
-    url("../../note-study-room-bg.webp") center / cover no-repeat,
+    url("../images/backgrounds/desktop/study-cabin-desktop.webp") center / cover no-repeat,
     var(--ridge-navy);
   background-attachment: fixed;
 }
@@ -1679,5 +1676,19 @@ body[data-note-id] .footer-rule {
   body[data-note-id] .prime-piece-cell,
   body[data-note-id] .signed-size-input {
     transition: none !important;
+  }
+}
+
+
+/* WebP-only note background mobile override. */
+@media (max-width: 820px) {
+  body[data-note-id] {
+    background:
+      radial-gradient(circle at 76% 14%, rgba(242, 184, 75, 0.18), transparent 34%),
+      radial-gradient(circle at 16% 86%, rgba(140, 201, 255, 0.08), transparent 34%),
+      linear-gradient(135deg, rgba(16, 32, 51, 0.90), rgba(16, 32, 51, 0.56)),
+      url("../images/backgrounds/mobile/study-cabin-mobile.webp") center / cover no-repeat,
+      var(--ridge-navy) !important;
+    background-attachment: scroll !important;
   }
 }
