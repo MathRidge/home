@@ -20,7 +20,7 @@ let completedSteps = new Set();
 
 const PLAY_ID = "2_4";
 const PLAY_SECTION = "2-4";
-const PLAY_TITLE = "Exponent Shelf Packing";
+const PLAY_TITLE = "Exponential Pattern Recognition";
 const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_4";
 const PLAY_CERT_KEY = "mathRidge_cert_2_4";
 const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
@@ -1599,7 +1599,7 @@ function saveCertificateImage(){
 
   ctx.fillStyle = "#b87900";
   ctx.font = "bold 42px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("Exponent Shelf Packing", canvas.width/2, 360);
+  ctx.fillText("Exponential Pattern Recognition", canvas.width/2, 360);
 
   ctx.fillStyle = "#24304f";
   ctx.font = "30px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";

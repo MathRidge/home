@@ -792,7 +792,7 @@
 			id: "1_1",
 			section: "1-1",
 			title: "Terms",
-			certificateTitle: "Build the Box",
+			certificateTitle: "Signed Term Structure",
 			playFile: "play1.html"
 		}, certData);
 
@@ -1092,7 +1092,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Build the Box", 700, 360);
+		ctx.fillText("Signed Term Structure", 700, 360);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";

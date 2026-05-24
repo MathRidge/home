@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "1_3";
 	const PLAY_SECTION = "1-3";
-	const PLAY_TITLE = "Sign Fixer Challenge";
+	const PLAY_TITLE = "Sign Simplification Fluency";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_3";
 	const PLAY_CERT_KEY = "mathRidge_cert_1_3";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_1_4";
@@ -995,7 +995,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Sign Fixer Challenge", 700, 350);
+		ctx.fillText("Sign Simplification Fluency", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";

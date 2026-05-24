@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "2_2";
 	const PLAY_SECTION = "2-2";
-	const PLAY_TITLE = "Prime Factor Trees";
+	const PLAY_TITLE = "Prime Factorization Fluency";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_2";
 	const PLAY_CERT_KEY = "mathRidge_cert_2_2";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_3";
@@ -986,7 +986,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Prime Factor Trees", 700, 350);
+		ctx.fillText("Prime Factorization Fluency", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";

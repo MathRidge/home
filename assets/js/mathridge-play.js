@@ -22,14 +22,14 @@
 	window.MathRidgePlayConfig = config;
 
 	const progressMap = {
-		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Build the Box", playFile: "play1.html", nextId: "1_2" },
-		"1_2": { section: "1-2", title: "Team Terms", certificateTitle: "Positive Negative Showdown", playFile: "play2.html", nextId: "1_3" },
-		"1_3": { section: "1-3", title: "Sign Simplify", certificateTitle: "Sign Fixer Challenge", playFile: "play3.html", nextId: "1_4" },
-		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Chunking Repeated Values", playFile: "play4.html", nextId: "2_1" },
-		"2_1": { section: "2-1", title: "Fraction Shelves", certificateTitle: "Fraction Reduction", playFile: "play5.html", nextId: "2_2" },
-		"2_2": { section: "2-2", title: "Prime Pieces", certificateTitle: "Prime Factor Trees", playFile: "play6.html", nextId: "2_3" },
-		"2_3": { section: "2-3", title: "Fraction Products", certificateTitle: "Fraction Multiplication and Division with Factor Trees", playFile: "play7.html", nextId: "2_4" },
-		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponent Shelf Packing", playFile: "play8.html", nextId: "" }
+		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Signed Term Structure", playFile: "play1.html", nextId: "1_2" },
+		"1_2": { section: "1-2", title: "Team Terms", certificateTitle: "Positive and Negative Term Balance", playFile: "play2.html", nextId: "1_3" },
+		"1_3": { section: "1-3", title: "Sign Simplify", certificateTitle: "Sign Simplification Fluency", playFile: "play3.html", nextId: "1_4" },
+		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Distribution and Grouping Foundations", playFile: "play4.html", nextId: "2_1" },
+		"2_1": { section: "2-1", title: "Fraction Shelves", certificateTitle: "Fraction Equivalence and Reduction", playFile: "play5.html", nextId: "2_2" },
+		"2_2": { section: "2-2", title: "Prime Pieces", certificateTitle: "Prime Factorization Fluency", playFile: "play6.html", nextId: "2_3" },
+		"2_3": { section: "2-3", title: "Fraction Products", certificateTitle: "Fraction Product Structure", playFile: "play7.html", nextId: "2_4" },
+		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponential Pattern Recognition", playFile: "play8.html", nextId: "" }
 	};
 
 	let totalRaceMs = 0;

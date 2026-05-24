@@ -1326,7 +1326,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 42px Georgia";
-		ctx.fillText("Positive Negative Showdown", 600, 315);
+		ctx.fillText("Positive and Negative Term Balance", 600, 315);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
