@@ -681,7 +681,8 @@ const DIRECT_TOUCH_GLOW_SELECTOR = [
   ".result-card-actions .pill-btn",
   ".result-card-actions .gold-btn",
   ".reset-progress-btn",
-  ".hotspot"
+  ".hotspot",
+  ".jump-link"
 ].join(", ");
 
 let currentTouchPreviewTarget = null;
