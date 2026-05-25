@@ -291,9 +291,7 @@
 	}
 
 	function scrollToCenter(id) {
-		requestAnimationFrame(() => requestAnimationFrame(() => {
-			[0, 120, 260, 460].forEach(delay => scrollToPremiumElement(id, 12, delay));
-		}));
+		requestAnimationFrame(() => scrollToPremiumElement(id, 12, 80));
 	}
 
 	function formatSigned(value) {
@@ -839,7 +837,7 @@
 			byId("finalBuilt").innerHTML = "";
 
 			if (feedback) {
-				feedback.textContent = `${chosen.sign}${chosen.size} leads. Its sign moves outside. Now tap the other total.`;
+				feedback.textContent = `${chosen.sign}${chosen.size} leads. Its sign moves outside. Now place the other term next; it will subtract inside the ring.`;
 				feedback.className = "feedback good-text";
 			}
 
@@ -864,7 +862,7 @@
 
 			byId("secondSize").textContent = ringData.second.size;
 			if (feedback) {
-				feedback.textContent = "Great. Now solve the ring.";
+				feedback.textContent = "Great. Now simplify the term: choose + or -, then fill in the size.";
 				feedback.className = "feedback good-text";
 			}
 
@@ -887,7 +885,7 @@
 
 		finalBuilt.innerHTML = `
 			<div id="step6RingSolve" class="final-answer-builder ring-solve-step">
-				<h2>Step 6: Solve the Ring Size</h2>
+				<h2>Step 6: Simplify the Term</h2>
 
 				<div class="build-ring step6-ring-copy" aria-label="ring expression">
 					<span>${ringData.first.sign}</span>
@@ -898,7 +896,7 @@
 					</span>
 				</div>
 
-				<p class="step-instruction">Choose the final sign:</p>
+				<p class="step-instruction">Choose the final sign, then type the size.</p>
 
 				<div class="final-sign-choice" role="group" aria-label="choose final answer sign">
 					<button type="button" id="chooseFinalPositive" class="sign-choice-card positive-choice" onclick="selectFinalAnswerSign('+')">+</button>
@@ -1004,13 +1002,25 @@
 		const correctSign = ringData.first.sign;
 
 		if (!finalAnswerSign) {
-			markMistake();
 			if (ringFeedback) {
-				ringFeedback.textContent = "Not yet. Choose the final sign first.";
-				ringFeedback.className = "feedback bad-text";
+				ringFeedback.textContent = "Warning! Be sure to choose a sign.";
+				ringFeedback.className = "feedback warning-text";
 			}
 			if (hintBox) {
-				hintBox.innerHTML = '<div class="hint-text">The bigger total decides whether the final answer is positive or negative.</div>';
+				hintBox.innerHTML = '<div class="hint-text">Choose + or - first. This reminder does not remove progress.</div>';
+				updateFocusHintMode();
+			}
+			return;
+		}
+
+		if (!input.value) {
+			input.style.borderColor = "#f2b84b";
+			if (ringFeedback) {
+				ringFeedback.textContent = "Warning! Make sure you fill in the size.";
+				ringFeedback.className = "feedback warning-text";
+			}
+			if (hintBox) {
+				hintBox.innerHTML = '<div class="hint-text">Type the size after choosing the sign. This reminder does not remove progress.</div>';
 				updateFocusHintMode();
 			}
 			return;
@@ -1326,7 +1336,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 42px Georgia";
-		ctx.fillText("Positive Negative Showdown", 600, 315);
+		ctx.fillText("Positive and Negative Term Balance", 600, 315);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";

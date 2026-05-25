@@ -40,6 +40,9 @@
 		stopClimbTimer() {},
 		startNextClimbTimer() {},
 		resetRaceTimer() {},
+		reviveProgressTurtle() {
+			document.querySelector(".progress-turtle")?.classList.remove("turtle-fade-away");
+		},
 		scrollToPremiumElement(id) {
 			document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
 		},
@@ -52,6 +55,9 @@
 			if (track) {
 				track.style.setProperty("--progress", `${options.progressPercent || 0}%`);
 				track.innerHTML = '<div class="progress-fill"></div><div class="progress-turtle">🐢</div>';
+				if (options.reviveTurtle || options.resetTurtle) {
+					track.querySelector(".progress-turtle")?.classList.remove("turtle-fade-away");
+				}
 			}
 			if (options.message) {
 				const message = document.getElementById("challengeMessage");
@@ -191,12 +197,14 @@
 		return `Climb ${getRequiredProgressSteps()} clean steps to score.`;
 	}
 
-	function updateTurtleBoard(message = "") {
+	function updateTurtleBoard(message = "", options = {}) {
 		shell().updateShelf({
 			score: turtleScore,
 			stage,
 			progressPercent: getProgressPercent(),
-			message: message || progressMessage()
+			message: message || progressMessage(),
+			reviveTurtle: Boolean(options.reviveTurtle),
+			resetTurtle: Boolean(options.resetTurtle)
 		});
 
 		if (turtleScore >= 10 && !achievementShown) {
@@ -340,13 +348,13 @@
 		if (!outsideTitle || !operationTitle) return;
 
 		if (turtleScore <= 3) {
-			outsideTitle.textContent = "Outside sign: tap the sign in front of the bigger number.";
-			operationTitle.textContent = "Inside operation: click + if same sign. Otherwise choose −.";
+			outsideTitle.textContent = "Tap the sign carried by the bigger size. That sign goes outside.";
+			operationTitle.textContent = "Same sign means add. Different sign means subtract.";
 			return;
 		}
 
-		outsideTitle.textContent = "Outside sign: tap one.";
-		operationTitle.textContent = "Inside operation: click one.";
+		outsideTitle.textContent = "Bigger size sign goes outside.";
+		operationTitle.textContent = "Choose same or different.";
 	}
 
 	function renderProblem() {
@@ -415,7 +423,7 @@
 		setText("finalPreviewSize", "__");
 		byId("finalAnswerPreview")?.classList.remove("filled");
 		setText("answerFeedback", "");
-		setText("builtBoxText", "");
+		setBuiltBoxText("");
 
 		const feedback = byId("feedback");
 		if (feedback) {
@@ -515,19 +523,20 @@
 		byId("step1")?.classList.remove("hidden");
 		shell().startNextClimbTimer();
 
+		shell().reviveProgressTurtle?.();
 		const message = `Stage ${stage}: climb ${getRequiredProgressSteps()} clean steps to score.`;
 		const feedback = byId("feedback");
 		if (feedback) {
 			feedback.textContent = "New climb started. Begin with Step 1.";
 			feedback.style.color = "#248a2f";
 		}
-		updateTurtleBoard(message);
+		updateTurtleBoard(message, { reviveTurtle: true });
 		scrollToActiveClimbStart();
 	}
 
 	function chooseSignType(type, button) {
 		if (stageStarted) shell().startClimbTimer();
-		document.querySelectorAll("#step1 .choice-btn").forEach(btn => btn.classList.remove("selected"));
+		document.querySelectorAll(".op-btn").forEach(btn => btn.classList.remove("selected"));
 
 		if (type !== expected.sameOrDifferent) {
 			markWrong(
@@ -539,21 +548,12 @@
 
 		button.classList.add("selected");
 		chosenSignType = type;
-		markCorrectStep("step1-sign-type");
-		byId("step2")?.classList.remove("hidden");
-		scrollToCenter("step2");
-
-		const feedback = byId("feedback");
-		if (feedback) {
-			feedback.textContent = type === "same"
-				? "Correct. Same signs add inside the box."
-				: "Correct. Different signs subtract inside the box.";
-		}
+		pickOperation(type === "same" ? "+" : "-", button);
 	}
 
 	function chooseBiggerSize(size, button) {
 		if (stageStarted) shell().startClimbTimer();
-		document.querySelectorAll("#step2 .choice-btn").forEach(btn => btn.classList.remove("selected"));
+		document.querySelectorAll("#step1 .choice-btn").forEach(btn => btn.classList.remove("selected"));
 
 		if (size !== expected.biggerSize) {
 			markWrong(button, `${size} is smaller. Pick the bigger size first.`);
@@ -562,34 +562,87 @@
 
 		button.classList.add("selected");
 		chosenBiggerSize = size;
-		markCorrectStep("step2-bigger-size");
+		const firstInput = byId("firstNumInput");
+		if (firstInput) firstInput.value = expected.biggerSize;
+		markCorrectStep("step1-bigger-size");
+		byId("step2")?.classList.remove("hidden");
+		scrollToCenter("step2");
+
+		const feedback = byId("feedback");
+		if (feedback) feedback.textContent = "Good. Now choose the sign carried by that bigger size.";
+	}
+
+	function displaySign(sign) {
+		return sign === "+" ? "+" : "-";
+	}
+
+	function setBuiltBoxText(value) {
+		setText("builtBoxText", value);
+		setText("builtBoxTextAnswer", value);
+	}
+
+	function builtBoxLine() {
+		return `You built: ${displaySign(expected.outsideSign)}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "-"} ${expected.smallerSize})`;
+	}
+
+	function chooseOutsideSign(sign, button) {
+		if (stageStarted) shell().startClimbTimer();
+		document.querySelectorAll("#step2 .sign-btn").forEach(btn => btn.classList.remove("selected"));
+
+		if (sign !== expected.outsideSign) {
+			markWrong(button, `Look at the bigger size. Its sign is ${displaySign(expected.outsideSign)}.`);
+			return;
+		}
+
+		button.classList.add("selected");
+		chosenOutsideSign = sign;
+		setText("outsideSignDisplay", displaySign(sign));
+		byId("outsideSignDisplay")?.classList.add("filled");
+		markCorrectStep("step2-outside-sign");
 		byId("builder")?.classList.remove("hidden");
 		scrollToCenter("builder");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Good. Now build: sign outside, bigger first, smaller second.";
+		if (feedback) feedback.textContent = "Correct. The bigger size sign goes outside. Now choose same-sign add or different-sign subtract.";
 	}
 
 	function pickOutsideSign(sign, button) {
-		if (stageStarted) shell().startClimbTimer();
-		document.querySelectorAll(".sign-btn").forEach(btn => btn.classList.remove("selected"));
-		button.classList.add("selected");
-		chosenOutsideSign = sign;
-		setText("outsideSignDisplay", sign === "+" ? "+" : "−");
-		byId("outsideSignDisplay")?.classList.add("filled");
-		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Outside sign selected. Now fill the box or choose operation.";
+		chooseOutsideSign(sign, button);
 	}
 
 	function pickOperation(operation, button) {
 		if (stageStarted) shell().startClimbTimer();
 		document.querySelectorAll(".op-btn").forEach(btn => btn.classList.remove("selected"));
+
+		if (!chosenOutsideSign) {
+			markWrong(button, "Choose the bigger size sign before the sign relationship.");
+			return;
+		}
+
+		if (operation !== expected.operation) {
+			markWrong(button, expected.operation === "+"
+				? "These signs are the same. Same signs add."
+				: "These signs are different. Different signs subtract."
+			);
+			return;
+		}
+
 		button.classList.add("selected");
 		chosenOperation = operation;
-		setText("operationDisplay", operation === "+" ? "+" : "−");
+		chosenSignType = operation === "+" ? "same" : "different";
+		setText("operationDisplay", operation === "+" ? "+" : "-");
 		byId("operationDisplay")?.classList.add("filled");
+		const firstInput = byId("firstNumInput");
+		const secondInput = byId("secondNumInput");
+		if (firstInput) firstInput.value = expected.biggerSize;
+		if (secondInput) secondInput.value = expected.smallerSize;
+		setBuiltBoxText(builtBoxLine());
+		markCorrectStep("step3-box-build");
+		byId("answerArea")?.classList.remove("hidden");
+
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Operation selected. Now fill the big size and small size.";
+		if (feedback) feedback.textContent = "Box is built. Now solve the size inside and write the final answer.";
+		scrollToCenter("answerArea");
 	}
 
 	function checkBox() {
@@ -630,10 +683,7 @@
 
 		markCorrectStep("step3-box-build");
 		byId("answerArea")?.classList.remove("hidden");
-		setText(
-			"builtBoxText",
-			`You built: ${expected.outsideSign === "+" ? "+" : "−"}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "−"} ${expected.smallerSize})`
-		);
+		setBuiltBoxText(builtBoxLine());
 
 		if (feedback) feedback.textContent = "✅ Box is correct. Now solve it.";
 		scrollToCenter("answerArea");
@@ -792,7 +842,7 @@
 			id: "1_1",
 			section: "1-1",
 			title: "Terms",
-			certificateTitle: "Build the Box",
+			certificateTitle: "Signed Term Structure",
 			playFile: "play1.html"
 		}, certData);
 
@@ -1092,7 +1142,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Build the Box", 700, 360);
+		ctx.fillText("Signed Term Structure", 700, 360);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
@@ -1160,7 +1210,8 @@
 		byId("playArea")?.classList.add("hidden");
 		shell().hideNextClimbButton({ force: true });
 		shell().updateTimerPanel?.();
-		updateTurtleBoard("Press START the Climb when you are ready.");
+		shell().reviveProgressTurtle?.();
+		updateTurtleBoard("Press START the Climb when you are ready.", { reviveTurtle: true });
 	}
 
 	function init() {
@@ -1174,6 +1225,7 @@
 		window.nextClimb = nextClimb;
 		window.chooseSignType = chooseSignType;
 		window.chooseBiggerSize = chooseBiggerSize;
+		window.chooseOutsideSign = chooseOutsideSign;
 		window.pickOutsideSign = pickOutsideSign;
 		window.pickOperation = pickOperation;
 		window.checkBox = checkBox;

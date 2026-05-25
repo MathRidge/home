@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Math Ridge | Play 1-1 Build the Box</title>
-	<link rel="stylesheet" href="assets/css/mathridge-play.css" />
-	<link rel="stylesheet" href="assets/css/play1.css" />
+	<title>Math Ridge | Play 1-1 The Bigger Sign and Operation Rule</title>
+<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260525-profile" />
+	<link rel="stylesheet" href="assets/css/play1.css?v=20260524-bigger-sign" />
 </head>
 
 <body class="play-page play-1">
@@ -14,7 +14,7 @@
 	<div class="achievement-popup" id="namePopup">
 		<div class="name-card">
 			<h2>🎉 Lesson Complete!</h2>
-			<p>You reached Score 10 in Build the Box.</p>
+			<p>You reached Score 10 in The Bigger Sign and Operation Rule.</p>
 			<p class="proof-note">Your time will be saved to the Math Ridge world record board. Then save your certificate as proof.</p>
 
 			<label for="playerNameInput">Name on Certificate</label>
@@ -32,7 +32,7 @@
 				<div class="cert-watermark" aria-hidden="true">Math Ridge</div>
 				<div class="cert-leaves">❦ ❦ ❦</div>
 				<h2>Certificate of Achievement</h2>
-				<h3>Build the Box</h3>
+				<h3>Signed Term Structure</h3>
 				<p>Presented to</p>
 				<div class="cert-name" id="certName">Math Ridge Champion</div>
 				<p>for completing Trail 1-1 with focus, accuracy, and steady climb energy.</p>
@@ -78,16 +78,16 @@
 			<div class="timer-panel" id="timerPanel">⏱ Time: 0:00 | This climb: 0:00</div>
 		</div>
 
-		<h1>Build the Box</h1>
-		<p class="subtitle">Practice signs, sizes, and the box method.</p>
+		<h1>The Bigger Sign and Operation Rule</h1>
+		<p class="subtitle">Find the bigger size, keep its sign, then add or subtract by sign behavior.</p>
 		<div class="certificate-note-wide">🐢 Reach the finish line at Score 10 to earn your certificate!</div>
 		<div class="motto">Math becomes easier when patterns stay consistent.</div>
 
 		<div class="climb-gate" id="climbStartGate">
 			<div class="climb-cover-card">
 				<div class="gate-kicker">Math Ridge Trail 1-1</div>
-				<h3>Build the Box</h3>
-				<p>Compare the signs, choose the bigger size, then build the box. Start when you are ready — the climb timer begins after you press the button.</p>
+				<h3>The Bigger Sign and Operation Rule</h3>
+				<p>Find the bigger size first. Its sign goes outside. Then look at the other term: same signs add, different signs subtract. Start when you are ready — the climb timer begins after you press the button.</p>
 				<button class="primary-action start-climb-btn" onclick="startClimbFromGate()">START the Climb</button>
 			</div>
 		</div>
@@ -96,41 +96,34 @@
 			<div class="problem-card" id="problemCard">
 				<p>Problem:</p>
 				<div class="problem" id="problemText"></div>
-				<p>Follow the steps: compare the signs, choose the bigger size, then build the box.</p>
+				<p>Follow the steps: bigger size, bigger sign, then choose the operation from the other term.</p>
 			</div>
 
 			<div class="step hidden" id="step1">
-				<h2>Step 1: Do the two numbers have the same sign?</h2>
-				<div class="options">
-					<button class="choice-btn" onclick="chooseSignType('same', this)">Same Sign</button>
-					<button class="choice-btn" onclick="chooseSignType('different', this)">Different Sign</button>
-				</div>
-			</div>
-
-			<div class="step hidden" id="step2">
-				<h2>Step 2: Tap the bigger size.</h2>
+				<h2>Step 1: Which size is bigger?</h2>
 				<div class="options" id="sizeOptions"></div>
 			</div>
 
+			<div class="step hidden" id="step2">
+				<h2>Step 2: What sign does the bigger size carry?</h2>
+				<p id="outsideSignTitle">Tap the sign directly in front of the bigger size.</p>
+				<div class="sign-picker">
+					<button class="sign-btn plus" onclick="chooseOutsideSign('+', this)">+</button>
+					<button class="sign-btn minus" onclick="chooseOutsideSign('-', this)">−</button>
+				</div>
+			</div>
+
 			<div class="step builder hidden" id="builder">
-				<h2>Step 3: Build the Box</h2>
-				<p>Look at the bigger number. Tap the sign directly in front of that bigger number. Then build the inside of the box.</p>
+				<h2>Step 3: Is the other sign same or different?</h2>
+				<p>Same sign means add. Different sign means subtract.</p>
 
 				<div class="mini-problem" id="miniProblem"></div>
 
 				<div class="quick-pick-box">
-					<div class="quick-pick-title" id="outsideSignTitle">Tap the sign in front of the bigger number.</div>
+					<div class="quick-pick-title" id="operationTitle">Choose the sign relationship.</div>
 					<div class="sign-picker">
-						<button class="sign-btn plus" onclick="pickOutsideSign('+', this)">+</button>
-						<button class="sign-btn minus" onclick="pickOutsideSign('-', this)">−</button>
-					</div>
-				</div>
-
-				<div class="quick-pick-box">
-					<div class="quick-pick-title" id="operationTitle">Inside operation: tap Add + for same signs. Tap Subtract − for different signs.</div>
-					<div class="sign-picker">
-						<button class="op-btn plus" onclick="pickOperation('+', this)">Add: +</button>
-						<button class="op-btn minus" onclick="pickOperation('-', this)">Subtract: −</button>
+						<button class="op-btn plus" onclick="pickOperation('+', this)">Same sign: add</button>
+						<button class="op-btn minus" onclick="pickOperation('-', this)">Different sign: subtract</button>
 					</div>
 				</div>
 
@@ -144,17 +137,17 @@
 				<div class="box-builder">
 					<div class="sign-display" id="outsideSignDisplay">?</div>
 					<span class="ring-box">
-						<input class="num-input" id="firstNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="big" aria-label="big size" />
+						<input class="num-input" id="firstNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="big" aria-label="big size" readonly />
 						<div class="op-display" id="operationDisplay">?</div>
-						<input class="num-input" id="secondNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="small" aria-label="small size" />
+						<input class="num-input" id="secondNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="small" aria-label="small size" readonly />
 					</span>
 				</div>
 
-				<button class="primary-action" onclick="checkBox()">Check Box</button>
+				<div class="built-box-text" id="builtBoxText"></div>
 			</div>
 
 			<div class="answer-area hidden" id="answerArea">
-				<p id="builtBoxText"></p>
+				<p id="builtBoxTextAnswer"></p>
 				<label>Now solve it: choose the sign, then type the size.</label>
 
 				<div class="final-answer-builder">
@@ -198,10 +191,10 @@
 		</div>
 
 		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
-		<div class="game-footer">Math Ridge | Play 1-1 Build the Box</div>
+		<div class="game-footer">Math Ridge | Play 1-1 The Bigger Sign and Operation Rule</div>
 	</div>
 
-	<script src="assets/js/mathridge-play.js"></script>
-	<script src="assets/js/play1.js"></script>
+<script src="assets/js/mathridge-play.js?v=20260525-profile"></script>
+	<script src="assets/js/play1.js?v=20260524-bigger-sign"></script>
 </body>
 </html>

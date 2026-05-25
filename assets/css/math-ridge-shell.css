@@ -56,6 +56,22 @@ button { -webkit-tap-highlight-color: transparent; }
   pointer-events: none;
 }
 
+/* Mobile pages use the gold progress bar as the scroll cue. Keep swipe scroll active. */
+@media (max-width: 760px), (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
 /* Fixed premium navigation */
 .topbar {
   position: fixed;

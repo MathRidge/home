@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "1_3";
 	const PLAY_SECTION = "1-3";
-	const PLAY_TITLE = "Sign Fixer Challenge";
+	const PLAY_TITLE = "Sign Simplification Fluency";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_3";
 	const PLAY_CERT_KEY = "mathRidge_cert_1_3";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_1_4";
@@ -29,6 +29,7 @@
 	let pickedBigger = false;
 	let pickedSmaller = false;
 	let finalAnswered = false;
+	let finalAnswerSign = null;
 	let pageHasStartedClimb = false;
 
 	function shell() {
@@ -61,6 +62,30 @@
 
 	function keepDigitsOnly(value) {
 		return String(value || "").replace(/[^\d]/g, "");
+	}
+
+	function displaySign(sign) {
+		if (sign === "-") return "\u2212";
+		return sign === "+" ? "+" : "?";
+	}
+
+	function getCorrectFinalSign() {
+		return currentProblem && currentProblem.finalValue < 0 ? "-" : "+";
+	}
+
+	function hasOppositeSizePair(values) {
+		const signsBySize = new Map();
+
+		for (const value of values) {
+			const size = Math.abs(value);
+			const sign = value < 0 ? -1 : 1;
+			const signs = signsBySize.get(size) || new Set();
+			if (signs.has(-sign)) return true;
+			signs.add(sign);
+			signsBySize.set(size, signs);
+		}
+
+		return false;
 	}
 
 	function fallbackFormatRaceTime(ms) {
@@ -177,9 +202,10 @@
 			const values = terms.map(term => term.value);
 			const hasPositive = values.some(value => value > 0);
 			const hasNegative = values.some(value => value < 0);
+			const hasOppositeDuplicateSize = hasOppositeSizePair(values);
 			const total = values.reduce((sum, value) => sum + value, 0);
 
-			if (complexCount >= settings.complexCount && hasPositive && hasNegative && total !== 0) {
+			if (complexCount >= settings.complexCount && hasPositive && hasNegative && !hasOppositeDuplicateSize && total !== 0) {
 				const positiveTotal = values.filter(value => value > 0).reduce((sum, value) => sum + value, 0);
 				const negativeTotal = values.filter(value => value < 0).reduce((sum, value) => sum + value, 0);
 				if (Math.abs(positiveTotal) !== Math.abs(negativeTotal)) {
@@ -531,27 +557,30 @@
 		pickedBigger = false;
 		pickedSmaller = false;
 		finalAnswered = false;
+		finalAnswerSign = null;
 
 		const pos = currentProblem.positiveTotal;
 		const neg = currentProblem.negativeTotal;
 		const bigger = Math.abs(pos) > Math.abs(neg) ? pos : neg;
 		const smaller = Math.abs(pos) > Math.abs(neg) ? neg : pos;
-		const outside = bigger > 0 ? "+" : "−";
+		const outside = bigger > 0 ? "+" : "-";
 
 		const summary = byId("teamSummary");
 		if (summary) {
 			summary.innerHTML = `
 				<div>Positive total: +${Math.abs(pos)}</div>
-				<div>Negative total: −${Math.abs(neg)}</div>
+				<div>Negative total: ${displaySign("-")}${Math.abs(neg)}</div>
 			`;
 		}
 
 		setText("outsideSign", "?");
 		setText("firstSize", "__");
 		setText("secondSize", "__");
-		setText("answerPreviewSign", outside);
+		setText("answerPreviewSign", "?");
 		setText("answerPreviewSize", "__");
 		byId("answerPreview")?.classList.remove("filled");
+		byId("chooseFinalPositive")?.classList.remove("selected");
+		byId("chooseFinalNegative")?.classList.remove("selected");
 		const finalInput = byId("finalAnswerInput");
 		if (finalInput) {
 			finalInput.value = "";
@@ -561,7 +590,7 @@
 
 		const buttons = [
 			{ value: pos, text: `+${Math.abs(pos)}` },
-			{ value: neg, text: `−${Math.abs(neg)}` }
+			{ value: neg, text: `${displaySign("-")}${Math.abs(neg)}` }
 		];
 
 		const holder = byId("totalButtons");
@@ -598,7 +627,7 @@
 
 			button.classList.add("selected");
 			button.disabled = true;
-			setText("outsideSign", bigger > 0 ? "+" : "−");
+			setText("outsideSign", displaySign(bigger > 0 ? "+" : "-"));
 			setText("firstSize", Math.abs(bigger));
 			boxPickStep = 1;
 			pickedBigger = true;
@@ -622,19 +651,31 @@
 			setText("secondSize", Math.abs(smaller));
 			boxPickStep = 2;
 			pickedSmaller = true;
-			setText("finalFeedback", "✅ Box is built. Now type the answer size.");
+			setText("finalFeedback", "✅ Box is built. Now choose the final sign and type the answer size.");
 			byId("finalFeedback").className = "feedback good-text";
 			markCorrectStep();
-			byId("finalAnswerInput")?.focus();
+			byId("chooseFinalPositive")?.focus();
 		}
+	}
+
+	function selectFinalAnswerSign(sign) {
+		finalAnswerSign = sign === "-" ? "-" : "+";
+		byId("chooseFinalPositive")?.classList.toggle("selected", finalAnswerSign === "+");
+		byId("chooseFinalNegative")?.classList.toggle("selected", finalAnswerSign === "-");
+		setText("answerPreviewSign", displaySign(finalAnswerSign));
+		setText("finalFeedback", "Now type the answer size.");
+		byId("finalFeedback").className = "feedback";
+		updateFinalAnswerPreview();
+		byId("finalAnswerInput")?.focus();
 	}
 
 	function updateFinalAnswerPreview() {
 		const input = byId("finalAnswerInput");
 		if (!input) return;
 		input.value = keepDigitsOnly(input.value);
+		setText("answerPreviewSign", finalAnswerSign ? displaySign(finalAnswerSign) : "?");
 		setText("answerPreviewSize", input.value || "__");
-		byId("answerPreview")?.classList.toggle("filled", Boolean(input.value));
+		byId("answerPreview")?.classList.toggle("filled", Boolean(finalAnswerSign && input.value));
 	}
 
 	function checkFinalAnswer() {
@@ -651,10 +692,32 @@
 		const input = byId("finalAnswerInput");
 		if (!input) return;
 		input.value = keepDigitsOnly(input.value);
+		updateFinalAnswerPreview();
 		const answerSize = Number(input.value);
 		const correctSize = Math.abs(currentProblem.finalValue);
+		const correctSign = getCorrectFinalSign();
 
-		if (!input.value || answerSize !== correctSize) {
+		if (!finalAnswerSign) {
+			setText("finalFeedback", "Warning! Be sure to choose a sign.");
+			byId("finalFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		if (!input.value) {
+			input.style.borderColor = "#f2b84b";
+			setText("finalFeedback", "Warning! Make sure you fill in the size.");
+			byId("finalFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		if (finalAnswerSign !== correctSign) {
+			input.style.borderColor = "#ef7777";
+			setText("finalFeedback", markMistake("Not yet. The final sign comes from the bigger total outside the box."));
+			byId("finalFeedback").className = "feedback bad-text";
+			return;
+		}
+
+		if (answerSize !== correctSize) {
 			input.style.borderColor = "#ef7777";
 			setText("finalFeedback", markMistake("Not yet. Subtract the smaller size from the bigger size."));
 			byId("finalFeedback").className = "feedback bad-text";
@@ -663,6 +726,7 @@
 
 		finalAnswered = true;
 		input.style.borderColor = "#6cc070";
+		setText("answerPreviewSign", displaySign(correctSign));
 		setText("answerPreviewSize", correctSize);
 		byId("answerPreview")?.classList.add("filled");
 		setText("finalFeedback", "✅ Correct final answer.");
@@ -685,6 +749,7 @@
 		setText("outsideSign", "?");
 		setText("firstSize", "__");
 		setText("secondSize", "__");
+		finalAnswerSign = null;
 		const finalInput = byId("finalAnswerInput");
 		if (finalInput) {
 			finalInput.value = "";
@@ -693,6 +758,8 @@
 		setText("answerPreviewSign", "?");
 		setText("answerPreviewSize", "__");
 		byId("answerPreview")?.classList.remove("filled");
+		byId("chooseFinalPositive")?.classList.remove("selected");
+		byId("chooseFinalNegative")?.classList.remove("selected");
 
 		renderChoices();
 	}
@@ -995,7 +1062,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Sign Fixer Challenge", 700, 350);
+		ctx.fillText("Sign Simplification Fluency", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
@@ -1106,6 +1173,7 @@
 
 	window.startClimbFromGate = startClimbFromGate;
 	window.checkSignChoice = checkSignChoice;
+	window.selectFinalAnswerSign = selectFinalAnswerSign;
 	window.checkFinalAnswer = checkFinalAnswer;
 	window.nextClimb = nextClimb;
 	window.createCertificateFromName = createCertificateFromName;
