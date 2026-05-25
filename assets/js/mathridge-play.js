@@ -22,20 +22,26 @@
 	window.MathRidgePlayConfig = config;
 
 	const progressMap = {
-		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Build the Box", playFile: "play1.html", nextId: "1_2" },
-		"1_2": { section: "1-2", title: "Team Terms", certificateTitle: "Positive Negative Showdown", playFile: "play2.html", nextId: "1_3" },
-		"1_3": { section: "1-3", title: "Sign Simplify", certificateTitle: "Sign Fixer Challenge", playFile: "play3.html", nextId: "1_4" },
-		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Chunking Repeated Values", playFile: "play4.html", nextId: "2_1" },
-		"2_1": { section: "2-1", title: "Fraction Shelves", certificateTitle: "Fraction Reduction", playFile: "play5.html", nextId: "2_2" },
-		"2_2": { section: "2-2", title: "Prime Pieces", certificateTitle: "Prime Factor Trees", playFile: "play6.html", nextId: "2_3" },
-		"2_3": { section: "2-3", title: "Fraction Products", certificateTitle: "Fraction Multiplication and Division with Factor Trees", playFile: "play7.html", nextId: "2_4" },
-		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponent Shelf Packing", playFile: "play8.html", nextId: "" }
+		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Signed Term Structure", playFile: "play1.html", nextId: "1_2" },
+		"1_2": { section: "1-2", title: "Team Terms", certificateTitle: "Positive and Negative Term Balance", playFile: "play2.html", nextId: "1_3" },
+		"1_3": { section: "1-3", title: "Sign Simplify", certificateTitle: "Sign Simplification Fluency", playFile: "play3.html", nextId: "1_4" },
+		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Distribution and Grouping Foundations", playFile: "play4.html", nextId: "2_1" },
+		"2_1": { section: "2-1", title: "Fraction Shelves", certificateTitle: "Fraction Equivalence and Reduction", playFile: "play5.html", nextId: "2_2" },
+		"2_2": { section: "2-2", title: "Prime Pieces", certificateTitle: "Prime Factorization Fluency", playFile: "play6.html", nextId: "2_3" },
+		"2_3": { section: "2-3", title: "Fraction Products", certificateTitle: "Fraction Product Structure", playFile: "play7.html", nextId: "2_4" },
+		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponential Pattern Recognition", playFile: "play8.html", nextId: "" }
 	};
 
 	let totalRaceMs = 0;
 	let climbStartMs = null;
 	let timerInterval = null;
 	let cachedRecords = [];
+	let premiumScrollTimer = null;
+	let bottomDrawerCloseTimer = null;
+	let armedBottomControl = null;
+	let armedBottomControlTimer = null;
+	let pendingExitTarget = null;
+	let suppressBottomDrawerUntil = 0;
 
 	function byId(id) {
 		return document.getElementById(id);
@@ -119,7 +125,9 @@
 		button.style.setProperty("opacity", "1", "important");
 		button.textContent = button.textContent.trim() || "Next Climb";
 
-		if (scroll) {
+		if (scroll && isMobilePlayView()) {
+			openBottomDrawer({ temporary: true, duration: 6200 });
+		} else if (scroll) {
 			window.setTimeout(() => scrollToPremiumElement("bottomControls", 18), 120);
 		}
 
@@ -159,6 +167,7 @@
 	function startNextClimbTimer() {
 		hideNextClimbButton({ force: true });
 		stopClimbTimer(false);
+		reviveProgressTurtle();
 		return startClimbTimer({ hideNext: false });
 	}
 
@@ -190,14 +199,197 @@
 		const element = byId(id);
 		if (!element) return false;
 
-		window.setTimeout(() => {
+		if (premiumScrollTimer) window.clearTimeout(premiumScrollTimer);
+		premiumScrollTimer = window.setTimeout(() => {
 			const shelf = document.querySelector(".challenge-board");
 			const shelfHeight = shelf ? shelf.getBoundingClientRect().height : 0;
 			const y = window.scrollY + element.getBoundingClientRect().top - shelfHeight - extraOffset;
-			window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-		}, 30);
+			const mobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
+			if (mobile) suppressBottomDrawerUntil = Date.now() + 900;
+			window.scrollTo({ top: Math.max(0, y), behavior: mobile ? "auto" : "smooth" });
+		}, 40);
 
 		return true;
+	}
+
+	function isMobilePlayView() {
+		return Boolean(window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
+	}
+
+	function getBottomDrawerTitle() {
+		const footerText = document.querySelector(".game-footer")?.textContent?.trim();
+		if (footerText) return footerText;
+		return document.title.replace(/^Math Ridge\s*\|\s*/i, "Math Ridge | ");
+	}
+
+	function clearArmedBottomControl() {
+		if (armedBottomControl) {
+			armedBottomControl.classList.remove("is-play-armed");
+			armedBottomControl.removeAttribute("data-play-armed");
+		}
+		armedBottomControl = null;
+		if (armedBottomControlTimer) {
+			window.clearTimeout(armedBottomControlTimer);
+			armedBottomControlTimer = null;
+		}
+	}
+
+	function openBottomDrawer(options = {}) {
+		const controls = byId("bottomControls");
+		if (!controls) return false;
+		controls.classList.add("is-open");
+		document.body.classList.add("play-bottom-drawer-open");
+		if (bottomDrawerCloseTimer) window.clearTimeout(bottomDrawerCloseTimer);
+		if (options.temporary !== false) {
+			bottomDrawerCloseTimer = window.setTimeout(() => {
+				if (!controls.matches(":focus-within")) closeBottomDrawer();
+			}, Number(options.duration || 4200));
+		}
+		return true;
+	}
+
+	function closeBottomDrawer() {
+		const controls = byId("bottomControls");
+		if (!controls) return false;
+		controls.classList.remove("is-open");
+		document.body.classList.remove("play-bottom-drawer-open");
+		clearArmedBottomControl();
+		return true;
+	}
+
+	function isExitControl(target) {
+		const href = target?.getAttribute?.("href") || "";
+		return Boolean(
+			target?.classList?.contains("trail-return") ||
+			target?.classList?.contains("note-return") ||
+			/index\.html|note\d+\.html/i.test(href)
+		);
+	}
+
+	function isActiveClimbRisk() {
+		const playAreaActive = Boolean(document.querySelector(".play-area:not(.hidden)"));
+		const climbGateReady = Boolean(document.querySelector(".climb-gate:not(.hidden)"));
+		const playPageActive = document.body.classList.contains("play-page");
+		const popupOpen = Boolean(document.querySelector(".achievement-popup[style*='flex'], .achievement-popup.show"));
+		return !popupOpen && (climbStartMs !== null || playAreaActive || climbGateReady || playPageActive);
+	}
+
+	function ensureExitConfirmModal() {
+		let modal = byId("playExitConfirm");
+		if (modal) return modal;
+
+		modal = document.createElement("div");
+		modal.id = "playExitConfirm";
+		modal.className = "play-exit-confirm";
+		modal.setAttribute("role", "dialog");
+		modal.setAttribute("aria-modal", "true");
+		modal.setAttribute("aria-labelledby", "playExitConfirmTitle");
+		modal.innerHTML = `
+			<div class="play-exit-card">
+				<h2 id="playExitConfirmTitle">Exit This Climb?</h2>
+				<p>The game is still open. Leaving now can interrupt this climb. Do you wish to exit the game now?</p>
+				<div class="play-exit-actions">
+					<button type="button" class="secondary-action" data-play-exit-no>No</button>
+					<button type="button" class="primary-action" data-play-exit-yes>Yes, Exit</button>
+				</div>
+			</div>
+		`;
+		document.body.appendChild(modal);
+		modal.querySelector("[data-play-exit-no]")?.addEventListener("click", () => {
+			modal.classList.remove("show");
+			pendingExitTarget = null;
+		});
+		modal.querySelector("[data-play-exit-yes]")?.addEventListener("click", () => {
+			const target = pendingExitTarget;
+			pendingExitTarget = null;
+			modal.classList.remove("show");
+			if (!target) return;
+			if ((target.getAttribute("onclick") || "").includes("rememberMountainTrailReturn")) {
+				rememberMountainTrailReturn();
+			}
+			const href = target.getAttribute("href");
+			if (href) window.location.href = href;
+		});
+		return modal;
+	}
+
+	function showExitConfirm(target) {
+		pendingExitTarget = target;
+		const modal = ensureExitConfirmModal();
+		modal.classList.add("show");
+		modal.querySelector("[data-play-exit-no]")?.focus();
+	}
+
+	function handleBottomControlClick(event) {
+		const controls = byId("bottomControls");
+		if (!controls) return;
+		const target = event.target?.closest?.("#bottomControls a, #bottomControls button");
+		if (!target || target.classList.contains("play-bottom-drawer-tab")) return;
+		if (target.disabled || target.getAttribute("aria-disabled") === "true") return;
+
+		if (!isMobilePlayView()) {
+			if (isExitControl(target) && isActiveClimbRisk()) {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				showExitConfirm(target);
+			}
+			return;
+		}
+
+		openBottomDrawer({ temporary: true, duration: 5200 });
+
+		if (armedBottomControl !== target || target.dataset.playArmed !== "true") {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			clearArmedBottomControl();
+			armedBottomControl = target;
+			target.dataset.playArmed = "true";
+			target.classList.add("is-play-armed");
+			armedBottomControlTimer = window.setTimeout(clearArmedBottomControl, 3400);
+			return;
+		}
+
+		clearArmedBottomControl();
+		if (isExitControl(target) && isActiveClimbRisk()) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			showExitConfirm(target);
+		}
+	}
+
+	function setupBottomDrawer() {
+		const controls = byId("bottomControls");
+		if (!controls || controls.dataset.drawerReady === "true") return;
+		controls.dataset.drawerReady = "true";
+		document.body.classList.add("has-play-bottom-drawer");
+
+		const tab = document.createElement("button");
+		tab.type = "button";
+		tab.className = "play-bottom-drawer-tab";
+		tab.innerHTML = `<span>${getBottomDrawerTitle()}</span><strong>Controls</strong>`;
+		tab.addEventListener("click", event => {
+			event.preventDefault();
+			if (controls.classList.contains("is-open")) closeBottomDrawer();
+			else openBottomDrawer({ temporary: false });
+		});
+		controls.insertBefore(tab, controls.firstChild);
+
+		let lastScrollY = window.scrollY;
+		window.addEventListener("scroll", () => {
+			const currentY = window.scrollY;
+			if (isMobilePlayView() && Date.now() > suppressBottomDrawerUntil && currentY > lastScrollY + 8 && currentY > 80) {
+				openBottomDrawer({ temporary: true });
+			}
+			lastScrollY = currentY;
+		}, { passive: true });
+
+		controls.addEventListener("focusin", () => openBottomDrawer({ temporary: false }));
+		document.addEventListener("click", handleBottomControlClick, true);
+		document.addEventListener("pointerdown", event => {
+			if (!isMobilePlayView()) return;
+			if (!controls.classList.contains("is-open")) return;
+			if (!event.target.closest("#bottomControls, #playExitConfirm")) closeBottomDrawer();
+		}, { passive: true });
 	}
 
 	function getRecordUrl(limit) {
@@ -442,6 +634,15 @@
 		}
 	}
 
+	function reviveProgressTurtle(track = byId("turtleTrack")) {
+		const turtle = track?.querySelector?.(".progress-turtle");
+		if (!turtle) return;
+		turtle.classList.remove("turtle-fade-away");
+		turtle.style.removeProperty("animation");
+		turtle.style.removeProperty("opacity");
+		turtle.style.removeProperty("transform");
+	}
+
 	function updateShelf(scoreOrOptions = {}, maybeStage, maybeProgressPercent) {
 		const options = typeof scoreOrOptions === "object"
 			? scoreOrOptions
@@ -461,6 +662,7 @@
 		if (track) {
 			track.style.setProperty("--progress", `${progressPercent}%`);
 			ensureProgressPieces(track);
+			if (options.reviveTurtle || options.resetTurtle) reviveProgressTurtle(track);
 			applyProgressThemeByScore(score, Boolean(options.delayedTheme));
 		}
 
@@ -470,6 +672,7 @@
 	document.addEventListener("DOMContentLoaded", () => {
 		updateTimerPanel();
 		hideNextClimbButton({ force: true });
+		setupBottomDrawer();
 	});
 
 	const api = {
@@ -484,6 +687,8 @@
 		startNextClimbTimer,
 		resetRaceTimer,
 		scrollToPremiumElement,
+		openBottomDrawer,
+		closeBottomDrawer,
 		setStatusMessage,
 		finishCorrectClimb,
 		finishFinalCorrectRound,
@@ -500,6 +705,7 @@
 		readTrailCertificate,
 		getProgressThemeNameByScore,
 		applyProgressThemeByScore,
+		reviveProgressTurtle,
 		updateShelf
 	};
 

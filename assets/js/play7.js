@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "2_3";
 	const PLAY_SECTION = "2-3";
-	const PLAY_TITLE = "Fraction Multiplication and Division with Factor Trees";
+	const PLAY_TITLE = "Fraction Product Structure";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_3";
 	const PLAY_CERT_KEY = "mathRidge_cert_2_3";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_4";
@@ -943,7 +943,7 @@
 		ctx.fillText("Certificate of Achievement", 750, 280);
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 38px Georgia";
-		ctx.fillText("Fraction Multiplication and Division with Factor Trees", 750, 352);
+		ctx.fillText("Fraction Product Structure", 750, 352);
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
 		ctx.fillText("Presented to", 750, 432);

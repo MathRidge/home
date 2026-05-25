@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "2_1";
 	const PLAY_SECTION = "2-1";
-	const PLAY_TITLE = "Fraction Reduction";
+	const PLAY_TITLE = "Fraction Equivalence and Reduction";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_1";
 	const PLAY_CERT_KEY = "mathRidge_cert_2_1";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_2";
@@ -1058,7 +1058,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Fraction Reduction", 700, 350);
+		ctx.fillText("Fraction Equivalence and Reduction", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";

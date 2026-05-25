@@ -15,14 +15,14 @@ const lessons = [
 const certificateList = lessons.map(({ id, section, title, playFile }) => ({ id, section, title, playFile }));
 
 const stageCardThemes = {
-  "1_1": "stage-1-1",
-  "1_2": "stage-1-2",
-  "1_3": "stage-1-3",
-  "1_4": "stage-1-4",
-  "2_1": "stage-2-1",
-  "2_2": "stage-2-2",
-  "2_3": "stage-2-3",
-  "2_4": "stage-2-4"
+  "1_1": "stage-1-1-trail-start",
+  "1_2": "stage-1-2-mountain-peak",
+  "1_3": "stage-1-3-mountain-trail",
+  "1_4": "stage-1-4-mountain-cabin",
+  "2_1": "stage-2-1-mountain-library",
+  "2_2": "stage-2-2-ancient-tree",
+  "2_3": "stage-2-3-math-workstation",
+  "2_4": "stage-2-4-exponential-bloom"
 };
 
 function stageImageSlug(id) {
@@ -76,6 +76,21 @@ function storageKeyPlayComplete(id) { return `mathRidge_playComplete_${id}`; }
 function storageKeyCert(id) { return `mathRidge_cert_${id}`; }
 
 const TRAIL_STATE_KEY = "mathRidge_trail_state_v1";
+const STAGE_REVEAL_HINT_KEY = "mathRidge_stageRevealHintSeen_v1";
+
+function hasSeenStageRevealHint() {
+  try { return localStorage.getItem(STAGE_REVEAL_HINT_KEY) === "true"; }
+  catch (error) { return false; }
+}
+
+function syncStageRevealHintState() {
+  document.body.classList.toggle("stage-reveal-hint-seen", hasSeenStageRevealHint());
+}
+
+function markStageRevealHintSeen() {
+  try { localStorage.setItem(STAGE_REVEAL_HINT_KEY, "true"); } catch (error) {}
+  syncStageRevealHintState();
+}
 
 function writeTrailStateSnapshot() {
   try {
@@ -725,6 +740,7 @@ async function sendMessage(event) {
    - second tap confirms navigation/action
    - stage cards first select the card, then Note/Play buttons arm separately. */
 const PREMIUM_TOUCH_QUERY = "(max-width: 760px)";
+const STAGE_SHELF_AUTO_CLOSE_MS = 4600;
 const CONFIRMABLE_INDEX_SELECTOR = [
   ".hero-actions .pill-btn",
   ".hero-actions .gold-btn",
@@ -756,16 +772,26 @@ function clearStageSelection() {
     currentSelectedStageCard.removeAttribute("data-stage-selected");
   }
   currentSelectedStageCard = null;
+  mobileConfirm()?.clear?.();
   if (stageSelectClearTimer) {
     window.clearTimeout(stageSelectClearTimer);
     stageSelectClearTimer = null;
   }
 }
 
+function scheduleStageShelfClose(card = currentSelectedStageCard, delay = STAGE_SHELF_AUTO_CLOSE_MS) {
+  if (stageSelectClearTimer) window.clearTimeout(stageSelectClearTimer);
+  stageSelectClearTimer = window.setTimeout(() => {
+    const keepSelected = document.activeElement && card && card.contains(document.activeElement);
+    if (!keepSelected) clearStageSelection();
+  }, delay);
+}
+
 function selectStageCard(card) {
   if (!card) return;
 
   mobileConfirm()?.clear?.();
+  if (!hasSeenStageRevealHint()) markStageRevealHintSeen();
 
   if (currentSelectedStageCard && currentSelectedStageCard !== card) {
     currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
@@ -776,11 +802,7 @@ function selectStageCard(card) {
   card.classList.add("is-stage-selected", "is-touch-preview", "is-pressed");
   card.setAttribute("data-stage-selected", "true");
 
-  if (stageSelectClearTimer) window.clearTimeout(stageSelectClearTimer);
-  stageSelectClearTimer = window.setTimeout(() => {
-    const keepSelected = document.activeElement && card.contains(document.activeElement);
-    if (!keepSelected) clearStageSelection();
-  }, 8000);
+  scheduleStageShelfClose(card);
 }
 
 function isConfirmableIndexTarget(target) {
@@ -905,6 +927,7 @@ function handleStageMobileClick(event) {
   }
 
   const blocked = requireIndexMobileConfirm(event, stageAction, { duration: 6500, keepOthers: true });
+  if (blocked) scheduleStageShelfClose(stageCard, 6900);
   if (!blocked) window.setTimeout(clearStageSelection, 220);
   return blocked;
 }
@@ -989,6 +1012,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Lazy-render the heavier sections only when a student opens that view.
   // This keeps the first mobile paint fast and prevents hidden Trail art from loading too early.
   openInitialSectionFromURL();
+  syncStageRevealHintState();
   writeTrailStateSnapshot();
   bindPremiumMobileSelection();
   window.addEventListener("resize", () => syncCabinPanelVisibility({ scroll: false }));

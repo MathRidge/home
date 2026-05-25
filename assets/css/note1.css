@@ -49,7 +49,9 @@ body[data-note-id="1_1"] .focus-route .mini-card::before {
 
 .sign-size-card,
 .concept-card,
-.rhythm-card {
+.rhythm-card,
+.summary-card,
+.adhd-short-row {
   border-radius: 24px;
   border: 1px solid rgba(255,247,232,0.18);
   background: rgba(255,247,232,0.10);
@@ -184,6 +186,64 @@ body[data-note-id="1_1"] .focus-route .mini-card::before {
   font-weight: 950;
 }
 
+.note1-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.summary-card {
+  min-height: 126px;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+}
+
+.summary-card strong {
+  color: #ffe3a8;
+  font-size: 1.05rem;
+  font-weight: 950;
+}
+
+.summary-card span {
+  color: rgba(255,247,232,0.75);
+  font-weight: 800;
+  line-height: 1.42;
+}
+
+.adhd-short-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px;
+  border-color: rgba(242,184,75,0.38);
+  background:
+    linear-gradient(135deg, rgba(242,184,75,0.16), rgba(255,247,232,0.06));
+}
+
+.adhd-short-row strong,
+.adhd-short-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,247,232,0.16);
+  background: rgba(255,247,232,0.10);
+  color: rgba(255,247,232,0.88);
+  font-weight: 950;
+}
+
+.adhd-short-row strong {
+  color: #102033;
+  background: linear-gradient(135deg, var(--sun-gold), #ffe09a);
+}
+
 .prompt-term {
   display: inline-flex;
   align-items: center;
@@ -307,7 +367,8 @@ body[data-note-id="1_1"] .focus-route .mini-card::before {
 @media (max-width: 880px) {
   .sign-size-board,
   .same-diff-grid,
-  .box-rhythm {
+  .box-rhythm,
+  .note1-summary-grid {
     grid-template-columns: 1fr;
   }
 }

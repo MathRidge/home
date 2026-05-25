@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "1_4";
 	const PLAY_SECTION = "1-4";
-	const PLAY_TITLE = "Chunking Repeated Values";
+	const PLAY_TITLE = "Distribution and Grouping Foundations";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_4";
 	const PLAY_CERT_KEY = "mathRidge_cert_1_4";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_1";
@@ -1048,7 +1048,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Chunking Repeated Values", 700, 350);
+		ctx.fillText("Distribution and Grouping Foundations", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
