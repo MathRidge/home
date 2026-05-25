@@ -52,5 +52,14 @@
     "gameKey": "play1",
     "stage": null,
     "date": "2026-05-25T00:30:33.221Z"
+  },
+  {
+    "name": "Math Ridge Champion",
+    "timeSeconds": 1187,
+    "timeDisplay": "19:47",
+    "game": "Play1 - Build the Box",
+    "gameKey": "play1",
+    "stage": null,
+    "date": "2026-05-25T01:05:49.180Z"
   }
 ]
