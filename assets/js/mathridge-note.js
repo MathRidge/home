@@ -41,6 +41,43 @@
   const storageKey = "mathRidge_noteComplete_" + note.noteId;
   const oldVisitedKey = "mathRidge_noteVisited_" + note.noteId;
 
+  function noteUnlockedKey(id) {
+    return "mathRidge_noteUnlocked_" + id;
+  }
+
+  function notePlayCompleteKey(id) {
+    return "mathRidge_playComplete_" + id;
+  }
+
+  function noteCertificateKey(id) {
+    return "mathRidge_cert_" + id;
+  }
+
+  function readNoteCertificate(id) {
+    try {
+      return JSON.parse(localStorage.getItem(noteCertificateKey(id)));
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function hasNoteAccess(id) {
+    try {
+      const cert = readNoteCertificate(id);
+      return localStorage.getItem(noteUnlockedKey(id)) === "true" ||
+        localStorage.getItem("mathRidge_noteComplete_" + id) === "true" ||
+        localStorage.getItem(notePlayCompleteKey(id)) === "true" ||
+        Boolean(cert && cert.completed);
+    } catch (error) {
+      return false;
+    }
+  }
+
+  if (!hasNoteAccess(note.noteId)) {
+    window.location.replace(note.noteId === "1_1" ? "prologue.html" : "index.html?view=quest");
+    return;
+  }
+
   function normalizeAnswer(value) {
     return String(value)
       .trim()
@@ -629,6 +666,28 @@
     updateProgress();
   }
 
+  function showTrialLockedReturn() {
+    let params;
+    try {
+      params = new URLSearchParams(window.location.search);
+    } catch (error) {
+      return;
+    }
+
+    if (params.get("trialLocked") !== "manual") return;
+
+    const unlockText = getEl("unlockText");
+    if (unlockText) {
+      unlockText.textContent = note.lockedText || "Complete the manual checks before beginning the trial.";
+    }
+
+    const dock = document.querySelector(".unlock-dock");
+    if (dock) {
+      dock.classList.add("manual-required");
+      setTimeout(() => dock.scrollIntoView({ behavior: "smooth", block: "center" }), 250);
+    }
+  }
+
   window.showHint = function showHint(index) {
     const hint = getEl("hint" + index);
     if (hint) hint.classList.add("show");
@@ -868,5 +927,6 @@
     renderPractice();
     restoreIfComplete();
     updateProgress();
+    showTrialLockedReturn();
   });
 })();

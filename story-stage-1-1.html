@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Math Ridge | Stage 1-1 Story</title>
+  <link rel="icon" href="assets/images/logo/mathridge-premium-favicon.ico" sizes="any" />
+  <link rel="shortcut icon" href="assets/images/logo/mathridge-premium-favicon.ico" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-neutral-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-shy-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-holding-hat.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-and-butterfly.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira_turn_motion_reflected_alpha.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-pointing-angry.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-pouting-crossed-arms.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-shy-holding-bag.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-surprised-horizontal-staff.webp" />
+  <link rel="preload" as="image" type="image/png" href="assets/images/Mira-sprite/Mira-sprite-alpha-png/mira-hug-stachel-true-alpha.png" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-back-right-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-pointing-left-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Shellwick-sprite/elder-webp/elder-natural.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Shellwick-sprite/elder-webp/elder-smile.webp" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/sound/tummy-growling.mp3" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/sound/cabin-door-creaking-open.mp3" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/sound/elder-creaking-door-open.mp3" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/elder/elder-i-see.mp3" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/elder/elder-yes-but-first-you-will-need-this.mp3" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/elder/elder-correct.mp3" />
+  <link rel="preload" as="audio" type="audio/mpeg" href="voice/elder/elder-exactly.mp3" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick_cabin.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick_cabin_inside.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick-table.png" />
+  <link rel="preload" as="image" href="assets/images/relic/term_stone.png" />
+  <link rel="preload" as="image" href="assets/images/relic/sign_compass_relic_alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/parity_prism_true_alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/factor_forge_alpha.png" />
+  <link rel="stylesheet" href="assets/css/story-stage-1-1.css?v=20260530-relic01" />
+</head>
+<body>
+  <div class="story-progress" aria-hidden="true">
+    <span id="storyProgressBar"></span>
+  </div>
+
+  <main class="story-vn" aria-label="Stage 1-1 visual story">
+    <div class="scene-bg" id="sceneBg" aria-hidden="true"></div>
+    <div class="scene-shade" aria-hidden="true"></div>
+    <div class="scene-fader" id="sceneFader" aria-hidden="true"></div>
+
+    <header class="story-topbar">
+      <a href="index.html" aria-label="Back to Math Ridge home">Home</a>
+      <strong>Stage 1-1 Story</strong>
+    </header>
+
+    <div class="character-stage mira-stage is-hidden" id="miraStage" aria-hidden="true">
+      <img class="character-sprite mira-sprite" id="miraSprite" alt="" draggable="false" />
+    </div>
+
+    <div class="character-stage elder-stage is-hidden" id="elderStage" aria-hidden="true">
+      <img class="character-sprite elder-sprite" id="elderSprite" alt="" draggable="false" />
+    </div>
+
+    <div class="relic-reveal-stage" id="relicRevealStage" aria-hidden="true">
+      <div class="story-relic relic-term" data-relic="term">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/term_stone.png" alt="" draggable="false" />
+        <span>The Term Stone</span>
+      </div>
+      <div class="story-relic relic-sign" data-relic="sign">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/sign_compass_relic_alpha.png" alt="" draggable="false" />
+        <span>The Sign Compass</span>
+      </div>
+      <div class="story-relic relic-parity" data-relic="parity">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/parity_prism_true_alpha.png" alt="" draggable="false" />
+        <span>The Parity Prism</span>
+      </div>
+      <div class="story-relic relic-factor" data-relic="factor">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/factor_forge_alpha.png" alt="" draggable="false" />
+        <span>The Factor Forge</span>
+      </div>
+    </div>
+
+    <section class="dialogue-box" aria-live="polite">
+      <div class="dialogue-meta">
+        <span id="speakerName">Mira</span>
+        <span id="sceneCounter">1 / 1</span>
+      </div>
+
+      <p id="dialogueText"></p>
+
+      <form class="name-form hidden" id="nameForm">
+        <label for="playerNameInput">Your name in Arithmere</label>
+        <div class="name-row">
+          <input id="playerNameInput" maxlength="24" autocomplete="name" placeholder="Ridge Wanderer" />
+          <button type="submit">Confirm</button>
+        </div>
+      </form>
+
+      <div class="choice-row hidden" id="choiceRow"></div>
+      <div class="feedback-text hidden" id="feedbackText"></div>
+
+      <div class="dialogue-actions">
+        <button type="button" id="backBtn">Back</button>
+        <button type="button" id="nextBtn">Next</button>
+      </div>
+    </section>
+
+    <div class="reward-panel hidden" id="rewardPanel" role="dialog" aria-modal="true" aria-labelledby="rewardTitle">
+      <div class="reward-card">
+        <strong id="rewardTitle">New Manual Unlocked</strong>
+        <span>Obtained: "Term Manual"</span>
+        <span>Skill: <em>Signed Terms</em></span>
+        <span>Quest Relic: <span class="reward-relic-name">The Term Stone</span></span>
+        <span class="reward-objective">Next Objective: Learn how to combine positive and negative terms.</span>
+        <div class="reward-actions">
+          <a href="note1.html">Open Term Manual</a>
+          <a href="index.html?view=quest">Return to Mountain Trail</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="orientation-lock" aria-live="polite">
+    <strong>Turn Sideways</strong>
+    <span>This story scene is designed for a wide game view.</span>
+  </aside>
+
+  <script src="assets/js/story-stage-1-1.js?v=20260530-relic01"></script>
+</body>
+</html>

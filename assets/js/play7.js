@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "2_3";
 	const PLAY_SECTION = "2-3";
-	const PLAY_TITLE = "Fraction Multiplication and Division with Factor Trees";
+	const PLAY_TITLE = "Fraction Product Structure";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_3";
 	const PLAY_CERT_KEY = "mathRidge_cert_2_3";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_4";
@@ -862,14 +862,14 @@
 				raceTimeText = result.record?.timeDisplay || (result.record?.timeSeconds ? formatRaceTime(result.record.timeSeconds * 1000) : raceTimeText);
 			}
 		} catch (error) {
-			rankMessage = "World record could not save. Certificate time is still shown.";
+			rankMessage = "World record could not save. Certificate still created.";
 		}
 
 		setText("certName", finalName);
-		setText("certStage", `Completed Score 10 after ${stage} stages of effort.`);
-		setText("certRaceTime", `World Time Race Completion: ${raceTimeText}`);
-		setText("certRank", rankMessage);
-		setText("certDate", `Completed on ${formattedDate} at ${formattedTime}`);
+		setText("certStage", "Academic Focus: Fraction Product Structure");
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${formattedDate}`);
 
 		savePlayCertificateProgress({ studentName: finalName, formattedDate, formattedTime, raceTimeText, rankMessage });
 
@@ -908,9 +908,7 @@
 	function saveCertificateImage() {
 		const name = byId("certName")?.textContent || "Math Ridge Champion";
 		const completedDate = byId("certDate")?.textContent || "";
-		const stageText = byId("certStage")?.textContent || `Completed Score 10 after ${stage} stages of effort.`;
-		const raceTime = byId("certRaceTime")?.textContent || "World Time Race Completion: 0:00";
-		const rank = byId("certRank")?.textContent || "";
+		const stageText = byId("certStage")?.textContent || "Academic Focus: Fraction Product Structure";
 		const canvas = document.createElement("canvas");
 		canvas.width = 1500;
 		canvas.height = 1080;
@@ -943,7 +941,7 @@
 		ctx.fillText("Certificate of Achievement", 750, 280);
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 38px Georgia";
-		ctx.fillText("Fraction Multiplication and Division with Factor Trees", 750, 352);
+		ctx.fillText("Fraction Product Structure", 750, 352);
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
 		ctx.fillText("Presented to", 750, 432);
@@ -958,19 +956,13 @@
 		ctx.stroke();
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
-		ctx.fillText("for completing the 10-score challenge", 750, 620);
-		ctx.fillText("by flipping division, factoring prime pieces, and reducing carefully.", 750, 660);
+		ctx.fillText("for demonstrating fraction product structure,", 750, 620);
+		ctx.fillText("reciprocal division, and careful reduction.", 750, 660);
 		ctx.font = "bold 30px Georgia";
 		ctx.fillText(stageText, 750, 720);
-		ctx.fillText(raceTime, 750, 765);
-		if (rank && !rank.startsWith("World record could not")) {
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 30px Georgia";
-			ctx.fillText(rank, 750, 810);
-		}
 		ctx.fillStyle = "#24304f";
 		ctx.font = "28px Georgia";
-		ctx.fillText(completedDate, 750, rank && !rank.startsWith("World record could not") ? 855 : 820);
+		ctx.fillText(completedDate, 750, 780);
 		ctx.fillStyle = "#7a4b00";
 		ctx.font = "italic 30px Georgia";
 		ctx.fillText(CERT_SIGNATURE, 750, 925);
@@ -988,10 +980,10 @@
 		try { certData = JSON.parse(localStorage.getItem(PLAY_CERT_KEY) || "{}"); } catch (error) {}
 		if (!certData.completed) return;
 		setText("certName", certData.studentName || "Math Ridge Champion");
-		setText("certStage", `Completed Score 10 after ${certData.stage || stage} stages of effort.`);
-		setText("certRaceTime", `World Time Race Completion: ${certData.raceTime || "0:00"}`);
-		setText("certRank", certData.rankText || "");
-		setText("certDate", `Completed on ${certData.displayDate || ""} at ${certData.displayTime || ""}`);
+		setText("certStage", "Academic Focus: Fraction Product Structure");
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${certData.displayDate || ""}`);
 		const popup = byId("certificatePopup");
 		if (popup) popup.style.display = "flex";
 		document.body.classList.add("modal-open");

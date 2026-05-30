@@ -1,5 +1,5 @@
 
-/* Play 1-1 Local Game: Build the Box
+/* Trail 1-1 Local Game: Term Stone Trial
    Owns only the Play1 game board, Build-the-Box steps, and answer builder. */
 
 .motto,
@@ -254,6 +254,18 @@
 
 .game:not(.climb-active) #feedback {
 	display: none;
+}
+
+.built-box-text,
+#builtBoxTextAnswer {
+	margin: 12px auto 0;
+	padding: 10px 12px;
+	border-radius: 16px;
+	border: 1px solid rgba(16,32,51,0.14);
+	background: rgba(255,248,226,0.92);
+	color: #1b2b46;
+	font-weight: 950;
+	line-height: 1.35;
 }
 
 .answer-area {

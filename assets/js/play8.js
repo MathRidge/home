@@ -20,7 +20,7 @@ let completedSteps = new Set();
 
 const PLAY_ID = "2_4";
 const PLAY_SECTION = "2-4";
-const PLAY_TITLE = "Exponent Shelf Packing";
+const PLAY_TITLE = "Exponential Pattern Recognition";
 const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_4";
 const PLAY_CERT_KEY = "mathRidge_cert_2_4";
 const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
@@ -1444,8 +1444,8 @@ async function createCertificateFromName(){
   }
 
   document.getElementById("certName").textContent = name;
-  document.getElementById("certStage").textContent = `Completed Score 10 after ${stage} stages of effort.`;
-  document.getElementById("certRaceTime").textContent = "Saving world time record...";
+  document.getElementById("certStage").textContent = "Academic Focus: Exponential Pattern Recognition";
+  document.getElementById("certRaceTime").textContent = "";
   document.getElementById("certRank").textContent = "";
 
   let rankMessage = "";
@@ -1456,12 +1456,12 @@ async function createCertificateFromName(){
     raceTimeText = result.record?.timeDisplay
       || (result.record?.timeSeconds ? formatRaceTime(result.record.timeSeconds * 1000) : raceTimeText);
   } else {
-    rankMessage = "World record could not save. Certificate time is still shown.";
+    rankMessage = "World record could not save. Certificate still created.";
   }
 
-  document.getElementById("certRaceTime").textContent = `World Time Completion: ${raceTimeText}`;
-  document.getElementById("certRank").textContent = rankMessage;
-  document.getElementById("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime}`;
+  document.getElementById("certRaceTime").textContent = "";
+  document.getElementById("certRank").textContent = "";
+  document.getElementById("certDate").textContent = `Completed on ${formattedDate}`;
 
   if(typeof shell()?.saveTrailProgress === "function"){
     shell().saveTrailProgress({
@@ -1563,8 +1563,6 @@ function downloadCanvas(canvas, filename){
 function saveCertificateImage(){
   const name = document.getElementById("certName").textContent || "Math Ridge Champion";
   const stageText = document.getElementById("certStage").textContent || "";
-  const raceText = document.getElementById("certRaceTime").textContent || "";
-  const rankTextValue = document.getElementById("certRank").textContent || "";
   const dateText = document.getElementById("certDate").textContent || "";
 
   const canvas = document.createElement("canvas");
@@ -1599,7 +1597,7 @@ function saveCertificateImage(){
 
   ctx.fillStyle = "#b87900";
   ctx.font = "bold 42px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("Exponent Shelf Packing", canvas.width/2, 360);
+  ctx.fillText("Exponential Pattern Recognition", canvas.width/2, 360);
 
   ctx.fillStyle = "#24304f";
   ctx.font = "30px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
@@ -1618,22 +1616,12 @@ function saveCertificateImage(){
 
   ctx.fillStyle = "#24304f";
   ctx.font = "30px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  wrapCanvasText(ctx, "for completing the 10-score challenge by packing prime copies, comparing exponent counts, and simplifying fraction multiplication.", canvas.width/2, 675, 1050, 42);
+  wrapCanvasText(ctx, "for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.", canvas.width/2, 675, 1050, 42);
 
   ctx.fillStyle = "#24304f";
   ctx.font = "bold 26px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
   ctx.fillText(stageText, canvas.width/2, 780);
-  ctx.fillText(raceText, canvas.width/2, 825);
-  if(rankTextValue){
-    ctx.fillStyle = "#b87900";
-    ctx.font = "bold 30px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-    ctx.fillText(rankTextValue, canvas.width/2, 870);
-    ctx.fillStyle = "#24304f";
-    ctx.font = "bold 26px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-    ctx.fillText(dateText, canvas.width/2, 910);
-  } else {
-    ctx.fillText(dateText, canvas.width/2, 870);
-  }
+  ctx.fillText(dateText, canvas.width/2, 840);
 
   ctx.fillStyle = "#7a4b00";
   ctx.font = "italic 32px Georgia";

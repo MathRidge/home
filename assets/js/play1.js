@@ -1,10 +1,28 @@
-/* Math Ridge Play 1-1 local game: Build the Box.
+/* Math Ridge Trail 1-1 local game: Term Stone Trial.
    The global shell owns timer, ladder, progress shelf, and Next Climb visibility. */
 (function () {
 	"use strict";
 
 	const CERT_KEY = "mathRidge_cert_1_1";
+	const MANUAL_COMPLETE_KEY = "mathRidge_noteComplete_1_1";
 	const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
+
+	function hasCompletedManual() {
+		try {
+			return localStorage.getItem(MANUAL_COMPLETE_KEY) === "true";
+		} catch (error) {
+			return false;
+		}
+	}
+
+	if (!hasCompletedManual()) {
+		try {
+			sessionStorage.setItem("mathRidgeReturnView", "quest");
+			sessionStorage.setItem("mathRidge_open_section", "quest");
+		} catch (error) {}
+		window.location.replace("note1.html?trialLocked=manual");
+		return;
+	}
 
 	const problemDecks = {};
 	const usedProblemDecks = {};
@@ -40,6 +58,9 @@
 		stopClimbTimer() {},
 		startNextClimbTimer() {},
 		resetRaceTimer() {},
+		reviveProgressTurtle() {
+			document.querySelector(".progress-turtle")?.classList.remove("turtle-fade-away");
+		},
 		scrollToPremiumElement(id) {
 			document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
 		},
@@ -52,6 +73,9 @@
 			if (track) {
 				track.style.setProperty("--progress", `${options.progressPercent || 0}%`);
 				track.innerHTML = '<div class="progress-fill"></div><div class="progress-turtle">🐢</div>';
+				if (options.reviveTurtle || options.resetTurtle) {
+					track.querySelector(".progress-turtle")?.classList.remove("turtle-fade-away");
+				}
 			}
 			if (options.message) {
 				const message = document.getElementById("challengeMessage");
@@ -191,12 +215,14 @@
 		return `Climb ${getRequiredProgressSteps()} clean steps to score.`;
 	}
 
-	function updateTurtleBoard(message = "") {
+	function updateTurtleBoard(message = "", options = {}) {
 		shell().updateShelf({
 			score: turtleScore,
 			stage,
 			progressPercent: getProgressPercent(),
-			message: message || progressMessage()
+			message: message || progressMessage(),
+			reviveTurtle: Boolean(options.reviveTurtle),
+			resetTurtle: Boolean(options.resetTurtle)
 		});
 
 		if (turtleScore >= 10 && !achievementShown) {
@@ -340,13 +366,13 @@
 		if (!outsideTitle || !operationTitle) return;
 
 		if (turtleScore <= 3) {
-			outsideTitle.textContent = "Outside sign: tap the sign in front of the bigger number.";
-			operationTitle.textContent = "Inside operation: click + if same sign. Otherwise choose −.";
+			outsideTitle.textContent = "Tap the sign carried by the bigger size. That sign goes outside.";
+			operationTitle.textContent = "Same sign means add. Different sign means subtract.";
 			return;
 		}
 
-		outsideTitle.textContent = "Outside sign: tap one.";
-		operationTitle.textContent = "Inside operation: click one.";
+		outsideTitle.textContent = "Bigger size sign goes outside.";
+		operationTitle.textContent = "Choose same or different.";
 	}
 
 	function renderProblem() {
@@ -415,7 +441,7 @@
 		setText("finalPreviewSize", "__");
 		byId("finalAnswerPreview")?.classList.remove("filled");
 		setText("answerFeedback", "");
-		setText("builtBoxText", "");
+		setBuiltBoxText("");
 
 		const feedback = byId("feedback");
 		if (feedback) {
@@ -515,19 +541,20 @@
 		byId("step1")?.classList.remove("hidden");
 		shell().startNextClimbTimer();
 
+		shell().reviveProgressTurtle?.();
 		const message = `Stage ${stage}: climb ${getRequiredProgressSteps()} clean steps to score.`;
 		const feedback = byId("feedback");
 		if (feedback) {
 			feedback.textContent = "New climb started. Begin with Step 1.";
 			feedback.style.color = "#248a2f";
 		}
-		updateTurtleBoard(message);
+		updateTurtleBoard(message, { reviveTurtle: true });
 		scrollToActiveClimbStart();
 	}
 
 	function chooseSignType(type, button) {
 		if (stageStarted) shell().startClimbTimer();
-		document.querySelectorAll("#step1 .choice-btn").forEach(btn => btn.classList.remove("selected"));
+		document.querySelectorAll(".op-btn").forEach(btn => btn.classList.remove("selected"));
 
 		if (type !== expected.sameOrDifferent) {
 			markWrong(
@@ -539,21 +566,12 @@
 
 		button.classList.add("selected");
 		chosenSignType = type;
-		markCorrectStep("step1-sign-type");
-		byId("step2")?.classList.remove("hidden");
-		scrollToCenter("step2");
-
-		const feedback = byId("feedback");
-		if (feedback) {
-			feedback.textContent = type === "same"
-				? "Correct. Same signs add inside the box."
-				: "Correct. Different signs subtract inside the box.";
-		}
+		pickOperation(type === "same" ? "+" : "-", button);
 	}
 
 	function chooseBiggerSize(size, button) {
 		if (stageStarted) shell().startClimbTimer();
-		document.querySelectorAll("#step2 .choice-btn").forEach(btn => btn.classList.remove("selected"));
+		document.querySelectorAll("#step1 .choice-btn").forEach(btn => btn.classList.remove("selected"));
 
 		if (size !== expected.biggerSize) {
 			markWrong(button, `${size} is smaller. Pick the bigger size first.`);
@@ -562,34 +580,87 @@
 
 		button.classList.add("selected");
 		chosenBiggerSize = size;
-		markCorrectStep("step2-bigger-size");
+		const firstInput = byId("firstNumInput");
+		if (firstInput) firstInput.value = expected.biggerSize;
+		markCorrectStep("step1-bigger-size");
+		byId("step2")?.classList.remove("hidden");
+		scrollToCenter("step2");
+
+		const feedback = byId("feedback");
+		if (feedback) feedback.textContent = "Good. Now choose the sign carried by that bigger size.";
+	}
+
+	function displaySign(sign) {
+		return sign === "+" ? "+" : "-";
+	}
+
+	function setBuiltBoxText(value) {
+		setText("builtBoxText", value);
+		setText("builtBoxTextAnswer", value);
+	}
+
+	function builtBoxLine() {
+		return `You built: ${displaySign(expected.outsideSign)}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "-"} ${expected.smallerSize})`;
+	}
+
+	function chooseOutsideSign(sign, button) {
+		if (stageStarted) shell().startClimbTimer();
+		document.querySelectorAll("#step2 .sign-btn").forEach(btn => btn.classList.remove("selected"));
+
+		if (sign !== expected.outsideSign) {
+			markWrong(button, `Look at the bigger size. Its sign is ${displaySign(expected.outsideSign)}.`);
+			return;
+		}
+
+		button.classList.add("selected");
+		chosenOutsideSign = sign;
+		setText("outsideSignDisplay", displaySign(sign));
+		byId("outsideSignDisplay")?.classList.add("filled");
+		markCorrectStep("step2-outside-sign");
 		byId("builder")?.classList.remove("hidden");
 		scrollToCenter("builder");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Good. Now build: sign outside, bigger first, smaller second.";
+		if (feedback) feedback.textContent = "Correct. The bigger size sign goes outside. Now choose same-sign add or different-sign subtract.";
 	}
 
 	function pickOutsideSign(sign, button) {
-		if (stageStarted) shell().startClimbTimer();
-		document.querySelectorAll(".sign-btn").forEach(btn => btn.classList.remove("selected"));
-		button.classList.add("selected");
-		chosenOutsideSign = sign;
-		setText("outsideSignDisplay", sign === "+" ? "+" : "−");
-		byId("outsideSignDisplay")?.classList.add("filled");
-		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Outside sign selected. Now fill the box or choose operation.";
+		chooseOutsideSign(sign, button);
 	}
 
 	function pickOperation(operation, button) {
 		if (stageStarted) shell().startClimbTimer();
 		document.querySelectorAll(".op-btn").forEach(btn => btn.classList.remove("selected"));
+
+		if (!chosenOutsideSign) {
+			markWrong(button, "Choose the bigger size sign before the sign relationship.");
+			return;
+		}
+
+		if (operation !== expected.operation) {
+			markWrong(button, expected.operation === "+"
+				? "These signs are the same. Same signs add."
+				: "These signs are different. Different signs subtract."
+			);
+			return;
+		}
+
 		button.classList.add("selected");
 		chosenOperation = operation;
-		setText("operationDisplay", operation === "+" ? "+" : "−");
+		chosenSignType = operation === "+" ? "same" : "different";
+		setText("operationDisplay", operation === "+" ? "+" : "-");
 		byId("operationDisplay")?.classList.add("filled");
+		const firstInput = byId("firstNumInput");
+		const secondInput = byId("secondNumInput");
+		if (firstInput) firstInput.value = expected.biggerSize;
+		if (secondInput) secondInput.value = expected.smallerSize;
+		setBuiltBoxText(builtBoxLine());
+		markCorrectStep("step3-box-build");
+		byId("answerArea")?.classList.remove("hidden");
+
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Operation selected. Now fill the big size and small size.";
+		if (feedback) feedback.textContent = "Box is built. Now solve the size inside and write the final answer.";
+		scrollToCenter("answerArea");
 	}
 
 	function checkBox() {
@@ -630,10 +701,7 @@
 
 		markCorrectStep("step3-box-build");
 		byId("answerArea")?.classList.remove("hidden");
-		setText(
-			"builtBoxText",
-			`You built: ${expected.outsideSign === "+" ? "+" : "−"}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "−"} ${expected.smallerSize})`
-		);
+		setBuiltBoxText(builtBoxLine());
 
 		if (feedback) feedback.textContent = "✅ Box is correct. Now solve it.";
 		scrollToCenter("answerArea");
@@ -792,7 +860,8 @@
 			id: "1_1",
 			section: "1-1",
 			title: "Terms",
-			certificateTitle: "Build the Box",
+			relicName: "The Term Stone",
+			certificateTitle: "Signed Term Structure",
 			playFile: "play1.html"
 		}, certData);
 
@@ -817,10 +886,10 @@
 	function fillCertificateDisplay(cert) {
 		if (!cert) return;
 		setText("certName", cert.studentName || "Math Ridge Champion");
-		setText("certStage", `Completed Score ${cert.score || 10} at Stage ${cert.stage || 10}.`);
-		setText("certRaceTime", `World Time Race: ${cert.timeDisplay || shell().formatRaceTime(shell().getTotalRaceMs())}`);
-		setText("certRank", cert.rankText || "");
-		setText("certDate", `Completed on ${cert.displayDate || ""}${cert.displayTime ? ` at ${cert.displayTime}` : ""}`);
+		setText("certStage", "Academic Focus: Signed Term Structure");
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${cert.displayDate || ""}`);
 	}
 
 	function openSavedCertificateIfRequested() {
@@ -937,6 +1006,7 @@
 			displayTime: formattedTime,
 			score: turtleScore,
 			stage,
+			relicName: "The Term Stone",
 			timeDisplay: finalRaceDisplay,
 			rank: latestRaceRank,
 			rankText: rankMessage
@@ -1066,9 +1136,7 @@
 	function saveCertificateImage() {
 		const name = byId("certName")?.textContent || "Math Ridge Champion";
 		const date = byId("certDate")?.textContent || "";
-		const raceTime = byId("certRaceTime")?.textContent || "";
 		const stageLine = byId("certStage")?.textContent || "";
-		const rank = byId("certRank")?.textContent || "";
 
 		const canvas = document.createElement("canvas");
 		canvas.width = 1400;
@@ -1092,7 +1160,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Build the Box", 700, 360);
+		ctx.fillText("Signed Term Structure", 700, 360);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
@@ -1111,24 +1179,15 @@
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
-		ctx.fillText("for completing Trail 1-1 with focus, accuracy,", 700, nameEndY + 72);
-		ctx.fillText("and steady climb energy.", 700, nameEndY + 112);
+		ctx.fillText("for demonstrating understanding of signed terms,", 700, nameEndY + 72);
+		ctx.fillText("sign direction, and combining positive and negative values.", 700, nameEndY + 112);
 
 		ctx.font = "bold 28px Georgia";
 		ctx.fillText(stageLine, 700, nameEndY + 168);
-		ctx.fillText(raceTime, 700, nameEndY + 206);
-
-		let detailY = nameEndY + 246;
-		if (rank) {
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 34px Georgia";
-			ctx.fillText(rank, 700, detailY);
-			detailY += 42;
-		}
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "bold 25px Georgia";
-		ctx.fillText(date, 700, detailY);
+		ctx.fillText(date, 700, nameEndY + 222);
 
 		ctx.strokeStyle = "rgba(126, 77, 26, 0.48)";
 		ctx.lineWidth = 2;
@@ -1142,7 +1201,7 @@
 		drawCenteredText(ctx, CERT_SIGNATURE, 700, 910, 780, 36);
 
 		const link = document.createElement("a");
-		link.download = "math-ridge-build-the-box-certificate.webp";
+		link.download = "math-ridge-signed-term-structure-certificate.webp";
 		link.href = canvas.toDataURL("image/webp", 0.92);
 		link.click();
 	}
@@ -1160,7 +1219,8 @@
 		byId("playArea")?.classList.add("hidden");
 		shell().hideNextClimbButton({ force: true });
 		shell().updateTimerPanel?.();
-		updateTurtleBoard("Press START the Climb when you are ready.");
+		shell().reviveProgressTurtle?.();
+		updateTurtleBoard("Press START the Climb when you are ready.", { reviveTurtle: true });
 	}
 
 	function init() {
@@ -1174,6 +1234,7 @@
 		window.nextClimb = nextClimb;
 		window.chooseSignType = chooseSignType;
 		window.chooseBiggerSize = chooseBiggerSize;
+		window.chooseOutsideSign = chooseOutsideSign;
 		window.pickOutsideSign = pickOutsideSign;
 		window.pickOperation = pickOperation;
 		window.checkBox = checkBox;

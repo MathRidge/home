@@ -15,14 +15,14 @@ const lessons = [
 const certificateList = lessons.map(({ id, section, title, playFile }) => ({ id, section, title, playFile }));
 
 const stageCardThemes = {
-  "1_1": "stage-1-1",
-  "1_2": "stage-1-2",
-  "1_3": "stage-1-3",
-  "1_4": "stage-1-4",
-  "2_1": "stage-2-1",
-  "2_2": "stage-2-2",
-  "2_3": "stage-2-3",
-  "2_4": "stage-2-4"
+  "1_1": "stage-1-1-trail-start",
+  "1_2": "stage-1-2-mountain-peak",
+  "1_3": "stage-1-3-mountain-trail",
+  "1_4": "stage-1-4-mountain-cabin",
+  "2_1": "stage-2-1-mountain-library",
+  "2_2": "stage-2-2-ancient-tree",
+  "2_3": "stage-2-3-math-workstation",
+  "2_4": "stage-2-4-exponential-bloom"
 };
 
 function stageImageSlug(id) {
@@ -76,6 +76,64 @@ function storageKeyPlayComplete(id) { return `mathRidge_playComplete_${id}`; }
 function storageKeyCert(id) { return `mathRidge_cert_${id}`; }
 
 const TRAIL_STATE_KEY = "mathRidge_trail_state_v1";
+const STAGE_REVEAL_HINT_KEY = "mathRidge_stageRevealHintSeen_v1";
+const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
+const PROLOGUE_SEEN_KEY = "mathRidge_prologueSeen_v1";
+const STORY_COMPLETE_1_1_KEY = "mathRidge_storyComplete_1_1";
+const TERM_MANUAL_UNLOCK_KEY = storageKeyNoteUnlocked("1_1");
+
+function isTermManualUnlocked() {
+  try {
+    return localStorage.getItem(TERM_MANUAL_UNLOCK_KEY) === "true" ||
+      localStorage.getItem(storageKeyNote("1_1")) === "true" ||
+      localStorage.getItem(storageKeyPlayComplete("1_1")) === "true" ||
+      hasCertificate("1_1");
+  } catch (error) {
+    return false;
+  }
+}
+
+function isStoryGateActive() {
+  return !isTermManualUnlocked();
+}
+
+function canOpenSectionWhileGated(id) {
+  return !isStoryGateActive() || ["home", "message"].includes(id);
+}
+
+function syncStoryGateState() {
+  const gateActive = isStoryGateActive();
+  document.body.classList.toggle("story-gated", gateActive);
+  document.documentElement.classList.toggle("story-gated", gateActive);
+
+  document.querySelectorAll(".top-actions button").forEach(button => {
+    const label = button.textContent.trim().toLowerCase();
+    const locked = gateActive && !["home", "message"].includes(label);
+    button.disabled = locked;
+    button.classList.toggle("story-locked", locked);
+    if (locked) {
+      button.setAttribute("aria-disabled", "true");
+      button.title = "Finish Story 1-1 to unlock this area.";
+    } else {
+      button.removeAttribute("aria-disabled");
+      button.removeAttribute("title");
+    }
+  });
+}
+
+function hasSeenStageRevealHint() {
+  try { return localStorage.getItem(STAGE_REVEAL_HINT_KEY) === "true"; }
+  catch (error) { return false; }
+}
+
+function syncStageRevealHintState() {
+  document.body.classList.toggle("stage-reveal-hint-seen", hasSeenStageRevealHint());
+}
+
+function markStageRevealHintSeen() {
+  try { localStorage.setItem(STAGE_REVEAL_HINT_KEY, "true"); } catch (error) {}
+  syncStageRevealHintState();
+}
 
 function writeTrailStateSnapshot() {
   try {
@@ -155,6 +213,120 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
+const pronounLabels = {
+  they: "they / them",
+  he: "he / him",
+  she: "she / her"
+};
+
+function cleanIdentityValue(value, maxLength) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .slice(0, maxLength);
+}
+
+function readPlayerProfile() {
+  const profile = readJSONStorage(PLAYER_PROFILE_KEY);
+  if (!profile || typeof profile !== "object") return null;
+  return profile;
+}
+
+function getPronounLabel(value) {
+  return pronounLabels[value] || pronounLabels.they;
+}
+
+function renderPlayerIdentityState() {
+  const form = document.getElementById("playerIdentityForm");
+  const saved = document.getElementById("playerIdentitySaved");
+  const nicknameInput = document.getElementById("playerNickname");
+  const certificateInput = document.getElementById("certificateName");
+  const profile = readPlayerProfile();
+
+  if (!form || !saved) return;
+
+  if (!profile) {
+    form.classList.remove("identity-locked");
+    form.querySelectorAll("input, button[type='submit']").forEach(control => {
+      control.disabled = false;
+    });
+    saved.classList.add("hidden");
+    saved.innerHTML = "";
+    return;
+  }
+
+  if (nicknameInput) nicknameInput.value = profile.nickname || "";
+  if (certificateInput) certificateInput.value = profile.certificateName || "";
+  form.querySelectorAll(`input[name="pronoun"]`).forEach(input => {
+    input.checked = input.value === (profile.pronoun || "they");
+  });
+  form.classList.add("identity-locked");
+  form.querySelectorAll("input, button[type='submit']").forEach(control => {
+    control.disabled = true;
+  });
+
+  saved.classList.remove("hidden");
+  saved.innerHTML = `
+    <strong>Story Profile Sealed</strong>
+    <span>Mira will call you ${escapeHTML(profile.nickname || "Ridge Wanderer")}.</span>
+    <span>Certificates and world records will use ${escapeHTML(profile.certificateName || profile.nickname || "Math Ridge Champion")}.</span>
+    <span>Pronouns: ${escapeHTML(getPronounLabel(profile.pronoun))}</span>
+    <button class="gold-btn" type="button" onclick="showSection('quest')">Step onto Math Ridge</button>
+  `;
+}
+
+function handlePrologueChoice(choice) {
+  const response = document.getElementById("prologueChoiceResponse");
+  if (!response) return;
+
+  const lines = {
+    look: "Glowing symbols are carved into the wooden floor. They shift when you stare at them, almost like they are waiting for an answer.",
+    mountain: "Mira lowers her voice. Math Ridge is ancient. Every trail teaches a different kind of magic, but no one reaches the top without learning.",
+    pockets: "Your phone is gone. All you find is a small glowing pebble shaped like the number 1. It feels warm, like it knows the first trail is waiting."
+  };
+
+  response.textContent = lines[choice] || "Mira takes a breath and promises to guide you as far as she can.";
+  response.classList.add("choice-response-active");
+  try { localStorage.setItem(PROLOGUE_SEEN_KEY, "true"); } catch (error) {}
+}
+
+function savePlayerIdentity(event) {
+  if (event) event.preventDefault();
+
+  const existingProfile = readPlayerProfile();
+  if (existingProfile) {
+    renderPlayerIdentityState();
+    return;
+  }
+
+  const form = document.getElementById("playerIdentityForm");
+  if (!form) return;
+
+  const data = new FormData(form);
+  const nickname = cleanIdentityValue(data.get("nickname"), 24) || "Ridge Wanderer";
+  const certificateName = cleanIdentityValue(data.get("certificateName"), 36) || nickname;
+  const selectedPronoun = cleanIdentityValue(data.get("pronoun"), 8);
+  const pronoun = pronounLabels[selectedPronoun] ? selectedPronoun : "they";
+  const profile = {
+    version: 1,
+    nickname,
+    certificateName,
+    pronoun,
+    pronounLabel: getPronounLabel(pronoun),
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    localStorage.setItem(PLAYER_PROFILE_KEY, JSON.stringify(profile));
+    localStorage.setItem(PROLOGUE_SEEN_KEY, "true");
+  } catch (error) {}
+
+  renderPlayerIdentityState();
+
+  const saved = document.getElementById("playerIdentitySaved");
+  if (saved) saved.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 function renderTrail(options = {}) {
   const trail = document.getElementById("trailChapters");
   if (!trail) return;
@@ -181,6 +353,31 @@ function renderTrail(options = {}) {
   bindStageCardInteractions();
 }
 
+function stageRelicName(id) {
+  const relics = {
+    "1_1": "The Term Stone",
+    "1_2": "The Sign Compass",
+    "1_3": "The Parity Prism",
+    "1_4": "The Factor Forge"
+  };
+  return relics[id] || "";
+}
+
+function stageRelicImage(id) {
+  const relicImages = {
+    "1_1": "assets/images/relic/term_stone.png",
+    "1_2": "assets/images/relic/sign_compass_relic_alpha.png",
+    "1_3": "assets/images/relic/parity_prism_true_alpha.png",
+    "1_4": "assets/images/relic/factor_forge_alpha.png"
+  };
+  return relicImages[id] || "";
+}
+
+function earnedStageProof(lesson) {
+  const relicName = stageRelicName(lesson.id);
+  return relicName ? `${relicName} obtained` : "Stage achieved";
+}
+
 function renderTrailCard(lesson) {
   const index = lessonIndex(lesson.id);
   const noteUnlocked = isNoteUnlocked(index);
@@ -192,6 +389,11 @@ function renderTrailCard(lesson) {
   const interactionClass = noteUnlocked ? "stage-tappable" : "";
   const stageArt = primaryStageImage
     ? `<div class="stage-art" aria-hidden="true"><img class="stage-art-img" src="${primaryStageImage}" alt="" loading="lazy" decoding="async" onerror="handleStageImageFallback(this)"></div>`
+    : "";
+  const relicName = stageRelicName(lesson.id);
+  const relicImage = stageRelicImage(lesson.id);
+  const relicProof = earned && relicName
+    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""}" aria-label="${escapeHTML(relicName)} obtained">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>Relic Obtained</span><strong>${escapeHTML(relicName)}</strong><em>Completed</em></div>`
     : "";
 
   return `
@@ -205,10 +407,11 @@ function renderTrailCard(lesson) {
         <h3>${escapeHTML(lesson.title)}</h3>
         <p>${escapeHTML(lesson.description)}</p>
       </div>
-      <div class="lock-chip">${earned ? "🏅 Certificate earned" : playUnlocked ? "✅ Play unlocked" : noteUnlocked ? "📖 Note open" : "🔒 Trail locked"}</div>
+      ${relicProof}
+      <div class="lock-chip">${earned ? escapeHTML(earnedStageProof(lesson)) : playUnlocked ? "Trail open" : noteUnlocked ? "Manual open" : "Trail locked"}</div>
       <div class="node-actions">
-        <a class="small-link note-link ${noteUnlocked ? "" : "locked"}" href="${noteUnlocked ? lesson.noteFile : "#"}" onclick="return handleNoteClick(event, '${lesson.id}')" aria-label="Open ${lesson.section} Note"><span class="button-rune" aria-hidden="true">📖</span><span>Note</span></a>
-        <a class="small-link play-link ${playUnlocked ? "" : "locked"}" href="${playUnlocked ? lesson.playFile : "#"}" onclick="return handlePlayClick(event, '${lesson.id}')" aria-label="Open ${lesson.section} Play"><span class="button-rune" aria-hidden="true">▶</span><span>Play</span></a>
+        <a class="small-link note-link ${noteUnlocked ? "" : "locked"}" href="${noteUnlocked ? lesson.noteFile : "#"}" onclick="return handleNoteClick(event, '${lesson.id}')" aria-label="Open ${lesson.section} Manual"><span class="button-rune" aria-hidden="true">📖</span><span>Manual</span></a>
+        <a class="small-link play-link ${playUnlocked ? "" : "locked"}" href="${playUnlocked ? lesson.playFile : "#"}" onclick="return handlePlayClick(event, '${lesson.id}')" aria-label="Open ${lesson.section} Trail"><span class="button-rune" aria-hidden="true">▶</span><span>Trail</span></a>
       </div>
     </article>
   `;
@@ -269,8 +472,8 @@ function renderMenuNotePlay(lesson) {
   const playUnlocked = isPlayUnlocked(index);
 
   return `
-    <a class="jump-link note-jump ${noteUnlocked ? "" : "locked"}" href="${noteUnlocked ? lesson.noteFile : "#"}" onclick="return handleNoteClick(event, '${lesson.id}')"><span><i aria-hidden="true">📖</i> ${lesson.section} Note</span><strong>${noteUnlocked ? lesson.tag : "Locked"}</strong></a>
-    <a class="jump-link play-jump ${playUnlocked ? "" : "locked"}" href="${playUnlocked ? lesson.playFile : "#"}" onclick="return handlePlayClick(event, '${lesson.id}')"><span><i aria-hidden="true">▶</i> ${lesson.section} Play</span><strong>${playUnlocked ? "Climb" : "Locked"}</strong></a>
+    <a class="jump-link note-jump ${noteUnlocked ? "" : "locked"}" href="${noteUnlocked ? lesson.noteFile : "#"}" onclick="return handleNoteClick(event, '${lesson.id}')"><span><i aria-hidden="true">📖</i> ${lesson.section} Manual</span><strong>${noteUnlocked ? lesson.tag : "Locked"}</strong></a>
+    <a class="jump-link play-jump ${playUnlocked ? "" : "locked"}" href="${playUnlocked ? lesson.playFile : "#"}" onclick="return handlePlayClick(event, '${lesson.id}')"><span><i aria-hidden="true">▶</i> ${lesson.section} Trail</span><strong>${playUnlocked ? "Enter" : "Locked"}</strong></a>
   `;
 }
 
@@ -280,7 +483,7 @@ function handleNoteClick(event, id) {
 
   if (!isNoteUnlocked(index)) {
     event.preventDefault();
-    showLockedProgressModal(`${lesson.section} Note`);
+    showLockedProgressModal(`${lesson.section} Manual`);
     return false;
   }
 
@@ -297,7 +500,7 @@ function handlePlayClick(event, id) {
     if (isNoteUnlocked(index)) {
       showPlayNeedsNoteModal(lesson);
     } else {
-      showLockedProgressModal(`${lesson.section} Play`);
+      showLockedProgressModal(`${lesson.section} Trail`);
     }
 
     return false;
@@ -398,8 +601,8 @@ function showLockedProgressModal(targetLabel) {
 
 function showPlayNeedsNoteModal(lesson) {
   showModal(
-    "Play Locked",
-    `To unlock ${lesson.section} Play, please finish the progress training in ${lesson.section} Note first. Would you like to go to the Note now?`,
+    "Trail Locked",
+    `To unlock ${lesson.section} Trail, please finish the progress training in ${lesson.section} Manual first. Would you like to go to the Manual now?`,
     [
       { text: "Yes", className: "gold-btn", action: () => { window.location.href = lesson.noteFile; } },
       { text: "No", className: "pill-btn", action: closeModal }
@@ -424,17 +627,24 @@ function resetAllProgress() {
   });
 
   try { localStorage.removeItem(TRAIL_STATE_KEY); } catch (error) {}
+  try { localStorage.removeItem(STAGE_REVEAL_HINT_KEY); } catch (error) {}
+  try { localStorage.removeItem(PLAYER_PROFILE_KEY); } catch (error) {}
+  try { localStorage.removeItem(PROLOGUE_SEEN_KEY); } catch (error) {}
+  try { localStorage.removeItem(STORY_COMPLETE_1_1_KEY); } catch (error) {}
 
   chapterTests.forEach(test => {
     (test.storageKeys || []).forEach(key => localStorage.removeItem(key));
   });
 
   closeModal();
+  renderPlayerIdentityState();
+  syncStageRevealHintState();
   renderTrail({ force: true });
   renderMenuLinks({ force: true });
   renderCertificateWall();
   renderTestResults();
-  showSection("quick");
+  syncStoryGateState();
+  showSection("home");
 }
 
 const modalActionMap = new WeakMap();
@@ -477,12 +687,20 @@ function closeModal() {
   if (modal) modal.classList.remove("show");
 }
 
+function showStoryGateModal() {
+  showModal("Story First", "The full Mountain Trail opens after you finish Story 1-1 and receive the Term Manual.", [
+    { text: "Begin Story", className: "gold-btn", action: () => { window.location.href = "prologue.html"; } },
+    { text: "Message", className: "pill-btn", action: () => showSection("message") },
+    { text: "OK", className: "pill-btn", action: closeModal }
+  ]);
+}
+
 const sections = document.querySelectorAll(".view-section");
 const shell = document.getElementById("appShell");
-const bgClasses = ["quest-bg", "menu-bg", "cabin-bg", "message-bg"];
+const bgClasses = ["quest-bg", "menu-bg", "cabin-bg", "message-bg", "prologue-bg"];
 
 function updateActiveNav(id) {
-  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", message: "Message" };
+  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", message: "Message", prologue: "" };
 
   document.querySelectorAll(".top-actions button").forEach(button => {
     const isCurrent = button.textContent.trim() === labels[id];
@@ -500,7 +718,13 @@ function updateActiveNav(id) {
 }
 
 function showSection(id, options = {}) {
-  const { scroll = true, keepURL = false } = options;
+  const { scroll = true, keepURL = false, silentGate = false } = options;
+  let nextId = normalizeSectionName(id) || "home";
+  const blockedByGate = !canOpenSectionWhileGated(nextId);
+
+  if (blockedByGate) {
+    nextId = "home";
+  }
 
   if (typeof toggleNoteMenu === "function") toggleNoteMenu(false);
   if (window.MathRidgeMobileConfirm?.clear) window.MathRidgeMobileConfirm.clear();
@@ -509,26 +733,30 @@ function showSection(id, options = {}) {
 
   sections.forEach(section => section.classList.remove("active"));
 
-  const target = document.getElementById(id);
+  const target = document.getElementById(nextId);
   if (target) target.classList.add("active");
 
   if (shell) {
     shell.classList.remove(...bgClasses);
-    if (id === "quest") shell.classList.add("quest-bg");
-    if (id === "quick") shell.classList.add("menu-bg");
-    if (id === "cabin") shell.classList.add("cabin-bg");
-    if (id === "message") shell.classList.add("message-bg");
+    if (nextId === "quest") shell.classList.add("quest-bg");
+    if (nextId === "quick") shell.classList.add("menu-bg");
+    if (nextId === "cabin") shell.classList.add("cabin-bg");
+    if (nextId === "message") shell.classList.add("message-bg");
+    if (nextId === "prologue") shell.classList.add("prologue-bg");
   }
 
-  if (id === "quest") renderTrail();
-  if (id === "quick") renderMenuLinks();
-  if (id === "cabin") {
+  if (nextId === "quest") renderTrail();
+  if (nextId === "quick") renderMenuLinks();
+  if (nextId === "cabin") {
     renderCertificateWall();
     renderTestResults();
     syncCabinPanelVisibility({ scroll: false });
   }
 
-  updateActiveNav(id);
+  updateActiveNav(nextId);
+  syncStoryGateState();
+
+  if (blockedByGate && !silentGate) showStoryGateModal();
 
   if (!keepURL && window.history && window.location.hash) {
     history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -541,6 +769,7 @@ function normalizeSectionName(value) {
   if (!value) return "";
   if (value === "trail" || value === "mountain-trail") return "quest";
   if (value === "menu") return "quick";
+  if (value === "story") return "prologue";
   return value;
 }
 
@@ -563,8 +792,13 @@ function openInitialSectionFromURL() {
   if (viewParam) target = viewParam;
   if (hashTarget) target = hashTarget;
 
+  if (target === "prologue") {
+    window.location.href = "prologue.html";
+    return;
+  }
+
   if (["quest", "quick", "cabin", "message"].includes(target)) {
-    showSection(target, { scroll: false, keepURL: true });
+    showSection(target, { scroll: false, keepURL: true, silentGate: true });
   } else {
     showSection("home", { scroll: false, keepURL: true });
   }
@@ -723,8 +957,9 @@ async function sendMessage(event) {
    Mobile only:
    - first tap gives the premium hover/pressed state
    - second tap confirms navigation/action
-   - stage cards first select the card, then Note/Play buttons arm separately. */
+   - stage cards first select the card, then Manual/Trail buttons arm separately. */
 const PREMIUM_TOUCH_QUERY = "(max-width: 760px)";
+const STAGE_SHELF_AUTO_CLOSE_MS = 4600;
 const CONFIRMABLE_INDEX_SELECTOR = [
   ".hero-actions .pill-btn",
   ".hero-actions .gold-btn",
@@ -756,16 +991,26 @@ function clearStageSelection() {
     currentSelectedStageCard.removeAttribute("data-stage-selected");
   }
   currentSelectedStageCard = null;
+  mobileConfirm()?.clear?.();
   if (stageSelectClearTimer) {
     window.clearTimeout(stageSelectClearTimer);
     stageSelectClearTimer = null;
   }
 }
 
+function scheduleStageShelfClose(card = currentSelectedStageCard, delay = STAGE_SHELF_AUTO_CLOSE_MS) {
+  if (stageSelectClearTimer) window.clearTimeout(stageSelectClearTimer);
+  stageSelectClearTimer = window.setTimeout(() => {
+    const keepSelected = document.activeElement && card && card.contains(document.activeElement);
+    if (!keepSelected) clearStageSelection();
+  }, delay);
+}
+
 function selectStageCard(card) {
   if (!card) return;
 
   mobileConfirm()?.clear?.();
+  if (!hasSeenStageRevealHint()) markStageRevealHintSeen();
 
   if (currentSelectedStageCard && currentSelectedStageCard !== card) {
     currentSelectedStageCard.classList.remove("is-stage-selected", "is-touch-preview", "is-pressed");
@@ -776,11 +1021,7 @@ function selectStageCard(card) {
   card.classList.add("is-stage-selected", "is-touch-preview", "is-pressed");
   card.setAttribute("data-stage-selected", "true");
 
-  if (stageSelectClearTimer) window.clearTimeout(stageSelectClearTimer);
-  stageSelectClearTimer = window.setTimeout(() => {
-    const keepSelected = document.activeElement && card.contains(document.activeElement);
-    if (!keepSelected) clearStageSelection();
-  }, 8000);
+  scheduleStageShelfClose(card);
 }
 
 function isConfirmableIndexTarget(target) {
@@ -788,7 +1029,7 @@ function isConfirmableIndexTarget(target) {
   if (target.disabled || target.hasAttribute("disabled") || target.getAttribute("aria-disabled") === "true") return false;
   if (target.closest("#noteTopActions")) return false; // the shared shell owns the drawer.
   if (target.closest("#ridgeModal") && target.dataset.mobileConfirm !== "modal-reset") return false;
-  if (target.classList.contains("locked")) return false; // locked Note/Play still opens its popup with one tap.
+  if (target.classList.contains("locked")) return false; // locked Manual/Trail still opens its popup with one tap.
   return true;
 }
 
@@ -905,6 +1146,7 @@ function handleStageMobileClick(event) {
   }
 
   const blocked = requireIndexMobileConfirm(event, stageAction, { duration: 6500, keepOthers: true });
+  if (blocked) scheduleStageShelfClose(stageCard, 6900);
   if (!blocked) window.setTimeout(clearStageSelection, 220);
   return blocked;
 }
@@ -989,6 +1231,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Lazy-render the heavier sections only when a student opens that view.
   // This keeps the first mobile paint fast and prevents hidden Trail art from loading too early.
   openInitialSectionFromURL();
+  renderPlayerIdentityState();
+  syncStageRevealHintState();
   writeTrailStateSnapshot();
   bindPremiumMobileSelection();
   window.addEventListener("resize", () => syncCabinPanelVisibility({ scroll: false }));
@@ -1007,6 +1251,10 @@ window.handlePlayClick = handlePlayClick;
 window.openCertificateFrame = openCertificateFrame;
 window.confirmResetProgress = confirmResetProgress;
 window.resetAllProgress = resetAllProgress;
+window.handlePrologueChoice = handlePrologueChoice;
+window.savePlayerIdentity = savePlayerIdentity;
+window.readPlayerProfile = readPlayerProfile;
+window.renderPlayerIdentityState = renderPlayerIdentityState;
 window.readTrailStateSnapshot = readTrailStateSnapshot;
 window.writeTrailStateSnapshot = writeTrailStateSnapshot;
 

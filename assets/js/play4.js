@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "1_4";
 	const PLAY_SECTION = "1-4";
-	const PLAY_TITLE = "Chunking Repeated Values";
+	const PLAY_TITLE = "Distribution and Grouping Foundations";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_4";
 	const PLAY_CERT_KEY = "mathRidge_cert_1_4";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_1";
@@ -935,14 +935,14 @@
 				raceTimeText = result.record?.timeDisplay
 					|| (result.record?.timeSeconds ? formatRaceTime(result.record.timeSeconds * 1000) : raceTimeText);
 			}
-		} catch (error) {
-			rankMessage = "World record could not save. Certificate time is still shown.";
+			} catch (error) {
+			rankMessage = "World record could not save. Certificate still created.";
 		}
 
 		setText("certName", finalName);
-		setText("certRaceTime", `World Time Race Completion: ${raceTimeText}`);
-		setText("certRank", rankMessage);
-		setText("certDate", `Completed on ${formattedDate} at ${formattedTime}`);
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${formattedDate}`);
 
 		savePlayCertificateProgress({
 			studentName: finalName,
@@ -1010,9 +1010,7 @@
 		} catch (error) {}
 
 		const name = byId("certName")?.textContent || certData.studentName || "Math Ridge Champion";
-		const raceTime = byId("certRaceTime")?.textContent || `World Time Race Completion: ${certData.raceTime || formatRaceTime(getRaceMs())}`;
-		const completedDate = byId("certDate")?.textContent || `Completed on ${certData.displayDate || ""} at ${certData.displayTime || ""}`;
-		const rank = byId("certRank")?.textContent || certData.rankText || "";
+		const completedDate = byId("certDate")?.textContent || `Completed on ${certData.displayDate || ""}`;
 
 		const canvas = document.createElement("canvas");
 		canvas.width = 1400;
@@ -1048,7 +1046,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Chunking Repeated Values", 700, 350);
+		ctx.fillText("Distribution and Grouping Foundations", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
@@ -1067,21 +1065,12 @@
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
-		ctx.fillText("for completing the 10-score challenge", 700, 610);
-		ctx.fillText("with focus, accuracy, and perseverance.", 700, 650);
-
-		ctx.font = "bold 30px Georgia";
-		ctx.fillText(raceTime, 700, 720);
-
-		if (rank) {
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 30px Georgia";
-			ctx.fillText(rank, 700, 765);
-		}
+		ctx.fillText("for demonstrating understanding of repeated addition,", 700, 610);
+		ctx.fillText("grouping, and early distributive reasoning.", 700, 650);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "28px Georgia";
-		ctx.fillText(completedDate, 700, rank ? 820 : 790);
+		ctx.fillText(completedDate, 700, 735);
 
 		ctx.fillStyle = "#7a4b00";
 		ctx.font = "italic 30px Georgia";
@@ -1105,9 +1094,9 @@
 		if (!certData.completed) return;
 
 		setText("certName", certData.studentName || "Math Ridge Champion");
-		setText("certRaceTime", `World Time Race Completion: ${certData.raceTime || "0:00"}`);
-		setText("certRank", certData.rankText || "");
-		setText("certDate", `Completed on ${certData.displayDate || ""} at ${certData.displayTime || ""}`);
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${certData.displayDate || ""}`);
 		const popup = byId("certificatePopup");
 		if (popup) popup.style.display = "flex";
 		document.body.classList.add("modal-open");

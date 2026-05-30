@@ -440,6 +440,14 @@ h1 {
 
 .unlock-dock span { color: rgba(255,247,232,0.70); }
 
+.unlock-dock.manual-required {
+  border-color: rgba(242, 184, 75, 0.55);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.36),
+    0 0 0 1px rgba(242, 184, 75, 0.22),
+    inset 0 1px 0 rgba(255, 247, 232, 0.12);
+}
+
 .footer-rule {
   margin: 24px auto 0;
   text-align: center;

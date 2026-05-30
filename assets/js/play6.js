@@ -5,7 +5,7 @@
 
 	const PLAY_ID = "2_2";
 	const PLAY_SECTION = "2-2";
-	const PLAY_TITLE = "Prime Factor Trees";
+	const PLAY_TITLE = "Prime Factorization Fluency";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_2_2";
 	const PLAY_CERT_KEY = "mathRidge_cert_2_2";
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_3";
@@ -889,14 +889,14 @@
 					|| (result.record?.timeSeconds ? formatRaceTime(result.record.timeSeconds * 1000) : raceTimeText);
 			}
 		} catch (error) {
-			rankMessage = "World record could not save. Certificate time is still shown.";
+			rankMessage = "World record could not save. Certificate still created.";
 		}
 
 		setText("certName", finalName);
-		setText("certStage", `Completed Score 10 after ${stage} stages of effort.`);
-		setText("certRaceTime", `World Time Race Completion: ${raceTimeText}`);
-		setText("certRank", rankMessage);
-		setText("certDate", `Completed on ${formattedDate} at ${formattedTime}`);
+		setText("certStage", "Academic Focus: Prime Factorization Fluency");
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${formattedDate}`);
 
 		savePlayCertificateProgress({
 			studentName: finalName,
@@ -948,9 +948,7 @@
 	function saveCertificateImage() {
 		const name = byId("certName")?.textContent || "Math Ridge Champion";
 		const completedDate = byId("certDate")?.textContent || "";
-		const stageText = byId("certStage")?.textContent || `Completed Score 10 after ${stage} stages of effort.`;
-		const raceTime = byId("certRaceTime")?.textContent || "World Time Race Completion: 0:00";
-		const rank = byId("certRank")?.textContent || "";
+		const stageText = byId("certStage")?.textContent || "Academic Focus: Prime Factorization Fluency";
 
 		const canvas = document.createElement("canvas");
 		canvas.width = 1400;
@@ -986,7 +984,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Prime Factor Trees", 700, 350);
+		ctx.fillText("Prime Factorization Fluency", 700, 350);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
@@ -1005,22 +1003,15 @@
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
-		ctx.fillText("for completing the 10-score challenge", 700, 610);
-		ctx.fillText("by breaking fractions into prime pieces and reducing carefully.", 700, 650);
+		ctx.fillText("for demonstrating prime factorization fluency", 700, 610);
+		ctx.fillText("and fraction reduction through matching factors.", 700, 650);
 
 		ctx.font = "bold 30px Georgia";
 		ctx.fillText(stageText, 700, 710);
-		ctx.fillText(raceTime, 700, 755);
-
-		if (rank && !rank.startsWith("World record could not")) {
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 30px Georgia";
-			ctx.fillText(rank, 700, 800);
-		}
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "28px Georgia";
-		ctx.fillText(completedDate, 700, rank && !rank.startsWith("World record could not") ? 845 : 810);
+		ctx.fillText(completedDate, 700, 770);
 
 		ctx.fillStyle = "#7a4b00";
 		ctx.font = "italic 30px Georgia";
@@ -1044,10 +1035,10 @@
 		if (!certData.completed) return;
 
 		setText("certName", certData.studentName || "Math Ridge Champion");
-		setText("certStage", `Completed Score 10 after ${certData.stage || stage} stages of effort.`);
-		setText("certRaceTime", `World Time Race Completion: ${certData.raceTime || "0:00"}`);
-		setText("certRank", certData.rankText || "");
-		setText("certDate", `Completed on ${certData.displayDate || ""} at ${certData.displayTime || ""}`);
+		setText("certStage", "Academic Focus: Prime Factorization Fluency");
+		setText("certRaceTime", "");
+		setText("certRank", "");
+		setText("certDate", `Completed on ${certData.displayDate || ""}`);
 		const popup = byId("certificatePopup");
 		if (popup) popup.style.display = "flex";
 		document.body.classList.add("modal-open");

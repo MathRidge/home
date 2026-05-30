@@ -291,9 +291,7 @@
 	}
 
 	function scrollToCenter(id) {
-		requestAnimationFrame(() => requestAnimationFrame(() => {
-			[0, 120, 260, 460].forEach(delay => scrollToPremiumElement(id, 12, delay));
-		}));
+		requestAnimationFrame(() => scrollToPremiumElement(id, 12, 80));
 	}
 
 	function formatSigned(value) {
@@ -839,7 +837,7 @@
 			byId("finalBuilt").innerHTML = "";
 
 			if (feedback) {
-				feedback.textContent = `${chosen.sign}${chosen.size} leads. Its sign moves outside. Now tap the other total.`;
+				feedback.textContent = `${chosen.sign}${chosen.size} leads. Its sign moves outside. Now place the other term next; it will subtract inside the ring.`;
 				feedback.className = "feedback good-text";
 			}
 
@@ -864,7 +862,7 @@
 
 			byId("secondSize").textContent = ringData.second.size;
 			if (feedback) {
-				feedback.textContent = "Great. Now solve the ring.";
+				feedback.textContent = "Great. Now simplify the term: choose + or -, then fill in the size.";
 				feedback.className = "feedback good-text";
 			}
 
@@ -887,7 +885,7 @@
 
 		finalBuilt.innerHTML = `
 			<div id="step6RingSolve" class="final-answer-builder ring-solve-step">
-				<h2>Step 6: Solve the Ring Size</h2>
+				<h2>Step 6: Simplify the Term</h2>
 
 				<div class="build-ring step6-ring-copy" aria-label="ring expression">
 					<span>${ringData.first.sign}</span>
@@ -898,7 +896,7 @@
 					</span>
 				</div>
 
-				<p class="step-instruction">Choose the final sign:</p>
+				<p class="step-instruction">Choose the final sign, then type the size.</p>
 
 				<div class="final-sign-choice" role="group" aria-label="choose final answer sign">
 					<button type="button" id="chooseFinalPositive" class="sign-choice-card positive-choice" onclick="selectFinalAnswerSign('+')">+</button>
@@ -1004,13 +1002,25 @@
 		const correctSign = ringData.first.sign;
 
 		if (!finalAnswerSign) {
-			markMistake();
 			if (ringFeedback) {
-				ringFeedback.textContent = "Not yet. Choose the final sign first.";
-				ringFeedback.className = "feedback bad-text";
+				ringFeedback.textContent = "Warning! Be sure to choose a sign.";
+				ringFeedback.className = "feedback warning-text";
 			}
 			if (hintBox) {
-				hintBox.innerHTML = '<div class="hint-text">The bigger total decides whether the final answer is positive or negative.</div>';
+				hintBox.innerHTML = '<div class="hint-text">Choose + or - first. This reminder does not remove progress.</div>';
+				updateFocusHintMode();
+			}
+			return;
+		}
+
+		if (!input.value) {
+			input.style.borderColor = "#f2b84b";
+			if (ringFeedback) {
+				ringFeedback.textContent = "Warning! Make sure you fill in the size.";
+				ringFeedback.className = "feedback warning-text";
+			}
+			if (hintBox) {
+				hintBox.innerHTML = '<div class="hint-text">Type the size after choosing the sign. This reminder does not remove progress.</div>';
 				updateFocusHintMode();
 			}
 			return;
@@ -1254,16 +1264,16 @@
 				rankMessage = result.topThree ? rankText(result.rank) : "";
 				raceTimeText = result.record?.timeDisplay || formatRaceSeconds(result.record?.timeSeconds || latestSavedRaceSeconds);
 			} else {
-				rankMessage = "World record could not save. Certificate time is still shown.";
+				rankMessage = "World record could not save. Certificate still created.";
 			}
 		} catch (error) {
-			rankMessage = "World record could not save. Certificate time is still shown.";
+			rankMessage = "World record could not save. Certificate still created.";
 		}
 
 		byId("certName").textContent = finalName;
-		byId("certRaceTime").textContent = `World Time Race Completion: ${raceTimeText}`;
-		byId("certRank").textContent = rankMessage;
-		byId("certDate").textContent = `Completed on ${formattedDate} at ${formattedTime}`;
+		byId("certRaceTime").textContent = "";
+		byId("certRank").textContent = "";
+		byId("certDate").textContent = `Completed on ${formattedDate}`;
 
 		if (shell && typeof shell.saveTrailProgress === "function") {
 			shell.saveTrailProgress({
@@ -1299,8 +1309,6 @@
 	function saveCertificateImage() {
 		const name = byId("certName")?.textContent || "Math Ridge Champion";
 		const date = byId("certDate")?.textContent || "";
-		const raceTime = byId("certRaceTime")?.textContent || "";
-		const rank = byId("certRank")?.textContent || "";
 
 		const canvas = document.createElement("canvas");
 		canvas.width = 1200;
@@ -1326,7 +1334,7 @@
 
 		ctx.fillStyle = "#b87900";
 		ctx.font = "bold 42px Georgia";
-		ctx.fillText("Positive Negative Showdown", 600, 315);
+		ctx.fillText("Positive and Negative Term Balance", 600, 315);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia";
@@ -1338,21 +1346,12 @@
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "28px Georgia";
-		ctx.fillText("for completing the 10-score challenge", 600, 550);
-		ctx.fillText("with focus, accuracy, and perseverance.", 600, 590);
-
-		ctx.font = "bold 30px Georgia";
-		ctx.fillText(raceTime, 600, 635);
-
-		if (rank) {
-			ctx.fillStyle = "#b87900";
-			ctx.font = "bold 34px Georgia";
-			ctx.fillText(rank, 600, 685);
-		}
+		ctx.fillText("for demonstrating understanding of grouping", 600, 550);
+		ctx.fillText("positive and negative terms by sign.", 600, 590);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "bold 24px Georgia";
-		ctx.fillText(date, 600, rank ? 725 : 690);
+		ctx.fillText(date, 600, 670);
 
 		ctx.fillStyle = "#7a4b00";
 		ctx.font = "italic 28px Georgia";

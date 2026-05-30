@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Math Ridge | Journey Hub</title>
+  <link rel="icon" href="assets/images/logo/mathridge-premium-favicon.ico" sizes="any" />
+  <link rel="shortcut icon" href="assets/images/logo/mathridge-premium-favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/math-ridge-shell.css" />
-  <link rel="stylesheet" href="assets/css/index.css" />
+  <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260529-story-gate" />
 </head>
 
 <body class="index-page" data-index-page="true">
@@ -48,8 +50,12 @@
           <p class="hero-lead">
             Math Ridge helps students notice the structure behind each step. Students learn terms, teams, signs, prime pieces, shelves, reduction, and repeated patterns. Each climb feels clear, earned, and connected.
           </p>
+          <p class="story-gate-lead">
+            The ridge is sealed for new travelers. Begin the story, meet Mira, and receive the Term Manual to unlock the full Math Ridge hub.
+          </p>
           <div class="hero-actions">
-            <button class="gold-btn" type="button" onclick="showSection('quest')">Start Trail</button>
+            <a class="gold-btn" href="prologue.html">Begin Story</a>
+            <button class="pill-btn" type="button" onclick="showSection('quest')">Start Trail</button>
             <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
             <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
             <p class="mobile-double-tap-note">Ridge controls use two taps: first to arm, second to enter.</p>
@@ -58,11 +64,11 @@
 
         <aside class="chapter-preview" aria-label="Chapter preview">
           <article class="preview-card">
-            <h3>Chapter 1 — Term Vision</h3>
+            <h3>Chapter 1 - Term Vision</h3>
             <p>Not traditional addition and subtraction. Students learn to recognize terms, teams, and sign behavior.</p>
           </article>
           <article class="preview-card">
-            <h3>Chapter 2 — Prime Element Vision</h3>
+            <h3>Chapter 2 - Prime Element Vision</h3>
             <p>Not traditional multiplication and division. Students learn to see values as prime pieces: 2, 3, 5, and 7.</p>
           </article>
         </aside>
@@ -70,17 +76,17 @@
 
       <div class="home-quote" aria-label="Math Ridge quote">
         <img class="home-quote-logo" src="assets/images/logo/logold.svg" alt="Math Ridge logo" />
-        <blockquote>“The best view comes after the hardest climb.”</blockquote>
+        <blockquote>"The best view comes after the hardest climb."</blockquote>
         <div class="ridge-divider"><span>M A T H&nbsp;&nbsp;R I D G E</span></div>
       </div>
     </section>
 
     <section id="quest" class="hub-section view-section" aria-labelledby="questTitle">
-      <div class="panel">
-        <header class="panel-header">
+      <div class="panel quest-panel">
+        <header class="panel-header trail-title-card">
           <div class="panel-title">
             <h2 id="questTitle">Mountain Trail</h2>
-            <p>Follow the guided path from Note to Play. Each climb builds the next kind of math vision.</p>
+            <p>Follow the guided path from Manual to Trail. Each climb builds the next kind of math vision.</p>
           </div>
           <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
         </header>
@@ -89,8 +95,8 @@
     </section>
 
     <section id="quick" class="hub-section view-section" aria-labelledby="quickTitle">
-      <div class="panel">
-        <header class="panel-header">
+      <div class="panel quick-panel">
+        <header class="panel-header study-title-card">
           <div class="panel-title">
             <h2 id="quickTitle">Study Desk Menu</h2>
             <p>For students or teachers who want direct access instead of the guided room navigation.</p>
@@ -100,8 +106,8 @@
 
         <div class="quick-nav">
           <div class="room-map interactive-room-map" aria-label="Clickable study desk navigation">
-            <button class="hotspot note" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Note links from the closed book">Note</button>
-            <button class="hotspot play" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Play links from the open notebook">Play</button>
+            <button class="hotspot note" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Manual links from the closed book">Manual</button>
+            <button class="hotspot play" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Trail links from the open notebook">Trail</button>
             <button class="hotspot trail" type="button" onclick="showSection('quest')" aria-label="Go to Mountain Trail from the outdoor view">Trail</button>
             <button class="hotspot cabin" type="button" onclick="showSection('cabin')" aria-label="Go to Cabin from the certificate wall">Cabin</button>
             <button class="hotspot message" type="button" onclick="showSection('message')" aria-label="Go to Message Desk from the laptop">Message</button>
@@ -113,7 +119,7 @@
 
     <section id="cabin" class="hub-section view-section" aria-labelledby="cabinTitle">
       <div class="panel cabin-panel">
-        <header class="panel-header">
+        <header class="panel-header cabin-title-card">
           <div class="panel-title">
             <h2 id="cabinTitle">The Cabin</h2>
             <p>A calm personal space for progress, certificates, test results, and returning to the next climb.</p>
@@ -122,7 +128,7 @@
         </header>
 
         <div class="escape-spots">
-          <button class="room-spot" type="button" onclick="showSection('quick')"><strong>Menu</strong><span>Open direct links to every Note and Play.</span></button>
+          <button class="room-spot" type="button" onclick="showSection('quick')"><strong>Menu</strong><span>Open direct links to every Manual and Trail.</span></button>
           <button class="room-spot" type="button" onclick="showSection('quest')"><strong>Trail</strong><span>Look outside and continue the guided mountain path.</span></button>
           <button class="room-spot" type="button" onclick="toggleCertificateWall()"><strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span></button>
           <button class="room-spot" type="button" onclick="showSection('message')"><strong>Message</strong><span>Leave a question, suggestion, thank-you note, or testimonial.</span></button>
@@ -157,8 +163,8 @@
     </section>
 
     <section id="message" class="hub-section view-section" aria-labelledby="messageTitle">
-      <div class="panel">
-        <header class="panel-header">
+      <div class="panel message-panel">
+        <header class="panel-header message-title-card">
           <div class="panel-title">
             <h2 id="messageTitle">Message Desk</h2>
             <p>Have a question, suggestion, thank-you note, or parent testimonial? Leave a note for Math Ridge.</p>
@@ -193,7 +199,7 @@
 
     <div class="modal-layer" id="ridgeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="ridge-modal">
-        <button class="modal-close" type="button" onclick="closeModal()" aria-label="Close popup">×</button>
+        <button class="modal-close" type="button" onclick="closeModal()" aria-label="Close popup">&times;</button>
         <h3 id="modalTitle">Mountain Trail</h3>
         <p id="modalText">Continue your climb?</p>
         <div class="modal-actions" id="modalActions"></div>
@@ -201,7 +207,7 @@
     </div>
   </main>
 
-  <script src="assets/js/math-ridge-shell.js"></script>
-  <script src="assets/js/index.js"></script>
+  <script src="assets/js/math-ridge-shell.js?v=20260524-stage-polish6"></script>
+  <script src="assets/js/index.js?v=20260529-story-gate"></script>
 </body>
 </html>

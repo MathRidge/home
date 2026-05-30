@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/math-ridge-shell.css">
+  <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
 <link rel="stylesheet" href="assets/css/mathridge-note.css">
 <link rel="stylesheet" href="assets/css/note2.css">
 </head>
@@ -113,6 +113,13 @@
     <div class="memory-line"><span>Collect teams</span><strong>compare sizes</strong><span>build the final answer</span></div>
   </section>
 
+  <section class="section note2-section mini-skit-section" aria-label="Sign Compass mini-skit">
+    <p class="eyebrow">Mini-Skit | The Sign Compass</p>
+    <h2>Before the Practice Gate</h2>
+    <p>Mira and Elder Shellwick have a quick reminder before practice: when a number moves, its sign travels with it.</p>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('signCompassSkitDialog').showModal()">View Mini-Skit</button>
+  </section>
+
   <section class="section practice note2-practice" id="practice">
     <h2><span class="section-kicker">06</span> Unlock Practice</h2>
     <p>For each expression, collect the two teams first. Then use the premium notepad: choose the final sign and type only the size.</p>
@@ -134,6 +141,17 @@
   <p class="footer-note">Math Ridge Note 1-2 | Positive Negative Showdown</p>
 </main>
 
+<dialog class="mini-skit-dialog" id="signCompassSkitDialog" aria-label="Sign Compass mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>The Sign Compass</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage1-2.png" alt="Mira learns that when a number moves, its sign must move with it." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
+
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
     <h2 id="modalTitle">1-2 Play Unlocked!</h2>
@@ -143,6 +161,6 @@
 </div>
 <script src="assets/js/mathridge-note-data.js" defer></script>
 <script src="assets/js/math-ridge-shell.js" defer></script>
-<script src="assets/js/mathridge-note.js" defer></script>
+<script src="assets/js/mathridge-note.js?v=20260529-story-gate" defer></script>
 </body>
 </html>

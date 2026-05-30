@@ -8,48 +8,48 @@ window.MathRidgeNotes = window.MathRidgeNotes || {};
 window.MathRidgeNotes["1_1"] = {
   noteId: "1_1",
   playLink: "play1.html",
-  startLabel: "Start Climb 1-1",
-  readyTitle: "Ready for the next climb: 1-1 Play",
-  lockedText: "Locked until all four sign-size checks are correct.",
-  unlockedText: "Unlocked! You may begin 1-1 Play.",
-  modalTitle: "1-1 Play Unlocked!",
-  modalText: "You have unlocked 1-1 Play. Would you like to begin the next climb now?",
+  startLabel: "Start Term Stone Trial",
+  readyTitle: "Ready for the Term Stone Trial",
+  lockedText: "Locked until all four manual checks are correct.",
+  unlockedText: "Manual mastered. The Term Stone Trial is open.",
+  modalTitle: "Term Stone Trial Unlocked!",
+  modalText: "You have completed the Term Manual checks. Would you like to begin the Term Stone Trial now?",
   problems: [
     {
-      prompt: '1) Same team: <span class="prompt-term plus">+5</span> and <span class="prompt-term plus">+2</span>',
+      prompt: '1) Same signs: <span class="prompt-term plus">+5</span> and <span class="prompt-term plus">+2</span>',
       answer: "+7",
       answerType: "signedNumber",
       inputLayout: "signedNumber",
-      inputLabel: "Build the final answer",
+      inputLabel: "Final answer",
       sizePlaceholder: "size",
-      hint: "Same signs stay on one team. Put + outside. Add 5 + 2 inside the box."
+      hint: "Both signs are positive. Keep + outside, then add the sizes: 5 + 2."
     },
     {
-      prompt: '2) Same team: <span class="prompt-term minus">−4</span> and <span class="prompt-term minus">−3</span>',
+      prompt: '2) Same signs: <span class="prompt-term minus">-4</span> and <span class="prompt-term minus">-3</span>',
       answer: "-7",
       answerType: "signedNumber",
       inputLayout: "signedNumber",
-      inputLabel: "Build the final answer",
+      inputLabel: "Final answer",
       sizePlaceholder: "size",
-      hint: "Both terms are negative. Put − outside. Add the sizes 4 + 3 inside the box."
+      hint: "Both signs are negative. Keep - outside, then add the sizes: 4 + 3."
     },
     {
-      prompt: '3) Different teams: <span class="prompt-term plus">+6</span> and <span class="prompt-term minus">−9</span>',
+      prompt: '3) Different signs: <span class="prompt-term plus">+6</span> and <span class="prompt-term minus">-9</span>',
       answer: "-3",
       answerType: "signedNumber",
       inputLayout: "signedNumber",
-      inputLabel: "Build the final answer",
+      inputLabel: "Final answer",
       sizePlaceholder: "size",
-      hint: "The larger size is 9, and it is negative. Put − outside. Subtract 9 − 6 inside."
+      hint: "The larger size is 9, and it is negative. Keep - outside, then subtract: 9 - 6."
     },
     {
-      prompt: '4) Different teams: <span class="prompt-term minus">−5</span> and <span class="prompt-term plus">+8</span>',
+      prompt: '4) Different signs: <span class="prompt-term minus">-5</span> and <span class="prompt-term plus">+8</span>',
       answer: "+3",
       answerType: "signedNumber",
       inputLayout: "signedNumber",
-      inputLabel: "Build the final answer",
+      inputLabel: "Final answer",
       sizePlaceholder: "size",
-      hint: "The larger size is 8, and it is positive. Put + outside. Subtract 8 − 5 inside."
+      hint: "The larger size is 8, and it is positive. Keep + outside, then subtract: 8 - 5."
     }
   ]
 };
