@@ -55,6 +55,13 @@ a {
   isolation: isolate;
 }
 
+@supports (height: 100dvh) {
+  .story-vn {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+}
+
 .scene-bg {
   position: absolute;
   inset: 0;
@@ -901,6 +908,138 @@ a {
   .dialogue-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 940px) and (orientation: landscape), (max-height: 520px) and (orientation: landscape) {
+  .story-progress {
+    height: max(3px, env(safe-area-inset-top));
+  }
+
+  .story-topbar {
+    left: max(7px, env(safe-area-inset-left));
+    right: max(7px, env(safe-area-inset-right));
+    top: max(5px, env(safe-area-inset-top));
+    grid-template-columns: 50px minmax(0, 1fr) 50px;
+    min-height: 32px;
+    padding: 0;
+    gap: 6px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    pointer-events: none;
+  }
+
+  .story-topbar strong {
+    justify-self: center;
+    max-width: 48vw;
+    min-height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 247, 232, 0.20);
+    border-radius: 999px;
+    background: rgba(8, 15, 26, 0.42);
+    font-size: 0.76rem;
+    pointer-events: auto;
+  }
+
+  .story-topbar a {
+    min-height: 26px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(8, 15, 26, 0.46);
+    font-size: 0.72rem;
+    pointer-events: auto;
+  }
+
+  .scene-bg {
+    background-position: center center;
+    background-size: cover;
+  }
+
+  .mira-stage {
+    right: clamp(-54px, -5vw, -18px);
+    bottom: clamp(-238px, -43svh, -118px);
+  }
+
+  .mira-sprite {
+    height: min(136svh, 680px, calc(100svh + 278px));
+  }
+
+  .elder-stage {
+    left: clamp(4px, 3vw, 24px);
+    bottom: clamp(26px, 8svh, 48px);
+  }
+
+  .elder-sprite {
+    height: min(50svh, 260px, calc(100svh - 98px));
+  }
+
+  .relic-reveal-stage {
+    top: clamp(38px, 9svh, 62px);
+    height: min(38svh, 190px);
+  }
+
+  .story-relic {
+    width: clamp(58px, 10vw, 86px);
+    min-height: 86px;
+  }
+
+  .story-relic img {
+    max-height: 82px;
+  }
+
+  .dialogue-box {
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(7px, env(safe-area-inset-bottom));
+    width: min(680px, calc(100% - 16px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+    padding: 6px 8px 7px;
+    max-height: min(30svh, 128px);
+  }
+
+  .dialogue-meta {
+    font-size: 0.68rem;
+    line-height: 1.1;
+  }
+
+  #sceneCounter {
+    font-size: 0.66rem;
+  }
+
+  #dialogueText {
+    min-height: 2.08em;
+    margin-top: 3px;
+    font-size: clamp(0.74rem, 1.82vw, 0.84rem);
+    line-height: 1.22;
+  }
+
+  .dialogue-actions {
+    margin-top: 4px;
+    gap: 6px;
+  }
+
+  .dialogue-actions button,
+  .name-row button,
+  .reward-actions a,
+  .choice-row button {
+    min-height: 26px;
+    border-radius: 7px;
+    font-size: 0.7rem;
+  }
+
+  .dialogue-actions button {
+    min-width: 76px;
+    padding: 0 9px;
+  }
+
+  .name-form,
+  .choice-row,
+  .feedback-text {
+    margin-top: 7px;
   }
 }
 

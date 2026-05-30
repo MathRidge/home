@@ -1,0 +1,30 @@
+{
+  "name": "Math Ridge",
+  "short_name": "Math Ridge",
+  "description": "A story-driven math learning adventure.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#050914",
+  "theme_color": "#050914",
+  "icons": [
+    {
+      "src": "assets/images/logo/mathridge-app-icon.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/logo/math-ridge-logo.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/logo/mathridge-premium-favicon.ico",
+      "sizes": "48x48 64x64 128x128 256x256",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -552,10 +552,16 @@
     return String(value || "").replace(/\{\{playerName\}\}/g, playerName());
   }
 
+  function isTightStoryViewport() {
+    return window.matchMedia("(max-width: 940px) and (orientation: landscape), (max-height: 520px) and (orientation: landscape)").matches;
+  }
+
   function splitIntoReadableSegments(text) {
     const value = formatText(text).trim();
     if (!value) return [""];
 
+    const sentenceLimit = isTightStoryViewport() ? 74 : 132;
+    const phraseLimit = isTightStoryViewport() ? 60 : 112;
     const sentences = value.match(/[^.!?。！？]+[.!?。！？]+(?:["”])?|[^.!?。！？]+$/g) || [value];
     const segments = [];
 
@@ -563,7 +569,7 @@
       const clean = sentence.trim();
       if (!clean) return;
 
-      if (clean.length <= 132) {
+      if (clean.length <= sentenceLimit) {
         segments.push(clean);
         return;
       }
@@ -572,7 +578,7 @@
       clean.split(/,\s+/).forEach((part, index, parts) => {
         const piece = index < parts.length - 1 ? `${part},` : part;
         const next = line ? `${line} ${piece}` : piece;
-        if (next.length > 112 && line) {
+        if (next.length > phraseLimit && line) {
           segments.push(line);
           line = piece;
           return;
@@ -584,6 +590,13 @@
     });
 
     return segments.length ? segments : [value];
+  }
+
+  function syncStandaloneMode() {
+    const standalone = window.navigator.standalone ||
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.matchMedia("(display-mode: fullscreen)").matches;
+    document.documentElement.classList.toggle("is-standalone-webapp", Boolean(standalone));
   }
 
   function isNarrationFrame(frame) {
@@ -1196,5 +1209,15 @@
     stopAmbient();
   });
 
+  window.addEventListener("resize", () => {
+    syncStandaloneMode();
+    const frame = frames[currentIndex];
+    const nextSegments = frameSegments(frame);
+    if (nextSegments.join("\n") === currentSegments.join("\n")) return;
+    currentSegments = nextSegments;
+    showSegment(Math.min(currentSegmentIndex, currentSegments.length - 1));
+  });
+
+  syncStandaloneMode();
   renderFrame();
 })();
