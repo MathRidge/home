@@ -1046,11 +1046,11 @@ a {
 
   .elder-stage {
     left: clamp(172px, 28vw, 260px);
-    bottom: clamp(92px, 25svh, 118px);
+    bottom: clamp(54px, 15svh, 68px);
   }
 
   .elder-sprite {
-    height: min(50svh, 260px, calc(100svh - 98px));
+    height: min(60svh, 330px, calc(100svh - 72px));
   }
 
   .relic-reveal-stage {

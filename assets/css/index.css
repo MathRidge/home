@@ -4761,7 +4761,7 @@ body.index-page.story-gated .home-hero .hero-card {
 body.index-page.story-gated .home-hero .hero-lead,
 body.index-page.story-gated .chapter-preview,
 body.index-page.story-gated .home-quote,
-body.index-page.story-gated .hero-actions .pill-btn,
+body.index-page.story-gated .hero-actions .pill-btn:not(.hero-story-link),
 body.index-page.story-gated .mobile-double-tap-note {
   display: none !important;
 }
@@ -4776,8 +4776,73 @@ body.index-page.story-gated .story-gate-lead {
   font-weight: 760;
 }
 
+body.index-page .install-guide {
+  display: none;
+}
+
+body.index-page.story-gated .install-guide {
+  display: grid;
+  gap: 6px;
+  width: min(520px, 100%);
+  margin: 18px auto 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(255,231,168,.28);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255,247,232,.12), rgba(255,247,232,.045)),
+    radial-gradient(circle at 10% 0%, rgba(246,201,108,.18), transparent 42%);
+  color: rgba(255,247,232,.84);
+  text-align: left;
+  line-height: 1.38;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+body.index-page.story-gated .install-guide strong {
+  color: #ffe7a8;
+  text-align: center;
+}
+
+body.index-page.story-gated .install-guide span {
+  font-size: .94rem;
+}
+
+body.index-page.story-gated .install-guide em {
+  color: #ffe7a8;
+  font-style: normal;
+  font-weight: 850;
+}
+
 body.index-page.story-gated .hero-actions {
   justify-content: center;
+  align-items: center;
+}
+
+body.index-page .hero-actions .hero-story-link,
+body.index-page .hero-actions .hero-start-trail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+body.index-page.story-gated .hero-actions .hero-story-link,
+body.index-page:not(.story-gated) .hero-actions .hero-start-trail {
+  min-width: 168px;
+  border-color: rgba(255,231,168,.70) !important;
+  background:
+    linear-gradient(180deg, #ffe5a1, #f0b851 58%, #b87331) !important;
+  color: #241608 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.34);
+  box-shadow:
+    0 15px 32px rgba(0,0,0,.26),
+    0 0 28px rgba(246,201,108,.30),
+    inset 0 1px 0 rgba(255,255,255,.48),
+    inset 0 -2px 0 rgba(88,52,20,.30) !important;
+}
+
+body.index-page.story-gated .hero-actions .hero-story-link {
+  justify-self: center;
+  margin-inline: auto;
 }
 
 body.index-page .top-actions .story-locked,
