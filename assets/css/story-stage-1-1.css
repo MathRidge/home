@@ -449,6 +449,129 @@ a {
   transform: translate(-50%, -8px) scale(1.08);
 }
 
+.blackboard-stage {
+  position: absolute;
+  left: clamp(330px, 24vw, 460px);
+  top: clamp(88px, 13vh, 120px);
+  z-index: 1;
+  width: min(56vw, 820px);
+  height: min(48vh, 420px);
+  display: grid;
+  align-content: start;
+  gap: clamp(8px, 1.2vh, 14px);
+  padding: clamp(14px, 2vw, 24px) clamp(18px, 3vw, 34px);
+  color: rgba(239, 250, 232, 0.92);
+  pointer-events: none;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 320ms ease, transform 360ms ease, visibility 320ms ease;
+  text-shadow:
+    0 0 7px rgba(174, 255, 205, 0.22),
+    0 2px 10px rgba(0, 0, 0, 0.48);
+}
+
+.blackboard-stage.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.985);
+}
+
+.blackboard-glow {
+  position: absolute;
+  inset: 4% 6% 8%;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 46% 38%, rgba(151, 229, 178, 0.16), transparent 38%),
+    radial-gradient(circle at 76% 18%, rgba(255, 231, 168, 0.11), transparent 28%);
+  filter: blur(14px);
+  opacity: 0.68;
+  animation: blackboardBreath 2600ms ease-in-out infinite;
+}
+
+.blackboard-badge,
+.blackboard-title,
+.blackboard-lines {
+  position: relative;
+  z-index: 1;
+}
+
+.blackboard-badge {
+  justify-self: start;
+  padding: 4px 9px;
+  border: 1px solid rgba(196, 255, 217, 0.24);
+  border-radius: 999px;
+  background: rgba(3, 12, 8, 0.30);
+  color: rgba(255, 231, 168, 0.90);
+  font-size: clamp(0.68rem, 1vw, 0.82rem);
+  font-weight: 900;
+  line-height: 1;
+  animation: chalkLineIn 360ms ease both;
+}
+
+.blackboard-title {
+  display: block;
+  color: rgba(239, 250, 232, 0.96);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.1rem, 2.6vw, 2rem);
+  line-height: 1.05;
+  font-weight: 800;
+  animation: chalkLineIn 420ms ease 80ms both;
+}
+
+.blackboard-lines {
+  display: grid;
+  gap: clamp(6px, 1vh, 10px);
+}
+
+.blackboard-line {
+  display: grid;
+  grid-template-columns: minmax(54px, auto) minmax(0, 1fr);
+  align-items: baseline;
+  gap: clamp(8px, 1vw, 13px);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: chalkLineIn 440ms cubic-bezier(.16, .8, .22, 1) both;
+  animation-delay: calc(180ms + (var(--line-index) * 135ms));
+}
+
+.blackboard-label {
+  color: rgba(255, 231, 168, 0.82);
+  font-size: clamp(0.66rem, 1vw, 0.84rem);
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.blackboard-text {
+  color: rgba(239, 250, 232, 0.95);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.02rem, 2.25vw, 1.72rem);
+  line-height: 1.08;
+  font-weight: 780;
+}
+
+.blackboard-line[data-kind="problem"] .blackboard-text {
+  color: #f7fff0;
+  font-size: clamp(1.35rem, 3.2vw, 2.45rem);
+}
+
+.blackboard-line[data-kind="magic"] .blackboard-text,
+.blackboard-line[data-kind="rule"] .blackboard-text {
+  color: #bfffd6;
+}
+
+.blackboard-line[data-kind="question"] .blackboard-text {
+  color: #ffe7a8;
+  animation: chalkQuestionPulse 1600ms ease-in-out infinite;
+}
+
+.blackboard-line[data-kind="answer"] .blackboard-text {
+  color: #ffe7a8;
+  font-size: clamp(1.45rem, 3.6vw, 2.75rem);
+  text-shadow:
+    0 0 12px rgba(255, 231, 168, 0.34),
+    0 2px 10px rgba(0, 0, 0, 0.48);
+}
+
 .dialogue-box {
   position: absolute;
   left: max(16px, env(safe-area-inset-left));
@@ -848,6 +971,49 @@ a {
   }
 }
 
+@keyframes blackboardBreath {
+  0%, 100% {
+    opacity: 0.44;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.72;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes chalkLineIn {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    filter: blur(1.2px);
+    transform: translateY(8px);
+  }
+  65% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes chalkQuestionPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 6px rgba(255, 231, 168, 0.22),
+      0 2px 10px rgba(0, 0, 0, 0.48);
+  }
+  50% {
+    text-shadow:
+      0 0 16px rgba(255, 231, 168, 0.54),
+      0 2px 10px rgba(0, 0, 0, 0.48);
+  }
+}
+
 @media (max-width: 900px) and (orientation: portrait) {
   .story-vn {
     filter: blur(2px);
@@ -928,6 +1094,37 @@ a {
     top: clamp(54px, 12vh, 92px);
     width: min(94vw, 760px);
     height: min(42vh, 300px);
+  }
+
+  .blackboard-stage {
+    left: 22vw;
+    top: clamp(50px, 10vh, 74px);
+    width: 60vw;
+    height: min(42vh, 240px);
+    padding: 10px 14px;
+    gap: 7px;
+  }
+
+  .blackboard-title {
+    font-size: clamp(0.98rem, 3.2vw, 1.3rem);
+  }
+
+  .blackboard-line {
+    grid-template-columns: minmax(42px, auto) minmax(0, 1fr);
+    gap: 7px;
+  }
+
+  .blackboard-label {
+    font-size: 0.58rem;
+  }
+
+  .blackboard-text {
+    font-size: clamp(0.84rem, 2.7vw, 1.1rem);
+  }
+
+  .blackboard-line[data-kind="problem"] .blackboard-text,
+  .blackboard-line[data-kind="answer"] .blackboard-text {
+    font-size: clamp(1.08rem, 3.9vw, 1.46rem);
   }
 
   .story-relic {
@@ -1056,6 +1253,48 @@ a {
   .relic-reveal-stage {
     top: clamp(38px, 9svh, 62px);
     height: min(38svh, 190px);
+  }
+
+  .blackboard-stage {
+    left: clamp(188px, 23vw, 218px);
+    top: clamp(27px, 8.8svh, 42px);
+    width: min(58vw, 500px);
+    height: min(50svh, 200px);
+    padding: 7px 10px;
+    gap: 5px;
+  }
+
+  .blackboard-badge {
+    padding: 3px 7px;
+    font-size: 0.55rem;
+  }
+
+  .blackboard-title {
+    font-size: clamp(0.78rem, 2.6vw, 1rem);
+    line-height: 1;
+  }
+
+  .blackboard-lines {
+    gap: 4px;
+  }
+
+  .blackboard-line {
+    grid-template-columns: minmax(36px, auto) minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .blackboard-label {
+    font-size: 0.48rem;
+  }
+
+  .blackboard-text {
+    font-size: clamp(0.62rem, 2vw, 0.78rem);
+    line-height: 1.05;
+  }
+
+  .blackboard-line[data-kind="problem"] .blackboard-text,
+  .blackboard-line[data-kind="answer"] .blackboard-text {
+    font-size: clamp(0.88rem, 2.8vw, 1.16rem);
   }
 
   .story-relic {

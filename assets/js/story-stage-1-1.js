@@ -31,9 +31,107 @@
     evening: `${bgBase}story-bg-Shellwick_cabin.png`,
     cabinInside: `${bgBase}story-bg-Shellwick_cabin_inside.png`,
     shellwickTable: `${bgBase}story-bg-Shellwick-table.png`,
+    shellwickBoard: `${bgBase}story-bg-Shellwick-black-board.png`,
     pumpkinCart: `${bgBase}story-bg-Pumpkin Cart Scene.png`,
     gateA: `${bgBase}story-bg-s09a-stage-1-1-gate.png`,
     gateB: `${bgBase}story-bg-s09b-stage-1-1-gate.png`
+  };
+
+  const blackboardStates = {
+    manualIntro: {
+      badge: "Term Manual",
+      title: "The Bigger Sign Rule",
+      rows: [
+        { label: "1", text: "Find the bigger size." },
+        { label: "2", text: "Keep the bigger sign." },
+        { label: "3", text: "Same signs add. Different signs subtract." }
+      ]
+    },
+    minusStart: {
+      badge: "Example A",
+      title: "Original Question",
+      rows: [
+        { label: "Start", text: "-8 - 3", kind: "problem" }
+      ]
+    },
+    minusOpposite: {
+      badge: "Example A",
+      title: "Change Subtraction",
+      rows: [
+        { label: "Start", text: "-8 - 3", kind: "problem" },
+        { label: "Opposite", text: "-8 + (-3)", kind: "magic" }
+      ]
+    },
+    sameSigns: {
+      badge: "Example A",
+      title: "Same Signs",
+      rows: [
+        { label: "Rewrite", text: "-8 + (-3)", kind: "problem" },
+        { label: "Rule", text: "Same signs -> add sizes", kind: "rule" },
+        { label: "Size", text: "8 + 3 = 11" }
+      ]
+    },
+    minusAnswer: {
+      badge: "Example A",
+      title: "Keep The Sign",
+      rows: [
+        { label: "Size", text: "8 + 3 = 11" },
+        { label: "Sign", text: "Both are negative" },
+        { label: "Answer", text: "-11", kind: "answer" }
+      ]
+    },
+    differentStart: {
+      badge: "Example B",
+      title: "Different Signs",
+      rows: [
+        { label: "Start", text: "5 + (-8)", kind: "problem" },
+        { label: "Compare", text: "8 is bigger than 5" }
+      ]
+    },
+    differentQuestion: {
+      badge: "Check",
+      title: "What Should We Do?",
+      rows: [
+        { label: "Start", text: "5 + (-8)", kind: "problem" },
+        { label: "Signs", text: "Different signs" },
+        { label: "Choose", text: "Add?  Subtract?  Ignore?", kind: "question" }
+      ]
+    },
+    differentRule: {
+      badge: "Example B",
+      title: "Different Signs Subtract",
+      rows: [
+        { label: "Rule", text: "Subtract smaller from bigger", kind: "rule" },
+        { label: "Size", text: "8 - 5 = 3" },
+        { label: "Sign", text: "Keep the bigger sign: negative" }
+      ]
+    },
+    differentAnswer: {
+      badge: "Example B",
+      title: "Final Answer",
+      rows: [
+        { label: "Start", text: "5 + (-8)", kind: "problem" },
+        { label: "Work", text: "8 - 5 = 3" },
+        { label: "Answer", text: "-3", kind: "answer" }
+      ]
+    },
+    finalQuestion: {
+      badge: "Your Turn",
+      title: "What Is The Final Answer?",
+      rows: [
+        { label: "Question", text: "5 + (-8)", kind: "problem" },
+        { label: "Hint", text: "Bigger size is 8, and it is negative." },
+        { label: "Answer", text: "?", kind: "question" }
+      ]
+    },
+    termStoneTrial: {
+      badge: "Relic Trial",
+      title: "The Term Stone",
+      rows: [
+        { label: "Checks", text: "sign + size", kind: "magic" },
+        { label: "Goal", text: "balance the answer with the correct sign" }
+      ]
+    }
   };
 
   const sprites = {
@@ -149,6 +247,7 @@
     volume: 0.1,
     maxMs: 50000
   };
+  const cabinAmbience = null;
   const ambientAudioByBg = new Map([
     ["arrival", forestAmbience],
     ["name", forestAmbience],
@@ -160,6 +259,9 @@
     ["gateA", forestAmbience],
     ["gateB", forestAmbience],
     ["welcome", townAmbience],
+    ["cabinInside", cabinAmbience],
+    ["shellwickTable", cabinAmbience],
+    ["shellwickBoard", cabinAmbience],
     ["pumpkinCart", townAmbience]
   ]);
 
@@ -375,91 +477,93 @@
     { bg: "shellwickTable", sprite: "none", speaker: "You", text: "And my phone?", relicReveal: "all" },
     { bg: "shellwickTable", sprite: "none", speaker: "Elder Shellwick", text: "Your device was carried beyond the lower trail. To reach it, you must pass the Root Gate and continue upward.", relicReveal: "all" },
     { bg: "shellwickTable", sprite: "none", speaker: "Narrator", text: "The lights faded. Mira clenched her fists.", relicReveal: "fade" },
-    { bg: "gateA", sprite: "angryPoint", speaker: "Mira", text: "Then we start with the Term Stone!" },
-    { bg: "gateA", sprite: "neutral", speaker: "Elder Shellwick", text: "Yes. But first, you will need this." },
-    { bg: "gateA", sprite: "neutral", speaker: "Narrator", text: "He handed Mira a thin booklet. The cover read: Term Manual: The Bigger Sign Rule." },
+    { bg: "shellwickBoard", sprite: "angryPoint", speaker: "Mira", text: "Then we start with the Term Stone!" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Yes. But first, you will need this.", board: "manualIntro" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "He handed Mira a thin booklet. The cover read: Term Manual: The Bigger Sign Rule.", board: "manualIntro" },
 
-    { bg: "clearing", sprite: "thinking", speaker: "Narrator", text: "Scene 8: Mira and the First Rule" },
-    { bg: "clearing", sprite: "thinking", speaker: "Narrator", text: "Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank." },
-    { bg: "clearing", sprite: "thinking", speaker: "Mira", text: "Elder... what does this mean?" },
-    { bg: "clearing", sprite: "confused", speaker: "Narrator", text: "She turned the book around." },
-    { bg: "clearing", sprite: "confused", speaker: "Mira", text: "-8 - 3" },
-    { bg: "clearing", sprite: "confused", speaker: "Mira", text: "I know minus means subtract. But why is it next to another number that also feels... minus-y?" },
-    { bg: "clearing", sprite: "confused", speaker: "You", text: "Minus-y?" },
-    { bg: "clearing", sprite: "confused", speaker: "Mira", text: "It is a technical feeling." },
-    { bg: "clearing", sprite: "neutral", speaker: "Narrator", text: "Elder Shellwick chuckled." },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "Signed terms can be tricky at first. But there is a simple key." },
-    { bg: "clearing", sprite: "neutral", speaker: "Narrator", text: "He took a piece of chalk and wrote: -8 - 3" },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "First, when you see subtraction, change it into adding the opposite." },
-    { bg: "clearing", sprite: "neutral", speaker: "Narrator", text: "He wrote beneath it: -8 + (-3)" },
-    { bg: "clearing", sprite: "curious", speaker: "Mira", text: "The second number became negative?" },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "Correct. Now compare the signs." },
-    { bg: "clearing", sprite: "thinking", speaker: "You", text: "They are both negative." },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "Then add the sizes. Eight and three make eleven. Since both signs are negative, the answer is negative." },
-    { bg: "clearing", sprite: "neutral", speaker: "Narrator", text: "He wrote: -11" },
-    { bg: "clearing", sprite: "happy", speaker: "Narrator", text: "Mira stared." },
-    { bg: "clearing", sprite: "happy", speaker: "Mira", text: "So if the signs are the same, add the sizes and keep the sign?" },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "Exactly." },
-    { bg: "clearing", sprite: "happy", speaker: "Narrator", text: "She looked proud. Then Elder Shellwick wrote: 5 + (-8)" },
-    { bg: "clearing", sprite: "thinking", speaker: "Elder Shellwick", text: "And if the signs are different?" },
-    { bg: "clearing", sprite: "surprisedStaff", speaker: "Mira", text: "You... panic?" },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "No." },
-    { bg: "clearing", sprite: "confused", speaker: "Mira", text: "You ask {{playerName}}?" },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "Also no." },
-    { bg: "clearing", sprite: "bagShy", speaker: "Mira", text: "You eat noodles and try again?" },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "Mira." },
-    { bg: "clearing", sprite: "shy", speaker: "Mira", text: "Sorry." },
+    { bg: "shellwickBoard", sprite: "thinking", speaker: "Narrator", text: "Scene 8: Mira and the First Rule", board: "manualIntro" },
+    { bg: "shellwickBoard", sprite: "thinking", speaker: "Narrator", text: "Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank.", board: "manualIntro" },
+    { bg: "shellwickBoard", sprite: "thinking", speaker: "Mira", text: "Elder... what does this mean?", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "Narrator", text: "She turned the book around.", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "Mira", text: "-8 - 3", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "Mira", text: "I know minus means subtract. But why is it next to another number that also feels... minus-y?", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "You", text: "Minus-y?", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "Mira", text: "It is a technical feeling.", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "Elder Shellwick chuckled.", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Signed terms can be tricky at first. But there is a simple key.", board: "manualIntro" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "He took a piece of chalk and wrote: -8 - 3", board: "minusStart" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "First, when you see subtraction, change it into adding the opposite.", board: "minusOpposite" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "He wrote beneath it: -8 + (-3)", board: "minusOpposite" },
+    { bg: "shellwickBoard", sprite: "curious", speaker: "Mira", text: "The second number became negative?", board: "minusOpposite" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Correct. Now compare the signs.", board: "sameSigns" },
+    { bg: "shellwickBoard", sprite: "thinking", speaker: "You", text: "They are both negative.", board: "sameSigns" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Then add the sizes. Eight and three make eleven. Since both signs are negative, the answer is negative.", board: "sameSigns" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "He wrote: -11", board: "minusAnswer" },
+    { bg: "shellwickBoard", sprite: "happy", speaker: "Narrator", text: "Mira stared.", board: "minusAnswer" },
+    { bg: "shellwickBoard", sprite: "happy", speaker: "Mira", text: "So if the signs are the same, add the sizes and keep the sign?", board: "sameSigns" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Exactly.", board: "minusAnswer" },
+    { bg: "shellwickBoard", sprite: "happy", speaker: "Narrator", text: "She looked proud. Then Elder Shellwick wrote: 5 + (-8)", board: "differentStart" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And if the signs are different?", board: "differentStart" },
+    { bg: "shellwickBoard", sprite: "surprisedStaff", speaker: "Mira", text: "You... panic?", board: "differentQuestion" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "No.", board: "differentQuestion" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "Mira", text: "You ask {{playerName}}?", board: "differentQuestion" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Also no.", board: "differentQuestion" },
+    { bg: "shellwickBoard", sprite: "bagShy", speaker: "Mira", text: "You eat noodles and try again?", board: "differentQuestion" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Mira.", board: "differentQuestion" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Sorry.", board: "differentQuestion" },
     {
-      bg: "clearing",
-      sprite: "thinking",
+      bg: "shellwickBoard",
+      sprite: "none",
       speaker: "Elder Shellwick",
       text: "If the signs are different, what should you do?",
+      board: "differentQuestion",
       choices: [
         { label: "Add every size", correct: false, response: "Not this time. Different signs push against each other." },
         { label: "Subtract smaller from bigger", correct: true, response: "Correct. Then keep the sign of the bigger size." },
         { label: "Ignore the signs", correct: false, response: "The signs are the magic. We cannot ignore them." }
       ]
     },
-    { bg: "clearing", sprite: "neutral", speaker: "Elder Shellwick", text: "If the signs are different, subtract the smaller size from the bigger size. Then keep the sign of the bigger size." },
-    { bg: "clearing", sprite: "thinking", speaker: "Narrator", text: "You looked at the problem." },
-    { bg: "clearing", sprite: "thinking", speaker: "You", text: "Eight is bigger than five. Eight is negative. So the answer is negative three." },
-    { bg: "clearing", sprite: "neutral", speaker: "Narrator", text: "Elder Shellwick nodded. 5 + (-8) = -3" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "If the signs are different, subtract the smaller size from the bigger size. Then keep the sign of the bigger size.", board: "differentRule" },
+    { bg: "shellwickBoard", sprite: "thinking", speaker: "Narrator", text: "You looked at the problem.", board: "differentRule" },
+    { bg: "shellwickBoard", sprite: "thinking", speaker: "You", text: "Eight is bigger than five. Eight is negative. So the answer is negative three.", board: "differentAnswer" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "Elder Shellwick nodded. 5 + (-8) = -3", board: "differentAnswer" },
     {
-      bg: "clearing",
-      sprite: "encouraging",
+      bg: "shellwickBoard",
+      sprite: "none",
       speaker: "Elder Shellwick",
       text: "Try this one: 5 + (-8). What is the final answer for 5 + (-8)?",
+      board: "finalQuestion",
       choices: [
         { label: "+3", correct: false, response: "Close size, wrong sign. The bigger size is 8, and it is negative." },
         { label: "-3", correct: true, response: "Correct. Eight is bigger than five, so the negative side leads." },
         { label: "-13", correct: false, response: "That would happen if both signs were negative. These signs are different." }
       ]
     },
-    { bg: "clearing", sprite: "happy", speaker: "Mira", text: "You understood that so fast." },
-    { bg: "clearing", sprite: "neutral", speaker: "You", text: "It is from school." },
-    { bg: "clearing", sprite: "worried", speaker: "Mira", text: "Pagebound training is terrifying." },
+    { bg: "shellwickBoard", sprite: "happy", speaker: "Mira", text: "You understood that so fast.", board: "differentAnswer" },
+    { bg: "shellwickBoard", sprite: "neutral", speaker: "You", text: "It is from school.", board: "differentAnswer" },
+    { bg: "shellwickBoard", sprite: "worried", speaker: "Mira", text: "Pagebound training is terrifying.", board: "differentAnswer" },
 
-    { bg: "gateB", sprite: "neutral", speaker: "Narrator", text: "Scene 9: The Quest Begins" },
-    { bg: "gateB", sprite: "neutral", speaker: "Narrator", text: "Elder Shellwick closed the manual and handed it to you." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "The Term Stone will test whether you understand signs and sizes. The mountain will not open the next path unless the answer is balanced with the correct sign." },
-    { bg: "gateB", sprite: "determined", speaker: "Narrator", text: "Mira stood straighter." },
-    { bg: "gateB", sprite: "determined", speaker: "Mira", text: "We can do it." },
-    { bg: "gateB", sprite: "shy", speaker: "Mira", text: "Probably." },
-    { bg: "gateB", sprite: "confused", speaker: "Narrator", text: "You gave her a look." },
-    { bg: "gateB", sprite: "shy", speaker: "Mira", text: "Definitely." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "Take care of Mira, {{playerName}}. She is brave, kind, and determined." },
-    { bg: "gateB", sprite: "shy", speaker: "Mira", text: "Elder..." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "She also has a habit of forgetting where she is going." },
-    { bg: "gateB", sprite: "pouting", speaker: "Narrator", text: "Mira froze." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "And wandering off." },
-    { bg: "gateB", sprite: "shy", speaker: "Mira", text: "Elder..." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "And following glowing insects." },
-    { bg: "gateB", sprite: "pouting", speaker: "Mira", text: "That was one time." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "And walking into storage closets while looking for doors." },
-    { bg: "gateB", sprite: "pouting", speaker: "Mira", text: "That was also one time." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "She will need a steady companion." },
-    { bg: "gateB", sprite: "pouting", speaker: "Mira", text: "I am standing right here." },
-    { bg: "gateB", sprite: "neutral", speaker: "Elder Shellwick", text: "Then go, both of you. The lower trail awaits." },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "Scene 9: The Quest Begins", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Narrator", text: "Elder Shellwick closed the manual and handed it to you.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "The Term Stone will test whether you understand signs and sizes. The mountain will not open the next path unless the answer is balanced with the correct sign.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "determined", speaker: "Narrator", text: "Mira stood straighter.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "determined", speaker: "Mira", text: "We can do it.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Probably.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "confused", speaker: "Narrator", text: "You gave her a look.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Definitely.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Take care of Mira, {{playerName}}. She is brave, kind, and determined.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Elder...", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "She also has a habit of forgetting where she is going.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "pouting", speaker: "Narrator", text: "Mira froze.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And wandering off.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Elder...", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And following glowing insects.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "pouting", speaker: "Mira", text: "That was one time.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And walking into storage closets while looking for doors.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "pouting", speaker: "Mira", text: "That was also one time.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "She will need a steady companion.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "pouting", speaker: "Mira", text: "I am standing right here.", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Then go, both of you. The lower trail awaits.", board: "termStoneTrial" },
     { bg: "gateB", sprite: "determined", speaker: "Narrator", text: "Outside, Math Ridge glowed. Somewhere above, your phone flashed faintly blue. The first relic was waiting." },
     { bg: "gateB", sprite: "celebrating", speaker: "Quest Reward", text: "You have received: \"Term Manual\"", reward: true }
   ];
@@ -494,7 +598,7 @@
   let pendingAmbient = null;
   const TYPE_SPEED_MS = 28;
   const elderFirstVisibleIndex = frames.findIndex(frame => frame.sprite === "elder" || frame.sprite === "elderWriting");
-  const shellwickSceneBackgrounds = new Set(["cabinInside", "gateA", "gateB"]);
+  const shellwickSceneBackgrounds = new Set(["cabinInside", "shellwickTable"]);
 
   const storyVn = document.querySelector(".story-vn");
   const sceneBg = document.getElementById("sceneBg");
@@ -504,6 +608,7 @@
   const elderStage = document.getElementById("elderStage");
   const elderSprite = document.getElementById("elderSprite");
   const relicRevealStage = document.getElementById("relicRevealStage");
+  const blackboardStage = document.getElementById("blackboardStage");
   const dialogueBox = document.querySelector(".dialogue-box");
   const speakerName = document.getElementById("speakerName");
   const sceneCounter = document.getElementById("sceneCounter");
@@ -520,6 +625,7 @@
   let relicRevealState = "";
   let relicNewTimer = null;
   let relicImagesReady = false;
+  let blackboardStateKey = "";
   let orientationLockAttempted = false;
   const actors = {
     mira: { stage: miraStage, img: miraSprite, lastKey: "", loadToken: 0 },
@@ -996,11 +1102,72 @@
     }
   }
 
+  function setBlackboard(stateKey = "") {
+    if (!blackboardStage) return;
+
+    const state = blackboardStates[stateKey];
+    if (!state) {
+      blackboardStateKey = "";
+      blackboardStage.classList.add("is-hidden");
+      blackboardStage.setAttribute("aria-hidden", "true");
+      blackboardStage.replaceChildren();
+      delete blackboardStage.dataset.board;
+      return;
+    }
+
+    if (blackboardStateKey === stateKey) return;
+    blackboardStateKey = stateKey;
+    blackboardStage.replaceChildren();
+    blackboardStage.dataset.board = stateKey;
+
+    const glow = document.createElement("span");
+    glow.className = "blackboard-glow";
+    glow.setAttribute("aria-hidden", "true");
+    blackboardStage.appendChild(glow);
+
+    const badge = document.createElement("span");
+    badge.className = "blackboard-badge";
+    badge.textContent = state.badge || "Lesson";
+    blackboardStage.appendChild(badge);
+
+    const title = document.createElement("strong");
+    title.className = "blackboard-title";
+    title.textContent = state.title || "";
+    blackboardStage.appendChild(title);
+
+    const list = document.createElement("div");
+    list.className = "blackboard-lines";
+    (state.rows || []).forEach((row, index) => {
+      const item = document.createElement("div");
+      item.className = "blackboard-line";
+      item.dataset.kind = row.kind || "note";
+      item.style.setProperty("--line-index", index);
+
+      if (row.label) {
+        const label = document.createElement("span");
+        label.className = "blackboard-label";
+        label.textContent = row.label;
+        item.appendChild(label);
+      }
+
+      const text = document.createElement("span");
+      text.className = "blackboard-text";
+      text.textContent = row.text || "";
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    blackboardStage.appendChild(list);
+    blackboardStage.classList.remove("is-hidden");
+    blackboardStage.setAttribute("aria-hidden", "false");
+  }
+
   function resolveFrameSprite(frame) {
     const text = String(frame?.text || "");
     const speaker = frame?.speaker || "";
 
     if (frame?.sprite === "none") return "none";
+
+    if (frame?.bg === "shellwickBoard" && speaker === "Elder Shellwick") return "none";
 
     if (speaker === "Elder Shellwick") {
       return /chalk|wrote|write|manual|gate|relic|sign|sizes|subtract|answer|term|root/i.test(text)
@@ -1207,6 +1374,7 @@
 
     setBackground(frame.bg);
     setRelicReveal(frame.relicReveal || "");
+    setBlackboard(frame.board || "");
     setSprite(resolveFrameSprite(frame), frame.motion || "", frame);
     setDialogueSpeaker(frame);
     speakerName.textContent = isNarrationFrame(frame) ? "Narrator" : frame.speaker || "";

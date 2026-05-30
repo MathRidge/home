@@ -42,7 +42,6 @@
 	let armedBottomControl = null;
 	let armedBottomControlTimer = null;
 	let pendingExitTarget = null;
-	let suppressBottomDrawerUntil = 0;
 
 	function byId(id) {
 		return document.getElementById(id);
@@ -174,7 +173,7 @@
 		button.textContent = button.textContent.trim() || "Next Climb";
 
 		if (scroll && isMobilePlayView()) {
-			openBottomDrawer({ temporary: true, duration: 6200 });
+			markBottomDrawerNeedsAttention();
 		} else if (scroll) {
 			window.setTimeout(() => scrollToPremiumElement("bottomControls", 18), 120);
 		}
@@ -253,7 +252,6 @@
 			const shelfHeight = shelf ? shelf.getBoundingClientRect().height : 0;
 			const y = window.scrollY + element.getBoundingClientRect().top - shelfHeight - extraOffset;
 			const mobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
-			if (mobile) suppressBottomDrawerUntil = Date.now() + 900;
 			window.scrollTo({ top: Math.max(0, y), behavior: mobile ? "auto" : "smooth" });
 		}, 40);
 
@@ -261,7 +259,7 @@
 	}
 
 	function isMobilePlayView() {
-		return Boolean(window.matchMedia && window.matchMedia("(max-width: 760px)").matches);
+		return Boolean(window.matchMedia && window.matchMedia("(max-width: 1024px), (hover: none) and (pointer: coarse)").matches);
 	}
 
 	function getBottomDrawerTitle() {
@@ -287,6 +285,12 @@
 		if (!controls) return false;
 		controls.classList.add("is-open");
 		document.body.classList.add("play-bottom-drawer-open");
+		const launcher = byId("playBottomDrawerLauncher");
+		if (launcher) {
+			launcher.setAttribute("aria-expanded", "true");
+			launcher.setAttribute("aria-label", "Close play controls");
+			launcher.classList.remove("is-ready");
+		}
 		if (bottomDrawerCloseTimer) window.clearTimeout(bottomDrawerCloseTimer);
 		if (options.temporary !== false) {
 			bottomDrawerCloseTimer = window.setTimeout(() => {
@@ -301,7 +305,20 @@
 		if (!controls) return false;
 		controls.classList.remove("is-open");
 		document.body.classList.remove("play-bottom-drawer-open");
+		const launcher = byId("playBottomDrawerLauncher");
+		if (launcher) {
+			launcher.setAttribute("aria-expanded", "false");
+			launcher.setAttribute("aria-label", "Open play controls");
+		}
 		clearArmedBottomControl();
+		return true;
+	}
+
+	function markBottomDrawerNeedsAttention() {
+		const launcher = byId("playBottomDrawerLauncher");
+		if (!launcher) return false;
+		launcher.classList.add("is-ready");
+		launcher.setAttribute("aria-label", "Open play controls. Next Climb is ready.");
 		return true;
 	}
 
@@ -411,25 +428,34 @@
 		controls.dataset.drawerReady = "true";
 		document.body.classList.add("has-play-bottom-drawer");
 
+		const launcher = document.createElement("button");
+		launcher.type = "button";
+		launcher.id = "playBottomDrawerLauncher";
+		launcher.className = "play-bottom-drawer-launcher";
+		launcher.setAttribute("aria-controls", "bottomControls");
+		launcher.setAttribute("aria-expanded", "false");
+		launcher.setAttribute("aria-label", "Open play controls");
+		launcher.innerHTML = `
+			<span class="play-bottom-launcher-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+			<span class="play-bottom-launcher-label">Controls</span>
+		`;
+		launcher.addEventListener("click", event => {
+			event.preventDefault();
+			if (controls.classList.contains("is-open")) closeBottomDrawer();
+			else openBottomDrawer({ temporary: false });
+		});
+		document.body.appendChild(launcher);
+
 		const tab = document.createElement("button");
 		tab.type = "button";
 		tab.className = "play-bottom-drawer-tab";
-		tab.innerHTML = `<span>${getBottomDrawerTitle()}</span><strong>Controls</strong>`;
+		tab.innerHTML = `<span>${getBottomDrawerTitle()}</span><strong>Close</strong>`;
 		tab.addEventListener("click", event => {
 			event.preventDefault();
 			if (controls.classList.contains("is-open")) closeBottomDrawer();
 			else openBottomDrawer({ temporary: false });
 		});
 		controls.insertBefore(tab, controls.firstChild);
-
-		let lastScrollY = window.scrollY;
-		window.addEventListener("scroll", () => {
-			const currentY = window.scrollY;
-			if (isMobilePlayView() && Date.now() > suppressBottomDrawerUntil && currentY > lastScrollY + 8 && currentY > 80) {
-				openBottomDrawer({ temporary: true });
-			}
-			lastScrollY = currentY;
-		}, { passive: true });
 
 		controls.addEventListener("focusin", () => openBottomDrawer({ temporary: false }));
 		document.addEventListener("click", handleBottomControlClick, true);
