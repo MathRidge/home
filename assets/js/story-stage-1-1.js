@@ -13,6 +13,12 @@
   const elderVoiceBase = "voice/elder/";
   const soundBase = "voice/sound/";
   const relicOrder = ["term", "sign", "parity", "factor"];
+  const relicImageSources = {
+    term: "assets/images/relic/term_stone.png",
+    sign: "assets/images/relic/sign_compass_relic_alpha.png",
+    parity: "assets/images/relic/parity_prism_true_alpha.png",
+    factor: "assets/images/relic/factor_forge_alpha.png"
+  };
 
   const backgrounds = {
     arrival: `${bgBase}story-bg-s01-arrival.png`,
@@ -481,6 +487,7 @@
   let currentBgKey = "";
   let activeVoice = null;
   let voiceToken = 0;
+  let voiceAdvanceLocked = false;
   let activeAmbient = null;
   let activeAmbientKey = "";
   let ambientStopTimer = null;
@@ -504,6 +511,7 @@
   const backBtn = document.getElementById("backBtn");
   const nextBtn = document.getElementById("nextBtn");
   const progressBar = document.getElementById("storyProgressBar");
+  const interactionPanel = document.getElementById("interactionPanel");
   const nameForm = document.getElementById("nameForm");
   const playerNameInput = document.getElementById("playerNameInput");
   const choiceRow = document.getElementById("choiceRow");
@@ -511,6 +519,8 @@
   const rewardPanel = document.getElementById("rewardPanel");
   let relicRevealState = "";
   let relicNewTimer = null;
+  let relicImagesReady = false;
+  let orientationLockAttempted = false;
   const actors = {
     mira: { stage: miraStage, img: miraSprite, lastKey: "", loadToken: 0 },
     elder: { stage: elderStage, img: elderSprite, lastKey: "", loadToken: 0 }
@@ -599,6 +609,48 @@
     document.documentElement.classList.toggle("is-standalone-webapp", Boolean(standalone));
   }
 
+  function preloadRelicImages() {
+    const imagePromises = Object.values(relicImageSources).map(src => new Promise(resolve => {
+      const img = new Image();
+      img.decoding = "async";
+      img.onload = () => {
+        if (typeof img.decode === "function") {
+          img.decode().catch(() => {}).finally(resolve);
+          return;
+        }
+        resolve();
+      };
+      img.onerror = resolve;
+      img.src = src;
+    }));
+
+    Promise.all(imagePromises).then(() => {
+      relicImagesReady = true;
+      relicRevealStage?.classList.add("relic-assets-ready");
+      relicRevealStage?.classList.remove("is-decoding-relics");
+    });
+  }
+
+  function tryLockLandscape() {
+    if (orientationLockAttempted) return;
+    orientationLockAttempted = true;
+
+    const lock = screen.orientation?.lock;
+    if (typeof lock !== "function") return;
+
+    lock.call(screen.orientation, "landscape-primary").catch(() => {
+      orientationLockAttempted = false;
+    });
+  }
+
+  function preventAppZoom(event) {
+    if (event.touches && event.touches.length > 1) event.preventDefault();
+  }
+
+  function preventSafariGesture(event) {
+    event.preventDefault();
+  }
+
   function isNarrationFrame(frame) {
     return frame?.speaker === "Narrator";
   }
@@ -632,6 +684,8 @@
 
   function stopVoice() {
     voiceToken += 1;
+    voiceAdvanceLocked = false;
+    document.documentElement.classList.remove("voice-advance-locked");
     if (!activeVoice) return;
     activeVoice.pause();
     activeVoice.removeAttribute("src");
@@ -639,16 +693,25 @@
     activeVoice = null;
   }
 
-  function playVoiceQueue(files) {
+  function playVoiceQueue(files, lockAdvance = false) {
     stopVoice();
     if (!files.length) return;
 
     const token = voiceToken;
     const queue = files.slice();
+    voiceAdvanceLocked = Boolean(lockAdvance);
+    document.documentElement.classList.toggle("voice-advance-locked", voiceAdvanceLocked);
+
+    const releaseAdvanceLock = () => {
+      if (token !== voiceToken) return;
+      voiceAdvanceLocked = false;
+      document.documentElement.classList.remove("voice-advance-locked");
+    };
 
     const playNext = () => {
       if (token !== voiceToken || !queue.length) {
         activeVoice = null;
+        releaseAdvanceLock();
         return;
       }
 
@@ -662,7 +725,10 @@
       const attempt = audio.play();
       if (attempt && typeof attempt.catch === "function") {
         attempt.catch(() => {
-          if (token === voiceToken) activeVoice = null;
+          if (token === voiceToken) {
+            activeVoice = null;
+            releaseAdvanceLock();
+          }
         });
       }
     };
@@ -671,7 +737,7 @@
   }
 
   function playFrameVoice(frame) {
-    playVoiceQueue(frameAudioFiles(frame));
+    playVoiceQueue(frameAudioFiles(frame), frameVoiceFiles(frame).length > 0);
   }
 
   function stopAmbient() {
@@ -809,6 +875,11 @@
     if (frame.reward) renderReward();
   }
 
+  function showInteractionPanel(mode) {
+    interactionPanel.className = "interaction-panel";
+    interactionPanel.dataset.mode = mode || "choice";
+  }
+
   function typeSegment(text) {
     stopTyping(false);
     typeTargetText = text;
@@ -894,6 +965,7 @@
 
     relicRevealState = normalized;
     relicRevealStage.classList.add("is-active", `reveal-${normalized}`);
+    relicRevealStage.classList.toggle("is-decoding-relics", !relicImagesReady && visibleCount > 0);
     if (state === "lights") relicRevealStage.classList.add("has-lights");
     if (state === "fade") relicRevealStage.classList.add("is-fading");
     if (activeRelic) relicRevealStage.dataset.active = activeRelic;
@@ -912,7 +984,7 @@
       relicRevealStage.classList.add(`has-${relic}`);
     });
 
-    if (activeRelic && previousState !== normalized) {
+    if (activeRelic && previousState !== normalized && relicImagesReady) {
       const activeItem = relicRevealStage.querySelector(`[data-relic="${activeRelic}"]`);
       if (activeItem) {
         activeItem.classList.add("is-new");
@@ -1042,12 +1114,15 @@
   function clearInteraction() {
     stopTyping(false);
     stopVoice();
+    interactionPanel.className = "interaction-panel hidden";
+    delete interactionPanel.dataset.mode;
     nameForm.classList.add("hidden");
     choiceRow.classList.add("hidden");
     feedbackText.classList.add("hidden");
     rewardPanel.classList.add("hidden");
     choiceRow.innerHTML = "";
     feedbackText.textContent = "";
+    feedbackText.classList.remove("is-continue");
     nameLockedOnFrame = false;
     choiceSolvedOnFrame = false;
   }
@@ -1061,6 +1136,7 @@
       return;
     }
 
+    showInteractionPanel("name");
     nameForm.classList.remove("hidden");
     nextBtn.disabled = true;
     playerNameInput.value = "";
@@ -1068,6 +1144,7 @@
   }
 
   function renderChoices(frame) {
+    showInteractionPanel(frame.problem ? "problem" : "choice");
     choiceRow.classList.remove("hidden");
     nextBtn.disabled = true;
 
@@ -1084,11 +1161,20 @@
 
         button.classList.add(choice.correct ? "correct-choice" : "wrong-choice");
         feedbackText.textContent = choice.response || "";
+        feedbackText.classList.remove("is-continue");
         feedbackText.classList.remove("hidden");
         choiceSolvedOnFrame = Boolean(choice.correct);
         nextBtn.disabled = !choice.correct;
 
-        if (!choice.correct) {
+        if (choice.correct) {
+          interactionPanel.classList.add("is-solved");
+          feedbackText.classList.add("is-continue");
+          window.setTimeout(() => {
+            if (frames[currentIndex] === frame && choiceSolvedOnFrame) {
+              choiceRow.classList.add("hidden");
+            }
+          }, 650);
+        } else {
           window.setTimeout(() => {
             choiceRow.querySelectorAll("button").forEach(item => {
               item.disabled = false;
@@ -1096,6 +1182,7 @@
             });
             feedbackText.classList.add("hidden");
             feedbackText.textContent = "";
+            feedbackText.classList.remove("is-continue");
           }, 1100);
         }
       });
@@ -1138,6 +1225,8 @@
   function goNext() {
     const frame = frames[currentIndex];
 
+    if (voiceAdvanceLocked) return;
+
     if (isTyping) {
       stopTyping(true);
       if (currentSegmentIndex >= currentSegments.length - 1) showFrameInteraction();
@@ -1171,9 +1260,11 @@
     event.preventDefault();
     writeProfileName(playerNameInput.value);
     nameLockedOnFrame = true;
+    interactionPanel.classList.add("is-solved");
     nameForm.classList.add("hidden");
     dialogueText.textContent = `${playerName()}...`;
     feedbackText.textContent = "Mira repeats your name softly, as if the trail itself should remember it.";
+    feedbackText.classList.add("is-continue");
     feedbackText.classList.remove("hidden");
     nextBtn.disabled = false;
   });
@@ -1182,11 +1273,21 @@
   backBtn.addEventListener("click", goBack);
 
   document.addEventListener("click", event => {
+    tryLockLandscape();
     if (event.target.closest("button, a, input, label")) return;
     if (!nameForm.classList.contains("hidden")) return;
     if (!choiceRow.classList.contains("hidden")) return;
     if (!rewardPanel.classList.contains("hidden")) return;
     goNext();
+  });
+
+  document.addEventListener("contextmenu", event => {
+    event.preventDefault();
+  });
+
+  document.addEventListener("selectstart", event => {
+    if (event.target.closest("input, textarea")) return;
+    event.preventDefault();
   });
 
   document.addEventListener("keydown", event => {
@@ -1202,7 +1303,15 @@
     }
   });
 
-  document.addEventListener("pointerdown", retryPendingAmbient, { passive: true });
+  document.addEventListener("pointerdown", () => {
+    retryPendingAmbient();
+    tryLockLandscape();
+  }, { passive: true });
+  document.addEventListener("touchstart", preventAppZoom, { passive: false });
+  document.addEventListener("touchmove", preventAppZoom, { passive: false });
+  document.addEventListener("gesturestart", preventSafariGesture, { passive: false });
+  document.addEventListener("gesturechange", preventSafariGesture, { passive: false });
+  document.addEventListener("gestureend", preventSafariGesture, { passive: false });
 
   window.addEventListener("pagehide", () => {
     stopVoice();
@@ -1219,5 +1328,6 @@
   });
 
   syncStandaloneMode();
+  preloadRelicImages();
   renderFrame();
 })();

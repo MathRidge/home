@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
   <title>Math Ridge | Stage 1-1 Story</title>
   <meta name="theme-color" content="#050914" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -12,7 +12,8 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/images/logo/mathridge-premium-favicon.ico" sizes="any" />
   <link rel="shortcut icon" href="assets/images/logo/mathridge-premium-favicon.ico" />
-  <link rel="apple-touch-icon" href="assets/images/logo/mathridge-app-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png" />
   <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-neutral-fb.webp" />
   <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-shy-fb.webp" />
@@ -42,7 +43,7 @@
   <link rel="preload" as="image" href="assets/images/relic/sign_compass_relic_alpha.png" />
   <link rel="preload" as="image" href="assets/images/relic/parity_prism_true_alpha.png" />
   <link rel="preload" as="image" href="assets/images/relic/factor_forge_alpha.png" />
-  <link rel="stylesheet" href="assets/css/story-stage-1-1.css?v=20260530-mobile-pwa" />
+  <link rel="stylesheet" href="assets/css/story-stage-1-1.css?v=20260530-interaction-layer" />
 </head>
 <body>
   <div class="story-progress" aria-hidden="true">
@@ -70,34 +71,27 @@
     <div class="relic-reveal-stage" id="relicRevealStage" aria-hidden="true">
       <div class="story-relic relic-term" data-relic="term">
         <span class="relic-light" aria-hidden="true"></span>
-        <img src="assets/images/relic/term_stone.png" alt="" draggable="false" />
+        <img src="assets/images/relic/term_stone.png" alt="" draggable="false" decoding="async" loading="eager" />
         <span>The Term Stone</span>
       </div>
       <div class="story-relic relic-sign" data-relic="sign">
         <span class="relic-light" aria-hidden="true"></span>
-        <img src="assets/images/relic/sign_compass_relic_alpha.png" alt="" draggable="false" />
+        <img src="assets/images/relic/sign_compass_relic_alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
         <span>The Sign Compass</span>
       </div>
       <div class="story-relic relic-parity" data-relic="parity">
         <span class="relic-light" aria-hidden="true"></span>
-        <img src="assets/images/relic/parity_prism_true_alpha.png" alt="" draggable="false" />
+        <img src="assets/images/relic/parity_prism_true_alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
         <span>The Parity Prism</span>
       </div>
       <div class="story-relic relic-factor" data-relic="factor">
         <span class="relic-light" aria-hidden="true"></span>
-        <img src="assets/images/relic/factor_forge_alpha.png" alt="" draggable="false" />
+        <img src="assets/images/relic/factor_forge_alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
         <span>The Factor Forge</span>
       </div>
     </div>
 
-    <section class="dialogue-box" aria-live="polite">
-      <div class="dialogue-meta">
-        <span id="speakerName">Mira</span>
-        <span id="sceneCounter">1 / 1</span>
-      </div>
-
-      <p id="dialogueText"></p>
-
+    <section class="interaction-panel hidden" id="interactionPanel" aria-live="polite">
       <form class="name-form hidden" id="nameForm">
         <label for="playerNameInput">Your name in Arithmere</label>
         <div class="name-row">
@@ -108,6 +102,15 @@
 
       <div class="choice-row hidden" id="choiceRow"></div>
       <div class="feedback-text hidden" id="feedbackText"></div>
+    </section>
+
+    <section class="dialogue-box" aria-live="polite">
+      <div class="dialogue-meta">
+        <span id="speakerName">Mira</span>
+        <span id="sceneCounter">1 / 1</span>
+      </div>
+
+      <p id="dialogueText"></p>
 
       <div class="dialogue-actions">
         <button type="button" id="backBtn">Back</button>
@@ -135,6 +138,6 @@
     <span>This story scene is designed for a wide game view.</span>
   </aside>
 
-  <script src="assets/js/story-stage-1-1.js?v=20260530-mobile-pwa"></script>
+  <script src="assets/js/story-stage-1-1.js?v=20260530-interaction-layer"></script>
 </body>
 </html>
