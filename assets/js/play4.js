@@ -8,8 +8,7 @@
 	const PLAY_TITLE = "Distribution and Grouping Foundations";
 	const PLAY_COMPLETE_KEY = "mathRidge_playComplete_1_4";
 	const PLAY_CERT_KEY = "mathRidge_cert_1_4";
-	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_1";
-	const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_2_1";
+	const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";
 	const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
 	const TOTAL_STEPS = 6;
 
@@ -103,8 +102,7 @@
 
 	function completePlayProgress() {
 		localStorage.setItem(PLAY_COMPLETE_KEY, "true");
-		localStorage.setItem(NEXT_NOTE_UNLOCK_KEY, "true");
-		localStorage.setItem(NEXT_STAGE_UNLOCK_KEY, "true");
+		localStorage.setItem(ROOT_GATE_UNLOCK_KEY, "true");
 	}
 
 	function randomItem(list) {
@@ -895,8 +893,7 @@
 		};
 
 		localStorage.setItem(PLAY_COMPLETE_KEY, "true");
-		localStorage.setItem(NEXT_NOTE_UNLOCK_KEY, "true");
-		localStorage.setItem(NEXT_STAGE_UNLOCK_KEY, "true");
+		localStorage.setItem(ROOT_GATE_UNLOCK_KEY, "true");
 		localStorage.setItem(PLAY_CERT_KEY, JSON.stringify(certData));
 	}
 

@@ -338,6 +338,77 @@ body[data-note-id="1_3"] .focus-route .mini-card::before {
   background: linear-gradient(135deg, var(--sun-gold), #ffe09a);
 }
 
+.mini-skit-section {
+  text-align: center;
+  border-color: rgba(242,184,75,0.34);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242,184,75,0.16), transparent 36%),
+    rgba(255,247,232,0.08);
+}
+
+.mini-skit-section p:not(.eyebrow) {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.mini-skit-open {
+  margin-top: 12px;
+}
+
+.mini-skit-dialog {
+  width: min(1180px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  padding: 0;
+  border: 1px solid rgba(242,184,75,0.56);
+  border-radius: 22px;
+  background: rgba(10,20,34,0.96);
+  color: #fff7e8;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.58);
+}
+
+.mini-skit-dialog::backdrop {
+  background: rgba(4,10,18,0.78);
+  backdrop-filter: blur(8px);
+}
+
+.mini-skit-dialog-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.mini-skit-dialog-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 2px 0;
+}
+
+.mini-skit-dialog-top strong {
+  color: #ffe3a8;
+  font-size: 1.05rem;
+  font-weight: 950;
+}
+
+.mini-skit-close {
+  min-height: 38px;
+}
+
+.mini-skit-dialog img {
+  display: block;
+  width: 100%;
+  max-height: min(72vh, 820px);
+  object-fit: contain;
+  border-radius: 14px;
+  background: #fff7e8;
+}
+
+.mini-skit-done {
+  justify-self: center;
+  min-width: min(100%, 220px);
+}
+
 .sign-stack-practice {
   display: inline-flex;
   align-items: center;
@@ -481,6 +552,25 @@ body[data-note-id="1_3"] .focus-route .mini-card::before {
 }
 
 @media (max-width: 620px) {
+  .mini-skit-dialog {
+    width: min(100vw - 14px, 760px);
+    max-height: calc(100vh - 14px);
+    border-radius: 18px;
+  }
+
+  .mini-skit-dialog-card {
+    padding: 10px;
+  }
+
+  .mini-skit-dialog-top {
+    align-items: flex-start;
+  }
+
+  .mini-skit-dialog img {
+    max-height: 70vh;
+    border-radius: 12px;
+  }
+
   body[data-note-id="1_3"] .problem-row.problem-row-signed {
     display: grid;
     grid-template-columns: 1fr;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Math Ridge | Note 1-4 — Chunking Repeated Values</title>
+<title>Math Ridge | Factor Forge Manual - Chunking Repeated Values</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
@@ -32,8 +32,8 @@
 
 <main class="page note4-page">
   <section class="hero note4-hero">
-    <p class="eyebrow">Math Ridge | Note 1-4</p>
-    <h1>Chunking Repeated Values</h1>
+    <p class="eyebrow">Math Ridge Manual 1-4 | Factor Forge</p>
+    <h1>Factor Forge Manual</h1>
     <p class="subtitle">When the same value repeats many times, do not count every copy one by one. Name the repeated value, split the number of copies into a friendly chunk, and add the chunk totals.</p>
     <div class="hero-note focus-route" aria-label="lesson focus route">
       <div class="mini-card">1. Name it<span>See copies × value.</span></div>
@@ -163,6 +163,13 @@
     <div class="memory-line"><span>copies split</span><strong>value stays</strong><span>totals add</span></div>
   </section>
 
+  <section class="section note4-section mini-skit-section" aria-label="Factor Forge mini-skit">
+    <p class="eyebrow">Mini-Skit | The Factor Forge</p>
+    <h2>Before the Practice Gate</h2>
+    <p>Mira and Elder Shellwick have a quick reminder before practice: repeated copies can be forged into friendly chunks, then added back into one total.</p>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('factorForgeSkitDialog').showModal()">View Mini-Skit</button>
+  </section>
+
   <section class="section practice note4-practice" id="practice">
     <h2><span class="section-kicker">08</span> Unlock Practice</h2>
     <p>For each practice check, split the copies around 5, solve the two chunk totals, and type the final total.</p>
@@ -181,8 +188,19 @@
   </section>
 
   <section class="footer-rule" aria-label="Math Ridge quote">“Math is pattern. Pattern builds logic. Logic builds confidence.” — Math Ridge</section>
-  <p class="footer-note">Math Ridge Note 1-4 | Chunking Repeated Values</p>
+  <p class="footer-note">Math Ridge Manual 1-4 | Factor Forge Manual</p>
 </main>
+
+<dialog class="mini-skit-dialog" id="factorForgeSkitDialog" aria-label="Factor Forge mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>The Factor Forge</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage-1-4.png" alt="Mira learns that repeated values can be chunked into friendly groups before finding the total." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
 
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">

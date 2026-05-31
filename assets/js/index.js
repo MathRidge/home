@@ -57,7 +57,10 @@ const chapterTests = [
     title: "Term Vision Checkpoint",
     image: "assets/images/test-results/chapter-1-test-result.svg",
     storageKeys: ["mathRidge_testResult_chapter_1", "mathRidge_testResult_chapter1"],
-    note: "Use this result card after the Chapter 1 test is built."
+    dataKey: "mathRidge_testResult_chapter_1_data",
+    attemptsKey: "mathRidge_testAttempts_chapter_1",
+    historyKey: "mathRidge_testAttemptHistory_chapter_1",
+    note: "Pass the Root Gate Exam to open Chapter 2."
   },
   {
     id: "chapter_2",
@@ -66,6 +69,9 @@ const chapterTests = [
     title: "Prime Element Vision Checkpoint",
     image: "assets/images/test-results/chapter-2-test-result.svg",
     storageKeys: ["mathRidge_testResult_chapter_2", "mathRidge_testResult_chapter2"],
+    dataKey: "mathRidge_testResult_chapter_2_data",
+    attemptsKey: "mathRidge_testAttempts_chapter_2",
+    historyKey: "mathRidge_testAttemptHistory_chapter_2",
     note: "Use this result card after the Chapter 2 test is built."
   }
 ];
@@ -81,6 +87,9 @@ const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
 const PROLOGUE_SEEN_KEY = "mathRidge_prologueSeen_v1";
 const STORY_COMPLETE_1_1_KEY = "mathRidge_storyComplete_1_1";
 const TERM_MANUAL_UNLOCK_KEY = storageKeyNoteUnlocked("1_1");
+const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";
+const ROOT_GATE_PASS_KEY = "mathRidge_rootGatePassed_chapter_1";
+const CHAPTER_ONE_TEST_PASS_KEY = "mathRidge_testPassed_chapter_1";
 
 function isTermManualUnlocked() {
   try {
@@ -180,10 +189,28 @@ function hasCompletedNote(id) { return localStorage.getItem(storageKeyNote(id)) 
 function hasUnlockedNote(id) { return localStorage.getItem(storageKeyNoteUnlocked(id)) === "true"; }
 function hasCompletedPlay(id) { return localStorage.getItem(storageKeyPlayComplete(id)) === "true"; }
 function lessonIndex(id) { return lessons.findIndex(lesson => lesson.id === id); }
+function isRootGatePassed() {
+  return localStorage.getItem(ROOT_GATE_PASS_KEY) === "true" ||
+    localStorage.getItem(CHAPTER_ONE_TEST_PASS_KEY) === "true";
+}
+function isChapterOneRelicsComplete() {
+  return ["1_1", "1_2", "1_3", "1_4"].every(id => hasCertificate(id) || hasCompletedPlay(id));
+}
+function isRootGateUnlocked() {
+  return isRootGatePassed() ||
+    localStorage.getItem(ROOT_GATE_UNLOCK_KEY) === "true" ||
+    isChapterOneRelicsComplete();
+}
 
 function isNoteUnlocked(index) {
-  if (index === 0) return true;
   const lesson = lessons[index];
+
+  if (lesson.chapter.startsWith("Chapter 2")) {
+    if (!isRootGatePassed()) return false;
+    if (lesson.id === "2_1") return true;
+  }
+
+  if (index === 0) return true;
   const previousLesson = lessons[index - 1];
 
   return (
@@ -195,6 +222,7 @@ function isNoteUnlocked(index) {
 
 function isPlayUnlocked(index) {
   const lesson = lessons[index];
+  if (lesson.chapter.startsWith("Chapter 2") && !isRootGatePassed()) return false;
   return hasCompletedNote(lesson.id) || hasCertificate(lesson.id);
 }
 
@@ -344,6 +372,7 @@ function renderTrail(options = {}) {
         <div class="node-grid">
           ${chapterLessons.map(renderTrailCard).join("")}
         </div>
+        ${chapter.startsWith("Chapter 1") ? renderRootGateCard() : ""}
       </div>
     `;
   }).join("");
@@ -351,6 +380,28 @@ function renderTrail(options = {}) {
   trail.dataset.rendered = "true";
   writeTrailStateSnapshot();
   bindStageCardInteractions();
+}
+
+function renderRootGateCard() {
+  const unlocked = isRootGateUnlocked();
+  const passed = isRootGatePassed();
+  const status = passed ? "Gate opened" : unlocked ? "Exam ready" : "Four relics required";
+  const href = unlocked ? (passed ? "root-gate-test.html" : "story-root-gate.html") : "#";
+
+  return `
+    <article class="root-gate-card ${unlocked ? "" : "locked"} ${passed ? "passed" : ""}" aria-label="Root Gate Chapter 1 checkpoint">
+      <div class="root-gate-mark" aria-hidden="true">I</div>
+      <div class="root-gate-copy">
+        <span>Chapter 1 Checkpoint</span>
+        <h3>Root Gate Finale</h3>
+        <p>A story finale leads into the formal 40-question mastery trial. Score 92% or higher within 10 minutes to open Chapter 2.</p>
+      </div>
+      <div class="root-gate-actions">
+        <strong>${escapeHTML(status)}</strong>
+        <a class="small-link root-gate-link ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">${passed ? "Review / Retake" : unlocked ? "Begin Finale" : "Locked"}</a>
+      </div>
+    </article>
+  `;
 }
 
 function stageRelicName(id) {
@@ -453,6 +504,7 @@ function renderMenuLinks(options = {}) {
         <div class="link-list">
           ${items.map(renderMenuNotePlay).join("")}
         </div>
+        ${chapter.startsWith("Chapter 1") ? renderMenuRootGateLink() : ""}
       </div>
     `;
   }).join("") + `
@@ -464,6 +516,17 @@ function renderMenuLinks(options = {}) {
 
   wrap.dataset.rendered = "true";
   writeTrailStateSnapshot();
+}
+
+function renderMenuRootGateLink() {
+  const unlocked = isRootGateUnlocked();
+  const passed = isRootGatePassed();
+  const href = unlocked ? (passed ? "root-gate-test.html" : "story-root-gate.html") : "#";
+  return `
+    <a class="jump-link root-gate-jump ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">
+      <span><i aria-hidden="true">I</i> Root Gate Finale</span><strong>${passed ? "Passed" : unlocked ? "Ready" : "Locked"}</strong>
+    </a>
+  `;
 }
 
 function renderMenuNotePlay(lesson) {
@@ -483,6 +546,10 @@ function handleNoteClick(event, id) {
 
   if (!isNoteUnlocked(index)) {
     event.preventDefault();
+    if (lesson.chapter.startsWith("Chapter 2") && !isRootGatePassed()) {
+      showChapterTwoGateModal();
+      return false;
+    }
     showLockedProgressModal(`${lesson.section} Manual`);
     return false;
   }
@@ -497,12 +564,30 @@ function handlePlayClick(event, id) {
   if (!isPlayUnlocked(index)) {
     event.preventDefault();
 
+    if (lesson.chapter.startsWith("Chapter 2") && !isRootGatePassed()) {
+      showChapterTwoGateModal();
+      return false;
+    }
+
     if (isNoteUnlocked(index)) {
       showPlayNeedsNoteModal(lesson);
     } else {
       showLockedProgressModal(`${lesson.section} Trail`);
     }
 
+    return false;
+  }
+
+  return true;
+}
+
+function handleRootGateClick(event) {
+  if (!isRootGateUnlocked()) {
+    event.preventDefault();
+    showModal("Root Gate Locked", "Collect all four Chapter 1 relics before attempting the Root Gate Exam.", [
+      { text: "Back to Mountain Trail", className: "gold-btn", action: () => showSection("quest") },
+      { text: "OK", className: "pill-btn", action: closeModal }
+    ]);
     return false;
   }
 
@@ -548,12 +633,113 @@ function readTestResultImage(test) {
   return test.image;
 }
 
+function readTestResultData(test) {
+  return test.dataKey ? readJSONStorage(test.dataKey) : null;
+}
+
+function readTestAttemptHistory(test) {
+  const saved = test.historyKey ? readJSONStorage(test.historyKey) : null;
+  return Array.isArray(saved) ? saved : [];
+}
+
+function formatTestPercent(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "--";
+  return `${Math.round(number * 10) / 10}%`;
+}
+
+function formatTestTime(seconds) {
+  const safe = Math.max(0, Math.floor(Number(seconds) || 0));
+  const minutes = Math.floor(safe / 60);
+  const rest = safe % 60;
+  return `${minutes}:${String(rest).padStart(2, "0")}`;
+}
+
+function formatTestDate(iso) {
+  if (!iso) return "";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+}
+
+function positiveTestInteger(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? Math.floor(number) : fallback;
+}
+
+function testAttemptCount(test, data, history) {
+  const saved = test.attemptsKey ? positiveTestInteger(localStorage.getItem(test.attemptsKey)) : 0;
+  return Math.max(
+    data ? 1 : 0,
+    saved,
+    positiveTestInteger(data?.attempts),
+    positiveTestInteger(data?.attemptNumber),
+    history.length
+  );
+}
+
+function bestTestAttempt(data, history) {
+  const candidates = [...history];
+  if (data) {
+    candidates.push({
+      correct: data.bestCorrect || data.correct,
+      percent: data.bestPercent || data.percent,
+      passed: data.passed
+    });
+  }
+  return candidates.reduce((best, attempt) => {
+    if (!best || Number(attempt.percent) > Number(best.percent)) return attempt;
+    return best;
+  }, null);
+}
+
+function renderTestResultStats(test) {
+  const data = readTestResultData(test);
+  const history = readTestAttemptHistory(test);
+  const attempts = testAttemptCount(test, data, history);
+  const best = bestTestAttempt(data, history);
+
+  if (!data && attempts <= 0) {
+    return `
+      <div class="test-result-stats is-empty">
+        <div><strong>--</strong><span>latest score</span></div>
+        <div><strong>0</strong><span>attempts</span></div>
+        <div><strong>--</strong><span>best score</span></div>
+        <div><strong>Pending</strong><span>result</span></div>
+      </div>
+      <div class="test-attempt-note">No official attempt has been submitted yet.</div>
+    `;
+  }
+
+  const latestScore = data ? `${Number(data.correct || 0)}/${Number(data.totalQuestions || 40)}` : "--";
+  const bestScore = best ? `${Number(best.correct || 0)}/${Number(data?.totalQuestions || 40)}` : latestScore;
+  const resultText = data?.passed ? "Passed" : "Retry";
+  const dateText = formatTestDate(data?.completedAt);
+  const attemptLabel = positiveTestInteger(data?.attemptNumber, attempts || 1);
+
+  return `
+    <div class="test-result-stats has-record">
+      <div><strong>${escapeHTML(latestScore)}</strong><span>latest score</span></div>
+      <div><strong>${escapeHTML(String(attempts))}</strong><span>attempts</span></div>
+      <div><strong>${escapeHTML(bestScore)}</strong><span>best score</span></div>
+      <div><strong>${escapeHTML(resultText)}</strong><span>${escapeHTML(formatTestPercent(data?.percent))}</span></div>
+    </div>
+    <div class="test-attempt-note">
+      ${data ? `Last attempt ${escapeHTML(String(attemptLabel))}${dateText ? ` on ${escapeHTML(dateText)}` : ""} · Time ${escapeHTML(formatTestTime(data.usedSeconds))}` : "Attempt history registered."}
+    </div>
+  `;
+}
+
 function renderTestResults() {
   const grid = document.getElementById("testResultsGrid");
   if (!grid) return;
 
   grid.innerHTML = chapterTests.map(test => {
     const image = readTestResultImage(test);
+    const isChapterOne = test.id === "chapter_1";
+    const chapterOneAction = isChapterOne
+      ? `<a class="pill-btn" href="${isRootGateUnlocked() ? (isRootGatePassed() ? "root-gate-test.html" : "story-root-gate.html") : "#"}" onclick="return handleRootGateClick(event)">${isRootGatePassed() ? "Review Root Gate Exam" : "Begin Root Gate Finale"}</a>`
+      : `<button class="pill-btn" type="button" onclick="showModal('Chapter Test Coming Soon', '${escapeHTML(test.chapter)} will connect here when the chapter test page is ready.', [{ text: 'OK', className: 'gold-btn', action: closeModal }])">Open Test Plan</button>`;
     return `
       <article class="test-result-card">
         <h4>${escapeHTML(test.chapter)}</h4>
@@ -561,9 +747,10 @@ function renderTestResults() {
         <div class="result-image-frame">
           <img src="${escapeHTML(image)}" alt="${escapeHTML(test.chapter)} result preview" />
         </div>
+        ${renderTestResultStats(test)}
         <div class="result-note">${escapeHTML(test.note)}</div>
         <div class="result-card-actions">
-          <button class="pill-btn" type="button" onclick="showModal('Chapter Test Coming Soon', '${escapeHTML(test.chapter)} will connect here when the chapter test page is ready.', [{ text: 'OK', className: 'gold-btn', action: closeModal }])">Open Test Plan</button>
+          ${chapterOneAction}
         </div>
       </article>
     `;
@@ -610,6 +797,16 @@ function showPlayNeedsNoteModal(lesson) {
   );
 }
 
+function showChapterTwoGateModal() {
+  showModal("Root Gate Required", "Chapter 2 opens after you pass the Root Gate Exam with 92% or higher.", [
+    { text: isRootGateUnlocked() ? "Begin Root Gate Finale" : "Back to Chapter 1", className: "gold-btn", action: () => {
+      if (isRootGateUnlocked()) window.location.href = "story-root-gate.html";
+      else showSection("quest");
+    } },
+    { text: "OK", className: "pill-btn", action: closeModal }
+  ]);
+}
+
 function confirmResetProgress() {
   showModal("Erase Device Progress?", "This clears Trail unlocks, Cabin achievements, and chapter test snapshots saved on this device only.", [
     { text: "Yes, erase device progress", className: "danger-btn", action: resetAllProgress, confirmTwice: true },
@@ -631,9 +828,16 @@ function resetAllProgress() {
   try { localStorage.removeItem(PLAYER_PROFILE_KEY); } catch (error) {}
   try { localStorage.removeItem(PROLOGUE_SEEN_KEY); } catch (error) {}
   try { localStorage.removeItem(STORY_COMPLETE_1_1_KEY); } catch (error) {}
+  try { localStorage.removeItem(ROOT_GATE_UNLOCK_KEY); } catch (error) {}
+  try { localStorage.removeItem(ROOT_GATE_PASS_KEY); } catch (error) {}
+  try { localStorage.removeItem(CHAPTER_ONE_TEST_PASS_KEY); } catch (error) {}
+  try { localStorage.removeItem("mathRidge_testResult_chapter_1_data"); } catch (error) {}
 
   chapterTests.forEach(test => {
     (test.storageKeys || []).forEach(key => localStorage.removeItem(key));
+    if (test.dataKey) localStorage.removeItem(test.dataKey);
+    if (test.attemptsKey) localStorage.removeItem(test.attemptsKey);
+    if (test.historyKey) localStorage.removeItem(test.historyKey);
   });
 
   closeModal();
@@ -970,6 +1174,7 @@ const CONFIRMABLE_INDEX_SELECTOR = [
   "#sendNoteButton",
   ".reset-progress-btn",
   ".jump-link:not(.locked)",
+  ".root-gate-link:not(.locked)",
   "#modalActions [data-mobile-confirm='modal-reset']"
 ].join(", ");
 
@@ -1248,6 +1453,7 @@ window.showModal = showModal;
 window.sendMessage = sendMessage;
 window.handleNoteClick = handleNoteClick;
 window.handlePlayClick = handlePlayClick;
+window.handleRootGateClick = handleRootGateClick;
 window.openCertificateFrame = openCertificateFrame;
 window.confirmResetProgress = confirmResetProgress;
 window.resetAllProgress = resetAllProgress;

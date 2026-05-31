@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Math Ridge | Root Gate Exam</title>
+  <meta name="theme-color" content="#050914" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Math Ridge" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260531-app-icon" />
+  <link rel="icon" href="assets/images/logo/mathridge-premium-favicon.ico" sizes="any" />
+  <link rel="shortcut icon" href="assets/images/logo/mathridge-premium-favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260531-app-icon" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260531-app-icon" />
+  <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-story" />
+</head>
+<body>
+  <main class="exam-shell">
+    <header class="exam-hero">
+      <a class="return-link" href="index.html?view=quest#quest">Mountain Trail</a>
+      <div>
+        <p class="exam-kicker">Chapter 1 Checkpoint</p>
+        <h1>Root Gate Exam</h1>
+        <p>Complete all 40 direct-answer questions in under 10 minutes. A score of 92% or higher opens Chapter 2.</p>
+      </div>
+      <div class="timer-card" aria-live="polite">
+        <span>Time Remaining</span>
+        <strong id="timerText">10:00</strong>
+      </div>
+    </header>
+
+    <section class="exam-status" aria-label="Exam rules">
+      <div><strong>40</strong><span>questions</span></div>
+      <div><strong>3</strong><span>errors allowed</span></div>
+      <div><strong>92%</strong><span>required</span></div>
+      <div><strong>Final Answer</strong><span>sign + size only</span></div>
+    </section>
+
+    <section class="start-panel climb-gate" id="startPanel">
+      <div class="climb-cover-card">
+        <div class="gate-kicker">Root Gate Challenge</div>
+        <h2>Seal of Chapter 1</h2>
+        <p>The Root Gate removes the training steps. Use the skills from 1-1 to 1-4 and write only the final answer.</p>
+        <p class="cover-rule">For positive answers, choose <strong>No minus</strong>. For negative answers, choose <strong>Minus</strong>, then enter the size.</p>
+        <button class="primary-action" type="button" id="startExamButton">Start the Challenge</button>
+      </div>
+    </section>
+
+    <form class="exam-form hidden" id="examForm" autocomplete="off">
+      <div class="exam-toolbar">
+        <div>
+          <strong id="answeredCount">0 / 40 answered</strong>
+          <span id="examMessage">Answer every question before submitting.</span>
+        </div>
+        <button class="submit-button" type="submit">Submit Exam</button>
+      </div>
+
+      <div class="question-grid" id="questionGrid"></div>
+    </form>
+  </main>
+
+  <section class="result-layer hidden" id="resultLayer" aria-live="polite">
+    <div class="result-card" id="resultCard">
+      <p class="exam-kicker">Root Gate Result</p>
+      <h2 id="resultTitle">Exam Complete</h2>
+      <div class="score-ring" id="scoreRing">0%</div>
+      <p id="resultSummary"></p>
+      <div class="result-stats" id="resultStats"></div>
+      <div class="result-actions">
+        <a class="primary-action" id="chapterTwoLink" href="note5.html">Begin Chapter 2-1</a>
+        <a class="primary-action" id="resultStoryLink" href="story-root-gate-result.html?outcome=pass">View Gate Scene</a>
+        <button class="secondary-action" type="button" id="reviewButton">Review Answers</button>
+        <button class="secondary-action" type="button" id="retryButton">Retake Exam</button>
+        <a class="secondary-action" href="index.html?view=quest#quest">Return to Mountain Trail</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/root-gate-test.js?v=20260531-root-gate-story"></script>
+</body>
+</html>

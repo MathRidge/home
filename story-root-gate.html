@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <title>Math Ridge | Chapter 1 Finale</title>
+  <meta name="theme-color" content="#050914" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Math Ridge" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260531-app-icon" />
+  <link rel="icon" href="assets/images/logo/mathridge-premium-favicon.ico" sizes="any" />
+  <link rel="shortcut icon" href="assets/images/logo/mathridge-premium-favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260531-app-icon" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260531-app-icon" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick_cabin.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick_cabin_inside.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick-table.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick-black-board.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-s09b-stage-1-1-gate.png" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-determined-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-worried-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Shellwick-sprite/elder-webp/elder-natural.webp" />
+  <link rel="preload" as="image" href="assets/images/relic/term_stone.png" />
+  <link rel="preload" as="image" href="assets/images/relic/sign_compass_relic_alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/parity_prism_true_alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/factor_forge_alpha.png" />
+  <link rel="stylesheet" href="assets/css/story-stage-1-1.css?v=20260530-blackboard-lesson" />
+  <link rel="stylesheet" href="assets/css/story-root-gate.css?v=20260531-root-gate-story" />
+</head>
+<body data-story-mode="intro">
+  <div class="story-progress" aria-hidden="true">
+    <span id="storyProgressBar"></span>
+  </div>
+
+  <main class="story-vn root-gate-story" aria-label="Chapter 1 finale visual story">
+    <div class="scene-bg" id="sceneBg" aria-hidden="true"></div>
+    <div class="scene-shade" aria-hidden="true"></div>
+    <div class="scene-fader" id="sceneFader" aria-hidden="true"></div>
+
+    <div class="blackboard-stage is-hidden" id="blackboardStage" aria-hidden="true"></div>
+
+    <header class="story-topbar">
+      <a href="index.html?view=quest#quest" aria-label="Back to Mountain Trail">Trail</a>
+      <strong>Chapter 1 Finale</strong>
+    </header>
+
+    <div class="character-stage mira-stage is-hidden" id="miraStage" aria-hidden="true">
+      <img class="character-sprite mira-sprite" id="miraSprite" alt="" draggable="false" />
+    </div>
+
+    <div class="character-stage elder-stage is-hidden" id="elderStage" aria-hidden="true">
+      <img class="character-sprite elder-sprite" id="elderSprite" alt="" draggable="false" />
+    </div>
+
+    <div class="relic-reveal-stage" id="relicRevealStage" aria-hidden="true">
+      <div class="story-relic relic-term" data-relic="term">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/term_stone.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Term Stone</span>
+      </div>
+      <div class="story-relic relic-sign" data-relic="sign">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/sign_compass_relic_alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Sign Compass</span>
+      </div>
+      <div class="story-relic relic-parity" data-relic="parity">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/parity_prism_true_alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Parity Prism</span>
+      </div>
+      <div class="story-relic relic-factor" data-relic="factor">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/factor_forge_alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Factor Forge</span>
+      </div>
+    </div>
+
+    <section class="interaction-panel hidden" id="interactionPanel" aria-live="polite">
+      <form class="name-form hidden" id="nameForm"></form>
+      <div class="choice-row hidden" id="choiceRow"></div>
+      <div class="feedback-text hidden" id="feedbackText"></div>
+    </section>
+
+    <section class="dialogue-box" aria-live="polite">
+      <div class="dialogue-meta">
+        <span id="speakerName">Narrator</span>
+        <span id="sceneCounter">1 / 1</span>
+      </div>
+
+      <p id="dialogueText"></p>
+
+      <div class="dialogue-actions">
+        <button type="button" id="backBtn">Back</button>
+        <button type="button" id="nextBtn">Next</button>
+      </div>
+    </section>
+
+    <div class="reward-panel hidden" id="rewardPanel" role="dialog" aria-modal="true" aria-labelledby="rewardTitle">
+      <div class="reward-card" id="rewardCard"></div>
+    </div>
+  </main>
+
+  <aside class="orientation-lock" aria-live="polite">
+    <strong>Turn Sideways</strong>
+    <span>This finale is designed for a wide game view.</span>
+  </aside>
+
+  <script src="assets/js/story-root-gate.js?v=20260531-root-gate-story"></script>
+</body>
+</html>

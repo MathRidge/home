@@ -32,20 +32,21 @@ body[data-note-id="1_1"] .manual-hero h1 {
   text-shadow: 0 12px 30px rgba(0,0,0,0.26);
 }
 
-.manual-intro {
+.manual-outline {
   background:
-    linear-gradient(135deg, rgba(34,68,64,0.32), rgba(16,32,51,0.46)),
+    radial-gradient(circle at 50% 0%, rgba(242,184,75,0.13), transparent 38%),
+    linear-gradient(135deg, rgba(16,32,51,0.50), rgba(16,32,51,0.36)),
     rgba(255,247,232,0.07);
 }
 
-.manual-lore-grid {
+.manual-outline-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
 
-.manual-lore-card {
+.manual-outline-card {
   min-height: 126px;
   display: grid;
   align-content: center;
@@ -57,23 +58,16 @@ body[data-note-id="1_1"] .manual-hero h1 {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 34px rgba(0,0,0,0.16);
 }
 
-.manual-lore-card strong {
+.manual-outline-card strong {
   color: #ffe3a8;
   font-size: 1.05rem;
   font-weight: 950;
 }
 
-.manual-lore-card span {
+.manual-outline-card span {
   color: rgba(255,247,232,0.78);
   font-weight: 780;
   line-height: 1.45;
-}
-
-.manual-lore-card.relic-card {
-  border-color: rgba(215,177,120,0.42);
-  background:
-    linear-gradient(135deg, rgba(215,177,120,0.18), rgba(255,247,232,0.07)),
-    rgba(255,247,232,0.08);
 }
 
 .sign-size-board,
@@ -418,7 +412,7 @@ body[data-note-id="1_1"] .manual-hero h1 {
   .same-diff-grid,
   .box-rhythm,
   .note1-summary-grid,
-  .manual-lore-grid {
+  .manual-outline-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Math Ridge | Note 1-3 — Negative Sign Pairs</title>
+<title>Math Ridge | Parity Prism Manual - Negative Sign Pairs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
@@ -32,8 +32,8 @@
 
 <main class="page note3-page">
   <section class="hero note3-hero">
-    <p class="eyebrow">Math Ridge | Note 1-3</p>
-    <h1>Negative Sign Pairs</h1>
+    <p class="eyebrow">Math Ridge Manual 1-3 | Parity Prism</p>
+    <h1>Parity Prism Manual</h1>
     <p class="subtitle">Stacked signs are easier when you pause before doing the number work. Look at <strong>one term</strong>, count its negative signs, fix the sign, then solve the problem.</p>
     <div class="hero-note focus-route" aria-label="lesson focus route">
       <div class="mini-card">1. Look close<span>Stay inside one term first.</span></div>
@@ -141,6 +141,13 @@
     <div class="memory-line"><span>Count negatives</span><strong>fix the sign</strong><span>then solve</span></div>
   </section>
 
+  <section class="section note3-section mini-skit-section" aria-label="Parity Prism mini-skit">
+    <p class="eyebrow">Mini-Skit | The Parity Prism</p>
+    <h2>Before the Practice Gate</h2>
+    <p>Mira and Elder Shellwick have a quick reminder before practice: count the negative signs in one stack, then let even or odd reveal the final sign.</p>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('parityPrismSkitDialog').showModal()">View Mini-Skit</button>
+  </section>
+
   <section class="section practice note3-practice" id="practice">
     <h2><span class="section-kicker">08</span> Unlock Practice</h2>
     <p>For each practice check, choose the final sign first. Then type only the size in the number box.</p>
@@ -159,8 +166,19 @@
   </section>
 
   <section class="footer-rule" aria-label="Math Ridge quote">“Math is pattern. Pattern builds logic. Logic builds confidence.” — Math Ridge</section>
-  <p class="footer-note">Math Ridge Note 1-3 | Negative Sign Pairs</p>
+  <p class="footer-note">Math Ridge Manual 1-3 | Parity Prism Manual</p>
 </main>
+
+<dialog class="mini-skit-dialog" id="parityPrismSkitDialog" aria-label="Parity Prism mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>The Parity Prism</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage-1-3.png" alt="Mira learns that even negative signs become positive and odd negative signs stay negative." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
 
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
