@@ -38,6 +38,7 @@
 	let timerInterval = null;
 	let cachedRecords = [];
 	let premiumScrollTimer = null;
+	let premiumScrollFrame = null;
 	let bottomDrawerCloseTimer = null;
 	let armedBottomControl = null;
 	let armedBottomControlTimer = null;
@@ -45,6 +46,40 @@
 
 	function byId(id) {
 		return document.getElementById(id);
+	}
+
+	function ensureTopNextClimbButton() {
+		const button = byId("nextClimbButton");
+		const board = document.querySelector(".challenge-board");
+		if (!button || !board) return null;
+
+		let tray = byId("nextClimbInlineTray");
+		if (!tray) {
+			tray = document.createElement("div");
+			tray.id = "nextClimbInlineTray";
+			tray.className = "next-climb-inline-tray";
+			const status = byId("challengeMessage");
+			if (status?.parentNode === board) {
+				status.insertAdjacentElement("afterend", tray);
+			} else {
+				board.appendChild(tray);
+			}
+		}
+
+		if (button.parentElement !== tray) {
+			tray.appendChild(button);
+		}
+
+		button.classList.add("inline-next-climb-button");
+		return button;
+	}
+
+	function pulseTopNextClimbButton() {
+		const button = ensureTopNextClimbButton();
+		if (!button) return;
+		button.classList.remove("is-ready-pulse");
+		void button.offsetWidth;
+		button.classList.add("is-ready-pulse");
 	}
 
 	function readPlayerProfile() {
@@ -132,7 +167,7 @@
 	}
 
 	function hideNextClimbButton(options = {}) {
-		const button = byId("nextClimbButton");
+		const button = ensureTopNextClimbButton() || byId("nextClimbButton");
 		if (!button) return false;
 
 		if (!options.force && document.body.dataset.finalCorrectReady === "true") {
@@ -150,14 +185,14 @@
 		button.style.removeProperty("visibility");
 		button.style.removeProperty("pointer-events");
 		button.style.removeProperty("opacity");
+		byId("playBottomDrawerLauncher")?.classList.remove("is-ready");
 		return true;
 	}
 
 	function showNextClimbButton(options = {}) {
-		const button = byId("nextClimbButton");
+		const button = ensureTopNextClimbButton() || byId("nextClimbButton");
 		if (!button) return false;
 
-		const scroll = options.scroll !== false;
 		document.body.dataset.finalCorrectReady = "true";
 		button.dataset.finalCorrectReady = "true";
 		button.classList.remove("hidden", "locked-button", "disabled", "is-disabled");
@@ -171,12 +206,7 @@
 		button.style.setProperty("pointer-events", "auto", "important");
 		button.style.setProperty("opacity", "1", "important");
 		button.textContent = button.textContent.trim() || "Next Climb";
-
-		if (scroll && isMobilePlayView()) {
-			markBottomDrawerNeedsAttention();
-		} else if (scroll) {
-			window.setTimeout(() => scrollToPremiumElement("bottomControls", 18), 120);
-		}
+		pulseTopNextClimbButton();
 
 		return true;
 	}
@@ -242,7 +272,30 @@
 		return finishCorrectClimb(options);
 	}
 
-	function scrollToPremiumElement(id, extraOffset = 14) {
+	function animatePremiumScroll(targetY, duration = 680) {
+		const startY = window.scrollY || window.pageYOffset || 0;
+		const distance = Math.max(0, targetY) - startY;
+		if (Math.abs(distance) < 4) return;
+
+		if (premiumScrollFrame) window.cancelAnimationFrame(premiumScrollFrame);
+
+		const startTime = performance.now();
+		const ease = progress => 1 - Math.pow(1 - progress, 3);
+
+		const step = now => {
+			const progress = Math.min(1, (now - startTime) / duration);
+			window.scrollTo(0, startY + distance * ease(progress));
+			if (progress < 1) {
+				premiumScrollFrame = window.requestAnimationFrame(step);
+			} else {
+				premiumScrollFrame = null;
+			}
+		};
+
+		premiumScrollFrame = window.requestAnimationFrame(step);
+	}
+
+	function scrollToPremiumElement(id, extraOffset = 14, options = {}) {
 		const element = byId(id);
 		if (!element) return false;
 
@@ -252,8 +305,13 @@
 			const shelfHeight = shelf ? shelf.getBoundingClientRect().height : 0;
 			const y = window.scrollY + element.getBoundingClientRect().top - shelfHeight - extraOffset;
 			const mobile = window.matchMedia && window.matchMedia("(max-width: 760px)").matches;
-			window.scrollTo({ top: Math.max(0, y), behavior: mobile ? "auto" : "smooth" });
-		}, 40);
+			const targetY = Math.max(0, y);
+			if (mobile || options.slow === true) {
+				animatePremiumScroll(targetY, Number(options.duration || 720));
+			} else {
+				window.scrollTo({ top: targetY, behavior: "smooth" });
+			}
+		}, Number(options.delay ?? 40));
 
 		return true;
 	}
@@ -745,6 +803,7 @@
 
 	document.addEventListener("DOMContentLoaded", () => {
 		updateTimerPanel();
+		ensureTopNextClimbButton();
 		hideNextClimbButton({ force: true });
 		setupBottomDrawer();
 		watchPlayerProfileNameInput();

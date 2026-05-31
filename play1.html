@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Math Ridge | 1-1 Term Stone Trial</title>
-<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260530-bottom-launcher" />
-	<link rel="stylesheet" href="assets/css/play1.css?v=20260529-term-stone-proof" />
+	<title>Math Ridge | Trail 1-1 Term Stone Trial</title>
+<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260531-slow-scroll" />
+	<link rel="stylesheet" href="assets/css/play1.css?v=20260531-term-stone-flow" />
 </head>
 
 <body class="play-page play-1">
@@ -96,11 +96,11 @@
 			<div class="problem-card" id="problemCard">
 				<p>Term Stone challenge:</p>
 				<div class="problem" id="problemText"></div>
-				<p>Follow the steps: bigger size, bigger sign, then choose the operation from the other term.</p>
+				<p>Follow the steps: bigger term, bigger sign, operation, box setup, final answer.</p>
 			</div>
 
 			<div class="step hidden" id="step1">
-				<h2>Step 1: Which size is bigger?</h2>
+				<h2>Step 1: Which term is bigger?</h2>
 				<div class="options" id="sizeOptions"></div>
 			</div>
 
@@ -114,18 +114,23 @@
 			</div>
 
 			<div class="step builder hidden" id="builder">
-				<h2>Step 3: Is the other sign same or different?</h2>
-				<p>Same sign means add. Different sign means subtract.</p>
+				<h2>Step 3: What operation should happen inside?</h2>
+				<p>Compare the other term with the bigger term. Same sign means addition. Different sign means subtraction.</p>
 
 				<div class="mini-problem" id="miniProblem"></div>
 
 				<div class="quick-pick-box">
 					<div class="quick-pick-title" id="operationTitle">Choose the sign relationship.</div>
 					<div class="sign-picker">
-						<button class="op-btn plus" onclick="pickOperation('+', this)">Same sign: add</button>
-						<button class="op-btn minus" onclick="pickOperation('-', this)">Different sign: subtract</button>
+						<button class="op-btn plus" onclick="pickOperation('+', this)">Addition +</button>
+						<button class="op-btn minus" onclick="pickOperation('-', this)">Subtraction -</button>
 					</div>
 				</div>
+			</div>
+
+			<div class="step builder box-step hidden" id="boxStep">
+				<h2>Step 4: Fill in the box</h2>
+				<p>The sign and operation are locked in. Type the bigger size first, then the smaller size.</p>
 
 				<div class="builder-labels">
 					<span>Big Sign</span>
@@ -137,18 +142,19 @@
 				<div class="box-builder">
 					<div class="sign-display" id="outsideSignDisplay">?</div>
 					<span class="ring-box">
-						<input class="num-input" id="firstNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="big" aria-label="big size" readonly />
+						<input class="num-input" id="firstNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="big" aria-label="big size" />
 						<div class="op-display" id="operationDisplay">?</div>
-						<input class="num-input" id="secondNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="small" aria-label="small size" readonly />
+						<input class="num-input" id="secondNumInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="small" aria-label="small size" />
 					</span>
 				</div>
 
 				<div class="built-box-text" id="builtBoxText"></div>
+				<button class="primary-action" onclick="checkBox()">Check Box</button>
 			</div>
 
 			<div class="answer-area hidden" id="answerArea">
 				<p id="builtBoxTextAnswer"></p>
-				<label>Now solve it: choose the sign, then type the size.</label>
+				<label>Step 5: What is the final answer? Choose the sign, then type the size.</label>
 
 				<div class="final-answer-builder">
 					<div class="quick-pick-title">Answer sign:</div>
@@ -191,10 +197,10 @@
 		</div>
 
 		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
-		<div class="game-footer">Math Ridge | 1-1 Term Stone Trial</div>
+		<div class="game-footer">Math Ridge | Trail 1-1 Term Stone Trial</div>
 	</div>
 
-<script src="assets/js/mathridge-play.js?v=20260530-bottom-launcher"></script>
-	<script src="assets/js/play1.js?v=20260529-term-stone-flow"></script>
+<script src="assets/js/mathridge-play.js?v=20260531-slow-scroll"></script>
+	<script src="assets/js/play1.js?v=20260531-term-stone-scroll"></script>
 </body>
 </html>

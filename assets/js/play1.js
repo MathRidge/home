@@ -30,6 +30,7 @@
 	let currentProblem = {};
 	let expected = {};
 	let chosenSignType = null;
+	let chosenBiggerTerm = null;
 	let chosenBiggerSize = null;
 	let chosenOutsideSign = null;
 	let chosenOperation = null;
@@ -62,7 +63,9 @@
 			document.querySelector(".progress-turtle")?.classList.remove("turtle-fade-away");
 		},
 		scrollToPremiumElement(id) {
-			document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+			window.setTimeout(() => {
+				document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+			}, 80);
 		},
 		updateShelf(options) {
 			const scoreText = document.getElementById("scoreText");
@@ -180,8 +183,9 @@
 	}
 
 	function formatTerm(n, isFirst = false) {
-		if (n >= 0) return isFirst ? `${n}` : `+ ${n}`;
-		return isFirst ? `−${Math.abs(n)}` : `− ${Math.abs(n)}`;
+		const size = Math.abs(n);
+		const sign = n >= 0 ? "+" : "-";
+		return isFirst ? `${sign}${size}` : `${sign} ${size}`;
 	}
 
 	function keepDigitsOnly(input, maxLength = null) {
@@ -200,7 +204,7 @@
 	}
 
 	function getRequiredProgressSteps() {
-		return 4;
+		return 5;
 	}
 
 	function getProgressPercent() {
@@ -261,7 +265,7 @@
 
 	function scrollToCenter(id) {
 		window.requestAnimationFrame(() => {
-			shell().scrollToPremiumElement(id, 14);
+			shell().scrollToPremiumElement(id, 12, { delay: 80, duration: 760, slow: true });
 		});
 	}
 
@@ -279,7 +283,7 @@
 		const smallLength = String(expected.smallerSize || "").length;
 		const answerLength = String(Math.abs(expected.finalAnswer) || "").length;
 
-		firstInput.maxLength = bigLength + smallLength;
+		firstInput.maxLength = bigLength;
 		secondInput.maxLength = smallLength;
 		finalInput.maxLength = answerLength;
 
@@ -302,7 +306,7 @@
 			const value = keepDigitsOnly(secondInput, smallLength);
 			if (value.length >= smallLength) {
 				window.setTimeout(() => {
-					document.querySelector("#builder button[onclick='checkBox()']")?.focus();
+					document.querySelector("#boxStep button[onclick='checkBox()']")?.focus();
 				}, 40);
 			}
 		};
@@ -335,25 +339,20 @@
 		const aSize = Math.abs(a);
 		const bSize = Math.abs(b);
 		const sameSign = aSign === bSign;
+		const biggerTerm = aSize > bSize ? "first" : "second";
 		const biggerSize = Math.max(aSize, bSize);
 		const smallerSize = Math.min(aSize, bSize);
-
-		let outsideSign;
-		let operation;
-
-		if (sameSign) {
-			outsideSign = aSign;
-			operation = "+";
-		} else {
-			outsideSign = aSize > bSize ? aSign : bSign;
-			operation = "-";
-		}
+		const outsideSign = biggerTerm === "first" ? aSign : bSign;
+		const otherSign = biggerTerm === "first" ? bSign : aSign;
+		const operation = sameSign ? "+" : "-";
 
 		expected = {
 			sameOrDifferent: sameSign ? "same" : "different",
+			biggerTerm,
 			biggerSize,
 			smallerSize,
 			outsideSign,
+			otherSign,
 			operation,
 			finalAnswer: a + b
 		};
@@ -366,13 +365,13 @@
 		if (!outsideTitle || !operationTitle) return;
 
 		if (turtleScore <= 3) {
-			outsideTitle.textContent = "Tap the sign carried by the bigger size. That sign goes outside.";
-			operationTitle.textContent = "Same sign means add. Different sign means subtract.";
+			outsideTitle.textContent = "Tap the sign carried by the bigger term. That sign goes outside.";
+			operationTitle.textContent = "Look at the other term. Same sign uses addition. Different sign uses subtraction.";
 			return;
 		}
 
-		outsideTitle.textContent = "Bigger size sign goes outside.";
-		operationTitle.textContent = "Choose same or different.";
+		outsideTitle.textContent = "Bigger term sign goes outside.";
+		operationTitle.textContent = "Choose the operation from the other term.";
 	}
 
 	function renderProblem() {
@@ -391,11 +390,9 @@
 		problemText.innerHTML = markup;
 		miniProblem.innerHTML = markup;
 
-		const aSize = Math.abs(currentProblem.a);
-		const bSize = Math.abs(currentProblem.b);
 		sizeOptions.innerHTML = `
-			<button class="choice-btn size-choice" onclick="chooseBiggerSize(${aSize}, this)">${aSize}</button>
-			<button class="choice-btn size-choice" onclick="chooseBiggerSize(${bSize}, this)">${bSize}</button>
+			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('first', this)"><strong>1st</strong><span>term</span></button>
+			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('second', this)"><strong>2nd</strong><span>term</span></button>
 		`;
 
 		updateGuidanceText();
@@ -403,6 +400,7 @@
 
 	function resetSteps(keepClimbProgress = false) {
 		chosenSignType = null;
+		chosenBiggerTerm = null;
 		chosenBiggerSize = null;
 		chosenOutsideSign = null;
 		chosenOperation = null;
@@ -422,6 +420,7 @@
 		byId("step1")?.classList.remove("hidden");
 		byId("step2")?.classList.add("hidden");
 		byId("builder")?.classList.add("hidden");
+		byId("boxStep")?.classList.add("hidden");
 		byId("answerArea")?.classList.add("hidden");
 
 		setText("outsideSignDisplay", "?");
@@ -569,25 +568,31 @@
 		pickOperation(type === "same" ? "+" : "-", button);
 	}
 
-	function chooseBiggerSize(size, button) {
+	function chooseBiggerTerm(term, button) {
 		if (stageStarted) shell().startClimbTimer();
 		document.querySelectorAll("#step1 .choice-btn").forEach(btn => btn.classList.remove("selected"));
 
-		if (size !== expected.biggerSize) {
-			markWrong(button, `${size} is smaller. Pick the bigger size first.`);
+		if (term !== expected.biggerTerm) {
+			const label = expected.biggerTerm === "first" ? "1st" : "2nd";
+			markWrong(button, `Look at the sizes. The bigger term is the ${label} term.`);
 			return;
 		}
 
 		button.classList.add("selected");
-		chosenBiggerSize = size;
-		const firstInput = byId("firstNumInput");
-		if (firstInput) firstInput.value = expected.biggerSize;
+		chosenBiggerTerm = term;
+		chosenBiggerSize = expected.biggerSize;
 		markCorrectStep("step1-bigger-size");
 		byId("step2")?.classList.remove("hidden");
 		scrollToCenter("step2");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Good. Now choose the sign carried by that bigger size.";
+		if (feedback) feedback.textContent = "Good. Now choose the sign carried by that bigger term.";
+	}
+
+	function chooseBiggerSize(size, button) {
+		if (size === Math.abs(currentProblem.a)) return chooseBiggerTerm("first", button);
+		if (size === Math.abs(currentProblem.b)) return chooseBiggerTerm("second", button);
+		markWrong(button, "Pick the term position: 1st or 2nd.");
 	}
 
 	function displaySign(sign) {
@@ -599,8 +604,12 @@
 		setText("builtBoxTextAnswer", value);
 	}
 
+	function problemPlainText() {
+		return `${formatTerm(currentProblem.a, true)} ${formatTerm(currentProblem.b, false)}`;
+	}
+
 	function builtBoxLine() {
-		return `You built: ${displaySign(expected.outsideSign)}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "-"} ${expected.smallerSize})`;
+		return `Original question: ${problemPlainText()} | Box setup: ${displaySign(expected.outsideSign)}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "-"} ${expected.smallerSize})`;
 	}
 
 	function chooseOutsideSign(sign, button) {
@@ -621,7 +630,7 @@
 		scrollToCenter("builder");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Correct. The bigger size sign goes outside. Now choose same-sign add or different-sign subtract.";
+		if (feedback) feedback.textContent = "Correct. The bigger sign is locked outside. Now choose the operation from the other term.";
 	}
 
 	function pickOutsideSign(sign, button) {
@@ -652,27 +661,37 @@
 		byId("operationDisplay")?.classList.add("filled");
 		const firstInput = byId("firstNumInput");
 		const secondInput = byId("secondNumInput");
-		if (firstInput) firstInput.value = expected.biggerSize;
-		if (secondInput) secondInput.value = expected.smallerSize;
-		setBuiltBoxText(builtBoxLine());
-		markCorrectStep("step3-box-build");
-		byId("answerArea")?.classList.remove("hidden");
+		if (firstInput) firstInput.value = "";
+		if (secondInput) secondInput.value = "";
+		setBuiltBoxText("");
+		markCorrectStep("step3-operation");
+		byId("boxStep")?.classList.remove("hidden");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Box is built. Now solve the size inside and write the final answer.";
-		scrollToCenter("answerArea");
+		if (feedback) feedback.textContent = "Operation is locked. Fill the box: big size first, smaller size second.";
+		scrollToCenter("boxStep");
+		window.setTimeout(() => firstInput?.focus(), 560);
 	}
 
 	function checkBox() {
 		if (stageStarted) shell().startClimbTimer();
 		const firstInput = byId("firstNumInput");
 		const secondInput = byId("secondNumInput");
-		const firstNum = Number(firstInput?.value.trim());
-		const secondNum = Number(secondInput?.value.trim());
+		const firstValue = firstInput?.value.trim() || "";
+		const secondValue = secondInput?.value.trim() || "";
+		const firstNum = Number(firstValue);
+		const secondNum = Number(secondValue);
 		const feedback = byId("feedback");
 
+		if (!firstValue || !secondValue) {
+			if (feedback) feedback.textContent = "Fill both box sizes first: bigger size, then smaller size.";
+			if (!firstValue) firstInput?.focus();
+			else secondInput?.focus();
+			return;
+		}
+
 		if (chosenOutsideSign !== expected.outsideSign) {
-			if (feedback) feedback.textContent = `Try again. The outside sign should be ${expected.outsideSign === "+" ? "+" : "−"}.`;
+			if (feedback) feedback.textContent = `Try again. The outside sign should be ${expected.outsideSign === "+" ? "+" : "-"}.`;
 			markMistake();
 			return;
 		}
@@ -699,11 +718,11 @@
 			return;
 		}
 
-		markCorrectStep("step3-box-build");
+		markCorrectStep("step4-box-fill");
 		byId("answerArea")?.classList.remove("hidden");
 		setBuiltBoxText(builtBoxLine());
 
-		if (feedback) feedback.textContent = "✅ Box is correct. Now solve it.";
+		if (feedback) feedback.textContent = "Box is correct. Now solve it.";
 		scrollToCenter("answerArea");
 	}
 
@@ -714,7 +733,7 @@
 		const input = byId("finalAnswerInput");
 		if (!preview || !signSlot || !sizeSlot || !input) return;
 
-		signSlot.textContent = chosenFinalAnswerSign === "+" ? "+" : chosenFinalAnswerSign === "-" ? "−" : "?";
+		signSlot.textContent = chosenFinalAnswerSign === "+" ? "+" : chosenFinalAnswerSign === "-" ? "-" : "?";
 		sizeSlot.textContent = input.value.trim() || "__";
 		preview.classList.toggle("filled", Boolean(chosenFinalAnswerSign && input.value.trim()));
 	}
@@ -777,36 +796,34 @@
 		const typedSize = Number(input.value.trim());
 
 		if (!chosenFinalAnswerSign) {
-			answerFeedback.textContent = "❌ Choose the answer sign first.";
+			answerFeedback.textContent = "Choose the answer sign first.";
 			answerFeedback.style.color = "#c0392b";
 			const feedback = byId("feedback");
-			if (feedback) feedback.textContent = "Tap + or − before checking the answer.";
-			markMistake();
+			if (feedback) feedback.textContent = "Tap + or - before checking the answer. This reminder does not count as a mistake.";
 			return;
 		}
 
 		if (!input.value.trim()) {
-			answerFeedback.textContent = "❌ Type the answer size.";
+			answerFeedback.textContent = "Type the answer size.";
 			answerFeedback.style.color = "#c0392b";
 			const feedback = byId("feedback");
-			if (feedback) feedback.textContent = "Type the number size before checking.";
+			if (feedback) feedback.textContent = "Type the number size before checking. This reminder does not count as a mistake.";
 			input.style.borderColor = "#ef7777";
-			markMistake();
 			return;
 		}
 
 		if (chosenFinalAnswerSign !== correctSign) {
-			answerFeedback.textContent = "❌ Check the answer sign.";
+			answerFeedback.textContent = "Check the answer sign.";
 			answerFeedback.style.color = "#c0392b";
 			const feedback = byId("feedback");
-			if (feedback) feedback.textContent = "Try again. Choose the correct + or − sign.";
+			if (feedback) feedback.textContent = "Try again. Choose the correct + or - sign.";
 			document.querySelectorAll(".final-sign-btn.selected").forEach(btn => btn.classList.add("wrong"));
 			markMistake();
 			return;
 		}
 
 		if (typedSize !== correctSize) {
-			answerFeedback.textContent = "❌ Try again. Check the size of the answer.";
+			answerFeedback.textContent = "Try again. Check the size of the answer.";
 			answerFeedback.style.color = "#c0392b";
 			const feedback = byId("feedback");
 			if (feedback) feedback.textContent = "Try again. The sign may be right, but the size needs checking.";
@@ -816,14 +833,14 @@
 		}
 
 		const finalText = `${correctSign}${correctSize}`;
-		answerFeedback.textContent = "✅ Correct! Great pattern work.";
+		answerFeedback.textContent = "Correct! Great pattern work.";
 		answerFeedback.style.color = "#248a2f";
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = `✅ Finished. Final answer is ${finalText}.`;
+		if (feedback) feedback.textContent = `Finished. Final answer is ${finalText}.`;
 		input.style.borderColor = "#6cc070";
 		byId("finalAnswerPreview")?.classList.add("filled");
 
-		markCorrectStep("step4-final-answer");
+		markCorrectStep("step5-final-answer");
 		finishFinalAnswer(finalText);
 	}
 
@@ -1233,6 +1250,7 @@
 		window.startClimb = startClimbFromGate;
 		window.nextClimb = nextClimb;
 		window.chooseSignType = chooseSignType;
+		window.chooseBiggerTerm = chooseBiggerTerm;
 		window.chooseBiggerSize = chooseBiggerSize;
 		window.chooseOutsideSign = chooseOutsideSign;
 		window.pickOutsideSign = pickOutsideSign;

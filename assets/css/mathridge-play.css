@@ -297,6 +297,52 @@ body.play-page.play-8 {
 	text-align: center;
 }
 
+.next-climb-inline-tray {
+	grid-column: 1 / 4;
+	grid-row: 4;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	max-height: 0;
+	margin: 0;
+	opacity: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transform: translateY(-4px);
+	transition: max-height .22s ease, margin .22s ease, opacity .18s ease, transform .22s ease;
+}
+
+body[data-final-correct-ready="true"] .next-climb-inline-tray {
+	max-height: 58px;
+	margin-top: 2px;
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.challenge-board #nextClimbButton.inline-next-climb-button {
+	min-height: 38px;
+	padding: 9px 22px;
+	border-radius: 999px;
+	font-size: clamp(0.82rem, 1.55vw, 0.98rem);
+	letter-spacing: 0;
+	white-space: nowrap;
+	box-shadow:
+		0 12px 30px rgba(242,184,75,0.30),
+		0 0 20px rgba(242,184,75,0.18),
+		inset 0 1px 0 rgba(255,255,255,0.38);
+}
+
+.challenge-board #nextClimbButton.inline-next-climb-button.is-ready-pulse {
+	animation: nextClimbReadyPop .52s ease;
+}
+
+@keyframes nextClimbReadyPop {
+	0% { transform: scale(0.94); filter: brightness(1); }
+	48% { transform: scale(1.055); filter: brightness(1.08); }
+	100% { transform: scale(1); filter: brightness(1); }
+}
+
 .score-pop {
 	position: absolute;
 	left: 50%;
