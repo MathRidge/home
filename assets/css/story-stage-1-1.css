@@ -609,9 +609,11 @@ a {
 }
 
 .story-vn.is-board-review .blackboard-lines {
-  width: min(100%, 860px);
+  --lesson-board-list-shift: clamp(48px, 7vw, 100px);
+  width: min(calc(100% - var(--lesson-board-list-shift) - 56px), 820px);
   justify-self: center;
   gap: clamp(8px, 1.2vh, 14px);
+  transform: translateX(var(--lesson-board-list-shift));
 }
 
 .story-vn.is-board-review .blackboard-line {
@@ -1515,6 +1517,8 @@ a {
   }
 
   .story-vn.is-board-review .blackboard-lines {
+    --lesson-board-list-shift: clamp(22px, 6vw, 54px);
+    width: min(calc(100% - var(--lesson-board-list-shift) - 26px), 620px);
     gap: 5px;
   }
 
@@ -1550,6 +1554,12 @@ a {
   .story-vn.is-board-review .blackboard-line {
     grid-template-columns: 1fr;
     gap: 2px;
+  }
+
+  .story-vn.is-board-review .blackboard-lines {
+    --lesson-board-list-shift: 0px;
+    width: min(100%, 430px);
+    transform: none;
   }
 
   .story-vn.is-board-review .blackboard-label {
