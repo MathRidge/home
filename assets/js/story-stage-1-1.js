@@ -205,11 +205,15 @@
     ]],
     ["You understood that so fast.", ["mira-you-understood-that-so-fast.mp3"]],
     ["Pagebound training is terrifying.", ["mira-pagebound-training-is-terrifying.mp3"]],
+    ["That was one time.", ["mira-That-was-one-time.mp3"]],
+    ["That was also one time.", ["mira-That-was-also-one-time.mp3"]],
+    ["I am standing right here.", ["mira-I-am-standing-right-here.mp3"]],
     ["Definitely.", ["mira-definitely.mp3"]]
   ]);
 
   const elderVoiceFilesByText = new Map([
     ["I see.", ["elder-i-see.mp3"]],
+    ["Then the mountain has chosen poorly... or wisely. It is often difficult to tell the difference at the beginning of a quest.", ["elder-[sighing]“Then-the-mountain-has-chosen-poorly…[v.mp3"]],
     ["Yes. But first, you will need this.", ["elder-yes-but-first-you-will-need-this.mp3"]],
     ["Signed terms can be tricky at first. But there is a simple key.", ["elder-signed-terms-can-be-tricky-at-first-but-there-is-a-simple-key.mp3"]],
     ["First, when you see subtraction, change it into adding the opposite.", ["elder-first-when-you-see-subtraction-change-it-into-adding-the-opposite.mp3"]],
@@ -219,9 +223,24 @@
     ]],
     ["Then add the sizes. Eight and three make eleven. Since both signs are negative, the answer is negative.", ["elder-then-add-the-sizes-eight-and-three-make-eleven-since-both-signs-are-negative-the-answer-is-negative.mp3"]],
     ["Exactly.", ["elder-exactly.mp3"]],
+    ["No.", ["elder-[long-pause]No.mp3"]],
+    ["Mira.", ["elder-[anxcious]Mira.mp3"]],
     ["If the signs are different, subtract the smaller size from the bigger size. Then keep the sign of the bigger size.", ["elder-if-the-signs-are-different-subtract-the-smaller-size-from-the-bigger-size-then-keep-the-sign-of-the-bigger-size.mp3"]],
     ["Then go, both of you. The lower trail awaits.", ["elder-then-go-both-of-you-the-lower-trail-awaits.mp3"]]
   ]);
+
+  elderVoiceFilesByText.set(
+    "Then the mountain has chosen poorly... or wisely. It is often difficult to tell the difference at the beginning of a quest.",
+    ["elder-sighing-then-the-mountain-has-chosen-poorly.mp3"]
+  );
+  elderVoiceFilesByText.set("Take care of Mira, {{playerName}}. She is brave, kind, and determined.", [
+    "elder-Take-care-of-Maira,.mp3",
+    { pause: 760 },
+    "elder-She-is-brave,-kind,-and-determined.mp3"
+  ]);
+  elderVoiceFilesByText.set("She also has a habit of forgetting where she is going.", ["elder-She-also-has-a-habit-of-forgetting-where-she-is.mp3"]);
+  elderVoiceFilesByText.set("And following glowing insects.", ["elder-And-following-glowing-insects.mp3"]);
+  elderVoiceFilesByText.set("And walking into storage closets while looking for doors.", ["elder-And-[audience-laughing]walking-into-storage-clos.mp3"]);
 
   const sceneAudioFilesByText = new Map([
     ["The door of Mira's cabin creaked open. Outside, the mountain waited.", ["cabin-door-creaking-open.mp3"]],
@@ -414,7 +433,7 @@
     { bg: "clearing", sprite: "happy", speaker: "Mira", text: "So maybe... we can unlock the gates together." },
     { bg: "clearing", sprite: "none", speaker: "Narrator", text: "The path ahead brightened. Far below, the town bells began to ring." },
 
-    { bg: "welcome", sprite: "none", speaker: "Narrator", text: "Chapter Transition: Welcome to Cipher Ridge" },
+    { bg: "welcome", sprite: "none", speaker: "Narrator", text: "Welcome to Cipher Ridge" },
     { bg: "welcome", sprite: "none", speaker: "Narrator", text: "A wooden sign stood at the edge of town. Its letters shifted from symbols, to numbers, to words." },
     { bg: "welcome", sprite: "none", speaker: "Narrator", text: "WELCOME TO CIPHER RIDGE" },
     { bg: "welcome", sprite: "none", speaker: "Narrator", text: "Cipher Ridge Town sat at the foot of Math Ridge." },
@@ -552,11 +571,11 @@
     { bg: "shellwickBoard", sprite: "confused", speaker: "Narrator", text: "You gave her a look.", board: "termStoneTrial" },
     { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Definitely.", board: "termStoneTrial" },
     { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "Take care of Mira, {{playerName}}. She is brave, kind, and determined.", board: "termStoneTrial" },
-    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Elder...", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Elder...", board: "termStoneTrial", voice: ["mira-Elder... (being praised).mp3"] },
     { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "She also has a habit of forgetting where she is going.", board: "termStoneTrial" },
     { bg: "shellwickBoard", sprite: "pouting", speaker: "Narrator", text: "Mira froze.", board: "termStoneTrial" },
     { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And wandering off.", board: "termStoneTrial" },
-    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Elder...", board: "termStoneTrial" },
+    { bg: "shellwickBoard", sprite: "shy", speaker: "Mira", text: "Elder...", board: "termStoneTrial", voice: ["mira-Elder... (being teased).mp3"] },
     { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And following glowing insects.", board: "termStoneTrial" },
     { bg: "shellwickBoard", sprite: "pouting", speaker: "Mira", text: "That was one time.", board: "termStoneTrial" },
     { bg: "shellwickBoard", sprite: "none", speaker: "Elder Shellwick", text: "And walking into storage closets while looking for doors.", board: "termStoneTrial" },
@@ -761,15 +780,30 @@
     return frame?.speaker === "Narrator";
   }
 
+  function normalizeVoiceSource(source, base) {
+    if (typeof source === "number") return { pause: source };
+    if (source && typeof source === "object") return source;
+    return { base, file: source };
+  }
+
   function frameVoiceFiles(frame) {
+    if (Array.isArray(frame?.voice)) {
+      const base = frame.speaker === "Elder Shellwick"
+        ? elderVoiceBase
+        : frame.speaker === "Mira"
+          ? miraVoiceBase
+          : soundBase;
+      return frame.voice.map(file => normalizeVoiceSource(file, base));
+    }
+
     if (frame?.speaker === "Mira") {
       return (miraVoiceFilesByText.get(frame.text) || [])
-        .map(file => ({ base: miraVoiceBase, file }));
+        .map(file => normalizeVoiceSource(file, miraVoiceBase));
     }
 
     if (frame?.speaker === "Elder Shellwick") {
       return (elderVoiceFilesByText.get(frame.text) || [])
-        .map(file => ({ base: elderVoiceBase, file }));
+        .map(file => normalizeVoiceSource(file, elderVoiceBase));
     }
 
     return [];
@@ -821,7 +855,13 @@
         return;
       }
 
-      const audio = new Audio(voiceUrl(queue.shift()));
+      const source = queue.shift();
+      if (source?.pause) {
+        window.setTimeout(playNext, Number(source.pause) || 500);
+        return;
+      }
+
+      const audio = new Audio(voiceUrl(source));
       activeVoice = audio;
       audio.preload = "auto";
       audio.volume = 0.95;
