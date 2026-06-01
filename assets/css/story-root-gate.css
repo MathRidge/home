@@ -146,6 +146,23 @@
   color: #fff7e8;
 }
 
+.root-gate-story.chapter-two-story .story-relic {
+  width: clamp(108px, 12vw, 166px);
+  min-height: 176px;
+}
+
+.root-gate-story.chapter-two-story .story-relic img {
+  max-height: 172px;
+}
+
+.root-gate-story.chapter-two-story .story-relic span:last-child {
+  min-width: 0;
+  max-width: 138px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.08;
+}
+
 .root-gate-story .trial-facts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

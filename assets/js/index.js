@@ -225,10 +225,23 @@ function rootGateActionText() {
   return hasWatchedRootGateIntro() ? "Begin Trial" : "Begin Finale";
 }
 
-function rootGateWatchSceneLink(className = "root-gate-watch-link") {
+function rootGateReplayLinks(className = "root-gate-watch-link") {
   if (!isRootGateUnlocked() || !hasWatchedRootGateIntro()) return "";
-  const text = isRootGatePassed() ? "Watch Finale Again" : "Watch Scene";
-  return `<a class="${className}" href="story-root-gate.html?watch=1">${text}</a>`;
+
+  const links = [
+    `<a class="${className}" href="story-root-gate.html?watch=1">${isRootGatePassed() ? "Replay Trial Setup" : "Watch Scene"}</a>`
+  ];
+
+  if (isRootGatePassed()) {
+    links.unshift(`<a class="${className}" href="story-root-gate-result.html?outcome=pass&watch=1">Watch Gate Opening</a>`);
+    links.push(`<a class="${className}" href="story-chapter-2.html?watch=1">Chapter 2 Opening</a>`);
+  }
+
+  return links.join("");
+}
+
+function rootGateWatchSceneLink(className = "root-gate-watch-link") {
+  return rootGateReplayLinks(className);
 }
 
 function isNoteUnlocked(index) {
@@ -440,7 +453,11 @@ function stageRelicName(id) {
     "1_1": "The Term Stone",
     "1_2": "The Sign Compass",
     "1_3": "The Parity Prism",
-    "1_4": "The Factor Forge"
+    "1_4": "The Factor Forge",
+    "2_1": "The Shelf Scale",
+    "2_2": "The Primewood Seed",
+    "2_3": "The Fraction Loom",
+    "2_4": "The Power Tally"
   };
   return relics[id] || "";
 }
@@ -450,9 +467,17 @@ function stageRelicImage(id) {
     "1_1": "assets/images/relic/term_stone.png",
     "1_2": "assets/images/relic/sign_compass_relic_alpha.png",
     "1_3": "assets/images/relic/parity_prism_true_alpha.png",
-    "1_4": "assets/images/relic/factor_forge_alpha.png"
+    "1_4": "assets/images/relic/factor_forge_alpha.png",
+    "2_1": "assets/images/relic/Shelf_Scale_Relic_True_Alpha.png",
+    "2_2": "assets/images/relic/Primewood_Seed_Relic_True_Alpha.png",
+    "2_3": "assets/images/relic/Fraction_Loom_Relic_True_Alpha.png",
+    "2_4": "assets/images/relic/Power_Tally_Relic_True_Alpha.png"
   };
   return relicImages[id] || "";
+}
+
+function stageRelicKind(id) {
+  return id.startsWith("2_") ? "Vision Relic" : "Relic";
 }
 
 function earnedStageProof(lesson) {
@@ -474,8 +499,9 @@ function renderTrailCard(lesson) {
     : "";
   const relicName = stageRelicName(lesson.id);
   const relicImage = stageRelicImage(lesson.id);
+  const relicKind = stageRelicKind(lesson.id);
   const relicProof = earned && relicName
-    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""}" aria-label="${escapeHTML(relicName)} obtained">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>Relic Obtained</span><strong>${escapeHTML(relicName)}</strong><em>Completed</em></div>`
+    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""}" aria-label="${escapeHTML(relicName)} obtained">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>${escapeHTML(relicKind)} Obtained</span><strong>${escapeHTML(relicName)}</strong><em>Completed</em></div>`
     : "";
 
   return `

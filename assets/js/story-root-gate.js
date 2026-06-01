@@ -5,6 +5,7 @@
   const INTRO_COMPLETE_KEY = "mathRidge_storyComplete_root_gate_intro";
   const PASS_STORY_KEY = "mathRidge_storyComplete_root_gate_pass";
   const FAIL_STORY_KEY = "mathRidge_storyComplete_root_gate_fail";
+  const CHAPTER_TWO_OPENING_KEY = "mathRidge_storyComplete_chapter_2_opening";
 
   const bgBase = "assets/images/bg-scene/Stage-1-1/";
   const miraBase = "assets/images/Mira-sprite/Mira-sprite-alpha-webp/";
@@ -85,6 +86,44 @@
         { label: "Pass", text: "37 or more correct", kind: "answer" },
         { label: "Time", text: "10:00", kind: "rule" }
       ]
+    },
+    chapterOneTools: {
+      badge: "Chapter 1",
+      title: "What The First Relics Taught",
+      rows: [
+        { label: "Signs", text: "-3", kind: "problem" },
+        { label: "Terms", text: "+5 - 2 + 3", kind: "magic" },
+        { label: "Stacks", text: "2 - (-3)", kind: "rule" },
+        { label: "Groups", text: "5(2) + 2(2)", kind: "answer" }
+      ]
+    },
+    vision12: {
+      badge: "Chapter 2",
+      title: "Seeing Beneath The Surface",
+      rows: [
+        { label: "Number", text: "12", kind: "problem" },
+        { label: "Split", text: "12 = 6 + 6", kind: "magic" },
+        { label: "Factor", text: "12 = 3 x 4", kind: "magic" },
+        { label: "Prime", text: "12 = 2 x 2 x 3", kind: "answer" }
+      ]
+    },
+    roots12: {
+      badge: "Vision",
+      title: "Hidden Structure",
+      rows: [
+        { label: "Surface", text: "12", kind: "problem" },
+        { label: "Inside", text: "2 x 2 x 3", kind: "answer" },
+        { label: "Rule", text: "A number can hold more than it seems", kind: "rule" }
+      ]
+    },
+    chapterTwoManual: {
+      badge: "Manual 2-1",
+      title: "Beyond The Root Gate",
+      rows: [
+        { label: "Path", text: "Prime Element Vision", kind: "magic" },
+        { label: "Relics", text: "Vision Relics", kind: "answer" },
+        { label: "Objective", text: "Open Manual 2-1", kind: "rule" }
+      ]
     }
   };
 
@@ -125,7 +164,7 @@
     }
   };
 
-  let frames = mode === "result" ? resultFrames(outcome) : introFrames();
+  let frames = mode === "result" ? resultFrames(outcome) : mode === "chapter2" ? chapterTwoFrames() : introFrames();
   let currentIndex = 0;
   let currentBgKey = "";
   let typeTimer = 0;
@@ -246,23 +285,104 @@
   function resultFrames(result) {
     if (result === "pass") {
       return [
-        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "The final answer locked into place." },
-        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "One by one, the forty stars around the Root Gate ignited." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Narrator", text: "The Term Stone glowed. The Sign Compass spun. The Parity Prism flashed green. The Factor Forge rang like a hammer striking crystal." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Narrator", text: "The four lights rose from the relics and met at the center of the gate." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Narrator", text: "For a moment, the entire mountain became silent. Then the Root Gate opened." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Mira", text: "We... we actually did it." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Elder Shellwick", text: "You proved the lower path." },
-        { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "A rolled certificate appeared in a burst of golden light and floated gently down into your hands." },
-        { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "A real certificate... Do I get one too?" },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Narrator", text: "Another certificate appeared. It bumped softly into Mira's hat." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Mira", text: "Ah! I passed..." },
-        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Elder Shellwick", text: "You did." },
-        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Beyond the open gate, a new path curved upward into blue mist. Far above, your phone flashed once. Brighter this time." },
-        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Chapter Two?" },
-        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "You", text: "Chapter Two." },
-        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Then climb carefully. And Mira? Do not follow any glowing insects." },
-        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "...I was only looking.", reward: "pass" }
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Root Gate Final Dialogue: The Root Gate Judges Roots" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The final symbol faded. The chamber became still." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "No more questions appeared. No more stone panels moved. No more glowing numbers waited to be solved." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The Root Gate stood silent." },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Mira held her breath." },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The four relics floated quietly around you.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The Term Stone.", relicReveal: "term" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The Sign Compass.", relicReveal: "sign" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The Parity Prism.", relicReveal: "parity" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "And the Factor Forge.", relicReveal: "factor" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "For a moment... nothing happened.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "Then the Root Gate began to glow. Not from the top. Not from the center. From below.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Thin lines of golden light spread across the floor like roots beneath the earth.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "They moved slowly. Carefully. As if the gate itself was waking up from a very long sleep.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Mira stepped closer.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Did we pass?", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Elder Shellwick did not answer right away.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "He watched the golden roots crawl across the ancient stone. Then he smiled.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "The gate has seen enough.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Seen enough mistakes?", relicReveal: "all" },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "Shellwick chuckled softly.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "Seen enough growth.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The glowing roots climbed higher and wrapped around the ancient carvings of the gate.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Then images appeared inside the golden light.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Not scores. Not ranks. Not trophies. Memories.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "none", speaker: "Narrator", text: "The first wrong answer. The first retry. The first time Mira almost gave up.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraDetermined", elder: "none", speaker: "Narrator", text: "The first time you looked at a problem again instead of walking away.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraDetermined", elder: "none", speaker: "Narrator", text: "The first time a confusing number finally made sense.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraHappy", elder: "none", speaker: "Narrator", text: "The first time the relics worked together.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraHappy", elder: "none", speaker: "Narrator", text: "The first time a hard problem became smaller because you broke it into pieces.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Mira stared at the images. Her voice became quiet.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "It remembered all of that?", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Shellwick nodded and stepped beside you and Mira.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Root Gate remembers effort.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The golden light reflected in his glasses.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Knowledge alone is a seed.", relicReveal: "term" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The Term Stone glowed softly.", relicReveal: "term" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "A seed may hold great promise, but promise must be cared for.", relicReveal: "term" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The Sign Compass began to shine.", relicReveal: "sign" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Understanding is the root.", relicReveal: "sign" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The golden lines spread deeper across the floor.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It grows quietly, even when no one else can see it.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The Factor Forge pulsed with warm light.", relicReveal: "factor" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The Parity Prism flashed once, then pointed its light toward the gate.", relicReveal: "parity" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "And persistence is what allows it to grow.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The chamber rumbled. Dust drifted down from the ceiling.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "So... the gate was not waiting for us to be perfect?", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "No.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "He placed one hand on the ancient stone.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "The gate was never searching for perfect students.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Elder Shellwick", text: "It was searching for students willing to continue.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "So even when we were stuck...", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You were growing.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Even when we were wrong?", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Especially then.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Mira blinked. For a moment, she did not say anything.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The golden roots reached the center of the gate. Ancient locks began to turn, one by one.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "Some roots grow fast.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "A lock opened.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "Some roots grow slowly.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Another lock opened.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "But no root should be ashamed of its own pace.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The final lock clicked. The entire chamber filled with golden light.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Do not let anyone decide your worth by how quickly you understand.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "And do not decide it for yourself too soon, either.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The gate began to open. Stone scraped against stone. Warm light poured through the widening crack.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Elder Shellwick", text: "The Root Gate judges roots.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "Mira looked toward the path ahead. Then she smiled. Not the loud, excited smile from before. A stronger one.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Then we keep growing.", relicReveal: "all" },
+        { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "The gate opened fully.", relicReveal: "all" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Beyond it was not the end of Math Ridge. Not a final castle. Not a last mountain. Not the answer to everything.", relicReveal: "clear" },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "It was a valley. Quiet. Green. Mysterious." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Stone shelves lined the hillsides. Crystal trees shimmered in the distance. Small numbers floated in the air like fireflies." },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Wait..." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "One floating number drifted near the gate. 12." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "It hovered there peacefully. Then, for a single heartbeat, it flickered." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The number cracked open with a soft golden flash. Inside it, smaller pieces appeared: 2 x 2 x 3." },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Did... did that number just break into pieces?" },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "Not break. Reveal." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The four relics floated behind you. The Factor Forge glowed brighter than the others." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Something small inside it stirred. A hidden light. A sleeping lens. A new power waiting to awaken." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Farther down the valley, four faint shapes answered that light." },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Shelf Scale. The Primewood Seed. The Fraction Loom. The Power Tally." },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Those are the next relics?" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Vision Relics. They do not only prove what you solved. They help you see what numbers are made of." },
+        { bg: "gate", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "So numbers have pieces inside them?" },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Every number has a story." },
+        { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "And some stories are easier to understand when you learn how to see what they are made of." },
+        { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Okay. That sounds important." },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Mira took one step past the Root Gate. Then another." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The golden roots behind you slowly dimmed, but they did not disappear." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "They remained glowing faintly in the stone. A reminder. Not of perfection. Of persistence." },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Elder Shellwick", text: "You have learned how to solve." },
+        { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The wind moved gently through the valley. The floating numbers shimmered." },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Elder Shellwick", text: "Now... you must learn how to see." },
+        { bg: "gate", sprite: "miraCelebrating", elder: "elder", speaker: "Mira", text: "Then let's go see." },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "You stepped forward. The Root Gate stood open behind you. The path to Chapter 2 waited ahead." },
+        { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "End of Chapter 1. The Root Gate Trial is complete. Prime Element Vision awakens.", reward: "pass" }
       ];
     }
 
@@ -274,6 +394,194 @@
       { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The gate is not rejecting you. It is showing you where your footing slipped." },
       { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "So we review... and try again." },
       { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "That is mastery.", reward: "fail" }
+    ];
+  }
+
+  function chapterTwoFrames() {
+    return [
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Chapter 2 Opening: Back to Shellwick's Cabin", relicReveal: "clear" },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 1: After the Root Gate" },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The Root Gate stood open behind you. Its stone roots glowed faintly, like embers after a fire." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Beyond it, a new path climbed into mist." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Higher up the mountain, something flashed blue. Once. Then again." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Your phone. Still far away. Still waiting." },
+      { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "Mira stood beside you, holding her certificate with both hands. She had been staring at it for several minutes." },
+      { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I keep checking." },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Checking what?" },
+      { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "That it still says I passed. It does." },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "A pause." },
+      { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I checked seven times." },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "That seems enough." },
+      { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Eight is safer." },
+      { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Before she could check again, Elder Shellwick cleared his throat." },
+      { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "Mira." },
+      { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Yes, Elder?" },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Both of you should return to my cabin." },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Not through the gate yet?" },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Not yet." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The wind moved through the Root Gate. Symbols shimmered along the new path, but they were different now." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "Less like loose numbers. More like shapes hidden inside numbers." },
+      { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "There are important things to discuss from here on." },
+      { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Important-good?" },
+      { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "Important-necessary." },
+      { bg: "gate", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "That usually means difficult." },
+      { bg: "gate", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "I noticed." },
+
+      { bg: "cabin", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 2: Return to the Cabin" },
+      { bg: "cabin", sprite: "none", elder: "none", speaker: "Narrator", text: "By the time you returned to Shellwick's cabin, evening had settled over Cipher Ridge." },
+      { bg: "cabin", sprite: "none", elder: "none", speaker: "Narrator", text: "The town lanterns were glowing. The little number charms on the rooftops spun lazily in the wind." },
+      { bg: "cabin", sprite: "miraHappy", elder: "none", speaker: "Narrator", text: "Mira walked very carefully, still holding her certificate." },
+      { bg: "cabin", sprite: "miraConfused", elder: "none", speaker: "Narrator", text: "Then she tripped over nothing. You caught the back of her cloak before she fell." },
+      { bg: "cabin", sprite: "miraWorried", elder: "none", speaker: "Mira", text: "Thank you. I believe the ground moved." },
+      { bg: "cabin", sprite: "miraNeutral", elder: "none", speaker: "You", text: "The ground?" },
+      { bg: "cabin", sprite: "miraConfused", elder: "none", speaker: "Mira", text: "Possibly." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick opened the cabin door before either of you knocked. Warm light spilled out." },
+      { bg: "cabinInside", sprite: "none", elder: "none", speaker: "Narrator", text: "Inside, the familiar room waited. Books. Scrolls. Tea. A chalkboard full of old symbols." },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "On the table were four empty spaces where the Chapter 1 relics had once rested." },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "The Term Stone. The Sign Compass. The Parity Prism. The Factor Forge." },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Their glow was gone now. Not dead. Finished. Like tools placed back after a job well done." },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "They are quiet." },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "Their task is complete." },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "So we do not use them anymore?" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You will always use what they taught you." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The best relics do not stay in your pack. They stay in your thinking." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Mira considered this. Then very carefully placed her certificate on the table." },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I would still like to keep mine in my pack." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "The certificate?" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Yes. For thinking support." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Acceptable." },
+
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 3: A Different Kind of Relic", relicReveal: "clear" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick climbed onto his wooden stool and reached toward a high shelf." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "He removed a long, narrow case covered in green dust." },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "That is the serious shelf." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "How do you know?" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "I am not allowed to dust it." },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Shellwick gave her a look. Mira immediately stood straighter." },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "For safety reasons." },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Shellwick placed the case on the table. The lid opened by itself.", relicReveal: "lights" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Inside were four faint outlines. Not relics yet. Only shadows of relics.", relicReveal: "lights" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "A small balanced scale. A seed with tiny carved rings. A silver loom threaded with glowing lines. A set of marks stacked like rising sparks.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Were those...", relicReveal: "lights" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "More relics?", relicReveal: "lights" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Yes.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Are they like the first four?", relicReveal: "lights" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "No.", relicReveal: "lights" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "He closed the case softly.", relicReveal: "clear" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "The first relics taught you how to control numbers.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Signs. Terms. Stacked signs. And repeated groups.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "Those used to look scary.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "You", text: "They still look a little scary.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "But now they are familiar scary.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Familiar scary is progress.", board: "chapterOneTools" },
+
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 4: The Vision Relics", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "What do you see?", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "You", text: "Twelve.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "I see a one and a two. And possibly a very thin snake.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "No snake.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "Probably wise.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "In Chapter 2, the mountain will ask a deeper question.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "The chalkboard shimmered. The number 12 split into different forms.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "It changed.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "No. It revealed itself.", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "You", text: "So Chapter 2 is not just solving?", board: "vision12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Correct. It is seeing.", board: "vision12" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The next four relics are called the Vision Relics.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Vision Relics...", relicReveal: "lights" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Do they give us magical glasses?", relicReveal: "lights" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "No.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Small glasses?", relicReveal: "lights" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "No.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Tiny glasses for numbers?", relicReveal: "lights" },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "Mira.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Right. Not glasses.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Vision Relics help you see what numbers are made of.", relicReveal: "lights" },
+
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 5: The Four Shadows", relicReveal: "clear" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "The case opened again. This time, the four shadows rose into the air.", relicReveal: "lights" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Only briefly. Only enough to be seen.", relicReveal: "lights" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Shelf Scale.", relicReveal: "term" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "That one looks friendly.", relicReveal: "term" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "What does it do?", relicReveal: "term" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It helps compare pieces and place them where they belong.", relicReveal: "term" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "So it is a very organized shelf.", relicReveal: "term" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "In a sense.", relicReveal: "term" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Primewood Seed.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The seed cracked open, showing smaller glowing factors inside.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Primewood?", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Some numbers grow from smaller roots.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Does it need water?", relicReveal: "sign" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "No.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Sunlight?", relicReveal: "sign" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "No.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Compliments?", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Those are harmless.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "You are doing very well.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "The seed flickered once. Mira's ears shot up.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "It heard me.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It reflected light.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "It heard me reflectively.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick decided not to argue.", relicReveal: "sign" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Fraction Loom.", relicReveal: "parity" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Threads of silver light crossed through a small frame. They divided one glowing circle into equal parts.", relicReveal: "parity" },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Fractions. I have heard stories.", relicReveal: "parity" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Bad stories?", relicReveal: "parity" },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Half of them were bad. Which feels appropriate, but upsetting.", relicReveal: "parity" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The loom does not harm the whole. It shows how the whole is woven.", relicReveal: "parity" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Mira", text: "That sounds less terrifying.", relicReveal: "parity" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "A little.", relicReveal: "parity" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Power Tally.", relicReveal: "factor" },
+      { bg: "table", sprite: "none", elder: "none", speaker: "Narrator", text: "Small glowing tally marks rose upward. Then doubled. Then doubled again.", relicReveal: "factor" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "That one looks... intense.", relicReveal: "factor" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It records repeated growth.", relicReveal: "factor" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "So it counts numbers that are climbing on top of themselves?", relicReveal: "factor" },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "Not official language. But not entirely wrong.", relicReveal: "factor" },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I am improving.", relicReveal: "all" },
+
+      { bg: "cabinInside", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 6: What Chapter 2 Means", relicReveal: "clear" },
+      { bg: "cabinInside", sprite: "none", elder: "none", speaker: "Narrator", text: "The four shadows faded back into the case. For a moment, the cabin was quiet." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick looked toward the window. The opened Root Gate could not be seen from here, but the mountain above it glowed faintly blue." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Beyond the Root Gate, the path changes." },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "The lower trail taught stability.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Do not lose signs.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "Backpacks.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Watch stacked negatives.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "Minus signs need supervision.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Group repeated numbers.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "Five first.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Good. But from now on, you must look beneath the surface.", board: "roots12" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "A number is not always just what it appears to be.", board: "roots12" },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "You thought about your phone. About the teleport stone hidden inside it. About your ordinary math book becoming a final manual in another world." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Like my phone. It looked like just a phone. But here, it is carrying a return spell." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Exactly." },
+      { bg: "cabinInside", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "So things can hold more than they seem." },
+      { bg: "cabinInside", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "She reached inside her satchel and pulled out a pencil. Then a spoon. Then the same emergency cup noodles." },
+      { bg: "cabinInside", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "This also holds more than it seems." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "That is lunch." },
+      { bg: "cabinInside", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Emergency lunch." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Chapter 2 will require patience. And careful seeing." },
+      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "I can be careful." },
+      { bg: "cabinInside", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "A glowing moth drifted past the window. Mira's eyes followed it." },
+      { bg: "cabinInside", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "You and Shellwick both looked at her. She slowly forced her eyes back to the table." },
+      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "I can be careful starting now." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Progress." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Indeed." },
+
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 7: The Next Manual", board: "chapterTwoManual" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick reached beneath the table and pulled out a new booklet." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Its cover was darker than the first Manual. Faint golden lines formed the shape of a shelf." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "He did not say the relic name again. Not yet. He simply handed the booklet to you." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "This is the first Manual beyond the Root Gate." },
+      { bg: "table", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Does it have many pages?" },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Enough." },
+      { bg: "table", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Enough is a mysterious number." },
+      { bg: "table", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "We made it through Chapter 1." },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "We did. And this time, we have certificates." },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "That means we are at least slightly official." },
+      { bg: "table", sprite: "miraHappy", elder: "elder", speaker: "Elder Shellwick", text: "Then, slightly official apprentices... prepare yourselves." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time." },
+      { bg: "gate", sprite: "none", elder: "none", speaker: "Narrator", text: "A new chapter was waiting.", reward: "chapter2" }
     ];
   }
 
@@ -503,6 +811,26 @@
   }
 
   function rewardContent(kind) {
+    if (kind === "chapter2") {
+      return {
+        key: CHAPTER_TWO_OPENING_KEY,
+        title: "Chapter 2 Unlocked",
+        summary: "Beyond the Root Gate, the mountain asks you to see what numbers are made of.",
+        lines: [
+          "New Relic Type: Vision Relics",
+          "Shelf Scale: Compare and arrange number pieces",
+          "Primewood Seed: See the roots numbers are built from",
+          "Fraction Loom: Understand parts of a whole",
+          "Power Tally: Track repeated growth",
+          "Next Objective: Open the first Chapter 2 Manual"
+        ],
+        actions: [
+          { href: "note5.html", text: "Open Manual 2-1" },
+          { href: "index.html?view=quest#quest", text: "Return to Mountain Trail", secondary: true }
+        ]
+      };
+    }
+
     if (kind === "pass") {
       return {
         key: PASS_STORY_KEY,
@@ -514,7 +842,7 @@
           "Next Objective: follow the signal from your missing device."
         ],
         actions: [
-          { href: "note5.html", text: "Begin Chapter 2-1" },
+          { href: "story-chapter-2.html", text: "Begin Chapter 2 Opening" },
           { href: "index.html?view=quest#quest", text: "Return to Mountain Trail", secondary: true }
         ]
       };
@@ -559,6 +887,10 @@
     const content = rewardContent(kind);
     try {
       localStorage.setItem(content.key, "true");
+      if (kind === "chapter2") {
+        localStorage.setItem("mathRidge_noteUnlocked_2_1", "true");
+        localStorage.setItem("mathRidge_stageUnlocked_2_1", "true");
+      }
     } catch (error) {}
 
     if (!rewardCard) return;

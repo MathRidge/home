@@ -706,7 +706,7 @@
     scoreRing.textContent = `${result.percent}%`;
 
     resultSummary.textContent = result.passed
-      ? "You passed the Chapter 1 checkpoint. Chapter 2-1 is now unlocked on this device."
+      ? "You passed the Chapter 1 checkpoint. The Chapter 2 opening scene is now unlocked on this device."
       : result.forced
         ? "Time expired before the Root Gate opened. Your first score is locked. Correct the red questions for practice, then retake the exam when you are ready."
         : "The Root Gate needs 37 correct answers. Your first score is locked. Correct the red questions for practice, then retake the exam.";

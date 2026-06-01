@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
-  <title>Math Ridge | Root Gate Result Scene</title>
+  <title>Math Ridge | Chapter 2 Opening</title>
   <meta name="theme-color" content="#050914" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -15,19 +15,26 @@
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260531-app-icon" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260531-app-icon" />
   <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-s09b-stage-1-1-gate.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick_cabin.png" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick_cabin_inside.png" />
   <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick-table.png" />
-  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-celebrating-fb.webp" />
-  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-worried-fb.webp" />
+  <link rel="preload" as="image" href="assets/images/bg-scene/Stage-1-1/story-bg-Shellwick-black-board.png" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-happy-fb.webp" />
+  <link rel="preload" as="image" type="image/webp" href="assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-confused-fb.webp" />
   <link rel="preload" as="image" type="image/webp" href="assets/images/Shellwick-sprite/elder-webp/elder-natural.webp" />
+  <link rel="preload" as="image" href="assets/images/relic/Shelf_Scale_Relic_True_Alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/Primewood_Seed_Relic_True_Alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/Fraction_Loom_Relic_True_Alpha.png" />
+  <link rel="preload" as="image" href="assets/images/relic/Power_Tally_Relic_True_Alpha.png" />
   <link rel="stylesheet" href="assets/css/story-stage-1-1.css?v=20260530-blackboard-lesson" />
-  <link rel="stylesheet" href="assets/css/story-root-gate.css?v=20260531-root-gate-story" />
+  <link rel="stylesheet" href="assets/css/story-root-gate.css?v=20260601-chapter2-opening" />
 </head>
-<body data-story-mode="result">
+<body data-story-mode="chapter2">
   <div class="story-progress" aria-hidden="true">
     <span id="storyProgressBar"></span>
   </div>
 
-  <main class="story-vn root-gate-story" aria-label="Root Gate result visual story">
+  <main class="story-vn root-gate-story chapter-two-story" aria-label="Chapter 2 opening visual story">
     <div class="scene-bg" id="sceneBg" aria-hidden="true"></div>
     <div class="scene-shade" aria-hidden="true"></div>
     <div class="scene-fader" id="sceneFader" aria-hidden="true"></div>
@@ -35,8 +42,8 @@
     <div class="blackboard-stage is-hidden" id="blackboardStage" aria-hidden="true"></div>
 
     <header class="story-topbar">
-      <a href="root-gate-test.html" aria-label="Back to Root Gate Mastery Trial">Trial</a>
-      <strong>Root Gate Result</strong>
+      <a href="index.html?view=quest#quest" aria-label="Back to Mountain Trail">Trail</a>
+      <strong>Chapter 2 Opening</strong>
     </header>
 
     <div class="character-stage mira-stage is-hidden" id="miraStage" aria-hidden="true">
@@ -47,7 +54,28 @@
       <img class="character-sprite elder-sprite" id="elderSprite" alt="" draggable="false" />
     </div>
 
-    <div class="relic-reveal-stage" id="relicRevealStage" aria-hidden="true"></div>
+    <div class="relic-reveal-stage" id="relicRevealStage" aria-hidden="true">
+      <div class="story-relic relic-term" data-relic="term">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/Shelf_Scale_Relic_True_Alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Shelf Scale</span>
+      </div>
+      <div class="story-relic relic-sign" data-relic="sign">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/Primewood_Seed_Relic_True_Alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Primewood Seed</span>
+      </div>
+      <div class="story-relic relic-parity" data-relic="parity">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/Fraction_Loom_Relic_True_Alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Fraction Loom</span>
+      </div>
+      <div class="story-relic relic-factor" data-relic="factor">
+        <span class="relic-light" aria-hidden="true"></span>
+        <img src="assets/images/relic/Power_Tally_Relic_True_Alpha.png" alt="" draggable="false" decoding="async" loading="eager" />
+        <span>The Power Tally</span>
+      </div>
+    </div>
 
     <section class="interaction-panel hidden" id="interactionPanel" aria-live="polite">
       <form class="name-form hidden" id="nameForm"></form>
@@ -76,7 +104,7 @@
 
   <aside class="orientation-lock" aria-live="polite">
     <strong>Turn Sideways</strong>
-    <span>This result scene is designed for a wide game view.</span>
+    <span>This opening scene is designed for a wide game view.</span>
   </aside>
 
   <script src="assets/js/story-root-gate.js?v=20260601-chapter2-opening"></script>

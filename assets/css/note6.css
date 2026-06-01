@@ -118,6 +118,35 @@
 
 .tree-line.bottom-line { gap: clamp(12px, 5vw, 42px); }
 
+.tree-mid-line,
+.tree-nine-branch {
+  width: min(260px, 68%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-items: center;
+  gap: 0;
+}
+
+.tree-nine-branch-inner {
+  grid-column: 2;
+  width: min(190px, 175%);
+  display: grid;
+  justify-items: center;
+}
+
+.tree-nine-branch .tree-branches.small,
+.tree-nine-branch .bottom-line {
+  width: 100%;
+}
+
+.tree-nine-branch .bottom-line {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-items: center;
+  gap: 0;
+}
+
 .tree-node {
   min-width: 58px;
   min-height: 48px;
@@ -134,8 +163,6 @@
 
 .tree-node.root { color: #7a4b00; }
 .tree-node.prime-node { border-color: rgba(107,209,138,0.72); background: #dcfce7; color: #14532d; }
-.tree-node.invisible { visibility: hidden; }
-
 .tree-branches {
   width: min(260px, 68%);
   height: 42px;
