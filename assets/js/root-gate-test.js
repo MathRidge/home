@@ -31,6 +31,7 @@
   let timerId = 0;
   let finished = false;
   let correctionMode = false;
+  let correctionTimers = new WeakMap();
 
   const startPanel = document.getElementById("startPanel");
   const startExamButton = document.getElementById("startExamButton");
@@ -49,6 +50,8 @@
   const reviewButton = document.getElementById("reviewButton");
   const retryButton = document.getElementById("retryButton");
   const resultStoryLink = document.getElementById("resultStoryLink");
+  const correctionCompletePanel = document.getElementById("correctionCompletePanel");
+  const correctionRetryButton = document.getElementById("correctionRetryButton");
   const submitButton = examForm?.querySelector(".submit-button");
 
   function readJSON(key) {
@@ -120,10 +123,28 @@
     return values.map((value, index) => signedTerm(value, index === 0)).join("");
   }
 
+  function hasOppositeSizePair(values) {
+    const positiveSizes = new Set();
+    const negativeSizes = new Set();
+
+    return values.some(value => {
+      const size = Math.abs(value);
+      if (value > 0) {
+        if (negativeSizes.has(size)) return true;
+        positiveSizes.add(size);
+      }
+      if (value < 0) {
+        if (positiveSizes.has(size)) return true;
+        negativeSizes.add(size);
+      }
+      return false;
+    });
+  }
+
   function nonZeroValues(factory) {
     let problem = factory();
     let guard = 0;
-    while ((!problem || problem.answer === 0) && guard < 30) {
+    while ((!problem || problem.answer === 0 || problem.hasOppositeSizePair) && guard < 50) {
       problem = factory();
       guard += 1;
     }
@@ -163,7 +184,10 @@
       }
 
       const answer = sum(values);
-      return makeQuestion(stage, difficulty, signedExpression(values), answer);
+      return {
+        ...makeQuestion(stage, difficulty, signedExpression(values), answer),
+        hasOppositeSizePair: hasOppositeSizePair(values)
+      };
     });
   }
 
@@ -183,7 +207,10 @@
       if (positiveTotal === negativeTotal) values[0] += 1;
 
       const answer = sum(values);
-      return makeQuestion(stage, difficulty, signedExpression(values), answer);
+      return {
+        ...makeQuestion(stage, difficulty, signedExpression(values), answer),
+        hasOppositeSizePair: hasOppositeSizePair(values)
+      };
     });
   }
 
@@ -211,7 +238,10 @@
 
       const expression = pieces.join(" + ");
       const answer = sum(values);
-      return makeQuestion(stage, difficulty, expression, answer);
+      return {
+        ...makeQuestion(stage, difficulty, expression, answer),
+        hasOppositeSizePair: hasOppositeSizePair(values)
+      };
     });
   }
 
@@ -272,11 +302,11 @@
         <p>${question.concept} - ${question.relicName}</p>
         <div class="question-expression">${question.expression}</div>
         <div class="answer-row" aria-label="Final answer">
-          <div class="sign-toggle" role="group" aria-label="Answer sign">
-            <button class="active" type="button" data-sign="positive">No minus</button>
-            <button type="button" data-sign="negative">Minus</button>
-          </div>
-          <input class="size-input" type="number" inputmode="numeric" min="0" step="1" placeholder="size" aria-label="Answer size for question ${index + 1}" />
+          <button class="minus-toggle" type="button" data-minus-toggle aria-pressed="false" aria-label="Turn on minus sign for question ${index + 1}">[-]</button>
+          <label class="signed-size-box">
+            <span class="answer-minus-mark" aria-hidden="true">-</span>
+            <input class="size-input" type="number" inputmode="numeric" min="0" step="1" placeholder="size" aria-label="Answer size for question ${index + 1}" />
+          </label>
         </div>
         <div class="question-feedback" aria-live="polite"></div>
       </article>
@@ -284,6 +314,7 @@
   }
 
   function renderExam() {
+    hideCorrectionCompletePanel();
     questions = buildExamQuestions();
     questionGrid.innerHTML = questions.map(renderQuestion).join("");
     updateAnsweredCount();
@@ -295,7 +326,7 @@
 
   function answerForCard(card) {
     const sizeInput = card.querySelector(".size-input");
-    const negative = card.querySelector('[data-sign="negative"]')?.classList.contains("active") || false;
+    const negative = card.querySelector("[data-minus-toggle]")?.classList.contains("active") || false;
     const rawSize = String(sizeInput?.value || "").trim();
     const size = Number(rawSize);
     const answered = rawSize !== "" && Number.isFinite(size) && Number.isInteger(size) && size >= 0;
@@ -314,9 +345,113 @@
     });
   }
 
+  function correctionCards() {
+    return questionCards().filter(card => card.classList.contains("needs-correction"));
+  }
+
+  function clearCorrectionTimers() {
+    correctionTimers = new WeakMap();
+  }
+
+  function focusCorrectionCard(card) {
+    if (!card) return;
+    questionCards().forEach(item => item.classList.toggle("is-correction-active", item === card));
+    const input = card.querySelector(".size-input");
+    if (input && !input.disabled) {
+      window.setTimeout(() => input.focus({ preventScroll: true }), 220);
+    }
+  }
+
+  function scrollToCorrectionCard(card, delay = 120) {
+    if (!card) return;
+    window.setTimeout(() => {
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      focusCorrectionCard(card);
+    }, delay);
+  }
+
+  function showCorrectionCompletePanel() {
+    correctionCompletePanel?.classList.remove("hidden");
+    window.setTimeout(() => {
+      correctionCompletePanel?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 160);
+  }
+
+  function hideCorrectionCompletePanel() {
+    correctionCompletePanel?.classList.add("hidden");
+  }
+
+  function completeCorrections() {
+    correctionMode = false;
+    clearCorrectionTimers();
+    questionCards().forEach(card => card.classList.remove("is-correction-active", "needs-correction"));
+    examMessage.textContent = "All corrections are complete. The original score stays locked.";
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Corrections Complete";
+    }
+    updateAnsweredCount();
+    showCorrectionCompletePanel();
+  }
+
+  function evaluateCorrectionCard(card, options = {}) {
+    if (!correctionMode || !card?.classList.contains("needs-correction")) return false;
+
+    const index = Number(card.dataset.index);
+    const question = questions[index];
+    const answer = answerForCard(card);
+    const feedback = card.querySelector(".question-feedback");
+
+    if (!answer.answered) {
+      card.classList.add("is-unanswered", "is-wrong", "needs-correction");
+      if (feedback) feedback.textContent = "Add your answer for this correction.";
+      updateAnsweredCount();
+      focusCorrectionCard(card);
+      return false;
+    }
+
+    const isCorrect = answer.negative === question.negative && answer.size === question.size;
+    card.classList.remove("is-unanswered");
+
+    if (isCorrect) {
+      card.classList.remove("is-wrong", "needs-correction", "is-correction-active");
+      card.classList.add("is-correct", "is-correction-fixed");
+      setCardControls(card, false);
+      if (feedback) feedback.textContent = "Corrected for practice.";
+
+      const nextCard = correctionCards()[0];
+      if (nextCard) {
+        examMessage.textContent = "Good correction. Moving to the next red question.";
+        updateAnsweredCount();
+        if (options.scrollNext !== false) scrollToCorrectionCard(nextCard, 260);
+      } else {
+        completeCorrections();
+      }
+      return true;
+    }
+
+    card.classList.add("is-wrong", "needs-correction", "is-correction-active");
+    if (feedback) feedback.textContent = `Your new answer: ${formatAnswer(answer)}. Try again.`;
+    examMessage.textContent = "Not yet. Adjust this answer before moving on.";
+    updateAnsweredCount();
+    focusCorrectionCard(card);
+    return false;
+  }
+
+  function scheduleCorrectionCheck(card, delay = 420) {
+    if (!correctionMode || !card?.classList.contains("needs-correction")) return;
+    const savedTimer = correctionTimers.get(card);
+    if (savedTimer) window.clearTimeout(savedTimer);
+    const timer = window.setTimeout(() => {
+      correctionTimers.delete(card);
+      evaluateCorrectionCard(card);
+    }, delay);
+    correctionTimers.set(card, timer);
+  }
+
   function updateAnsweredCount() {
     if (correctionMode) {
-      const remaining = questionCards().filter(card => card.classList.contains("needs-correction")).length;
+      const remaining = correctionCards().length;
       answeredCount.textContent = remaining === 1
         ? "1 correction remaining"
         : `${remaining} corrections remaining`;
@@ -380,6 +515,8 @@
 
   function gradeExam(options = {}) {
     if (finished) return;
+    hideCorrectionCompletePanel();
+    clearCorrectionTimers();
 
     if (!options.forced) {
       const firstMissing = firstUnansweredCard();
@@ -441,47 +578,15 @@
   function checkCorrections() {
     if (!correctionMode) return;
 
-    const remainingCards = questionCards().filter(card => card.classList.contains("needs-correction"));
-    let stillWrong = 0;
+    const firstReady = correctionCards().find(card => answerForCard(card).answered);
+    const target = firstReady || correctionCards()[0];
 
-    remainingCards.forEach(card => {
-      const index = Number(card.dataset.index);
-      const question = questions[index];
-      const answer = answerForCard(card);
-      const isCorrect = answer.answered && answer.negative === question.negative && answer.size === question.size;
-      const feedback = card.querySelector(".question-feedback");
-
-      if (isCorrect) {
-        card.classList.remove("is-wrong", "needs-correction", "is-unanswered");
-        card.classList.add("is-correct");
-        setCardControls(card, false);
-        if (feedback) feedback.textContent = "Corrected for practice.";
-      } else {
-        stillWrong += 1;
-        card.classList.remove("is-unanswered");
-        card.classList.add("is-wrong", "needs-correction");
-        if (feedback) {
-          feedback.textContent = answer.answered
-            ? `Your new answer: ${formatAnswer(answer)}. Try again.`
-            : "Add your answer, then check corrections again.";
-        }
-      }
-    });
-
-    if (stillWrong === 0) {
-      correctionMode = false;
-      examMessage.textContent = "All corrections are complete. The original score stays locked.";
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent = "Corrections Complete";
-      }
-    } else {
-      examMessage.textContent = "Keep working only on the red questions. Your original score will not change.";
-      const firstWrong = questionCards().find(card => card.classList.contains("needs-correction"));
-      firstWrong?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!target) {
+      completeCorrections();
+      return;
     }
 
-    updateAnsweredCount();
+    evaluateCorrectionCard(target);
   }
 
   function resultImageDataUrl(result) {
@@ -624,6 +729,8 @@
   }
 
   function startExam() {
+    hideCorrectionCompletePanel();
+    clearCorrectionTimers();
     renderExam();
     startPanel.classList.add("hidden");
     examForm.classList.remove("hidden");
@@ -634,11 +741,13 @@
   function resetExam() {
     finished = false;
     correctionMode = false;
+    clearCorrectionTimers();
     stopTimer();
     startedAt = 0;
     timerText.textContent = formatTime(TIME_LIMIT_SECONDS);
     timerCard?.classList.remove("is-warning");
     resultLayer.classList.add("hidden");
+    hideCorrectionCompletePanel();
     examForm.classList.add("hidden");
     startPanel.classList.remove("hidden");
     examMessage.textContent = "Answer every question before submitting.";
@@ -663,33 +772,56 @@
   });
 
   questionGrid?.addEventListener("click", event => {
-    const button = event.target.closest("[data-sign]");
+    const button = event.target.closest("[data-minus-toggle]");
     if (!button || (finished && !correctionMode)) return;
 
-    const wrap = button.closest(".sign-toggle");
     const card = button.closest(".question-card");
     if (correctionMode && !card?.classList.contains("needs-correction")) return;
 
-    wrap.querySelectorAll("button").forEach(item => item.classList.remove("active"));
-    button.classList.add("active");
+    const active = !button.classList.contains("active");
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+    card?.classList.toggle("answer-negative", active);
     card?.classList.remove("is-unanswered");
     updateAnsweredCount();
+    if (correctionMode) scheduleCorrectionCheck(card, 160);
   });
 
   questionGrid?.addEventListener("input", event => {
     if (!event.target.matches(".size-input")) return;
-    if (correctionMode && !event.target.closest(".question-card")?.classList.contains("needs-correction")) return;
-    event.target.closest(".question-card")?.classList.remove("is-unanswered");
+    const card = event.target.closest(".question-card");
+    if (correctionMode && !card?.classList.contains("needs-correction")) return;
+    card?.classList.remove("is-unanswered");
     updateAnsweredCount();
+    if (correctionMode) scheduleCorrectionCheck(card, 480);
+  });
+
+  questionGrid?.addEventListener("change", event => {
+    if (!event.target.matches(".size-input")) return;
+    const card = event.target.closest(".question-card");
+    if (correctionMode && card?.classList.contains("needs-correction")) {
+      evaluateCorrectionCard(card);
+    }
+  });
+
+  questionGrid?.addEventListener("keydown", event => {
+    if (event.key !== "Enter" || !event.target.matches(".size-input")) return;
+    const card = event.target.closest(".question-card");
+    if (correctionMode && card?.classList.contains("needs-correction")) {
+      event.preventDefault();
+      evaluateCorrectionCard(card);
+    }
   });
 
   reviewButton?.addEventListener("click", () => {
     resultLayer.classList.add("hidden");
-    const firstCorrection = questionCards().find(card => card.classList.contains("needs-correction"));
-    (firstCorrection || examForm).scrollIntoView({ behavior: "smooth", block: "center" });
+    const firstCorrection = correctionCards()[0];
+    if (firstCorrection) scrollToCorrectionCard(firstCorrection, 80);
+    else examForm.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
   retryButton?.addEventListener("click", resetExam);
+  correctionRetryButton?.addEventListener("click", resetExam);
 
   try {
     if (localStorage.getItem("mathRidge_playComplete_1_4") === "true") {

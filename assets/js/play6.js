@@ -159,10 +159,7 @@
 		// All generated numbers are built from 2, 3, 5, and 7.
 		if (score < 3) return { min: 4, max: 49, minShared: 1, maxShared: 2 };
 		if (score < 6) return { min: 25, max: 98, minShared: 2, maxShared: 3 };
-		if (score < 10) return { min: 49, max: 245, minShared: 3, maxShared: 5 };
-		if (score < 13) return { min: 98, max: 686, minShared: 3, maxShared: 6 };
-		if (score < 16) return { min: 245, max: 1750, minShared: 4, maxShared: 7 };
-		return { min: 343, max: 3500, minShared: 3, maxShared: 8 };
+		return { min: 49, max: 245, minShared: 3, maxShared: 5 };
 	}
 
 	function buildValueFromFactors(factors) {
@@ -603,7 +600,7 @@
 		let message;
 
 		if (stageEligible && mistakesThisStage === 0) {
-			score++;
+			score = Math.min(10, score + 1);
 			earnedScore = true;
 			message = score >= 10
 				? "🎁 Score 10 reached! Certificate unlocked."

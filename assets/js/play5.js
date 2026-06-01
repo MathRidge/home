@@ -133,10 +133,8 @@
 	function isHintLevel() { return turtleScore <= 3; }
 	function isMiddleLevel() { return turtleScore >= 4 && turtleScore <= 6; }
 	function isHardLevel() { return turtleScore >= 7 && turtleScore <= 9; }
-	function isBossLevel() { return turtleScore >= 10; }
 
 	function targetDepth() {
-		if (isBossLevel()) return 4;
 		if (isHardLevel()) return 3;
 		if (isMiddleLevel()) return 2;
 		return 1;
@@ -753,7 +751,7 @@
 		let message;
 
 		if (!gameScoreAwarded && mistakesThisGame === 0) {
-			turtleScore++;
+			turtleScore = Math.min(10, turtleScore + 1);
 			gameScoreAwarded = true;
 			earnedScore = true;
 			message = turtleScore >= 10

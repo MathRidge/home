@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Math Ridge | Trail 1-1 Term Stone Trial</title>
 <link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260531-slow-scroll" />
-	<link rel="stylesheet" href="assets/css/play1.css?v=20260531-term-stone-flow" />
+	<link rel="stylesheet" href="assets/css/play1.css?v=20260531-original-given" />
 </head>
 
 <body class="play-page play-1">
@@ -15,10 +15,10 @@
 		<div class="name-card">
 			<h2>🎉 Term Stone Trial Complete!</h2>
 			<p>You reached Score 10 and proved the Bigger Sign and Operation Rule.</p>
-			<p class="proof-note">Your official certificate will use this name. Race time is saved separately to the world record board.</p>
+			<p class="proof-note">Type the student's full name once. This name will be saved on this device for future certificates.</p>
 
-			<label for="playerNameInput">Name on Certificate</label>
-			<input id="playerNameInput" type="text" placeholder="Math Ridge Champion" />
+			<label for="playerNameInput">Full Name for Certificate</label>
+			<input id="playerNameInput" type="text" autocomplete="name" placeholder="Student Full Name" />
 
 			<button id="createCertificateButton" class="primary-action" onclick="createCertificateFromName()">Create My Certificate</button>
 			<p class="proof-note save-status" id="worldRecordSaveStatus" aria-live="polite"></p>
@@ -107,6 +107,7 @@
 			<div class="step hidden" id="step2">
 				<h2>Step 2: What sign does the bigger size carry?</h2>
 				<p id="outsideSignTitle">Tap the sign directly in front of the bigger size.</p>
+				<div class="mini-problem original-given" id="step2OriginalGiven"></div>
 				<div class="sign-picker">
 					<button class="sign-btn plus" onclick="chooseOutsideSign('+', this)">+</button>
 					<button class="sign-btn minus" onclick="chooseOutsideSign('-', this)">−</button>
@@ -131,6 +132,7 @@
 			<div class="step builder box-step hidden" id="boxStep">
 				<h2>Step 4: Fill in the box</h2>
 				<p>The sign and operation are locked in. Type the bigger size first, then the smaller size.</p>
+				<div class="mini-problem original-given" id="boxOriginalGiven"></div>
 
 				<div class="builder-labels">
 					<span>Big Sign</span>
@@ -200,7 +202,7 @@
 		<div class="game-footer">Math Ridge | Trail 1-1 Term Stone Trial</div>
 	</div>
 
-<script src="assets/js/mathridge-play.js?v=20260531-slow-scroll"></script>
-	<script src="assets/js/play1.js?v=20260531-term-stone-scroll"></script>
+<script src="assets/js/mathridge-play.js?v=20260531-certificate-name"></script>
+	<script src="assets/js/play1.js?v=20260531-score-cap"></script>
 </body>
 </html>

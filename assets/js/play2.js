@@ -205,17 +205,13 @@
 	function getTermCountRange() {
 		if (turtleScore <= 3) return { minTerms: 4, maxTerms: 5 };
 		if (turtleScore <= 6) return { minTerms: 5, maxTerms: 6 };
-		if (turtleScore <= 10) return { minTerms: 6, maxTerms: 7 };
-		return { minTerms: 7, maxTerms: 8 };
+		return { minTerms: 6, maxTerms: 7 };
 	}
 
 	function getDifficultyRange() {
 		if (turtleScore <= 3) return { minTotal: 2, maxTotal: 18, minValue: 1, maxValue: 7 };
 		if (turtleScore <= 6) return { minTotal: 3, maxTotal: 24, minValue: 1, maxValue: 9 };
-		if (turtleScore <= 10) return { minTotal: 5, maxTotal: 34, minValue: 2, maxValue: 12 };
-		if (turtleScore <= 13) return { minTotal: 6, maxTotal: 42, minValue: 2, maxValue: 12 };
-		if (turtleScore <= 16) return { minTotal: 8, maxTotal: 50, minValue: 2, maxValue: 12 };
-		return { minTotal: 9, maxTotal: 60, minValue: 2, maxValue: 12 };
+		return { minTotal: 5, maxTotal: 34, minValue: 2, maxValue: 12 };
 	}
 
 	function generateTerms() {
@@ -1058,7 +1054,7 @@
 			runCorrectCount = getRequiredProgressSteps();
 
 			if (mistakesThisGame === 0 && !gameScoreAwarded) {
-				turtleScore++;
+				turtleScore = Math.min(10, turtleScore + 1);
 				gameScoreAwarded = true;
 				updateTurtleBoard();
 				fadeCompletionTurtle();

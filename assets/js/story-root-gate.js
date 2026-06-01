@@ -584,6 +584,54 @@
     nextBtn.disabled = true;
   }
 
+  function hasWatchedIntro() {
+    try { return localStorage.getItem(INTRO_COMPLETE_KEY) === "true"; }
+    catch (error) { return false; }
+  }
+
+  function shouldReplayIntro() {
+    const watch = String(params.get("watch") || "").toLowerCase();
+    return watch === "1" || watch === "true" || watch === "again";
+  }
+
+  function shouldShowIntroShortcut() {
+    return mode === "intro" && hasWatchedIntro() && !shouldReplayIntro();
+  }
+
+  function renderIntroShortcut() {
+    storyVn?.classList.add("story-shortcut-mode");
+    storyVn?.classList.add("is-board-review");
+    stopTyping(false);
+    clearInteraction();
+    rewardPanel?.classList.add("hidden");
+    setBackground("gate");
+    setRelicReveal("all");
+    setBlackboard("trial");
+    hideActor("mira");
+    hideActor("elder");
+    if (progressBar) progressBar.style.transform = "scaleX(1)";
+    if (sceneCounter) sceneCounter.textContent = "Trial Ready";
+    if (backBtn) backBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+
+    if (!rewardCard) return;
+    rewardCard.innerHTML = `
+      <h2 id="rewardTitle">Root Gate Trial Ready</h2>
+      <p>You have already watched the Chapter 1 finale. You can begin the mastery trial now, or replay the scene when you want the story again.</p>
+      <div class="trial-facts">
+        <span><strong>40</strong>questions</span>
+        <span><strong>37+</strong>to pass</span>
+        <span><strong>10:00</strong>time limit</span>
+      </div>
+      <div class="reward-actions">
+        <a href="root-gate-test.html">Begin Root Gate Mastery Trial</a>
+        <a class="secondary" href="story-root-gate.html?watch=1">Watch Scene Again</a>
+        <a class="secondary" href="index.html?view=quest#quest">Mountain Trail</a>
+      </div>
+    `;
+    rewardPanel?.classList.remove("hidden");
+  }
+
   function updateProgress() {
     if (!progressBar) return;
     const progress = frames.length <= 1 ? 1 : currentIndex / (frames.length - 1);
@@ -592,13 +640,20 @@
 
   function renderFrame() {
     const frame = frames[currentIndex];
+    const boardReview = Boolean(frame.board && frame.bg === "board");
     clearInteraction();
     rewardPanel?.classList.add("hidden");
+    storyVn?.classList.toggle("is-board-review", boardReview);
 
     setBackground(frame.bg);
     setRelicReveal(frame.relicReveal || "");
     setBlackboard(frame.board || "");
-    setActors(frame);
+    if (boardReview) {
+      hideActor("mira");
+      hideActor("elder");
+    } else {
+      setActors(frame);
+    }
     setSpeaker(frame);
 
     sceneCounter.textContent = `${currentIndex + 1} / ${frames.length}`;
@@ -673,5 +728,6 @@
   document.addEventListener("gesturechange", preventSafariGesture, { passive: false });
   document.addEventListener("gestureend", preventSafariGesture, { passive: false });
 
-  renderFrame();
+  if (shouldShowIntroShortcut()) renderIntroShortcut();
+  else renderFrame();
 })();

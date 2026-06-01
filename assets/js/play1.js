@@ -124,8 +124,7 @@
 
 	function getDifficultySettings() {
 		if (turtleScore <= 6) return { min: 1, max: 10 };
-		if (turtleScore <= 10) return { min: 12, max: 25 };
-		return { min: 1, max: 25 };
+		return { min: 12, max: 25 };
 	}
 
 	function shuffleList(list) {
@@ -377,11 +376,15 @@
 	function renderProblem() {
 		const problemText = byId("problemText");
 		const miniProblem = byId("miniProblem");
+		const step2OriginalGiven = byId("step2OriginalGiven");
+		const boxOriginalGiven = byId("boxOriginalGiven");
 		const sizeOptions = byId("sizeOptions");
 		if (!problemText || !miniProblem || !sizeOptions) return;
 
 		const aText = formatTerm(currentProblem.a, true);
 		const bText = formatTerm(currentProblem.b, false);
+		const aSize = Math.abs(currentProblem.a);
+		const bSize = Math.abs(currentProblem.b);
 		const markup = `
 			<span class="term ${currentProblem.a >= 0 ? "plus" : "minus"}">${aText}</span>
 			<span class="term ${currentProblem.b >= 0 ? "plus" : "minus"}">${bText}</span>
@@ -389,10 +392,20 @@
 
 		problemText.innerHTML = markup;
 		miniProblem.innerHTML = markup;
+		if (step2OriginalGiven) step2OriginalGiven.innerHTML = `<span class="given-label">Original given</span>${markup}`;
+		if (boxOriginalGiven) boxOriginalGiven.innerHTML = `<span class="given-label">Original given</span>${markup}`;
 
 		sizeOptions.innerHTML = `
-			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('first', this)"><strong>1st</strong><span>term</span></button>
-			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('second', this)"><strong>2nd</strong><span>term</span></button>
+			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('first', this)">
+				<span class="term-choice-label">1st term</span>
+				<strong class="${currentProblem.a >= 0 ? "plus-text" : "minus-text"}">${aText}</strong>
+				<span class="term-choice-size">size ${aSize}</span>
+			</button>
+			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('second', this)">
+				<span class="term-choice-label">2nd term</span>
+				<strong class="${currentProblem.b >= 0 ? "plus-text" : "minus-text"}">${bText}</strong>
+				<span class="term-choice-size">size ${bSize}</span>
+			</button>
 		`;
 
 		updateGuidanceText();
@@ -601,7 +614,7 @@
 
 	function setBuiltBoxText(value) {
 		setText("builtBoxText", value);
-		setText("builtBoxTextAnswer", value);
+		setText("builtBoxTextAnswer", value ? value.replace(/^Original question:\s*.*?\s*\|\s*/i, "") : "");
 	}
 
 	function problemPlainText() {
@@ -610,6 +623,10 @@
 
 	function builtBoxLine() {
 		return `Original question: ${problemPlainText()} | Box setup: ${displaySign(expected.outsideSign)}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "-"} ${expected.smallerSize})`;
+	}
+
+	function boxSetupLine() {
+		return `Box setup: ${displaySign(expected.outsideSign)}(${expected.biggerSize} ${expected.operation === "+" ? "+" : "-"} ${expected.smallerSize})`;
 	}
 
 	function chooseOutsideSign(sign, button) {
@@ -754,7 +771,7 @@
 
 		let message;
 		if (mistakesThisProblem === 0 && !gameScoreAwarded) {
-			turtleScore += 1;
+			turtleScore = Math.min(10, turtleScore + 1);
 			gameScoreAwarded = true;
 			fadeCompletionTurtle();
 			popScoreChange("+1", "plus");
@@ -961,11 +978,12 @@
 		startConfetti();
 
 		const nameInput = byId("playerNameInput");
-		if (nameInput) nameInput.value = "";
+		if (nameInput && !shell().readOfficialCertificateName?.()) nameInput.value = "";
 
 		document.body.classList.add("modal-open");
 		const popup = byId("namePopup");
 		if (popup) popup.style.display = "flex";
+		shell().applyPlayerProfileToCertificateInput?.();
 
 		window.setTimeout(() => nameInput?.focus(), 200);
 	}
@@ -974,14 +992,26 @@
 		const nameInput = byId("playerNameInput");
 		const createButton = byId("createCertificateButton");
 		const saveStatus = byId("worldRecordSaveStatus");
-		const finalName = (nameInput?.value || "").trim() || "Math Ridge Champion";
+		const typedName = (nameInput?.value || "").trim().replace(/\s+/g, " ");
+		const existingOfficialName = shell().readOfficialCertificateName?.() || "";
+
+		if (!existingOfficialName && !typedName) {
+			if (saveStatus) saveStatus.textContent = "Please type the student's full name for the official certificate.";
+			nameInput?.focus();
+			return;
+		}
+
+		const finalName = shell().saveOfficialCertificateName?.(typedName || existingOfficialName)
+			|| existingOfficialName
+			|| typedName
+			|| "Math Ridge Champion";
 		const now = new Date();
 
 		if (createButton) {
 			createButton.disabled = true;
 			createButton.textContent = "Saving world record...";
 		}
-		if (saveStatus) saveStatus.textContent = "Saving your time to the world ladder…";
+		if (saveStatus) saveStatus.textContent = "Saving your time to the world ladder...";
 
 		const formattedDate = now.toLocaleDateString("en-US", {
 			year: "numeric",
@@ -1009,7 +1039,7 @@
 				rankMessage = latestRaceRank && latestRaceRank <= 3 ? rankText(latestRaceRank) : "";
 			}
 			if (saveStatus) saveStatus.textContent = latestWorldRecordSaved
-				? "World ladder saved. Creating your certificate…"
+				? "World ladder saved. Creating your certificate..."
 				: "Certificate created. World ladder response was unavailable.";
 		} catch (error) {
 			rankMessage = "World record not saved yet. Certificate still created.";

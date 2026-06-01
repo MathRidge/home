@@ -116,8 +116,7 @@
 	function getDifficultyRule() {
 		if (score < 3) return { sharedMin: 1, sharedMax: 2, extraMin: 1, extraMax: 2 };
 		if (score < 6) return { sharedMin: 2, sharedMax: 3, extraMin: 1, extraMax: 2 };
-		if (score < 10) return { sharedMin: 2, sharedMax: 4, extraMin: 2, extraMax: 3 };
-		return { sharedMin: 3, sharedMax: 5, extraMin: 2, extraMax: 4 };
+		return { sharedMin: 2, sharedMax: 4, extraMin: 2, extraMax: 3 };
 	}
 
 	function makeRandomFactors(count) {
@@ -606,7 +605,7 @@
 		let earnedScore = false;
 		let message;
 		if (stageEligible && mistakesThisStage === 0) {
-			score++;
+			score = Math.min(10, score + 1);
 			earnedScore = true;
 			message = score >= 10
 				? "🎁 Score 10 reached! Certificate unlocked."

@@ -57,6 +57,7 @@
 	   JS sets --play4-item-count to the number of visible tokens so long
 	   problems shrink instead of wrapping into multiple rows. */
 	--play4-item-count: 13;
+	--play4-fit-size: clamp(0.92rem, calc(72vw / var(--play4-item-count)), 2.65rem);
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: center;
@@ -70,7 +71,7 @@
 	border-radius: 26px;
 	padding: clamp(12px, 2.6vw, 18px) clamp(8px, 2vw, 16px);
 	margin: 4px auto 14px;
-	font-size: clamp(0.92rem, calc(72vw / var(--play4-item-count)), 2.65rem);
+	font-size: var(--play4-fit-size);
 	font-weight: 950;
 	line-height: 1.02;
 	color: #d97800;
@@ -335,7 +336,7 @@
 	}
 
 	.repeated-line {
-		font-size: clamp(0.84rem, calc(86vw / var(--play4-item-count)), 2.05rem);
+		--play4-fit-size: clamp(0.84rem, calc(86vw / var(--play4-item-count)), 2.05rem);
 		gap: clamp(2px, calc(22px / var(--play4-item-count)), 5px);
 		padding: 12px 7px;
 	}

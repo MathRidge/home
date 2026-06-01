@@ -1370,12 +1370,19 @@
 
   function renderFrame() {
     const frame = frames[currentIndex];
+    const boardReview = Boolean(frame.board && frame.bg === "shellwickBoard");
     clearInteraction();
+    storyVn?.classList.toggle("is-board-review", boardReview);
 
     setBackground(frame.bg);
     setRelicReveal(frame.relicReveal || "");
     setBlackboard(frame.board || "");
-    setSprite(resolveFrameSprite(frame), frame.motion || "", frame);
+    if (boardReview) {
+      hideActor("mira");
+      hideActor("elder");
+    } else {
+      setSprite(resolveFrameSprite(frame), frame.motion || "", frame);
+    }
     setDialogueSpeaker(frame);
     speakerName.textContent = isNarrationFrame(frame) ? "Narrator" : frame.speaker || "";
     sceneCounter.textContent = `${currentIndex + 1} / ${frames.length}`;

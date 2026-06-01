@@ -572,6 +572,76 @@ a {
     0 2px 10px rgba(0, 0, 0, 0.48);
 }
 
+.story-vn.is-board-review .blackboard-stage {
+  left: 50%;
+  top: clamp(86px, 13vh, 126px);
+  width: min(86vw, 980px);
+  height: min(53vh, 470px);
+  align-content: center;
+  justify-content: stretch;
+  gap: clamp(10px, 1.5vh, 18px);
+  padding: clamp(18px, 2.5vw, 34px) clamp(26px, 4vw, 56px);
+  transform: translateX(-50%) scale(1);
+}
+
+.story-vn.is-board-review .blackboard-stage.is-hidden {
+  transform: translate(-50%, 10px) scale(0.985);
+}
+
+.story-vn.is-board-review .blackboard-badge {
+  justify-self: center;
+  font-family: "Segoe Print", "Comic Sans MS", "Trebuchet MS", cursive;
+  font-size: clamp(0.74rem, 1.1vw, 0.94rem);
+  letter-spacing: 0;
+}
+
+.story-vn.is-board-review .blackboard-title {
+  justify-self: center;
+  max-width: 92%;
+  color: rgba(243, 255, 235, 0.98);
+  font-family: "Segoe Print", "Comic Sans MS", "Trebuchet MS", cursive;
+  font-size: clamp(1.55rem, 3.3vw, 3.15rem);
+  font-weight: 850;
+  text-align: center;
+  text-shadow:
+    0 0 9px rgba(174, 255, 205, 0.22),
+    0 2px 10px rgba(0, 0, 0, 0.54);
+}
+
+.story-vn.is-board-review .blackboard-lines {
+  width: min(100%, 860px);
+  justify-self: center;
+  gap: clamp(8px, 1.2vh, 14px);
+}
+
+.story-vn.is-board-review .blackboard-line {
+  grid-template-columns: minmax(88px, auto) minmax(0, 1fr);
+  gap: clamp(12px, 1.8vw, 22px);
+}
+
+.story-vn.is-board-review .blackboard-label {
+  font-family: "Segoe Print", "Comic Sans MS", "Trebuchet MS", cursive;
+  font-size: clamp(0.74rem, 1.1vw, 0.96rem);
+  text-align: right;
+}
+
+.story-vn.is-board-review .blackboard-text {
+  font-family: "Segoe Print", "Comic Sans MS", "Trebuchet MS", cursive;
+  font-size: clamp(1.18rem, 2.45vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.story-vn.is-board-review .blackboard-line[data-kind="problem"] .blackboard-text,
+.story-vn.is-board-review .blackboard-line[data-kind="answer"] .blackboard-text {
+  font-size: clamp(1.5rem, 3.15vw, 2.7rem);
+}
+
+.story-vn.is-board-review .character-stage {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .dialogue-box {
   position: absolute;
   left: max(16px, env(safe-area-inset-left));
@@ -1424,5 +1494,65 @@ a {
 
   .story-topbar strong {
     font-size: 0.88rem;
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .story-vn.is-board-review .blackboard-stage {
+    top: clamp(50px, 9svh, 74px);
+    width: min(86vw, 740px);
+    height: min(50svh, 300px);
+    padding: 10px clamp(18px, 4vw, 34px);
+    gap: 7px;
+  }
+
+  .story-vn.is-board-review .blackboard-badge {
+    font-size: clamp(0.56rem, 1.35vw, 0.72rem);
+  }
+
+  .story-vn.is-board-review .blackboard-title {
+    font-size: clamp(1rem, 2.9vw, 1.5rem);
+  }
+
+  .story-vn.is-board-review .blackboard-lines {
+    gap: 5px;
+  }
+
+  .story-vn.is-board-review .blackboard-line {
+    grid-template-columns: minmax(62px, auto) minmax(0, 1fr);
+    gap: 9px;
+  }
+
+  .story-vn.is-board-review .blackboard-label {
+    font-size: clamp(0.5rem, 1.35vw, 0.66rem);
+  }
+
+  .story-vn.is-board-review .blackboard-text {
+    font-size: clamp(0.78rem, 2.25vw, 1.08rem);
+    line-height: 1.08;
+  }
+
+  .story-vn.is-board-review .blackboard-line[data-kind="problem"] .blackboard-text,
+  .story-vn.is-board-review .blackboard-line[data-kind="answer"] .blackboard-text {
+    font-size: clamp(0.94rem, 2.7vw, 1.3rem);
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  .story-vn.is-board-review .blackboard-stage {
+    top: clamp(86px, 12svh, 112px);
+    width: min(92vw, 520px);
+    height: min(45svh, 370px);
+    padding: 14px 16px;
+    gap: 8px;
+  }
+
+  .story-vn.is-board-review .blackboard-line {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .story-vn.is-board-review .blackboard-label {
+    text-align: left;
   }
 }

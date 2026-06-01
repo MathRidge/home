@@ -407,13 +407,13 @@
 
 		let message;
 		if (mistakesThisRound === 0) {
-			turtleScore++;
+			turtleScore = Math.min(10, turtleScore + 1);
 			popScoreChange("+1", "plus");
 			fadeCompletionTurtle();
 
 			if (turtleScore >= 10) {
 				completePlayProgress();
-				message = "🎁 Score 10 reached! Certificate unlocked. Next Climb is ready below.";
+				message = "🎁 Score 10 reached! Certificate unlocked.";
 			} else {
 				message = "✅ Correct final answer. +1 score. Press Next Climb to start the next problem.";
 			}

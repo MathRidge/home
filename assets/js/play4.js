@@ -133,7 +133,7 @@
 	}
 
 	function isHardLevel() {
-		return turtleScore >= 7;
+		return turtleScore >= 7 && turtleScore <= 9;
 	}
 
 	function getPoolsForLevel(level) {
@@ -213,9 +213,32 @@
 
 	function repeatedAdditionHTML(count, value) {
 		return Array(count).fill(0).map((_, index) => {
-			const plus = index < count - 1 ? "<span>+</span>" : "";
+			const plus = index < count - 1 ? '<span class="op">+</span>' : "";
 			return `<span class="num">${value}</span>${plus}`;
 		}).join("");
+	}
+
+	function fitRepeatedLineToFrame() {
+		const line = byId("repeatedLine");
+		if (!line) return;
+
+		line.classList.add("is-measuring");
+		line.style.removeProperty("--play4-fit-size");
+
+		window.requestAnimationFrame(() => {
+			const available = line.clientWidth;
+			const needed = line.scrollWidth;
+			if (!available || !needed || needed <= available) {
+				line.classList.remove("is-measuring");
+				return;
+			}
+
+			const currentSize = Number.parseFloat(window.getComputedStyle(line).fontSize) || 16;
+			const fittedSize = Math.max(10, Math.floor(currentSize * (available / needed) * 100) / 100);
+			line.style.setProperty("--play4-fit-size", `${fittedSize}px`);
+			line.classList.add("is-fitted");
+			line.classList.remove("is-measuring");
+		});
 	}
 
 	function chunkVisualHTML() {
@@ -329,7 +352,16 @@
 	}
 
 	function updateProblemText() {
-		byId("repeatedLine").innerHTML = repeatedAdditionHTML(current.multiplicity, current.value);
+		const repeatedLine = byId("repeatedLine");
+		if (repeatedLine) {
+			const itemCount = Math.max(1, current.multiplicity * 2 - 1);
+			repeatedLine.style.setProperty("--play4-item-count", itemCount);
+			repeatedLine.style.removeProperty("--play4-fit-size");
+			repeatedLine.classList.toggle("is-compact", itemCount >= 15);
+			repeatedLine.classList.remove("is-fitted");
+			repeatedLine.innerHTML = repeatedAdditionHTML(current.multiplicity, current.value);
+			fitRepeatedLineToFrame();
+		}
 
 		const levelText = isHardLevel()
 			? "Challenge level: hints are tucked away so you can focus."
@@ -714,7 +746,7 @@
 		let message;
 
 		if (!gameScoreAwarded && mistakesThisGame === 0 && completedSteps.size >= TOTAL_STEPS) {
-			turtleScore++;
+			turtleScore = Math.min(10, turtleScore + 1);
 			gameScoreAwarded = true;
 			earnedScore = true;
 			message = turtleScore >= 10
@@ -1101,6 +1133,16 @@
 
 	function attachEvents() {
 		prepareNumberOnlyInputs();
+
+		let fitResizeTimer = 0;
+		window.addEventListener("resize", () => {
+			window.clearTimeout(fitResizeTimer);
+			fitResizeTimer = window.setTimeout(fitRepeatedLineToFrame, 120);
+		});
+
+		if (document.fonts?.ready) {
+			document.fonts.ready.then(fitRepeatedLineToFrame).catch(() => {});
+		}
 
 		document.addEventListener("keydown", event => {
 			if (event.key === "Enter") {

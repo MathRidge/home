@@ -118,8 +118,7 @@ function recipeBand(){
 function getRecipe(){
   if(score < 3) return { band:"easy", label:"Score 1–3: small values under 49, many copies of 2 and 3" };
   if(score < 6) return { band:"medium", label:"Score 4–6: fewer hints, 7 and 11 may appear" };
-  if(score < 10) return { band:"hard", label:"Score 7–10: stronger exponent packing with 11 and 13 possible" };
-  return { band:"hard", label:"Score 10+: speed practice with stronger copy counts" };
+  return { band:"hard", label:"Score 7–10: stronger exponent packing with 11 and 13 possible" };
 }
 
 function valueRuleForBand(band){
@@ -1020,7 +1019,7 @@ function showComplete(){
   let scoreText = "";
   let earnedScore = false;
   if(stageEligible && mistakesThisStage === 0){
-    score++;
+    score = Math.min(10, score + 1);
     earnedScore = true;
     scoreText = "🏁 Turtle reached the score! +1 score earned.";
   } else {

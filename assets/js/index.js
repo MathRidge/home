@@ -84,11 +84,13 @@ function storageKeyCert(id) { return `mathRidge_cert_${id}`; }
 const TRAIL_STATE_KEY = "mathRidge_trail_state_v1";
 const STAGE_REVEAL_HINT_KEY = "mathRidge_stageRevealHintSeen_v1";
 const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
+const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 const PROLOGUE_SEEN_KEY = "mathRidge_prologueSeen_v1";
 const STORY_COMPLETE_1_1_KEY = "mathRidge_storyComplete_1_1";
 const TERM_MANUAL_UNLOCK_KEY = storageKeyNoteUnlocked("1_1");
 const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";
 const ROOT_GATE_PASS_KEY = "mathRidge_rootGatePassed_chapter_1";
+const ROOT_GATE_INTRO_KEY = "mathRidge_storyComplete_root_gate_intro";
 const CHAPTER_ONE_TEST_PASS_KEY = "mathRidge_testPassed_chapter_1";
 
 function isTermManualUnlocked() {
@@ -202,6 +204,32 @@ function isRootGateUnlocked() {
     isChapterOneRelicsComplete();
 }
 
+function hasWatchedRootGateIntro() {
+  try {
+    return isRootGatePassed() || localStorage.getItem(ROOT_GATE_INTRO_KEY) === "true";
+  } catch (error) {
+    return isRootGatePassed();
+  }
+}
+
+function rootGateHref() {
+  if (!isRootGateUnlocked()) return "#";
+  return isRootGatePassed() || hasWatchedRootGateIntro()
+    ? "root-gate-test.html"
+    : "story-root-gate.html";
+}
+
+function rootGateActionText() {
+  if (!isRootGateUnlocked()) return "Locked";
+  if (isRootGatePassed()) return "Review / Retake";
+  return hasWatchedRootGateIntro() ? "Begin Trial" : "Begin Finale";
+}
+
+function rootGateWatchSceneLink(className = "root-gate-watch-link") {
+  if (!isRootGateUnlocked() || isRootGatePassed() || !hasWatchedRootGateIntro()) return "";
+  return `<a class="${className}" href="story-root-gate.html?watch=1">Watch Scene</a>`;
+}
+
 function isNoteUnlocked(index) {
   const lesson = lessons[index];
 
@@ -297,7 +325,7 @@ function renderPlayerIdentityState() {
   saved.innerHTML = `
     <strong>Story Profile Sealed</strong>
     <span>Mira will call you ${escapeHTML(profile.nickname || "Ridge Wanderer")}.</span>
-    <span>Certificates and world records will use ${escapeHTML(profile.certificateName || profile.nickname || "Math Ridge Champion")}.</span>
+    <span>Your official certificate name is saved after completing Trail 1-1.</span>
     <span>Pronouns: ${escapeHTML(getPronounLabel(profile.pronoun))}</span>
     <button class="gold-btn" type="button" onclick="showSection('quest')">Step onto Math Ridge</button>
   `;
@@ -385,8 +413,9 @@ function renderTrail(options = {}) {
 function renderRootGateCard() {
   const unlocked = isRootGateUnlocked();
   const passed = isRootGatePassed();
-  const status = passed ? "Gate opened" : unlocked ? "Exam ready" : "Four relics required";
-  const href = unlocked ? (passed ? "root-gate-test.html" : "story-root-gate.html") : "#";
+  const watchedIntro = hasWatchedRootGateIntro();
+  const status = passed ? "Gate opened" : unlocked ? watchedIntro ? "Trial ready" : "Finale ready" : "Four relics required";
+  const href = rootGateHref();
 
   return `
     <article class="root-gate-card ${unlocked ? "" : "locked"} ${passed ? "passed" : ""}" aria-label="Root Gate Chapter 1 checkpoint">
@@ -398,7 +427,8 @@ function renderRootGateCard() {
       </div>
       <div class="root-gate-actions">
         <strong>${escapeHTML(status)}</strong>
-        <a class="small-link root-gate-link ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">${passed ? "Review / Retake" : unlocked ? "Begin Finale" : "Locked"}</a>
+        <a class="small-link root-gate-link ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">${rootGateActionText()}</a>
+        ${rootGateWatchSceneLink("root-gate-replay-link")}
       </div>
     </article>
   `;
@@ -521,11 +551,12 @@ function renderMenuLinks(options = {}) {
 function renderMenuRootGateLink() {
   const unlocked = isRootGateUnlocked();
   const passed = isRootGatePassed();
-  const href = unlocked ? (passed ? "root-gate-test.html" : "story-root-gate.html") : "#";
+  const href = rootGateHref();
   return `
     <a class="jump-link root-gate-jump ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">
-      <span><i aria-hidden="true">I</i> Root Gate Finale</span><strong>${passed ? "Passed" : unlocked ? "Ready" : "Locked"}</strong>
+      <span><i aria-hidden="true">I</i> Root Gate Finale</span><strong>${passed ? "Passed" : unlocked ? hasWatchedRootGateIntro() ? "Trial" : "Ready" : "Locked"}</strong>
     </a>
+    ${rootGateWatchSceneLink("jump-link root-gate-replay-jump")}
   `;
 }
 
@@ -738,7 +769,7 @@ function renderTestResults() {
     const image = readTestResultImage(test);
     const isChapterOne = test.id === "chapter_1";
     const chapterOneAction = isChapterOne
-      ? `<a class="pill-btn" href="${isRootGateUnlocked() ? (isRootGatePassed() ? "root-gate-test.html" : "story-root-gate.html") : "#"}" onclick="return handleRootGateClick(event)">${isRootGatePassed() ? "Review Root Gate Exam" : "Begin Root Gate Finale"}</a>`
+      ? `<a class="pill-btn" href="${rootGateHref()}" onclick="return handleRootGateClick(event)">${isRootGatePassed() ? "Review Root Gate Exam" : hasWatchedRootGateIntro() ? "Begin Root Gate Exam" : "Begin Root Gate Finale"}</a>${rootGateWatchSceneLink("pill-btn root-gate-replay-pill")}`
       : `<button class="pill-btn" type="button" onclick="showModal('Chapter Test Coming Soon', '${escapeHTML(test.chapter)} will connect here when the chapter test page is ready.', [{ text: 'OK', className: 'gold-btn', action: closeModal }])">Open Test Plan</button>`;
     return `
       <article class="test-result-card">
@@ -799,8 +830,8 @@ function showPlayNeedsNoteModal(lesson) {
 
 function showChapterTwoGateModal() {
   showModal("Root Gate Required", "Chapter 2 opens after you pass the Root Gate Exam with 92% or higher.", [
-    { text: isRootGateUnlocked() ? "Begin Root Gate Finale" : "Back to Chapter 1", className: "gold-btn", action: () => {
-      if (isRootGateUnlocked()) window.location.href = "story-root-gate.html";
+    { text: isRootGateUnlocked() ? (hasWatchedRootGateIntro() ? "Begin Root Gate Exam" : "Begin Root Gate Finale") : "Back to Chapter 1", className: "gold-btn", action: () => {
+      if (isRootGateUnlocked()) window.location.href = rootGateHref();
       else showSection("quest");
     } },
     { text: "OK", className: "pill-btn", action: closeModal }
@@ -826,10 +857,12 @@ function resetAllProgress() {
   try { localStorage.removeItem(TRAIL_STATE_KEY); } catch (error) {}
   try { localStorage.removeItem(STAGE_REVEAL_HINT_KEY); } catch (error) {}
   try { localStorage.removeItem(PLAYER_PROFILE_KEY); } catch (error) {}
+  try { localStorage.removeItem(CERTIFICATE_FULL_NAME_KEY); } catch (error) {}
   try { localStorage.removeItem(PROLOGUE_SEEN_KEY); } catch (error) {}
   try { localStorage.removeItem(STORY_COMPLETE_1_1_KEY); } catch (error) {}
   try { localStorage.removeItem(ROOT_GATE_UNLOCK_KEY); } catch (error) {}
   try { localStorage.removeItem(ROOT_GATE_PASS_KEY); } catch (error) {}
+  try { localStorage.removeItem(ROOT_GATE_INTRO_KEY); } catch (error) {}
   try { localStorage.removeItem(CHAPTER_ONE_TEST_PASS_KEY); } catch (error) {}
   try { localStorage.removeItem("mathRidge_testResult_chapter_1_data"); } catch (error) {}
 

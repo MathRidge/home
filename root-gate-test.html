@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="assets/images/logo/mathridge-premium-favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260531-app-icon" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=20260531-app-icon" />
-  <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-story" />
+  <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-minus-toggle" />
 </head>
 <body>
   <main class="exam-shell">
@@ -43,7 +43,7 @@
         <div class="gate-kicker">Root Gate Challenge</div>
         <h2>Seal of Chapter 1</h2>
         <p>The Root Gate removes the training steps. Use the skills from 1-1 to 1-4 and write only the final answer.</p>
-        <p class="cover-rule">For positive answers, choose <strong>No minus</strong>. For negative answers, choose <strong>Minus</strong>, then enter the size.</p>
+        <p class="cover-rule">Leave the minus switch untouched for positive answers. Light up <strong>[-]</strong> when the final answer is negative, then enter the size.</p>
         <button class="primary-action" type="button" id="startExamButton">Start the Challenge</button>
       </div>
     </section>
@@ -58,6 +58,16 @@
       </div>
 
       <div class="question-grid" id="questionGrid"></div>
+
+      <section class="correction-complete-panel hidden" id="correctionCompletePanel" aria-live="polite">
+        <p class="exam-kicker">Corrections Complete</p>
+        <h2>Practice Review Finished</h2>
+        <p>The original score stays locked. You may retake the Root Gate Exam or return to Mountain Trail.</p>
+        <div class="result-actions">
+          <button class="primary-action" type="button" id="correctionRetryButton">Retake Exam</button>
+          <a class="secondary-action" href="index.html?view=quest#quest">Return to Mountain Trail</a>
+        </div>
+      </section>
     </form>
   </main>
 
@@ -78,6 +88,6 @@
     </div>
   </section>
 
-  <script src="assets/js/root-gate-test.js?v=20260531-root-gate-story"></script>
+  <script src="assets/js/root-gate-test.js?v=20260531-root-gate-minus-toggle"></script>
 </body>
 </html>

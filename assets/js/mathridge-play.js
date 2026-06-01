@@ -21,6 +21,7 @@
 	const config = Object.assign({}, defaultConfig, window.MathRidgePlayConfig || {});
 	window.MathRidgePlayConfig = config;
 	const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
+	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 
 	const progressMap = {
 		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Signed Term Structure", playFile: "play1.html", nextId: "1_2" },
@@ -92,28 +93,95 @@
 		}
 	}
 
+	function cleanCertificateName(value, fallback = "") {
+		const clean = String(value || "")
+			.trim()
+			.replace(/\s+/g, " ")
+			.slice(0, 48);
+		return clean || fallback;
+	}
+
+	function readOfficialCertificateName() {
+		try {
+			return cleanCertificateName(localStorage.getItem(CERTIFICATE_FULL_NAME_KEY));
+		} catch (error) {
+			return "";
+		}
+	}
+
+	function saveOfficialCertificateName(name) {
+		const existing = readOfficialCertificateName();
+		if (existing) return existing;
+
+		const clean = cleanCertificateName(name);
+		if (!clean) return "";
+
+		try {
+			localStorage.setItem(CERTIFICATE_FULL_NAME_KEY, clean);
+
+			const profile = readPlayerProfile();
+			if (profile && typeof profile === "object") {
+				localStorage.setItem(PLAYER_PROFILE_KEY, JSON.stringify(Object.assign({}, profile, {
+					certificateName: clean,
+					certificateNameLocked: true,
+					certificateNameSavedAt: new Date().toISOString()
+				})));
+			}
+		} catch (error) {
+			// Storage may be unavailable in private or embedded previews.
+		}
+
+		return clean;
+	}
+
 	function getPreferredCertificateName(fallback = "Math Ridge Champion") {
+		const officialName = readOfficialCertificateName();
+		if (officialName) return officialName;
+
 		const profile = readPlayerProfile();
 		const name = profile?.certificateName || profile?.nickname || fallback;
 		return String(name || fallback).trim() || fallback;
 	}
 
+	function resolveCertificateName(inputName, fallback = "Math Ridge Champion") {
+		const officialName = readOfficialCertificateName();
+		if (officialName) return officialName;
+
+		const typedName = cleanCertificateName(inputName);
+		if (typedName) return saveOfficialCertificateName(typedName) || typedName;
+
+		return getPreferredCertificateName(fallback);
+	}
+
 	function applyPlayerProfileToCertificateInput() {
-		const profile = readPlayerProfile();
 		const input = byId("playerNameInput");
-		if (!profile || !input) return;
+		if (!input) return;
 
-		input.value = getPreferredCertificateName();
-		input.readOnly = true;
-		input.classList.add("profile-locked-input");
-
+		const officialName = readOfficialCertificateName();
 		const label = document.querySelector('label[for="playerNameInput"]');
-		if (label) label.textContent = "Story Profile Certificate Name";
-
 		const note = document.querySelector("#namePopup .proof-note");
-		if (note && !note.dataset.profileLocked) {
-			note.dataset.profileLocked = "true";
-			note.textContent = "Your official certificate and optional world record use the name sealed in your Story Profile.";
+
+		if (officialName) {
+			input.value = officialName;
+			input.readOnly = true;
+			input.classList.add("profile-locked-input");
+
+			if (label) label.textContent = "Official Certificate Name";
+			if (note && !note.dataset.officialNameLocked) {
+				note.dataset.officialNameLocked = "true";
+				note.textContent = "This official name is saved on this device for all future Math Ridge certificates.";
+			}
+			return;
+		}
+
+		input.readOnly = false;
+		input.classList.remove("profile-locked-input");
+		input.placeholder = "Student Full Name";
+
+		if (label) label.textContent = "Full Name for Certificate";
+		if (note && !note.dataset.officialNamePrompt) {
+			note.dataset.officialNamePrompt = "true";
+			note.textContent = "Type the student's full name once. This name will be saved on this device for future certificates.";
 		}
 	}
 
@@ -630,7 +698,9 @@
 	}
 
 	async function submitWorldRecord(name, timeMs = getTotalRaceMs()) {
-		const safeName = getPreferredCertificateName(name || "Math Ridge Champion");
+		const safeName = readOfficialCertificateName()
+			|| cleanCertificateName(name, "")
+			|| getPreferredCertificateName("Math Ridge Champion");
 		const ms = Math.max(1, Math.round(Number(timeMs || getTotalRaceMs())));
 		const timeSeconds = Math.max(1, Math.round(ms / 1000));
 
@@ -694,7 +764,7 @@
 			title: data.title || meta.title,
 			certificateTitle: data.certificateTitle || meta.certificateTitle,
 			playFile: data.playFile || meta.playFile,
-			studentName: data.studentName || data.name || getPreferredCertificateName(),
+			studentName: resolveCertificateName(data.studentName || data.name),
 			completedAt: now,
 			displayDate: data.displayDate || data.formattedDate || "",
 			displayTime: data.displayTime || data.formattedTime || "",
@@ -835,6 +905,9 @@
 		submitWorldRecord,
 		rememberMountainTrailReturn,
 		readPlayerProfile,
+		readOfficialCertificateName,
+		saveOfficialCertificateName,
+		resolveCertificateName,
 		getPreferredCertificateName,
 		applyPlayerProfileToCertificateInput,
 		getProgressMeta,

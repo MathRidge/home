@@ -123,24 +123,56 @@
 }
 
 .term-choice {
-	min-width: 132px;
+	min-width: 152px;
 	display: inline-flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 2px;
+	gap: 5px;
+	padding: 12px 18px;
 }
 
 .term-choice strong {
-	font-size: 1.25rem;
+	font-size: 1.55rem;
 	line-height: 1;
 }
 
-.term-choice span {
+.term-choice-label,
+.term-choice-size {
 	font-size: 0.78rem;
 	font-weight: 900;
 	letter-spacing: 0;
 	text-transform: uppercase;
 	opacity: 0.78;
+}
+
+.plus-text { color: #8a5b00; }
+.minus-text { color: #164b7d; }
+
+.sign-btn {
+	width: 76px;
+	height: 76px;
+	min-height: 76px;
+	padding: 0;
+	border-radius: 14px;
+	font-size: 2rem;
+	line-height: 1;
+}
+
+.original-given {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.given-label {
+	width: 100%;
+	font-size: 0.76rem;
+	font-weight: 950;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: rgba(27,43,70,0.72);
 }
 
 .choice-btn.selected,
@@ -392,10 +424,14 @@
 	}
 
 	.options button,
-	.sign-picker button,
 	.answer-area button,
 	.builder > button {
 		width: 100%;
+	}
+
+	.sign-picker .sign-btn {
+		width: 76px;
+		flex: 0 0 76px;
 	}
 
 	#secondNumInput::placeholder {
