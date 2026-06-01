@@ -5061,7 +5061,7 @@ body.index-page .top-actions .story-locked:focus-visible {
     background:
       radial-gradient(circle at 50% 0%, rgba(246, 201, 108, 0.12), transparent 38%),
       linear-gradient(180deg, rgba(7, 16, 29, 0.42), rgba(7, 16, 29, 0.72)),
-      url("../images/backgrounds/mobile/Mathridge_bg.png") center / cover no-repeat !important;
+      url("../images/backgrounds/mobile/mathridge-background.png") center / cover no-repeat !important;
     background-attachment: scroll !important;
   }
 
@@ -5069,6 +5069,6 @@ body.index-page .top-actions .story-locked:focus-visible {
   body.index-page .app-shell.menu-bg .interactive-room-map {
     background:
       linear-gradient(135deg, rgba(16, 32, 51, 0.34), rgba(16, 32, 51, 0.48)),
-      url("../images/backgrounds/mobile/Mathridge_bg.png") center / cover no-repeat !important;
+      url("../images/backgrounds/mobile/mathridge-background.png") center / cover no-repeat !important;
   }
 }

@@ -226,8 +226,9 @@ function rootGateActionText() {
 }
 
 function rootGateWatchSceneLink(className = "root-gate-watch-link") {
-  if (!isRootGateUnlocked() || isRootGatePassed() || !hasWatchedRootGateIntro()) return "";
-  return `<a class="${className}" href="story-root-gate.html?watch=1">Watch Scene</a>`;
+  if (!isRootGateUnlocked() || !hasWatchedRootGateIntro()) return "";
+  const text = isRootGatePassed() ? "Watch Finale Again" : "Watch Scene";
+  return `<a class="${className}" href="story-root-gate.html?watch=1">${text}</a>`;
 }
 
 function isNoteUnlocked(index) {
