@@ -1371,13 +1371,14 @@
   function renderFrame() {
     const frame = frames[currentIndex];
     const boardReview = Boolean(frame.board && frame.bg === "shellwickBoard");
+    const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
     clearInteraction();
     storyVn?.classList.toggle("is-board-review", boardReview);
 
     setBackground(frame.bg);
     setRelicReveal(frame.relicReveal || "");
     setBlackboard(frame.board || "");
-    if (boardReview) {
+    if (boardReview || relicFocus) {
       hideActor("mira");
       hideActor("elder");
     } else {
