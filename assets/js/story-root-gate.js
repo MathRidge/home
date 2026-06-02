@@ -10,6 +10,7 @@
   const bgBase = "assets/images/bg-scene/Stage-1-1/";
   const chapterTwoBgBase = "assets/images/bg-scene/Chapter-2/";
   const miraBase = "assets/images/Mira-sprite/Mira-sprite-alpha-webp/";
+  const miraPngBase = "assets/images/Mira-sprite/Mira-sprite-alpha-png/";
   const shellwickBase = "assets/images/Shellwick-sprite/elder-webp/";
   const miraVoiceBase = "voice/Mira/";
   const elderVoiceBase = "voice/elder/";
@@ -41,6 +42,7 @@
     miraPouting: { character: "mira", src: `${miraBase}mira-pouting-crossed-arms.webp` },
     miraCelebrating: { character: "mira", src: `${miraBase}mira-celebrating-fb.webp` },
     miraPointing: { character: "mira", src: `${miraBase}mira-pointing-fb.webp` },
+    miraTrailReturn: { character: "mira", src: `${miraPngBase}Mira_Apprentice_Mage_TRUE_ALPHA_Cropped.png` },
     elder: { character: "elder", src: `${shellwickBase}elder-natural.webp` },
     elderWriting: { character: "elder", src: `${shellwickBase}elder-smile.webp` }
   };
@@ -64,6 +66,8 @@
     ["Do they give us magical glasses?", ["mira-Do-they-give-us-magical-glasses.mp3"]],
     ["Tiny glasses for numbers?", ["mira-Tiny-glasses-for-numbers.mp3"]]
   ]);
+
+  miraVoiceFilesByText.set("Forty questions. Only three mistakes. I might panic a little.", ["mira-Only-three-mistakes….mp3"]);
 
   const relicOrder = ["term", "sign", "parity", "factor"];
 
@@ -235,10 +239,10 @@
       { bg: "cabinEvening", sprite: "miraDetermined", speaker: "Narrator", text: "Root Gate Finale: Return to Elder Shellwick" },
       { bg: "cabinEvening", sprite: "miraDetermined", speaker: "Narrator", text: "The door of Elder Shellwick's cabin opened by itself. Warm lantern light spilled onto the path." },
       { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Inside, the familiar smell of tea, parchment, and old rain filled the room." },
-      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Mira stepped in first, covered in dust, leaves, and at least one tiny twig stuck in her hat." },
-      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Elder Shellwick... we have returned!" },
-      { bg: "cabinInside", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "The twig slipped from her hat and landed on the floor." },
-      { bg: "cabinInside", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "...mostly intact." },
+      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Narrator", text: "Mira stepped in first, covered in dust, leaves, and at least one tiny twig stuck in her hat." },
+      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "Elder Shellwick... we have returned!" },
+      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Narrator", text: "The twig slipped from her hat and landed on the floor." },
+      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "...mostly intact." },
       { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "You stepped in behind her. In your pack, four relics pulsed softly." },
       { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The Term Stone. The Sign Compass. The Parity Prism. And the Factor Forge.", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Ah. So the lower trail has accepted you.", relicReveal: "all" },
@@ -486,10 +490,39 @@
       { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "The certificate?" },
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Yes. For thinking support." },
       { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Acceptable." },
+      { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "Mira looked relieved and immediately tucked the certificate back into her satchel." },
+      { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Good. I think better when official paper is nearby." },
+      { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "So the relics are finished... but what they taught us stays?" },
+      { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Precisely." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Narrator", text: "Shellwick tapped the empty space where the Term Stone had rested." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "The Term Stone taught you to notice signs and sizes." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Narrator", text: "He tapped the second space." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "The Sign Compass taught you that a term carries its sign." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Narrator", text: "He tapped the third." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "The Parity Prism taught you to watch hidden signs." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Narrator", text: "Then the fourth." },
+      { bg: "emptyRelicTable", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "And the Factor Forge taught you to group what repeats." },
+      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "So... we really learned all that?" },
+      { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You did." },
+      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Mira looked down at her certificate again." },
+      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Then bravery counted?" },
+      { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick smiled gently." },
+      { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Bravery helped you begin." },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "He turned toward the chalkboard.", board: "chapterOneTools" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "But understanding opened the gate.", board: "chapterOneTools" },
+      { bg: "cabinInside", sprite: "none", elder: "none", speaker: "Narrator", text: "The room grew quiet." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Outside the window, far above the Root Gate, the blue flash appeared again." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Your phone. Still higher. Still waiting." },
+      { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Then what comes next?" },
+      { bg: "seriousShelfCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick's smile faded into something more thoughtful." },
+      { bg: "seriousShelfCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The lower trail taught you how to handle numbers." },
+      { bg: "seriousShelfCase", sprite: "none", elder: "elder", speaker: "Narrator", text: "He reached toward the high shelf behind his desk." },
+      { bg: "seriousShelfCase", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "From here on..." },
+      { bg: "seriousShelfCase", sprite: "none", elder: "elder", speaker: "Narrator", text: "His claw rested on an old dust-covered case." },
+      { bg: "seriousShelfCase", sprite: "none", elder: "elder", speaker: "Elder Shellwick", text: "You must learn to see what numbers are made of." },
 
       { bg: "seriousShelfCase", sprite: "none", elder: "none", speaker: "Narrator", text: "Scene 3: A Different Kind of Relic", relicReveal: "clear" },
-      { bg: "seriousShelfCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Shellwick climbed onto his wooden stool and reached toward a high shelf." },
-      { bg: "seriousShelfCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "He removed a long, narrow case covered in green dust." },
+      { bg: "seriousShelfCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The old case came down from the serious shelf and settled on the table." },
       { bg: "seriousShelfCase", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "That is the serious shelf." },
       { bg: "seriousShelfCase", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "How do you know?" },
       { bg: "seriousShelfCase", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "I am not allowed to dust it." },

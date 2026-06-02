@@ -148,7 +148,7 @@
     pointing: { src: `${miraBase}mira-pointing-fb.webp`, character: "mira" },
     celebrating: { src: `${miraBase}mira-celebrating-fb.webp`, character: "mira" },
     lookAway: { src: `${miraBase}mira-look-away-right-fb.webp`, character: "mira" },
-    holdingHat: { src: `${miraBase}mira-holding-hat.webp`, character: "mira" },
+    holdingHat: { src: `${miraPngBase}mira-holding-hat.png`, character: "mira" },
     butterfly: { src: `${miraBase}mira-and-butterfly.webp`, character: "mira" },
     turning: { src: `${miraBase}mira_turn_motion_reflected_alpha.webp`, character: "mira" },
     castingBack: { src: `${miraBase}mira-back-casting-alpha.webp`, character: "mira" },
