@@ -9,6 +9,7 @@
   const miraBase = "assets/images/Mira-sprite/Mira-sprite-alpha-webp/";
   const miraPngBase = "assets/images/Mira-sprite/Mira-sprite-alpha-png/";
   const shellwickBase = "assets/images/Shellwick-sprite/elder-webp/";
+  const shellwickPngBase = "assets/images/Shellwick-sprite/";
   const miraVoiceBase = "voice/Mira/";
   const elderVoiceBase = "voice/elder/";
   const soundBase = "voice/sound/";
@@ -161,9 +162,11 @@
     angryPoint: { src: `${miraBase}mira-pointing-angry.webp`, character: "mira" },
     pouting: { src: `${miraBase}mira-pouting-crossed-arms.webp`, character: "mira" },
     bagShy: { src: `${miraBase}mira-shy-holding-bag.webp`, character: "mira" },
+    magicSatchel: { src: `${miraPngBase}mira-magic-satchel-true-alpha.png`, character: "mira" },
     surprisedStaff: { src: `${miraBase}mira-surprised-horizontal-staff.webp`, character: "mira" },
-    elder: { src: `${shellwickBase}elder-natural.webp`, character: "elder" },
-    elderWriting: { src: `${shellwickBase}elder-smile.webp`, character: "elder" }
+    elder: { src: `${shellwickPngBase}Elder standing-no desk.png`, character: "elder" },
+    elderWriting: { src: `${shellwickPngBase}Elder teaching.png`, character: "elder" },
+    elderGentleNo: { src: `${shellwickPngBase}Elder amused  gentle no.png`, character: "elder" }
   };
 
   const miraVoiceFilesByText = new Map([
@@ -373,19 +376,19 @@
     { bg: "path", sprite: "worried", speaker: "Mira", text: "The gates are locking. The paths are breaking. Even Math Ridge is becoming unstable." },
     { bg: "path", sprite: "thinking", speaker: "Mira", text: "Elder Shellwick says the old spell knowledge is fading. We needed outside resources. Manuals from the Pagebound Realm." },
     { bg: "path", sprite: "confused", speaker: "You", text: "Manuals?" },
-    { bg: "path", sprite: "hugSatchel", speaker: "Narrator", text: "Mira opened her satchel. It looked far too small to hold anything important." },
-    { bg: "path", sprite: "hugSatchel", speaker: "Narrator", text: "Mira opened her emergency satchel. Her arm went in farther than it should have." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "Mira opened her satchel. It looked far too small to hold anything important." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "Mira opened her emergency satchel. Her arm went in farther than it should have." },
     { bg: "path", sprite: "confused", speaker: "You", text: "What is that bag?" },
-    { bg: "path", sprite: "bagShy", speaker: "Mira", text: "My emergency satchel." },
-    { bg: "path", sprite: "confused", speaker: "Narrator", text: "She pulled out a wooden spoon." },
-    { bg: "path", sprite: "confused", speaker: "Mira", text: "No." },
-    { bg: "path", sprite: "confused", speaker: "Narrator", text: "She pulled out a sock." },
-    { bg: "path", sprite: "confused", speaker: "Mira", text: "Not that." },
-    { bg: "path", sprite: "bagShy", speaker: "Narrator", text: "She pulled out a tiny bag labeled Emergency Cup Noodles. She froze. Her ears twitched." },
-    { bg: "path", sprite: "bagShy", speaker: "Mira", text: "Also not that." },
-    { bg: "path", sprite: "bagShy", speaker: "Narrator", text: "You raised an eyebrow. Mira quickly shoved it back in." },
-    { bg: "path", sprite: "bagShy", speaker: "Mira", text: "This is not the time." },
-    { bg: "path", sprite: "curious", speaker: "Narrator", text: "She dug deeper. A glowing pebble rolled out. Then a folded map. Then three pencils. Then a half-eaten cracker." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "My emergency satchel." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a wooden spoon." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "No." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a sock." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "Not that." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a tiny bag labeled Emergency Cup Noodles. She froze. Her ears twitched." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "Also not that." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "You raised an eyebrow. Mira quickly shoved it back in." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "This is not the time." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She dug deeper. A glowing pebble rolled out. Then a folded map. Then three pencils. Then a half-eaten cracker." },
     { bg: "path", sprite: "celebrating", speaker: "Mira", text: "Aha! The final manual!" },
     { bg: "path", sprite: "hugSatchel", speaker: "Narrator", text: "She pulled out a book. The cover was scratched, bent, and painfully familiar." },
     { bg: "path", sprite: "confused", speaker: "Narrator", text: "Your eyes widened." },
