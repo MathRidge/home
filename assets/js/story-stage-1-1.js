@@ -245,8 +245,8 @@
   elderVoiceFilesByText.set("And following glowing insects.", ["elder-And-following-glowing-insects.mp3"]);
   elderVoiceFilesByText.set("And walking into storage closets while looking for doors.", ["elder-And-[audience-laughing]walking-into-storage-clos.mp3"]);
 
-  const relicRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.08, end: 2.75, volume: 0.42, fadeOut: 850, lockMs: 1200 };
-  const softRelicCue = { file: "Relic reveal shimmer.mp3", start: 0.45, end: 2.9, volume: 0.28, fadeOut: 900, lockMs: 950 };
+  const relicRevealCue = { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.36, fadeOut: 220, lockMs: 650 };
+  const softRelicCue = { file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.22, fadeOut: 200, lockMs: 520 };
   const chalkCueA = { file: "chuck-writing.mp3", start: 0.45, end: 2.3, volume: 0.34, fadeOut: 260, lockMs: 1200 };
   const chalkCueB = { file: "chuck-writing.mp3", start: 3.2, end: 5.1, volume: 0.3, fadeOut: 260, lockMs: 1200 };
   const chalkCueC = { file: "chuck-writing.mp3", start: 6.35, end: 8.35, volume: 0.32, fadeOut: 300, lockMs: 1200 };
@@ -255,12 +255,12 @@
   const satchelCueC = { file: "satchel search.mp3", start: 5.0, end: 8.15, volume: 0.34, fadeOut: 760 };
   const manualRewardCues = [
     { file: "certificate-paper-rustle.mp3", start: 0, end: 2.15, volume: 0.38, fadeOut: 520, lockMs: 1000 },
-    { file: "Relic reveal shimmer.mp3", start: 0.16, end: 2.9, volume: 0.36, delay: 180, fadeOut: 900, lockMs: 1400 }
+    { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.32, delay: 160, fadeOut: 220, lockMs: 750 }
   ];
 
   const sceneSoundCuesByText = new Map([
     ["The door of Mira's cabin creaked open. Outside, the mountain waited.", [{ file: "cabin-door-creaking-open.mp3", volume: 0.42, end: 3.0, fadeOut: 820 }]],
-    ["A small butterfly-shaped symbol floated past her.", [{ file: "Relic reveal shimmer.mp3", start: 0.65, end: 3.0, volume: 0.2, fadeOut: 900 }]],
+    ["A small butterfly-shaped symbol floated past her.", [{ file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.16, fadeOut: 200 }]],
     ["She marched forward with serious confidence.", [{ file: "walk-steps.mp3", start: 0.1, end: 5.8, volume: 0.24, fadeOut: 900, lockMs: 900 }]],
     ["Then quietly turned around and walked the other direction.", [{ file: "walk-steps.mp3", start: 1.35, end: 6.4, volume: 0.22, fadeOut: 900, lockMs: 900 }]],
     ["Mira walked beside you, still hugging her little satchel close.", [{ file: "walk-steps.mp3", start: 0.2, end: 5.2, volume: 0.18, fadeOut: 900, lockMs: 800 }]],
@@ -285,7 +285,7 @@
     ["The second became a compass with two glowing needles, one positive and one negative. Relic 1-2: The Sign Compass", [relicRevealCue]],
     ["The third became a crystal prism that split stacked signs into one true direction. Relic 1-3: The Parity Prism", [relicRevealCue]],
     ["The fourth became a small forge that gathered equal pieces into faster groups. Relic 1-4: The Factor Forge", [relicRevealCue]],
-    ["The lights faded. Mira clenched her fists.", [{ file: "Relic reveal shimmer.mp3", start: 1.2, end: 3.35, volume: 0.2, fadeOut: 1100 }]],
+    ["The lights faded. Mira clenched her fists.", [{ file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.16, fadeOut: 220 }]],
     ["He handed Mira a thin booklet. The cover read: Term Manual: The Bigger Sign Rule.", manualRewardCues],
     ["Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 2.05, volume: 0.24, fadeOut: 520 }]],
     ["He took a piece of chalk and wrote: -8 - 3", [chalkCueA]],

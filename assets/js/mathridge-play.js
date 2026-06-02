@@ -28,7 +28,7 @@
 		secondTap: { file: "second tap.mp3", volume: 0.58, maxMs: 1200, fadeOut: 240 },
 		correct: { file: "correct.mp3", volume: 0.44, maxMs: 1500, fadeOut: 320 },
 		wrong: { file: "wrong.mp3", volume: 0.3, maxMs: 900, fadeOut: 180 },
-		relic: { file: "Relic reveal shimmer.mp3", start: 0.08, end: 2.9, volume: 0.4, fadeOut: 900 },
+		relic: { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.36, fadeOut: 220 },
 		certificatePaper: { file: "certificate-paper-rustle.mp3", start: 0, end: 2.2, volume: 0.42, fadeOut: 520 },
 		certificateStamp: { file: "certificate-stamp.mp3", start: 0, end: 2.1, volume: 0.48, fadeOut: 460 },
 		certificateFanfare: { file: "certificate-fanfare.mp3", start: 0, end: 2.25, volume: 0.48, fadeOut: 700 }
@@ -55,6 +55,7 @@
 	let armedBottomControl = null;
 	let armedBottomControlTimer = null;
 	let pendingExitTarget = null;
+	const sfxAudioCache = new Map();
 
 	function byId(id) {
 		return document.getElementById(id);
@@ -66,10 +67,10 @@
 
 	function normalizeSfx(cue) {
 		if (!cue) return null;
-		if (typeof cue === "string") return Object.assign({}, sfxPresets[cue] || { file: cue });
+		if (typeof cue === "string") return Object.assign({}, sfxPresets[cue] || { file: cue }, { _cacheName: cue });
 		if (typeof cue === "object") {
 			const preset = cue.name ? sfxPresets[cue.name] || {} : {};
-			return Object.assign({}, preset, cue);
+			return Object.assign({}, preset, cue, cue.name ? { _cacheName: cue.name } : {});
 		}
 		return null;
 	}
@@ -81,12 +82,39 @@
 		audio.load();
 	}
 
+	function prepareSfx(name) {
+		const cue = normalizeSfx(name);
+		if (!cue?.file || typeof Audio !== "function") return null;
+		const cacheName = cue._cacheName || cue.file;
+		if (sfxAudioCache.has(cacheName)) return sfxAudioCache.get(cacheName);
+
+		const audio = new Audio(soundUrl(cue.file));
+		audio.preload = "auto";
+		audio.volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.35;
+		try { audio.load(); } catch (error) {}
+		sfxAudioCache.set(cacheName, audio);
+		return audio;
+	}
+
+	function createSfxAudio(cue) {
+		const cacheName = cue._cacheName || cue.file;
+		const prepared = cacheName ? prepareSfx(cacheName) : null;
+		const audio = prepared && typeof prepared.cloneNode === "function"
+			? prepared.cloneNode(true)
+			: new Audio(soundUrl(cue.file));
+
+		audio.preload = "auto";
+		audio.volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.35;
+		try { audio.currentTime = 0; } catch (error) {}
+		return audio;
+	}
+
 	function playSfx(cueLike, options = {}) {
 		const cue = normalizeSfx(cueLike);
 		if (!cue?.file) return null;
 
 		const play = () => {
-			const audio = new Audio(soundUrl(cue.file));
+			const audio = createSfxAudio(cue);
 			const startAt = Math.max(0, Number(cue.start || 0));
 			const endAt = Number(cue.end);
 			const maxMs = Number(cue.maxMs);
@@ -1271,6 +1299,7 @@
 	}
 
 	document.addEventListener("DOMContentLoaded", () => {
+		["firstTap", "secondTap", "correct", "wrong", "relic", "certificatePaper", "certificateStamp", "certificateFanfare"].forEach(prepareSfx);
 		updateTimerPanel();
 		ensureTopNextClimbButton();
 		hideNextClimbButton({ force: true });

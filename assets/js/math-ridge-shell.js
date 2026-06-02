@@ -19,6 +19,7 @@
   let mobileConfirmTarget = null;
   let mobileConfirmTimer = null;
   let drawerCloseTimer = null;
+  const shellSfxCache = new Map();
 
   function matchesQuery(query) {
     return Boolean(window.matchMedia && window.matchMedia(query).matches);
@@ -43,11 +44,36 @@
     audio.load();
   }
 
+  function prepareShellSfx(name) {
+    const cue = shellSfxPresets[name];
+    if (!cue?.file || typeof Audio !== "function") return null;
+    if (shellSfxCache.has(name)) return shellSfxCache.get(name);
+
+    const audio = new Audio(shellSoundUrl(cue.file));
+    audio.preload = "auto";
+    audio.volume = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
+    try { audio.load(); } catch (error) {}
+    shellSfxCache.set(name, audio);
+    return audio;
+  }
+
+  function createShellSfxAudio(name, cue) {
+    const prepared = prepareShellSfx(name);
+    const audio = prepared && typeof prepared.cloneNode === "function"
+      ? prepared.cloneNode(true)
+      : new Audio(shellSoundUrl(cue.file));
+
+    audio.preload = "auto";
+    audio.volume = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
+    try { audio.currentTime = 0; } catch (error) {}
+    return audio;
+  }
+
   function playShellSfx(name) {
     const cue = shellSfxPresets[name];
     if (!cue?.file || typeof Audio !== "function") return null;
 
-    const audio = new Audio(shellSoundUrl(cue.file));
+    const audio = createShellSfxAudio(name, cue);
     const durationMs = Math.max(0, Number(cue.maxMs || 0));
     const fadeMs = Math.max(0, Number(cue.fadeOut || 0));
     const volume = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
@@ -329,6 +355,8 @@
   }
 
   function bindShellEvents() {
+    prepareShellSfx("firstTap");
+    prepareShellSfx("secondTap");
     injectMobileConfirmNote();
 
     document.addEventListener("keydown", closeNoteMenuOnEscape);

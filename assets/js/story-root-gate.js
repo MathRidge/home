@@ -78,8 +78,8 @@
 
   miraVoiceFilesByText.set("Forty questions. Only three mistakes. I might panic a little.", ["mira-Only-three-mistakes….mp3"]);
 
-  const relicRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.08, end: 2.9, volume: 0.42, fadeOut: 900, lockMs: 1200 };
-  const softRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.45, end: 3.05, volume: 0.28, fadeOut: 950, lockMs: 950 };
+  const relicRevealCue = { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.36, fadeOut: 220, lockMs: 650 };
+  const softRevealCue = { file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.22, fadeOut: 200, lockMs: 520 };
   const gateRumbleCue = { file: "gate-open-lock.mp3", start: 0.3, end: 3.8, volume: 0.34, fadeOut: 900, lockMs: 2000 };
   const gateLockCue = { file: "gate-open-lock.mp3", start: 4.25, end: 5.45, volume: 0.34, fadeOut: 240, lockMs: 900 };
   const gateOpenCue = { file: "gate-open-lock.mp3", start: 8.7, end: 13.8, volume: 0.4, fadeOut: 1200, lockMs: 2000 };
@@ -92,7 +92,7 @@
     { file: "certificate-fanfare.mp3", start: 0, end: 2.25, volume: 0.48, delay: 1120, fadeOut: 700, lockMs: 2200 }
   ];
   const chapterUnlockCues = [
-    { file: "Relic reveal shimmer.mp3", start: 0.16, end: 2.9, volume: 0.36, fadeOut: 900, lockMs: 1400 },
+    { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.32, fadeOut: 220, lockMs: 750 },
     { file: "certificate-fanfare.mp3", start: 0.12, end: 2.1, volume: 0.3, delay: 640, fadeOut: 700, lockMs: 2000 }
   ];
   const sceneSoundCuesByText = new Map([
@@ -120,7 +120,7 @@
     ["Another lock opened.", [{ file: "gate-open-lock.mp3", start: 5.65, end: 6.85, volume: 0.34, fadeOut: 240, lockMs: 900 }]],
     ["The final lock clicked. The entire chamber filled with golden light.", [{ file: "gate-open-lock.mp3", start: 7.0, end: 8.35, volume: 0.38, fadeOut: 320, lockMs: 1100 }, softRevealCue]],
     ["The gate began to open. Stone scraped against stone. Warm light poured through the widening crack.", [gateOpenCue]],
-    ["The gate opened fully.", [{ file: "Relic reveal shimmer.mp3", start: 0.08, end: 3.1, volume: 0.4, fadeOut: 1000, lockMs: 1600 }]],
+    ["The gate opened fully.", [{ file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.34, fadeOut: 220, lockMs: 750 }]],
     ["The number cracked open with a soft golden flash. Inside it, smaller pieces appeared: 2 x 2 x 3.", [relicRevealCue]],
     ["The four relics floated behind you. The Factor Forge glowed brighter than the others.", [softRevealCue]],
     ["Something small inside it stirred. A hidden light. A sleeping lens. A new power waiting to awaken.", [softRevealCue]],
