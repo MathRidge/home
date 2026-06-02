@@ -26,17 +26,6 @@
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
-    },
-    {
-      "src": "assets/images/logo/math-ridge-logo.webp",
-      "sizes": "512x512",
-      "type": "image/webp",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
     }
   ]
 }
