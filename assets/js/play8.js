@@ -1030,17 +1030,17 @@ function showComplete(){
     ? "🎁 Score 10 reached! Certificate unlocked."
     : "🏁 Exponent shelf packing complete! Next Climb is ready.";
 
+  const masteryComplete = score >= 10;
   document.getElementById("completeMessage").textContent = `${scoreText} You used exponent copy counts to simplify the fraction multiplication.`;
-  setFeedback("✅ Stage complete. Next Climb is unlocked below.", "good");
+  setFeedback(
+    masteryComplete
+      ? "✅ Score 10 reached. Certificate unlocked."
+      : "✅ Stage complete. Next Climb is unlocked below.",
+    "good"
+  );
 
-  if(score >= 10) completePlayProgress();
+  if(masteryComplete) completePlayProgress();
   updateBoard(message);
-
-  if(shell()?.finishCorrectClimb){
-    shell().finishCorrectClimb({ message, scroll:false });
-  } else {
-    setNextClimbAvailable(true, { scroll:false });
-  }
 
   if(earnedScore){
     setTimeout(() => {
@@ -1049,7 +1049,20 @@ function showComplete(){
     }, 80);
   }
 
-  if(score >= 10 && !achievementShown) setTimeout(showAchievementPopup, 700);
+  if(masteryComplete){
+    stopStageTimer(true);
+    setNextClimbAvailable(false);
+    if(!achievementShown) setTimeout(showAchievementPopup, 700);
+    setTimeout(focusCompleteView, 100);
+    return;
+  }
+
+  if(shell()?.finishCorrectClimb){
+    shell().finishCorrectClimb({ message, scroll:false });
+  } else {
+    setNextClimbAvailable(true, { scroll:false });
+  }
+
   setTimeout(focusCompleteView, 100);
 }
 
@@ -1563,6 +1576,18 @@ function saveCertificateImage(){
   const name = document.getElementById("certName").textContent || "Math Ridge Champion";
   const stageText = document.getElementById("certStage").textContent || "";
   const dateText = document.getElementById("certDate").textContent || "";
+
+  if(shell()?.downloadOfficialCertificate){
+    shell().downloadOfficialCertificate({
+      studentName: name,
+      certificateTitle: PLAY_TITLE,
+      bodyText: "for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.",
+      dateText,
+      signature: CERT_SIGNATURE,
+      filename: "math-ridge-exponential-pattern-recognition-certificate.png"
+    });
+    return;
+  }
 
   const canvas = document.createElement("canvas");
   canvas.width = 1400;

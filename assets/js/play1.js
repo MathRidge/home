@@ -1185,6 +1185,18 @@
 		const date = byId("certDate")?.textContent || "";
 		const stageLine = byId("certStage")?.textContent || "";
 
+		if (shell()?.downloadOfficialCertificate) {
+			shell().downloadOfficialCertificate({
+				studentName: name,
+				certificateTitle: "Signed Term Structure",
+				bodyText: "for demonstrating understanding of signed terms, sign direction, and combining positive and negative values.",
+				dateText: date,
+				signature: CERT_SIGNATURE,
+				filename: "math-ridge-signed-term-structure-certificate.png"
+			});
+			return;
+		}
+
 		const canvas = document.createElement("canvas");
 		canvas.width = 1400;
 		canvas.height = 1050;

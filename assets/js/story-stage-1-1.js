@@ -164,8 +164,8 @@
     bagShy: { src: `${miraBase}mira-shy-holding-bag.webp`, character: "mira" },
     magicSatchel: { src: `${miraPngBase}mira-magic-satchel-true-alpha.png`, character: "mira" },
     surprisedStaff: { src: `${miraBase}mira-surprised-horizontal-staff.webp`, character: "mira" },
-    elder: { src: `${shellwickPngBase}Elder standing-no desk.png`, character: "elder" },
-    elderWriting: { src: `${shellwickPngBase}Elder teaching.png`, character: "elder" },
+    elder: { src: `${shellwickBase}elder-natural.webp`, character: "elder" },
+    elderWriting: { src: `${shellwickBase}elder-smile.webp`, character: "elder" },
     elderGentleNo: { src: `${shellwickPngBase}Elder amused  gentle no.png`, character: "elder" }
   };
 

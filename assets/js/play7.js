@@ -563,7 +563,12 @@
 			: "Practice stage completed. This run had a mistake, so it does not earn a score.";
 		if (round.reducedBottom === 1) scoreText += ` ${round.reducedTop}/1 can also be written as ${round.reducedTop}.`;
 		setText("completeMessage", `${scoreText} ${crossNote}`);
-		setFeedback("✅ Factor tree fraction complete. Next Climb is unlocked below.", "good");
+		setFeedback(
+			stageEligible && mistakesThisStage === 0 && score >= 9
+				? "✅ Factor tree fraction complete. Score 10 is ready for the certificate."
+				: "✅ Factor tree fraction complete. Next Climb is unlocked below.",
+			"good"
+		);
 		focusCompleteView();
 	}
 
@@ -613,17 +618,27 @@
 		} else {
 			message = "🏁 Fraction factor tree complete. This run had a mistake, so no score point is added. Next Climb is ready.";
 		}
-		if (score >= 10) completePlayProgress();
+		const masteryComplete = score >= 10;
+		if (masteryComplete) completePlayProgress();
 		updateTurtleBoard(message);
-		shell()?.finishCorrectClimb?.({ message, scroll: false });
-		focusCompleteView();
+
 		if (earnedScore) {
 			window.setTimeout(() => {
 				animateTurtleFinish();
 				popScoreChange("+1", "plus");
 			}, 120);
 		}
-		if (score >= 10 && !achievementShown) window.setTimeout(showAchievementPopup, 700);
+
+		if (masteryComplete) {
+			stopClimbTimer(true);
+			hideNextClimb();
+			focusCompleteView();
+			if (!achievementShown) window.setTimeout(showAchievementPopup, 700);
+			return;
+		}
+
+		shell()?.finishCorrectClimb?.({ message, scroll: false });
+		focusCompleteView();
 	}
 
 	function updateTurtleBoard(message) {
@@ -908,6 +923,19 @@
 		const name = byId("certName")?.textContent || "Math Ridge Champion";
 		const completedDate = byId("certDate")?.textContent || "";
 		const stageText = byId("certStage")?.textContent || "Academic Focus: Fraction Product Structure";
+
+		if (shell()?.downloadOfficialCertificate) {
+			shell().downloadOfficialCertificate({
+				studentName: name,
+				certificateTitle: PLAY_TITLE,
+				bodyText: "for demonstrating fraction product structure, reciprocal division, and careful reduction.",
+				dateText: completedDate,
+				signature: CERT_SIGNATURE,
+				filename: "math-ridge-fraction-product-structure-certificate.png"
+			});
+			return;
+		}
+
 		const canvas = document.createElement("canvas");
 		canvas.width = 1500;
 		canvas.height = 1080;

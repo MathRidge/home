@@ -757,9 +757,9 @@
 			message = "🏁 Climb finished. Final answer is correct. This run had a mistake, so no score point is added. Next Climb is ready.";
 		}
 
-		if (turtleScore >= 10) completePlayProgress();
+		const masteryComplete = turtleScore >= 10;
+		if (masteryComplete) completePlayProgress();
 		updateTurtleBoard(message);
-		shell()?.finishCorrectClimb?.({ message, scroll: true });
 
 		if (earnedScore) {
 			window.setTimeout(() => {
@@ -768,9 +768,16 @@
 			}, 120);
 		}
 
-		if (turtleScore >= 10 && !achievementShown) {
-			window.setTimeout(showAchievementPopup, 700);
+		if (masteryComplete) {
+			stopClimbTimer(true);
+			hideNextClimb();
+			if (!achievementShown) {
+				window.setTimeout(showAchievementPopup, 700);
+			}
+			return;
 		}
+
+		shell()?.finishCorrectClimb?.({ message, scroll: true });
 	}
 
 	function showClimbGate() {
@@ -1040,6 +1047,18 @@
 
 		const name = byId("certName")?.textContent || certData.studentName || "Math Ridge Champion";
 		const completedDate = byId("certDate")?.textContent || `Completed on ${certData.displayDate || ""}`;
+
+		if (shell()?.downloadOfficialCertificate) {
+			shell().downloadOfficialCertificate({
+				studentName: name,
+				certificateTitle: PLAY_TITLE,
+				bodyText: "for demonstrating understanding of repeated addition, grouping, and early distributive reasoning.",
+				dateText: completedDate,
+				signature: CERT_SIGNATURE,
+				filename: "math-ridge-distribution-grouping-foundations-certificate.png"
+			});
+			return;
+		}
 
 		const canvas = document.createElement("canvas");
 		canvas.width = 1400;

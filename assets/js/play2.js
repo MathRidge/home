@@ -1306,6 +1306,18 @@
 		const name = byId("certName")?.textContent || "Math Ridge Champion";
 		const date = byId("certDate")?.textContent || "";
 
+		if (shell?.downloadOfficialCertificate) {
+			shell.downloadOfficialCertificate({
+				studentName: name,
+				certificateTitle: "Positive and Negative Term Balance",
+				bodyText: "for demonstrating understanding of grouping positive and negative terms by sign.",
+				dateText: date,
+				signature: "Presented by Math Ridge Creator: Kuan-Yuan Huang",
+				filename: "math-ridge-positive-negative-term-balance-certificate.png"
+			});
+			return;
+		}
+
 		const canvas = document.createElement("canvas");
 		canvas.width = 1200;
 		canvas.height = 1000;

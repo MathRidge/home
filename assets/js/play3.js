@@ -1026,6 +1026,18 @@
 		const name = byId("certName")?.textContent || certData.studentName || "Math Ridge Champion";
 		const completedDate = byId("certDate")?.textContent || `Completed on ${certData.displayDate || ""}`;
 
+		if (shell()?.downloadOfficialCertificate) {
+			shell().downloadOfficialCertificate({
+				studentName: name,
+				certificateTitle: PLAY_TITLE,
+				bodyText: "for demonstrating fluency with stacked signs and parity-based sign simplification.",
+				dateText: completedDate,
+				signature: CERT_SIGNATURE,
+				filename: "math-ridge-sign-simplification-fluency-certificate.png"
+			});
+			return;
+		}
+
 		const canvas = document.createElement("canvas");
 		canvas.width = 1400;
 		canvas.height = 1050;

@@ -871,6 +871,287 @@
 		if (options.message) setStatusMessage(options.message);
 	}
 
+	function drawRoundedRect(ctx, x, y, width, height, radius) {
+		const safeRadius = Math.min(radius, width / 2, height / 2);
+		ctx.beginPath();
+		ctx.moveTo(x + safeRadius, y);
+		ctx.lineTo(x + width - safeRadius, y);
+		ctx.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+		ctx.lineTo(x + width, y + height - safeRadius);
+		ctx.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+		ctx.lineTo(x + safeRadius, y + height);
+		ctx.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+		ctx.lineTo(x, y + safeRadius);
+		ctx.quadraticCurveTo(x, y, x + safeRadius, y);
+		ctx.closePath();
+	}
+
+	function wrapCanvasLines(ctx, text, maxWidth) {
+		const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+		const lines = [];
+		let line = "";
+
+		words.forEach(word => {
+			const test = line ? `${line} ${word}` : word;
+			if (ctx.measureText(test).width > maxWidth && line) {
+				lines.push(line);
+				line = word;
+			} else {
+				line = test;
+			}
+		});
+
+		if (line) lines.push(line);
+		return lines.length ? lines : [""];
+	}
+
+	function drawCenteredCanvasText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 4) {
+		const lines = wrapCanvasLines(ctx, text, maxWidth).slice(0, maxLines);
+		lines.forEach((line, index) => ctx.fillText(line, x, y + index * lineHeight));
+		return y + Math.max(0, lines.length - 1) * lineHeight;
+	}
+
+	function drawCertificateCorner(ctx, x, y, flipX = 1, flipY = 1) {
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.scale(flipX, flipY);
+		ctx.strokeStyle = "rgba(120, 73, 27, 0.56)";
+		ctx.fillStyle = "rgba(198, 143, 55, 0.18)";
+		ctx.lineWidth = 4;
+
+		ctx.beginPath();
+		ctx.moveTo(0, 54);
+		ctx.bezierCurveTo(34, 20, 72, 16, 106, 0);
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(54, 0);
+		ctx.bezierCurveTo(20, 34, 16, 72, 0, 106);
+		ctx.stroke();
+
+		for (let i = 0; i < 3; i++) {
+			const offset = 24 + i * 26;
+			ctx.beginPath();
+			ctx.ellipse(offset, 30 + i * 10, 13, 6, -0.6, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.stroke();
+		}
+
+		ctx.beginPath();
+		ctx.arc(48, 48, 18, 0, Math.PI * 2);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.arc(48, 48, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.restore();
+	}
+
+	function drawOfficialCertificateBackground(ctx, width, height) {
+		const parchment = ctx.createLinearGradient(0, 0, 0, height);
+		parchment.addColorStop(0, "#fffaf0");
+		parchment.addColorStop(0.34, "#f8e7bd");
+		parchment.addColorStop(0.68, "#edd39b");
+		parchment.addColorStop(1, "#fff3cf");
+		ctx.fillStyle = parchment;
+		ctx.fillRect(0, 0, width, height);
+
+		ctx.save();
+		ctx.globalAlpha = 0.12;
+		for (let i = 0; i < 820; i++) {
+			const x = (i * 73) % width;
+			const y = (i * 41) % height;
+			const size = 0.8 + ((i * 17) % 9) / 10;
+			ctx.fillStyle = i % 3 === 0 ? "#7d4f1d" : "#c89637";
+			ctx.fillRect(x, y, size, size);
+		}
+		ctx.restore();
+
+		ctx.save();
+		ctx.translate(width / 2, height / 2);
+		ctx.rotate(-Math.PI / 10);
+		ctx.textAlign = "center";
+		ctx.fillStyle = "rgba(88, 55, 22, 0.035)";
+		ctx.font = "bold 112px Georgia, serif";
+		for (let y = -420; y <= 420; y += 180) {
+			ctx.fillText("MATH RIDGE", 0, y);
+		}
+		ctx.restore();
+
+		ctx.save();
+		ctx.textAlign = "center";
+		ctx.fillStyle = "rgba(88, 55, 22, 0.055)";
+		ctx.font = "bold 330px Georgia, serif";
+		ctx.fillText("MR", width / 2, height / 2 + 110);
+		ctx.restore();
+	}
+
+	function drawOfficialCertificateFrame(ctx, width, height) {
+		ctx.save();
+		drawRoundedRect(ctx, 44, 44, width - 88, height - 88, 28);
+		ctx.lineWidth = 18;
+		ctx.strokeStyle = "#c89637";
+		ctx.stroke();
+
+		drawRoundedRect(ctx, 82, 82, width - 164, height - 164, 18);
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = "#70451b";
+		ctx.stroke();
+
+		drawRoundedRect(ctx, 112, 112, width - 224, height - 224, 12);
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = "rgba(112, 69, 27, 0.44)";
+		ctx.stroke();
+
+		ctx.strokeStyle = "rgba(200, 150, 55, 0.72)";
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.moveTo(260, 126);
+		ctx.lineTo(width - 260, 126);
+		ctx.moveTo(260, height - 126);
+		ctx.lineTo(width - 260, height - 126);
+		ctx.stroke();
+
+		drawCertificateCorner(ctx, 122, 122, 1, 1);
+		drawCertificateCorner(ctx, width - 122, 122, -1, 1);
+		drawCertificateCorner(ctx, 122, height - 122, 1, -1);
+		drawCertificateCorner(ctx, width - 122, height - 122, -1, -1);
+		ctx.restore();
+	}
+
+	function drawOfficialCertificateSeal(ctx, x, y, radius) {
+		ctx.save();
+		const seal = ctx.createRadialGradient(x - radius * 0.35, y - radius * 0.35, 4, x, y, radius);
+		seal.addColorStop(0, "#fff6cf");
+		seal.addColorStop(0.46, "#f2b84b");
+		seal.addColorStop(1, "#8c551d");
+		ctx.fillStyle = seal;
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = "#70451b";
+		ctx.stroke();
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = "rgba(255, 247, 232, 0.72)";
+		ctx.beginPath();
+		ctx.arc(x, y, radius - 11, 0, Math.PI * 2);
+		ctx.stroke();
+		ctx.fillStyle = "#4d2d12";
+		ctx.font = `bold ${Math.round(radius * 0.72)}px Georgia, serif`;
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillText("MR", x, y + 1);
+		ctx.restore();
+	}
+
+	function createOfficialCertificateCanvas(options = {}) {
+		const canvas = document.createElement("canvas");
+		canvas.width = Number(options.width || 1600);
+		canvas.height = Number(options.height || 1150);
+		const ctx = canvas.getContext("2d");
+		const width = canvas.width;
+		const height = canvas.height;
+		const studentName = cleanCertificateName(options.studentName || options.name, "Math Ridge Champion");
+		const certificateTitle = String(options.certificateTitle || "Math Ridge Achievement").trim();
+		const dateText = String(options.dateText || options.date || "").trim();
+		const signature = String(options.signature || "Presented by Math Ridge Creator: Kuan-Yuan Huang").trim();
+		const bodyText = Array.isArray(options.bodyLines)
+			? options.bodyLines.join(" ")
+			: String(options.bodyText || options.bodyLines || "for demonstrating understanding, persistence, and careful mathematical reasoning.");
+
+		drawOfficialCertificateBackground(ctx, width, height);
+		drawOfficialCertificateFrame(ctx, width, height);
+		drawOfficialCertificateSeal(ctx, width / 2, 214, 56);
+
+		ctx.textAlign = "center";
+		ctx.textBaseline = "alphabetic";
+		ctx.fillStyle = "#684019";
+		ctx.font = "bold 28px Georgia, serif";
+		ctx.fillText("OFFICIAL MATH RIDGE CERTIFICATE", width / 2, 154);
+
+		ctx.fillStyle = "#7a4b00";
+		ctx.font = "bold 78px Georgia, serif";
+		ctx.fillText("Math Ridge", width / 2, 310);
+
+		ctx.fillStyle = "#24304f";
+		ctx.font = "bold 58px Georgia, serif";
+		ctx.fillText("Certificate of Achievement", width / 2, 394);
+
+		ctx.fillStyle = "#b87900";
+		ctx.font = certificateTitle.length > 36 ? "bold 42px Georgia, serif" : "bold 48px Georgia, serif";
+		const titleEnd = drawCenteredCanvasText(ctx, certificateTitle, width / 2, 462, 1080, 52, 2);
+
+		ctx.fillStyle = "#24304f";
+		ctx.font = "30px Georgia, serif";
+		ctx.fillText("This certifies that", width / 2, titleEnd + 70);
+
+		ctx.fillStyle = "#0f5a9a";
+		const nameFontSize = studentName.length > 28 ? 56 : 68;
+		ctx.font = `bold ${nameFontSize}px Georgia, serif`;
+		const nameEnd = drawCenteredCanvasText(ctx, studentName, width / 2, titleEnd + 150, 1120, nameFontSize + 10, 2);
+
+		ctx.strokeStyle = "rgba(126, 77, 26, 0.54)";
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.moveTo(width / 2 - 430, nameEnd + 24);
+		ctx.lineTo(width / 2 + 430, nameEnd + 24);
+		ctx.stroke();
+
+		ctx.fillStyle = "#24304f";
+		ctx.font = "30px Georgia, serif";
+		const bodyEnd = drawCenteredCanvasText(ctx, bodyText, width / 2, nameEnd + 86, 1080, 42, 3);
+
+		ctx.fillStyle = "#5f381c";
+		ctx.font = "bold 25px Georgia, serif";
+		const dateY = bodyEnd + 94;
+
+		ctx.fillStyle = "#24304f";
+		ctx.font = "bold 25px Georgia, serif";
+		if (dateText) ctx.fillText(dateText, width / 2, dateY);
+
+		ctx.strokeStyle = "rgba(126, 77, 26, 0.48)";
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.moveTo(width / 2 - 360, height - 188);
+		ctx.lineTo(width / 2 + 360, height - 188);
+		ctx.stroke();
+
+		ctx.fillStyle = "#5f381c";
+		ctx.font = "italic 30px Georgia, serif";
+		drawCenteredCanvasText(ctx, signature, width / 2, height - 146, 900, 34, 2);
+
+		ctx.fillStyle = "rgba(63, 42, 22, 0.76)";
+		ctx.font = "bold 18px Georgia, serif";
+		ctx.fillText("Issued by Math Ridge", width / 2, height - 82);
+
+		return canvas;
+	}
+
+	function downloadOfficialCertificate(options = {}) {
+		const filename = options.filename || "math-ridge-official-certificate.png";
+		const canvas = createOfficialCertificateCanvas(options);
+		const mimeType = options.mimeType || "image/png";
+
+		try {
+			const link = document.createElement("a");
+			link.download = filename;
+			link.href = canvas.toDataURL(mimeType, 0.96);
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+		} catch (error) {
+			const imageUrl = canvas.toDataURL("image/png");
+			const win = window.open("");
+			if (win) {
+				win.document.write(`<title>Math Ridge Certificate</title><img src="${imageUrl}" style="max-width:100%;">`);
+			} else {
+				alert("Certificate image was created, but the browser blocked the download. Please allow pop-ups or try again.");
+			}
+		}
+
+		return canvas;
+	}
+
 	document.addEventListener("DOMContentLoaded", () => {
 		updateTimerPanel();
 		ensureTopNextClimbButton();
@@ -916,7 +1197,9 @@
 		getProgressThemeNameByScore,
 		applyProgressThemeByScore,
 		reviveProgressTurtle,
-		updateShelf
+		updateShelf,
+		createOfficialCertificateCanvas,
+		downloadOfficialCertificate
 	};
 
 	window.MathRidgePlay = api;

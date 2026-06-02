@@ -12,7 +12,24 @@ const lessons = [
   { id: "2_4", section: "2-4", tag: "Exponents", title: "Exponential Count", description: "Repeated prime pieces become counted pieces.", noteFile: "note8.html", playFile: "play8.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." }
 ];
 
-const certificateList = lessons.map(({ id, section, title, playFile }) => ({ id, section, title, playFile }));
+const certificateTitles = {
+  "1_1": "Signed Term Structure",
+  "1_2": "Positive and Negative Term Balance",
+  "1_3": "Sign Simplification Fluency",
+  "1_4": "Distribution and Grouping Foundations",
+  "2_1": "Fraction Equivalence and Reduction",
+  "2_2": "Prime Factorization Fluency",
+  "2_3": "Fraction Product Structure",
+  "2_4": "Exponential Pattern Recognition"
+};
+
+const certificateList = lessons.map(({ id, section, title, playFile }) => ({
+  id,
+  section,
+  title,
+  playFile,
+  certificateTitle: certificateTitles[id] || title
+}));
 
 const stageCardThemes = {
   "1_1": "stage-1-1-trail-start",
@@ -661,18 +678,23 @@ function renderCertificateWall() {
     const earned = Boolean(cert && cert.completed);
     const name = earned ? (cert.studentName || cert.name || "Student") : "";
     const date = earned ? certificateDateText(cert) : "";
-    const actionText = earned ? "View / Download" : "Not yet obtained";
-    const statusText = earned ? "🏅 Earned" : "🔒 Locked";
+    const certificateTitle = cert?.certificateTitle || item.certificateTitle || item.title;
+    const actionText = earned ? "Official printout ready" : "Complete trail to unlock";
+    const statusText = earned ? "Earned" : "Locked";
+    const ariaLabel = earned
+      ? `View and download ${item.section} ${certificateTitle} certificate`
+      : `${item.section} ${certificateTitle} certificate locked`;
 
     return `
-      <button class="certificate-frame ${earned ? "earned" : "not-earned"}" type="button" onclick="openCertificateFrame('${item.id}')">
+      <button class="certificate-frame ${earned ? "earned" : "not-earned"}" type="button" onclick="openCertificateFrame('${item.id}')" aria-label="${escapeHTML(ariaLabel)}">
         <div class="certificate-mini">
-          <div class="mini-cert-school">Math Ridge</div>
+          <div class="mini-cert-school">Math Ridge Official Record</div>
           <div class="mini-cert-rule" aria-hidden="true"></div>
+          <div class="mini-cert-seal" aria-hidden="true"><span>MR</span></div>
           <strong>${item.section}</strong>
-          <span>${escapeHTML(item.title)}</span>
+          <span class="mini-cert-title">${escapeHTML(certificateTitle)}</span>
           <div class="cert-status">${statusText}</div>
-          ${earned ? `<div class="cert-name">${escapeHTML(name)}</div>` : ""}
+          ${earned ? `<div class="cert-name">${escapeHTML(name)}</div>` : `<div class="cert-name locked-name">Awaiting Achievement</div>`}
           ${earned ? `<div class="cert-date">${escapeHTML(date)}</div>` : ""}
           <div class="cert-date">${actionText}</div>
         </div>
