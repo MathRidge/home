@@ -22,6 +22,17 @@
 	window.MathRidgePlayConfig = config;
 	const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
 	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
+	const SOUND_BASE = "voice/sound/";
+	const sfxPresets = {
+		firstTap: { file: "first tap.mp3", volume: 0.32, maxMs: 900, fadeOut: 180 },
+		secondTap: { file: "second tap.mp3", volume: 0.34, maxMs: 900, fadeOut: 180 },
+		correct: { file: "correct.mp3", volume: 0.38, maxMs: 1300, fadeOut: 280 },
+		wrong: { file: "wrong.mp3", volume: 0.3, maxMs: 900, fadeOut: 180 },
+		relic: { file: "Relic reveal shimmer.mp3", start: 0.12, end: 1.45, volume: 0.38, fadeOut: 420 },
+		certificatePaper: { file: "certificate-paper-rustle.mp3", start: 0, end: 1.1, volume: 0.34, fadeOut: 220 },
+		certificateStamp: { file: "certificate-stamp.mp3", start: 0, end: 1.35, volume: 0.38, fadeOut: 240 },
+		certificateFanfare: { file: "certificate-fanfare.mp3", start: 0, end: 1.55, volume: 0.42, fadeOut: 500 }
+	};
 
 	const progressMap = {
 		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Signed Term Structure", playFile: "play1.html", nextId: "1_2" },
@@ -47,6 +58,109 @@
 
 	function byId(id) {
 		return document.getElementById(id);
+	}
+
+	function soundUrl(file) {
+		return `${SOUND_BASE}${encodeURIComponent(file)}`;
+	}
+
+	function normalizeSfx(cue) {
+		if (!cue) return null;
+		if (typeof cue === "string") return Object.assign({}, sfxPresets[cue] || { file: cue });
+		if (typeof cue === "object") {
+			const preset = cue.name ? sfxPresets[cue.name] || {} : {};
+			return Object.assign({}, preset, cue);
+		}
+		return null;
+	}
+
+	function stopSfxAudio(audio) {
+		if (!audio) return;
+		audio.pause();
+		audio.removeAttribute("src");
+		audio.load();
+	}
+
+	function playSfx(cueLike, options = {}) {
+		const cue = normalizeSfx(cueLike);
+		if (!cue?.file) return null;
+
+		const play = () => {
+			const audio = new Audio(soundUrl(cue.file));
+			const startAt = Math.max(0, Number(cue.start || 0));
+			const endAt = Number(cue.end);
+			const maxMs = Number(cue.maxMs);
+			const hasEnd = Number.isFinite(endAt) && endAt > startAt;
+			const durationMs = hasEnd
+				? (endAt - startAt) * 1000
+				: Number.isFinite(maxMs) && maxMs > 0
+					? maxMs
+					: 0;
+			const fadeMs = Math.max(0, Number(cue.fadeOut || 0));
+			const volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.35;
+			let fadeTimer = null;
+			let stopTimer = null;
+
+			audio.preload = "auto";
+			audio.volume = volume;
+			audio.addEventListener("ended", () => stopSfxAudio(audio), { once: true });
+			audio.addEventListener("error", () => stopSfxAudio(audio), { once: true });
+
+			const begin = () => {
+				if (startAt && audio.duration && startAt < audio.duration) {
+					try { audio.currentTime = startAt; } catch (error) {}
+				}
+
+				if (durationMs) {
+					if (fadeMs && durationMs > fadeMs + 80) {
+						window.setTimeout(() => {
+							const started = performance.now();
+							fadeTimer = window.setInterval(() => {
+								const progress = Math.min(1, (performance.now() - started) / fadeMs);
+								audio.volume = Math.max(0, volume * (1 - progress));
+								if (progress >= 1) {
+									window.clearInterval(fadeTimer);
+									fadeTimer = null;
+								}
+							}, 40);
+						}, Math.max(0, durationMs - fadeMs));
+					}
+					stopTimer = window.setTimeout(() => {
+						if (fadeTimer) window.clearInterval(fadeTimer);
+						stopSfxAudio(audio);
+					}, durationMs);
+				}
+
+				const attempt = audio.play();
+				if (attempt && typeof attempt.catch === "function") {
+					attempt.catch(() => {
+						if (fadeTimer) window.clearInterval(fadeTimer);
+						if (stopTimer) window.clearTimeout(stopTimer);
+						stopSfxAudio(audio);
+					});
+				}
+			};
+
+			if (audio.readyState >= 1) begin();
+			else {
+				audio.addEventListener("loadedmetadata", begin, { once: true });
+				audio.load();
+			}
+			return audio;
+		};
+
+		const delay = Math.max(0, Number(options.delay ?? cue.delay ?? 0));
+		if (delay) {
+			window.setTimeout(play, delay);
+			return null;
+		}
+		return play();
+	}
+
+	function playCertificateSfx() {
+		playSfx("certificatePaper");
+		playSfx("certificateStamp", { delay: 520 });
+		playSfx("certificateFanfare", { delay: 920 });
 	}
 
 	function ensureTopNextClimbButton() {
@@ -331,6 +445,7 @@
 
 	function finishCorrectClimb(options = {}) {
 		stopClimbTimer(true);
+		if (options.sound !== false) playSfx(options.sound || "correct");
 		if (options.message) setStatusMessage(options.message);
 		showNextClimbButton({ scroll: options.scroll !== false });
 		return true;
@@ -536,11 +651,13 @@
 			armedBottomControl = target;
 			target.dataset.playArmed = "true";
 			target.classList.add("is-play-armed");
+			playSfx("firstTap");
 			armedBottomControlTimer = window.setTimeout(clearArmedBottomControl, 3400);
 			return;
 		}
 
 		clearArmedBottomControl();
+		playSfx("secondTap");
 		if (isExitControl(target) && isActiveClimbRisk()) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
@@ -1131,6 +1248,7 @@
 		const filename = options.filename || "math-ridge-official-certificate.png";
 		const canvas = createOfficialCertificateCanvas(options);
 		const mimeType = options.mimeType || "image/png";
+		if (options.sound !== false) playCertificateSfx();
 
 		try {
 			const link = document.createElement("a");
@@ -1198,6 +1316,8 @@
 		applyProgressThemeByScore,
 		reviveProgressTurtle,
 		updateShelf,
+		playSfx,
+		playCertificateSfx,
 		createOfficialCertificateCanvas,
 		downloadOfficialCertificate
 	};
