@@ -10,14 +10,14 @@
   "theme_color": "#050914",
   "icons": [
     {
-      "src": "assets/images/logo/mathridge-app-icon-192.png",
-      "sizes": "192x192",
+      "src": "assets/images/logo/MathRidge_AppIcon_true_alpha.png",
+      "sizes": "1254x1254",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "assets/images/logo/mathridge-app-icon.png",
-      "sizes": "512x512",
+      "src": "assets/images/logo/MathRidge_AppIcon_true_alpha_1024.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
     },
@@ -28,9 +28,9 @@
       "purpose": "any"
     },
     {
-      "src": "assets/images/logo/mathridge-premium-favicon.ico",
-      "sizes": "48x48 64x64 128x128 256x256",
-      "type": "image/x-icon"
+      "src": "assets/images/logo/MathRidge_AppIcon_true_alpha.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
     }
   ]
 }
