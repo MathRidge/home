@@ -78,8 +78,8 @@
 
   miraVoiceFilesByText.set("Forty questions. Only three mistakes. I might panic a little.", ["mira-Only-three-mistakes….mp3"]);
 
-  const relicRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.1, end: 1.45, volume: 0.42, fadeOut: 420, lockMs: 1050 };
-  const softRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.75, end: 2.05, volume: 0.28, fadeOut: 520, lockMs: 900 };
+  const relicRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.08, end: 2.9, volume: 0.42, fadeOut: 900, lockMs: 1200 };
+  const softRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.45, end: 3.05, volume: 0.28, fadeOut: 950, lockMs: 950 };
   const gateRumbleCue = { file: "gate-open-lock.mp3", start: 0.3, end: 3.8, volume: 0.34, fadeOut: 900, lockMs: 2000 };
   const gateLockCue = { file: "gate-open-lock.mp3", start: 4.25, end: 5.45, volume: 0.34, fadeOut: 240, lockMs: 900 };
   const gateOpenCue = { file: "gate-open-lock.mp3", start: 8.7, end: 13.8, volume: 0.4, fadeOut: 1200, lockMs: 2000 };
@@ -87,13 +87,13 @@
   const chalkCueB = { file: "chuck-writing.mp3", start: 3.1, end: 5.25, volume: 0.28, fadeOut: 320, lockMs: 1200 };
   const satchelCue = { file: "satchel search.mp3", start: 1.1, end: 4.2, volume: 0.3, fadeOut: 850, lockMs: 900 };
   const certificateUnlockCues = [
-    { file: "certificate-paper-rustle.mp3", start: 0, end: 1.25, volume: 0.38, fadeOut: 220, lockMs: 700 },
-    { file: "certificate-stamp.mp3", start: 0, end: 1.35, volume: 0.42, delay: 520, fadeOut: 240, lockMs: 1400 },
-    { file: "certificate-fanfare.mp3", start: 0, end: 1.55, volume: 0.46, delay: 920, fadeOut: 500, lockMs: 2000 }
+    { file: "certificate-paper-rustle.mp3", start: 0, end: 2.2, volume: 0.4, fadeOut: 520, lockMs: 1000 },
+    { file: "certificate-stamp.mp3", start: 0, end: 2.1, volume: 0.46, delay: 620, fadeOut: 460, lockMs: 1600 },
+    { file: "certificate-fanfare.mp3", start: 0, end: 2.25, volume: 0.48, delay: 1120, fadeOut: 700, lockMs: 2200 }
   ];
   const chapterUnlockCues = [
-    { file: "Relic reveal shimmer.mp3", start: 0.18, end: 1.7, volume: 0.36, fadeOut: 560, lockMs: 1100 },
-    { file: "certificate-fanfare.mp3", start: 0.15, end: 1.45, volume: 0.28, delay: 520, fadeOut: 520, lockMs: 1700 }
+    { file: "Relic reveal shimmer.mp3", start: 0.16, end: 2.9, volume: 0.36, fadeOut: 900, lockMs: 1400 },
+    { file: "certificate-fanfare.mp3", start: 0.12, end: 2.1, volume: 0.3, delay: 640, fadeOut: 700, lockMs: 2000 }
   ];
   const sceneSoundCuesByText = new Map([
     ["The door of Elder Shellwick's cabin opened by itself. Warm lantern light spilled onto the path.", [{ file: "elder-creaking-door-open.mp3", volume: 0.4, end: 2.25, fadeOut: 520, lockMs: 900 }]],
@@ -120,15 +120,15 @@
     ["Another lock opened.", [{ file: "gate-open-lock.mp3", start: 5.65, end: 6.85, volume: 0.34, fadeOut: 240, lockMs: 900 }]],
     ["The final lock clicked. The entire chamber filled with golden light.", [{ file: "gate-open-lock.mp3", start: 7.0, end: 8.35, volume: 0.38, fadeOut: 320, lockMs: 1100 }, softRevealCue]],
     ["The gate began to open. Stone scraped against stone. Warm light poured through the widening crack.", [gateOpenCue]],
-    ["The gate opened fully.", [{ file: "Relic reveal shimmer.mp3", start: 0.1, end: 2.4, volume: 0.4, fadeOut: 900, lockMs: 1600 }]],
+    ["The gate opened fully.", [{ file: "Relic reveal shimmer.mp3", start: 0.08, end: 3.1, volume: 0.4, fadeOut: 1000, lockMs: 1600 }]],
     ["The number cracked open with a soft golden flash. Inside it, smaller pieces appeared: 2 x 2 x 3.", [relicRevealCue]],
     ["The four relics floated behind you. The Factor Forge glowed brighter than the others.", [softRevealCue]],
     ["Something small inside it stirred. A hidden light. A sleeping lens. A new power waiting to awaken.", [softRevealCue]],
     ["Root Gate Trial complete. Prime Element Vision awakens.", chapterUnlockCues],
     ["The fortieth star faded. The Root Gate remained closed.", [{ file: "wrong.mp3", volume: 0.3, lockMs: 500 }]],
     ["Somehow, Shellwick was already there. He opened the cabin door before either of you knocked. Warm light spilled out.", [{ file: "elder-creaking-door-open.mp3", volume: 0.38, end: 2.25, fadeOut: 520, lockMs: 900 }]],
-    ["Mira walked very carefully, still holding her certificate high enough to read.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 1.05, volume: 0.22, fadeOut: 260, lockMs: 620 }]],
-    ["Mira considered this. Then very carefully placed her certificate on the table.", [{ file: "certificate-paper-rustle.mp3", start: 0.1, end: 1.0, volume: 0.2, fadeOut: 240, lockMs: 620 }]],
+    ["Mira walked very carefully, still holding her certificate high enough to read.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 2.0, volume: 0.24, fadeOut: 520, lockMs: 760 }]],
+    ["Mira considered this. Then very carefully placed her certificate on the table.", [{ file: "certificate-paper-rustle.mp3", start: 0.1, end: 2.0, volume: 0.22, fadeOut: 520, lockMs: 760 }]],
     ["Mira looked relieved and immediately tucked the certificate back into her satchel.", [satchelCue]],
     ["The old case came down from the serious shelf and settled on the table.", [{ file: "gate-open-lock.mp3", start: 1.25, end: 2.5, volume: 0.18, fadeOut: 460, lockMs: 720 }]],
     ["Shellwick placed the case on the table. The lid opened by itself.", [softRevealCue]],
@@ -1014,6 +1014,27 @@
     activeSoundCues = activeSoundCues.filter(item => item !== entry);
   }
 
+  function fadeOutSoundEntry(entry, fadeMs = 240) {
+    if (!entry?.audio || fadeMs <= 0) {
+      clearSoundEntry(entry);
+      return;
+    }
+
+    (entry.timers || []).forEach(timer => window.clearTimeout(timer));
+    entry.timers = [];
+    if (entry.fadeTimer) window.clearInterval(entry.fadeTimer);
+
+    const audio = entry.audio;
+    const startVolume = Math.max(0, Number(audio.volume || 0));
+    const started = performance.now();
+
+    entry.fadeTimer = window.setInterval(() => {
+      const progress = Math.min(1, (performance.now() - started) / fadeMs);
+      audio.volume = Math.max(0, startVolume * (1 - progress));
+      if (progress >= 1) clearSoundEntry(entry);
+    }, 40);
+  }
+
   function releaseSoundAdvanceLock() {
     soundAdvanceLocked = false;
     if (soundAdvanceTimer) {
@@ -1032,9 +1053,13 @@
     soundAdvanceTimer = window.setTimeout(releaseSoundAdvanceLock, lockMs);
   }
 
-  function stopSoundCues() {
+  function stopSoundCues(options = {}) {
     releaseSoundAdvanceLock();
-    activeSoundCues.slice().forEach(clearSoundEntry);
+    const fadeMs = Math.max(0, Number(options.fadeMs || 0));
+    activeSoundCues.slice().forEach(entry => {
+      if (fadeMs > 0) fadeOutSoundEntry(entry, fadeMs);
+      else clearSoundEntry(entry);
+    });
   }
 
   function scheduleSoundCueStop(entry, cue, startAt) {
@@ -1137,7 +1162,7 @@
       const start = Math.max(0, Number(cue.start || 0));
       const end = Number(cue.end);
       const windowMs = Number.isFinite(end) && end > start ? (end - start) * 1000 : 700;
-      return Math.max(max, Math.min(900, Math.max(520, windowMs * 0.45)));
+      return Math.max(max, Math.min(1600, Math.max(650, windowMs * 0.55)));
     }, 0);
   }
 
@@ -1288,7 +1313,7 @@
 
   function renderReward(kind) {
     stopVoice();
-    stopSoundCues();
+    stopSoundCues({ fadeMs: 280 });
     if (kind === "pass") playSoundCues(certificateUnlockCues);
     if (kind === "chapter2") playSoundCues(chapterUnlockCues);
     const content = rewardContent(kind);
@@ -1384,7 +1409,7 @@
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
     const voiceFiles = frameVoiceFiles(frame);
     const soundCues = frameSoundCues(frame);
-    stopSoundCues();
+    stopSoundCues({ fadeMs: 280 });
     clearInteraction();
     rewardPanel?.classList.add("hidden");
     storyVn?.classList.toggle("is-board-review", boardReview);

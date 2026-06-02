@@ -24,14 +24,14 @@
 	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 	const SOUND_BASE = "voice/sound/";
 	const sfxPresets = {
-		firstTap: { file: "first tap.mp3", volume: 0.32, maxMs: 900, fadeOut: 180 },
-		secondTap: { file: "second tap.mp3", volume: 0.34, maxMs: 900, fadeOut: 180 },
-		correct: { file: "correct.mp3", volume: 0.38, maxMs: 1300, fadeOut: 280 },
+		firstTap: { file: "first tap.mp3", volume: 0.55, maxMs: 1200, fadeOut: 240 },
+		secondTap: { file: "second tap.mp3", volume: 0.58, maxMs: 1200, fadeOut: 240 },
+		correct: { file: "correct.mp3", volume: 0.44, maxMs: 1500, fadeOut: 320 },
 		wrong: { file: "wrong.mp3", volume: 0.3, maxMs: 900, fadeOut: 180 },
-		relic: { file: "Relic reveal shimmer.mp3", start: 0.12, end: 1.45, volume: 0.38, fadeOut: 420 },
-		certificatePaper: { file: "certificate-paper-rustle.mp3", start: 0, end: 1.1, volume: 0.34, fadeOut: 220 },
-		certificateStamp: { file: "certificate-stamp.mp3", start: 0, end: 1.35, volume: 0.38, fadeOut: 240 },
-		certificateFanfare: { file: "certificate-fanfare.mp3", start: 0, end: 1.55, volume: 0.42, fadeOut: 500 }
+		relic: { file: "Relic reveal shimmer.mp3", start: 0.08, end: 2.9, volume: 0.4, fadeOut: 900 },
+		certificatePaper: { file: "certificate-paper-rustle.mp3", start: 0, end: 2.2, volume: 0.42, fadeOut: 520 },
+		certificateStamp: { file: "certificate-stamp.mp3", start: 0, end: 2.1, volume: 0.48, fadeOut: 460 },
+		certificateFanfare: { file: "certificate-fanfare.mp3", start: 0, end: 2.25, volume: 0.48, fadeOut: 700 }
 	};
 
 	const progressMap = {
@@ -159,8 +159,8 @@
 
 	function playCertificateSfx() {
 		playSfx("certificatePaper");
-		playSfx("certificateStamp", { delay: 520 });
-		playSfx("certificateFanfare", { delay: 920 });
+		playSfx("certificateStamp", { delay: 620 });
+		playSfx("certificateFanfare", { delay: 1120 });
 	}
 
 	function ensureTopNextClimbButton() {

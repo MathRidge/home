@@ -1307,6 +1307,7 @@ function selectStageCard(card) {
   currentSelectedStageCard = card;
   card.classList.add("is-stage-selected", "is-touch-preview", "is-pressed");
   card.setAttribute("data-stage-selected", "true");
+  mobileConfirm()?.play?.("firstTap");
 
   scheduleStageShelfClose(card);
 }
@@ -1339,6 +1340,7 @@ function requireIndexMobileConfirm(event, target, options = {}) {
   target.classList.add("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
   target.setAttribute("data-mobile-confirm-ready", "true");
   target.setAttribute("data-touch-preview-active", "true");
+  helper?.play?.("firstTap");
   return true;
 }
 
@@ -1356,6 +1358,7 @@ function activateConfirmedIndexTarget(target) {
   const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
   const showCabinPanelMatch = inlineAction.match(/showCabinPanel\('([^']+)'\)/);
 
+  mobileConfirm()?.play?.("secondTap");
   disarmIndexConfirmTarget(target);
 
   if (modalActionMap.has(target)) {

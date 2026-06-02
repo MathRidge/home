@@ -10,6 +10,11 @@
   const MOBILE_CONFIRM_QUERY = "(max-width: 760px)";
   const MOBILE_CONFIRM_DURATION = 5600;
   const MOBILE_CONFIRM_NOTE = "Ridge controls use two taps: first to arm, second to enter.";
+  const SHELL_SOUND_BASE = "voice/sound/";
+  const shellSfxPresets = {
+    firstTap: { file: "first tap.mp3", volume: 0.55, maxMs: 1200, fadeOut: 240 },
+    secondTap: { file: "second tap.mp3", volume: 0.58, maxMs: 1200, fadeOut: 240 }
+  };
 
   let mobileConfirmTarget = null;
   let mobileConfirmTimer = null;
@@ -25,6 +30,64 @@
 
   function isMobileConfirmMode() {
     return matchesQuery(MOBILE_CONFIRM_QUERY);
+  }
+
+  function shellSoundUrl(file) {
+    return `${SHELL_SOUND_BASE}${encodeURIComponent(file)}`;
+  }
+
+  function stopShellSfxAudio(audio) {
+    if (!audio) return;
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+  }
+
+  function playShellSfx(name) {
+    const cue = shellSfxPresets[name];
+    if (!cue?.file || typeof Audio !== "function") return null;
+
+    const audio = new Audio(shellSoundUrl(cue.file));
+    const durationMs = Math.max(0, Number(cue.maxMs || 0));
+    const fadeMs = Math.max(0, Number(cue.fadeOut || 0));
+    const volume = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
+    let fadeTimer = null;
+    let stopTimer = null;
+
+    audio.preload = "auto";
+    audio.volume = volume;
+    audio.addEventListener("ended", () => stopShellSfxAudio(audio), { once: true });
+    audio.addEventListener("error", () => stopShellSfxAudio(audio), { once: true });
+
+    if (durationMs) {
+      if (fadeMs && durationMs > fadeMs + 80) {
+        window.setTimeout(() => {
+          const started = performance.now();
+          fadeTimer = window.setInterval(() => {
+            const progress = Math.min(1, (performance.now() - started) / fadeMs);
+            audio.volume = Math.max(0, volume * (1 - progress));
+            if (progress >= 1) {
+              window.clearInterval(fadeTimer);
+              fadeTimer = null;
+            }
+          }, 40);
+        }, Math.max(0, durationMs - fadeMs));
+      }
+      stopTimer = window.setTimeout(() => {
+        if (fadeTimer) window.clearInterval(fadeTimer);
+        stopShellSfxAudio(audio);
+      }, durationMs);
+    }
+
+    const attempt = audio.play();
+    if (attempt && typeof attempt.catch === "function") {
+      attempt.catch(() => {
+        if (fadeTimer) window.clearInterval(fadeTimer);
+        if (stopTimer) window.clearTimeout(stopTimer);
+        stopShellSfxAudio(audio);
+      });
+    }
+    return audio;
   }
 
   function getMenu() {
@@ -78,6 +141,7 @@
     if (!isMobileConfirmMode() || !target || isConfirmDisabled(target)) return false;
 
     if (target.dataset.mobileConfirmReady === "true") {
+      playShellSfx("secondTap");
       clearMobileConfirm(target);
       target.classList.remove("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
       target.removeAttribute("data-touch-preview-active");
@@ -92,6 +156,7 @@
     }
 
     markMobileConfirm(target, options);
+    playShellSfx("firstTap");
     return true;
   }
 
@@ -112,6 +177,7 @@
     const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
     const indexSectionMatch = inlineAction.match(/goToIndexSection\('([^']+)'\)/);
 
+    playShellSfx("secondTap");
     disarmConfirmedTarget(target);
 
     if (showSectionMatch && typeof window.showSection === "function") {
@@ -234,6 +300,7 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       markMobileConfirm(target, { duration: 1200 });
+      playShellSfx("firstTap");
       return;
     }
 
@@ -287,7 +354,8 @@
     isMode: isMobileConfirmMode,
     require: requireMobileConfirm,
     mark: markMobileConfirm,
-    clear: clearMobileConfirm
+    clear: clearMobileConfirm,
+    play: playShellSfx
   };
 
   if (document.readyState === "loading") {

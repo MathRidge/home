@@ -245,8 +245,8 @@
   elderVoiceFilesByText.set("And following glowing insects.", ["elder-And-following-glowing-insects.mp3"]);
   elderVoiceFilesByText.set("And walking into storage closets while looking for doors.", ["elder-And-[audience-laughing]walking-into-storage-clos.mp3"]);
 
-  const relicRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.12, end: 1.45, volume: 0.42, fadeOut: 420, lockMs: 1050 };
-  const softRelicCue = { file: "Relic reveal shimmer.mp3", start: 0.65, end: 1.9, volume: 0.28, fadeOut: 520, lockMs: 850 };
+  const relicRevealCue = { file: "Relic reveal shimmer.mp3", start: 0.08, end: 2.75, volume: 0.42, fadeOut: 850, lockMs: 1200 };
+  const softRelicCue = { file: "Relic reveal shimmer.mp3", start: 0.45, end: 2.9, volume: 0.28, fadeOut: 900, lockMs: 950 };
   const chalkCueA = { file: "chuck-writing.mp3", start: 0.45, end: 2.3, volume: 0.34, fadeOut: 260, lockMs: 1200 };
   const chalkCueB = { file: "chuck-writing.mp3", start: 3.2, end: 5.1, volume: 0.3, fadeOut: 260, lockMs: 1200 };
   const chalkCueC = { file: "chuck-writing.mp3", start: 6.35, end: 8.35, volume: 0.32, fadeOut: 300, lockMs: 1200 };
@@ -254,18 +254,18 @@
   const satchelCueB = { file: "satchel search.mp3", start: 2.7, end: 4.6, volume: 0.32, fadeOut: 520 };
   const satchelCueC = { file: "satchel search.mp3", start: 5.0, end: 8.15, volume: 0.34, fadeOut: 760 };
   const manualRewardCues = [
-    { file: "certificate-paper-rustle.mp3", start: 0, end: 1.1, volume: 0.36, fadeOut: 240, lockMs: 800 },
-    { file: "Relic reveal shimmer.mp3", start: 0.22, end: 1.62, volume: 0.36, delay: 180, fadeOut: 520, lockMs: 1200 }
+    { file: "certificate-paper-rustle.mp3", start: 0, end: 2.15, volume: 0.38, fadeOut: 520, lockMs: 1000 },
+    { file: "Relic reveal shimmer.mp3", start: 0.16, end: 2.9, volume: 0.36, delay: 180, fadeOut: 900, lockMs: 1400 }
   ];
 
   const sceneSoundCuesByText = new Map([
-    ["The door of Mira's cabin creaked open. Outside, the mountain waited.", [{ file: "cabin-door-creaking-open.mp3", volume: 0.42, end: 2.2, fadeOut: 520 }]],
-    ["A small butterfly-shaped symbol floated past her.", [{ file: "Relic reveal shimmer.mp3", start: 1.0, end: 2.18, volume: 0.2, fadeOut: 520 }]],
-    ["She marched forward with serious confidence.", [{ file: "walk-steps.mp3", start: 0.15, end: 1.65, volume: 0.24, fadeOut: 360 }]],
-    ["Then quietly turned around and walked the other direction.", [{ file: "walk-steps.mp3", start: 1.75, end: 3.2, volume: 0.22, fadeOut: 420 }]],
-    ["Mira walked beside you, still hugging her little satchel close.", [{ file: "walk-steps.mp3", start: 0.2, end: 1.55, volume: 0.18, fadeOut: 380 }]],
+    ["The door of Mira's cabin creaked open. Outside, the mountain waited.", [{ file: "cabin-door-creaking-open.mp3", volume: 0.42, end: 3.0, fadeOut: 820 }]],
+    ["A small butterfly-shaped symbol floated past her.", [{ file: "Relic reveal shimmer.mp3", start: 0.65, end: 3.0, volume: 0.2, fadeOut: 900 }]],
+    ["She marched forward with serious confidence.", [{ file: "walk-steps.mp3", start: 0.1, end: 5.8, volume: 0.24, fadeOut: 900, lockMs: 900 }]],
+    ["Then quietly turned around and walked the other direction.", [{ file: "walk-steps.mp3", start: 1.35, end: 6.4, volume: 0.22, fadeOut: 900, lockMs: 900 }]],
+    ["Mira walked beside you, still hugging her little satchel close.", [{ file: "walk-steps.mp3", start: 0.2, end: 5.2, volume: 0.18, fadeOut: 900, lockMs: 800 }]],
     ["Then her stomach made a tiny sound. Grrrumble.", [{ file: "tummy-growling.mp3", volume: 0.5, end: 2.25, fadeOut: 260 }]],
-    ["You kept walking. But one question would not leave your mind.", [{ file: "walk-steps.mp3", start: 0.35, end: 2.0, volume: 0.16, fadeOut: 500 }]],
+    ["You kept walking. But one question would not leave your mind.", [{ file: "walk-steps.mp3", start: 0.35, end: 5.65, volume: 0.16, fadeOut: 1000, lockMs: 800 }]],
     ["Mira opened her satchel. It looked far too small to hold anything important.", [satchelCueA]],
     ["Mira opened her emergency satchel. Her arm went in farther than it should have.", [satchelCueB]],
     ["She pulled out a wooden spoon.", [{ file: "satchel search.mp3", start: 4.75, end: 5.55, volume: 0.24, fadeOut: 220 }]],
@@ -274,8 +274,8 @@
     ["You raised an eyebrow. Mira quickly shoved it back in.", [{ file: "satchel search.mp3", start: 8.3, end: 9.55, volume: 0.24, fadeOut: 420 }]],
     ["She dug deeper. A glowing pebble rolled out. Then a folded map. Then three pencils. Then a half-eaten cracker.", [satchelCueC]],
     ["She pulled out a book. The cover was scratched, bent, and painfully familiar.", [{ file: "satchel search.mp3", start: 9.8, end: 11.35, volume: 0.28, fadeOut: 420 }]],
-    ["Before you could ask what that meant, Mira hurried down a narrow side path.", [{ file: "walk-steps.mp3", start: 2.0, end: 3.35, volume: 0.2, fadeOut: 380 }]],
-    ["She walked confidently toward a pumpkin cart.", [{ file: "walk-steps.mp3", start: 3.55, end: 5.0, volume: 0.22, fadeOut: 420 }]],
+    ["Before you could ask what that meant, Mira hurried down a narrow side path.", [{ file: "walk-steps.mp3", start: 2.0, end: 6.6, volume: 0.2, fadeOut: 900, lockMs: 800 }]],
+    ["She walked confidently toward a pumpkin cart.", [{ file: "walk-steps.mp3", start: 3.0, end: 7.2, volume: 0.22, fadeOut: 900, lockMs: 800 }]],
     ["Mira knocked twice. Then once more.", [{ file: "freesound_community-wood-door-knock-106669.mp3", start: 0.05, end: 1.85, volume: 0.44, fadeOut: 260 }]],
     ["The door opened by itself. Inside, the cabin smelled like tea, parchment, and old rain.", [{ file: "elder-creaking-door-open.mp3", volume: 0.42, end: 2.2, fadeOut: 520 }]],
     ["He tapped the table with one claw. Four small lights appeared in the air.", [softRelicCue]],
@@ -285,9 +285,9 @@
     ["The second became a compass with two glowing needles, one positive and one negative. Relic 1-2: The Sign Compass", [relicRevealCue]],
     ["The third became a crystal prism that split stacked signs into one true direction. Relic 1-3: The Parity Prism", [relicRevealCue]],
     ["The fourth became a small forge that gathered equal pieces into faster groups. Relic 1-4: The Factor Forge", [relicRevealCue]],
-    ["The lights faded. Mira clenched her fists.", [{ file: "Relic reveal shimmer.mp3", start: 1.65, end: 2.7, volume: 0.2, fadeOut: 720 }]],
+    ["The lights faded. Mira clenched her fists.", [{ file: "Relic reveal shimmer.mp3", start: 1.2, end: 3.35, volume: 0.2, fadeOut: 1100 }]],
     ["He handed Mira a thin booklet. The cover read: Term Manual: The Bigger Sign Rule.", manualRewardCues],
-    ["Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 1.05, volume: 0.22, fadeOut: 300 }]],
+    ["Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 2.05, volume: 0.24, fadeOut: 520 }]],
     ["He took a piece of chalk and wrote: -8 - 3", [chalkCueA]],
     ["He wrote beneath it: -8 + (-3)", [chalkCueB]],
     ["He wrote: -11", [chalkCueC]],
@@ -888,6 +888,27 @@
     activeSoundCues = activeSoundCues.filter(item => item !== entry);
   }
 
+  function fadeOutSoundEntry(entry, fadeMs = 240) {
+    if (!entry?.audio || fadeMs <= 0) {
+      clearSoundEntry(entry);
+      return;
+    }
+
+    (entry.timers || []).forEach(timer => window.clearTimeout(timer));
+    entry.timers = [];
+    if (entry.fadeTimer) window.clearInterval(entry.fadeTimer);
+
+    const audio = entry.audio;
+    const startVolume = Math.max(0, Number(audio.volume || 0));
+    const started = performance.now();
+
+    entry.fadeTimer = window.setInterval(() => {
+      const progress = Math.min(1, (performance.now() - started) / fadeMs);
+      audio.volume = Math.max(0, startVolume * (1 - progress));
+      if (progress >= 1) clearSoundEntry(entry);
+    }, 40);
+  }
+
   function releaseSoundAdvanceLock() {
     soundAdvanceLocked = false;
     if (soundAdvanceTimer) {
@@ -906,9 +927,13 @@
     soundAdvanceTimer = window.setTimeout(releaseSoundAdvanceLock, lockMs);
   }
 
-  function stopSoundCues() {
+  function stopSoundCues(options = {}) {
     releaseSoundAdvanceLock();
-    activeSoundCues.slice().forEach(clearSoundEntry);
+    const fadeMs = Math.max(0, Number(options.fadeMs || 0));
+    activeSoundCues.slice().forEach(entry => {
+      if (fadeMs > 0) fadeOutSoundEntry(entry, fadeMs);
+      else clearSoundEntry(entry);
+    });
   }
 
   function scheduleSoundCueStop(entry, cue, startAt) {
@@ -1015,7 +1040,7 @@
       const start = Math.max(0, Number(cue.start || 0));
       const end = Number(cue.end);
       const windowMs = Number.isFinite(end) && end > start ? (end - start) * 1000 : 700;
-      return Math.max(max, Math.min(900, Math.max(520, windowMs * 0.45)));
+      return Math.max(max, Math.min(1600, Math.max(650, windowMs * 0.55)));
     }, 0);
   }
 
@@ -1124,7 +1149,7 @@
 
     audio.preload = "auto";
     audio.volume = Number.isFinite(config.volume) ? config.volume : 0.1;
-    audio.loop = false;
+    audio.loop = config.loop !== false;
 
     const begin = () => {
       if (activeAmbient !== audio) return;
@@ -1143,7 +1168,7 @@
         });
       }
 
-      if (config.maxMs) {
+      if (config.maxMs && !audio.loop) {
         ambientStopTimer = window.setTimeout(() => {
           if (activeAmbient === audio) stopAmbient();
         }, config.maxMs);
@@ -1595,7 +1620,7 @@
   }
 
   function renderReward() {
-    stopSoundCues();
+    stopSoundCues({ fadeMs: 260 });
     playSoundCues(manualRewardCues);
     rewardPanel.classList.remove("hidden");
     nextBtn.disabled = true;
@@ -1613,7 +1638,7 @@
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
     const voiceFiles = frameVoiceFiles(frame);
     const soundCues = frameSoundCues(frame);
-    stopSoundCues();
+    stopSoundCues({ fadeMs: 260 });
     clearInteraction();
     storyVn?.classList.toggle("is-board-review", boardReview);
 
