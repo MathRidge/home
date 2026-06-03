@@ -8,11 +8,40 @@
     ["mira-apology", "mira-im-sorry-i-think-i-brought-you-here.mp3"]
   ]);
   const playedVoiceCues = new Set();
+  const voiceAudioCache = new Map();
   let activeVoice = null;
   let pendingVoiceCue = null;
 
   function voiceUrl(file) {
     return `${VOICE_BASE}${encodeURIComponent(file)}`;
+  }
+
+  function prepareVoiceFile(file) {
+    if (!file || typeof Audio !== "function") return null;
+    if (voiceAudioCache.has(file)) return voiceAudioCache.get(file);
+
+    const audio = new Audio(voiceUrl(file));
+    audio.preload = "auto";
+    audio.volume = 0.95;
+    try { audio.load(); } catch (error) {}
+    voiceAudioCache.set(file, audio);
+    return audio;
+  }
+
+  function prepareVoiceCues() {
+    voiceCues.forEach(file => prepareVoiceFile(file));
+  }
+
+  function createVoiceAudio(file) {
+    const prepared = prepareVoiceFile(file);
+    const audio = prepared && typeof prepared.cloneNode === "function"
+      ? prepared.cloneNode(true)
+      : new Audio(voiceUrl(file));
+
+    audio.preload = "auto";
+    audio.volume = 0.95;
+    try { audio.currentTime = 0; } catch (error) {}
+    return audio;
   }
 
   function stopVoice() {
@@ -28,7 +57,7 @@
     if (pendingVoiceCue?.cue === cue) return;
 
     stopVoice();
-    const audio = new Audio(voiceUrl(file));
+    const audio = createVoiceAudio(file);
     activeVoice = audio;
     audio.preload = "auto";
     audio.volume = 0.95;
@@ -50,6 +79,7 @@
   }
 
   function retryPendingVoiceCue() {
+    prepareVoiceCues();
     if (!pendingVoiceCue) return;
     const { cue, file } = pendingVoiceCue;
     pendingVoiceCue = null;
@@ -106,6 +136,7 @@
   window.addEventListener("keydown", retryPendingVoiceCue);
   window.addEventListener("pagehide", stopVoice);
   document.addEventListener("DOMContentLoaded", () => {
+    prepareVoiceCues();
     markImagesLoaded();
     updateProgress();
   });
