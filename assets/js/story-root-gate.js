@@ -286,10 +286,13 @@
   let isTyping = false;
   let activeVoice = null;
   let activeSoundCues = [];
+  const preparedVoiceAudio = new Map();
+  const preparedSoundAudio = new Map();
   let voiceToken = 0;
   let voiceAdvanceLocked = false;
   let soundAdvanceLocked = false;
   let soundAdvanceTimer = null;
+  const PRELOAD_AHEAD_FRAMES = 4;
 
   function readProfile() {
     try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}"); }
@@ -997,9 +1000,53 @@
     return `${source.base}${encodeURIComponent(source.file)}`;
   }
 
+  function prepareAudioUrl(url, cache, volume = 0.9) {
+    if (!url || !cache || cache.has(url) || typeof Audio !== "function") return cache?.get(url) || null;
+
+    const audio = new Audio(url);
+    audio.preload = "auto";
+    audio.volume = volume;
+    try { audio.load(); } catch (error) {}
+    cache.set(url, audio);
+    return audio;
+  }
+
+  function createPreparedAudio(url, cache, volume = 0.9) {
+    const prepared = prepareAudioUrl(url, cache, volume);
+    const audio = prepared && typeof prepared.cloneNode === "function"
+      ? prepared.cloneNode(true)
+      : new Audio(url);
+
+    audio.preload = "auto";
+    audio.volume = volume;
+    try { audio.currentTime = 0; } catch (error) {}
+    return audio;
+  }
+
+  function prepareVoiceSource(source) {
+    if (!source || source.pause) return;
+    prepareAudioUrl(voiceUrl(source), preparedVoiceAudio, 0.95);
+  }
+
+  function createVoiceAudio(source) {
+    return createPreparedAudio(voiceUrl(source), preparedVoiceAudio, 0.95);
+  }
+
   function soundCueUrl(source) {
     const cue = normalizeSoundCue(source);
     return cue ? `${cue.base}${encodeURIComponent(cue.file)}` : "";
+  }
+
+  function prepareSoundSource(source) {
+    const cue = normalizeSoundCue(source);
+    if (!cue?.file) return;
+    const volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
+    prepareAudioUrl(soundCueUrl(cue), preparedSoundAudio, volume);
+  }
+
+  function createSoundAudio(cue) {
+    const volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
+    return createPreparedAudio(soundCueUrl(cue), preparedSoundAudio, volume);
   }
 
   function clearSoundEntry(entry) {
@@ -1105,7 +1152,7 @@
     const start = () => {
       const url = soundCueUrl(cue);
       if (!url) return;
-      const audio = new Audio(url);
+      const audio = createSoundAudio(cue);
       const startAt = Math.max(0, Number(cue.start || 0));
       entry.audio = audio;
       audio.preload = "auto";
@@ -1151,6 +1198,16 @@
     if (Array.isArray(frame?.sfx)) cues.push(...frame.sfx);
     else if (frame?.sfx) cues.push(frame.sfx);
     return cues;
+  }
+
+  function prepareStoryAudio(startIndex = currentIndex, ahead = PRELOAD_AHEAD_FRAMES) {
+    const from = Math.max(0, Number(startIndex) || 0);
+    const to = Math.min(frames.length - 1, from + Math.max(0, Number(ahead) || 0));
+    for (let index = from; index <= to; index += 1) {
+      const frame = frames[index];
+      frameVoiceFiles(frame).forEach(prepareVoiceSource);
+      frameSoundCues(frame).forEach(prepareSoundSource);
+    }
   }
 
   function soundCueLockDuration(cues, hasVoice = false) {
@@ -1205,7 +1262,7 @@
         return;
       }
 
-      const audio = new Audio(voiceUrl(source));
+      const audio = createVoiceAudio(source);
       activeVoice = audio;
       audio.preload = "auto";
       audio.volume = 0.95;
@@ -1409,6 +1466,7 @@
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
     const voiceFiles = frameVoiceFiles(frame);
     const soundCues = frameSoundCues(frame);
+    prepareStoryAudio(currentIndex);
     stopSoundCues({ fadeMs: 280 });
     clearInteraction();
     rewardPanel?.classList.add("hidden");
@@ -1502,6 +1560,7 @@
   document.addEventListener("gesturechange", preventSafariGesture, { passive: false });
   document.addEventListener("gestureend", preventSafariGesture, { passive: false });
 
+  prepareStoryAudio(currentIndex, 6);
   if (shouldShowIntroShortcut()) renderIntroShortcut();
   else renderFrame();
 })();
