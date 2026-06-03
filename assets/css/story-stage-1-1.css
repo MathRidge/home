@@ -136,7 +136,19 @@ a {
   text-overflow: ellipsis;
 }
 
+.story-autoplay-toggle {
+  font: inherit;
+}
+
+.story-autoplay-toggle[aria-pressed="true"] {
+  border-color: rgba(255, 231, 168, 0.82);
+  background: linear-gradient(135deg, rgba(255, 216, 126, 0.92), rgba(90, 215, 178, 0.74));
+  color: #07111a;
+  box-shadow: 0 0 0 1px rgba(255, 247, 232, 0.22), 0 10px 24px rgba(90, 215, 178, 0.22);
+}
+
 .story-topbar a,
+.story-autoplay-toggle,
 .dialogue-actions button,
 .name-row button,
 .reward-actions a,
@@ -156,6 +168,8 @@ a {
 
 .story-topbar a:hover,
 .story-topbar a:focus-visible,
+.story-autoplay-toggle:hover,
+.story-autoplay-toggle:focus-visible,
 .dialogue-actions button:hover,
 .dialogue-actions button:focus-visible,
 .choice-row button:hover,

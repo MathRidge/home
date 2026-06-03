@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const TIME_LIMIT_SECONDS = 10 * 60;
+  const TIME_LIMIT_SECONDS = 15 * 60;
   const TOTAL_QUESTIONS = 40;
   const PASSING_CORRECT = 37;
   const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";

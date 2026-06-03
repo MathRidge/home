@@ -485,6 +485,24 @@ h1 {
 	margin-bottom: 18px;
 }
 
+.stage-clarity-note {
+	display: grid;
+	gap: 6px;
+	margin: 14px auto 18px;
+	padding: 12px 14px;
+	border-radius: 14px;
+	border: 1px solid rgba(242,184,75,0.34);
+	background: rgba(255,247,232,0.08);
+	color: rgba(255,247,232,0.9);
+	text-align: left;
+	font-weight: 800;
+	line-height: 1.38;
+}
+
+.stage-clarity-note strong {
+	color: var(--mr-gold);
+}
+
 button,
 .trail-button,
 .primary-action,
@@ -860,6 +878,15 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 	border: 1px solid rgba(242,184,75,0.36);
 	font-weight: 900;
 	color: var(--mr-gold-soft);
+}
+
+.unlock-note .relic-clarity-note {
+	display: block;
+	margin-top: 7px;
+	color: rgba(255,247,232,0.86);
+	font-size: 0.92rem;
+	line-height: 1.38;
+	font-weight: 800;
 }
 
 .trail-complete-actions,

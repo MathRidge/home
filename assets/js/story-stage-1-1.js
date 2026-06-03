@@ -13,6 +13,7 @@
   const miraVoiceBase = "voice/Mira/";
   const elderVoiceBase = "voice/elder/";
   const soundBase = "voice/sound/";
+  const AUTO_PLAY_DELAY_MS = 2500;
   const relicOrder = ["term", "sign", "parity", "factor"];
   const relicImageSources = {
     term: "assets/images/relic/term_stone.png",
@@ -653,6 +654,8 @@
   let activeSoundCues = [];
   let voiceToken = 0;
   let voiceAdvanceLocked = false;
+  let voicePreloadToken = 0;
+  const voicePreloadCache = new Map();
   let soundAdvanceLocked = false;
   let soundAdvanceTimer = null;
   let activeAmbient = null;
@@ -678,6 +681,7 @@
   const dialogueText = document.getElementById("dialogueText");
   const backBtn = document.getElementById("backBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const autoPlayBtn = document.getElementById("autoPlayBtn");
   const progressBar = document.getElementById("storyProgressBar");
   const interactionPanel = document.getElementById("interactionPanel");
   const nameForm = document.getElementById("nameForm");
@@ -690,6 +694,8 @@
   let relicImagesReady = false;
   let blackboardStateKey = "";
   let orientationLockAttempted = false;
+  let autoPlayEnabled = false;
+  let autoPlayTimer = null;
   const actors = {
     mira: { stage: miraStage, img: miraSprite, lastKey: "", loadToken: 0 },
     elder: { stage: elderStage, img: elderSprite, lastKey: "", loadToken: 0 }
@@ -871,6 +877,58 @@
     return `${item.base}${encodeURIComponent(item.file)}`;
   }
 
+  function releaseVoiceAdvanceLock(token = voicePreloadToken) {
+    if (token !== voicePreloadToken) return;
+    voiceAdvanceLocked = false;
+    document.documentElement.classList.remove("voice-advance-locked");
+    scheduleAutoPlay();
+  }
+
+  function preloadVoiceSource(source) {
+    if (source?.pause) return Promise.resolve();
+    const url = voiceUrl(source);
+    const cached = voicePreloadCache.get(url);
+    if (cached) return cached.promise;
+
+    const audio = new Audio(url);
+    audio.preload = "auto";
+
+    const promise = new Promise(resolve => {
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
+        audio.removeEventListener("canplaythrough", done);
+        audio.removeEventListener("loadeddata", done);
+        audio.removeEventListener("error", done);
+        resolve();
+      };
+      const timer = window.setTimeout(done, 1800);
+      audio.addEventListener("canplaythrough", done, { once: true });
+      audio.addEventListener("loadeddata", done, { once: true });
+      audio.addEventListener("error", done, { once: true });
+      audio.load();
+    });
+
+    voicePreloadCache.set(url, { audio, promise });
+    return promise;
+  }
+
+  function preloadUpcomingVoice(index) {
+    releaseVoiceAdvanceLock();
+    voicePreloadToken += 1;
+    const token = voicePreloadToken;
+
+    const nextVoiceFiles = frameVoiceFiles(frames[index + 1]);
+    if (!nextVoiceFiles.length) return;
+
+    voiceAdvanceLocked = true;
+    document.documentElement.classList.add("voice-advance-locked");
+    Promise.all(nextVoiceFiles.map(preloadVoiceSource))
+      .finally(() => releaseVoiceAdvanceLock(token));
+  }
+
   function soundCueUrl(source) {
     const cue = normalizeSoundCue(source);
     return cue ? `${cue.base}${encodeURIComponent(cue.file)}` : "";
@@ -916,6 +974,7 @@
       soundAdvanceTimer = null;
     }
     document.documentElement.classList.remove("sound-advance-locked");
+    scheduleAutoPlay();
   }
 
   function setSoundAdvanceLock(durationMs = 0) {
@@ -1046,8 +1105,6 @@
 
   function stopVoice() {
     voiceToken += 1;
-    voiceAdvanceLocked = false;
-    document.documentElement.classList.remove("voice-advance-locked");
     if (!activeVoice) return;
     activeVoice.pause();
     activeVoice.removeAttribute("src");
@@ -1055,25 +1112,16 @@
     activeVoice = null;
   }
 
-  function playVoiceQueue(files, lockAdvance = false) {
+  function playVoiceQueue(files) {
     stopVoice();
     if (!files.length) return;
 
     const token = voiceToken;
     const queue = files.slice();
-    voiceAdvanceLocked = Boolean(lockAdvance);
-    document.documentElement.classList.toggle("voice-advance-locked", voiceAdvanceLocked);
-
-    const releaseAdvanceLock = () => {
-      if (token !== voiceToken) return;
-      voiceAdvanceLocked = false;
-      document.documentElement.classList.remove("voice-advance-locked");
-    };
 
     const playNext = () => {
       if (token !== voiceToken || !queue.length) {
         activeVoice = null;
-        releaseAdvanceLock();
         return;
       }
 
@@ -1095,7 +1143,6 @@
         attempt.catch(() => {
           if (token === voiceToken) {
             activeVoice = null;
-            releaseAdvanceLock();
           }
         });
       }
@@ -1105,7 +1152,7 @@
   }
 
   function playFrameVoice(frame) {
-    playVoiceQueue(frameAudioFiles(frame), frameVoiceFiles(frame).length > 0);
+    playVoiceQueue(frameAudioFiles(frame));
   }
 
   function stopAmbient() {
@@ -1225,6 +1272,46 @@
     dialogueBox.classList.add(speakerToneClass(frame));
   }
 
+  function clearAutoPlayTimer() {
+    if (!autoPlayTimer) return;
+    window.clearTimeout(autoPlayTimer);
+    autoPlayTimer = null;
+  }
+
+  function updateAutoPlayButton() {
+    if (!autoPlayBtn) return;
+    autoPlayBtn.setAttribute("aria-pressed", autoPlayEnabled ? "true" : "false");
+    autoPlayBtn.textContent = autoPlayEnabled ? "Auto On" : "Auto";
+  }
+
+  function isAutoPlayBlocked() {
+    const frame = frames[currentIndex];
+    if (!autoPlayEnabled || isTyping || voiceAdvanceLocked || soundAdvanceLocked) return true;
+    if (nextBtn?.disabled) return true;
+    if (frame?.action === "name" && !nameLockedOnFrame && !(readProfile()?.nickname || readProfile()?.certificateName)) return true;
+    if (frame?.choices && !choiceSolvedOnFrame) return true;
+    if (frame?.reward) return true;
+    if (!rewardPanel?.classList.contains("hidden")) return true;
+    if (currentIndex >= frames.length - 1 && currentSegmentIndex >= currentSegments.length - 1) return true;
+    return false;
+  }
+
+  function scheduleAutoPlay() {
+    clearAutoPlayTimer();
+    if (isAutoPlayBlocked()) return;
+    autoPlayTimer = window.setTimeout(() => {
+      autoPlayTimer = null;
+      if (!isAutoPlayBlocked()) goNext();
+    }, AUTO_PLAY_DELAY_MS);
+  }
+
+  function toggleAutoPlay() {
+    autoPlayEnabled = !autoPlayEnabled;
+    updateAutoPlayButton();
+    if (autoPlayEnabled) scheduleAutoPlay();
+    else clearAutoPlayTimer();
+  }
+
   function stopTyping(showFull = false) {
     if (typeTimer) {
       window.clearTimeout(typeTimer);
@@ -1249,6 +1336,7 @@
   }
 
   function typeSegment(text) {
+    clearAutoPlayTimer();
     stopTyping(false);
     typeTargetText = text;
     dialogueText.textContent = "";
@@ -1268,6 +1356,7 @@
 
       stopTyping(false);
       if (currentSegmentIndex >= currentSegments.length - 1) showFrameInteraction();
+      scheduleAutoPlay();
     };
 
     typeTimer = window.setTimeout(step, TYPE_SPEED_MS);
@@ -1633,6 +1722,7 @@
   }
 
   function renderFrame() {
+    clearAutoPlayTimer();
     const frame = frames[currentIndex];
     const boardReview = Boolean(frame.board && frame.bg === "shellwickBoard");
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
@@ -1660,7 +1750,8 @@
     currentSegments = frameSegments(frame);
     showSegment(0);
     playFrameAmbient(frame);
-    playVoiceQueue(voiceFiles, voiceFiles.length > 0);
+    playVoiceQueue(voiceFiles);
+    preloadUpcomingVoice(currentIndex);
     playSoundCues(soundCues);
     setSoundAdvanceLock(soundCueLockDuration(soundCues, voiceFiles.length > 0));
 
@@ -1668,6 +1759,7 @@
   }
 
   function goNext() {
+    clearAutoPlayTimer();
     const frame = frames[currentIndex];
 
     if (voiceAdvanceLocked || soundAdvanceLocked) return;
@@ -1675,6 +1767,7 @@
     if (isTyping) {
       stopTyping(true);
       if (currentSegmentIndex >= currentSegments.length - 1) showFrameInteraction();
+      scheduleAutoPlay();
       return;
     }
 
@@ -1696,6 +1789,7 @@
   }
 
   function goBack() {
+    clearAutoPlayTimer();
     if (voiceAdvanceLocked || soundAdvanceLocked) return;
     stopTyping(false);
     currentIndex = Math.max(0, currentIndex - 1);
@@ -1717,6 +1811,8 @@
 
   nextBtn.addEventListener("click", goNext);
   backBtn.addEventListener("click", goBack);
+  autoPlayBtn?.addEventListener("click", toggleAutoPlay);
+  updateAutoPlayButton();
 
   document.addEventListener("click", event => {
     tryLockLandscape();

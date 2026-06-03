@@ -300,120 +300,6 @@ function escapeHTML(value) {
     .replace(/'/g, "&#039;");
 }
 
-const pronounLabels = {
-  they: "they / them",
-  he: "he / him",
-  she: "she / her"
-};
-
-function cleanIdentityValue(value, maxLength) {
-  return String(value || "")
-    .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, maxLength);
-}
-
-function readPlayerProfile() {
-  const profile = readJSONStorage(PLAYER_PROFILE_KEY);
-  if (!profile || typeof profile !== "object") return null;
-  return profile;
-}
-
-function getPronounLabel(value) {
-  return pronounLabels[value] || pronounLabels.they;
-}
-
-function renderPlayerIdentityState() {
-  const form = document.getElementById("playerIdentityForm");
-  const saved = document.getElementById("playerIdentitySaved");
-  const nicknameInput = document.getElementById("playerNickname");
-  const certificateInput = document.getElementById("certificateName");
-  const profile = readPlayerProfile();
-
-  if (!form || !saved) return;
-
-  if (!profile) {
-    form.classList.remove("identity-locked");
-    form.querySelectorAll("input, button[type='submit']").forEach(control => {
-      control.disabled = false;
-    });
-    saved.classList.add("hidden");
-    saved.innerHTML = "";
-    return;
-  }
-
-  if (nicknameInput) nicknameInput.value = profile.nickname || "";
-  if (certificateInput) certificateInput.value = profile.certificateName || "";
-  form.querySelectorAll(`input[name="pronoun"]`).forEach(input => {
-    input.checked = input.value === (profile.pronoun || "they");
-  });
-  form.classList.add("identity-locked");
-  form.querySelectorAll("input, button[type='submit']").forEach(control => {
-    control.disabled = true;
-  });
-
-  saved.classList.remove("hidden");
-  saved.innerHTML = `
-    <strong>Story Profile Sealed</strong>
-    <span>Mira will call you ${escapeHTML(profile.nickname || "Ridge Wanderer")}.</span>
-    <span>Your official certificate name is saved after completing Trail 1-1.</span>
-    <span>Pronouns: ${escapeHTML(getPronounLabel(profile.pronoun))}</span>
-    <button class="gold-btn" type="button" onclick="showSection('quest')">Step onto Math Ridge</button>
-  `;
-}
-
-function handlePrologueChoice(choice) {
-  const response = document.getElementById("prologueChoiceResponse");
-  if (!response) return;
-
-  const lines = {
-    look: "Glowing symbols are carved into the wooden floor. They shift when you stare at them, almost like they are waiting for an answer.",
-    mountain: "Mira lowers her voice. Math Ridge is ancient. Every trail teaches a different kind of magic, but no one reaches the top without learning.",
-    pockets: "Your phone is gone. All you find is a small glowing pebble shaped like the number 1. It feels warm, like it knows the first trail is waiting."
-  };
-
-  response.textContent = lines[choice] || "Mira takes a breath and promises to guide you as far as she can.";
-  response.classList.add("choice-response-active");
-  try { localStorage.setItem(PROLOGUE_SEEN_KEY, "true"); } catch (error) {}
-}
-
-function savePlayerIdentity(event) {
-  if (event) event.preventDefault();
-
-  const existingProfile = readPlayerProfile();
-  if (existingProfile) {
-    renderPlayerIdentityState();
-    return;
-  }
-
-  const form = document.getElementById("playerIdentityForm");
-  if (!form) return;
-
-  const data = new FormData(form);
-  const nickname = cleanIdentityValue(data.get("nickname"), 24) || "Ridge Wanderer";
-  const certificateName = cleanIdentityValue(data.get("certificateName"), 36) || nickname;
-  const selectedPronoun = cleanIdentityValue(data.get("pronoun"), 8);
-  const pronoun = pronounLabels[selectedPronoun] ? selectedPronoun : "they";
-  const profile = {
-    version: 1,
-    nickname,
-    certificateName,
-    pronoun,
-    pronounLabel: getPronounLabel(pronoun),
-    createdAt: new Date().toISOString()
-  };
-
-  try {
-    localStorage.setItem(PLAYER_PROFILE_KEY, JSON.stringify(profile));
-    localStorage.setItem(PROLOGUE_SEEN_KEY, "true");
-  } catch (error) {}
-
-  renderPlayerIdentityState();
-
-  const saved = document.getElementById("playerIdentitySaved");
-  if (saved) saved.scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
 function renderTrail(options = {}) {
   const trail = document.getElementById("trailChapters");
   if (!trail) return;
@@ -454,7 +340,7 @@ function renderRootGateCard() {
       <div class="root-gate-copy">
         <span>Chapter 1 Checkpoint</span>
         <h3>Root Gate Finale</h3>
-        <p>A story finale leads into the formal 40-question mastery trial. Score 92% or higher within 10 minutes to open Chapter 2.</p>
+        <p>A story finale leads into the formal 40-question mastery trial. Score 92% or higher within 15 minutes to open Chapter 2.</p>
       </div>
       <div class="root-gate-actions">
         <strong>${escapeHTML(status)}</strong>
@@ -923,7 +809,6 @@ function resetAllProgress() {
   });
 
   closeModal();
-  renderPlayerIdentityState();
   syncStageRevealHintState();
   renderTrail({ force: true });
   renderMenuLinks({ force: true });
@@ -1521,7 +1406,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Lazy-render the heavier sections only when a student opens that view.
   // This keeps the first mobile paint fast and prevents hidden Trail art from loading too early.
   openInitialSectionFromURL();
-  renderPlayerIdentityState();
   syncStageRevealHintState();
   writeTrailStateSnapshot();
   bindPremiumMobileSelection();
@@ -1542,10 +1426,6 @@ window.handleRootGateClick = handleRootGateClick;
 window.openCertificateFrame = openCertificateFrame;
 window.confirmResetProgress = confirmResetProgress;
 window.resetAllProgress = resetAllProgress;
-window.handlePrologueChoice = handlePrologueChoice;
-window.savePlayerIdentity = savePlayerIdentity;
-window.readPlayerProfile = readPlayerProfile;
-window.renderPlayerIdentityState = renderPlayerIdentityState;
 window.readTrailStateSnapshot = readTrailStateSnapshot;
 window.writeTrailStateSnapshot = writeTrailStateSnapshot;
 

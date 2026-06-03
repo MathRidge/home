@@ -16,6 +16,7 @@
   const miraVoiceBase = "voice/Mira/";
   const elderVoiceBase = "voice/elder/";
   const soundBase = "voice/sound/";
+  const AUTO_PLAY_DELAY_MS = 2500;
 
   const backgrounds = {
     cabin: `${bgBase}story-bg-Shellwick_cabin.png`,
@@ -198,7 +199,7 @@
       rows: [
         { label: "Questions", text: "40", kind: "problem" },
         { label: "Pass", text: "37 or more correct", kind: "answer" },
-        { label: "Time", text: "10:00", kind: "rule" }
+        { label: "Time", text: "15:00", kind: "rule" }
       ]
     },
     chapterOneTools: {
@@ -256,6 +257,7 @@
   const dialogueText = document.getElementById("dialogueText");
   const backBtn = document.getElementById("backBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const autoPlayBtn = document.getElementById("autoPlayBtn");
   const rewardPanel = document.getElementById("rewardPanel");
   const rewardCard = document.getElementById("rewardCard");
   const interactionPanel = document.getElementById("interactionPanel");
@@ -288,8 +290,12 @@
   let activeSoundCues = [];
   let voiceToken = 0;
   let voiceAdvanceLocked = false;
+  let voicePreloadToken = 0;
+  const voicePreloadCache = new Map();
   let soundAdvanceLocked = false;
   let soundAdvanceTimer = null;
+  let autoPlayEnabled = false;
+  let autoPlayTimer = null;
 
   function readProfile() {
     try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || "{}"); }
@@ -934,6 +940,43 @@
     speakerName.textContent = isNarration(frame) ? "Narrator" : frame.speaker || "";
   }
 
+  function clearAutoPlayTimer() {
+    if (!autoPlayTimer) return;
+    window.clearTimeout(autoPlayTimer);
+    autoPlayTimer = null;
+  }
+
+  function updateAutoPlayButton() {
+    if (!autoPlayBtn) return;
+    autoPlayBtn.setAttribute("aria-pressed", autoPlayEnabled ? "true" : "false");
+    autoPlayBtn.textContent = autoPlayEnabled ? "Auto On" : "Auto";
+  }
+
+  function isAutoPlayBlocked() {
+    const frame = frames[currentIndex];
+    if (!autoPlayEnabled || isTyping || voiceAdvanceLocked || soundAdvanceLocked) return true;
+    if (nextBtn?.disabled) return true;
+    if (!rewardPanel?.classList.contains("hidden")) return true;
+    if (currentIndex >= frames.length - 1 && !frame?.reward) return true;
+    return false;
+  }
+
+  function scheduleAutoPlay() {
+    clearAutoPlayTimer();
+    if (isAutoPlayBlocked()) return;
+    autoPlayTimer = window.setTimeout(() => {
+      autoPlayTimer = null;
+      if (!isAutoPlayBlocked()) goNext();
+    }, AUTO_PLAY_DELAY_MS);
+  }
+
+  function toggleAutoPlay() {
+    autoPlayEnabled = !autoPlayEnabled;
+    updateAutoPlayButton();
+    if (autoPlayEnabled) scheduleAutoPlay();
+    else clearAutoPlayTimer();
+  }
+
   function stopTyping(showFull = false) {
     if (typeTimer) {
       window.clearTimeout(typeTimer);
@@ -945,6 +988,7 @@
   }
 
   function typeText(text) {
+    clearAutoPlayTimer();
     stopTyping(false);
     typeTargetText = text;
     dialogueText.textContent = "";
@@ -960,6 +1004,7 @@
         return;
       }
       stopTyping(false);
+      scheduleAutoPlay();
     };
 
     typeTimer = window.setTimeout(step, 18);
@@ -1002,6 +1047,58 @@
     return cue ? `${cue.base}${encodeURIComponent(cue.file)}` : "";
   }
 
+  function releaseVoiceAdvanceLock(token = voicePreloadToken) {
+    if (token !== voicePreloadToken) return;
+    voiceAdvanceLocked = false;
+    document.documentElement.classList.remove("voice-advance-locked");
+    scheduleAutoPlay();
+  }
+
+  function preloadVoiceSource(source) {
+    if (source?.pause) return Promise.resolve();
+    const url = voiceUrl(source);
+    const cached = voicePreloadCache.get(url);
+    if (cached) return cached.promise;
+
+    const audio = new Audio(url);
+    audio.preload = "auto";
+
+    const promise = new Promise(resolve => {
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
+        audio.removeEventListener("canplaythrough", done);
+        audio.removeEventListener("loadeddata", done);
+        audio.removeEventListener("error", done);
+        resolve();
+      };
+      const timer = window.setTimeout(done, 1800);
+      audio.addEventListener("canplaythrough", done, { once: true });
+      audio.addEventListener("loadeddata", done, { once: true });
+      audio.addEventListener("error", done, { once: true });
+      audio.load();
+    });
+
+    voicePreloadCache.set(url, { audio, promise });
+    return promise;
+  }
+
+  function preloadUpcomingVoice(index) {
+    releaseVoiceAdvanceLock();
+    voicePreloadToken += 1;
+    const token = voicePreloadToken;
+
+    const nextVoiceFiles = frameVoiceFiles(frames[index + 1]);
+    if (!nextVoiceFiles.length) return;
+
+    voiceAdvanceLocked = true;
+    document.documentElement.classList.add("voice-advance-locked");
+    Promise.all(nextVoiceFiles.map(preloadVoiceSource))
+      .finally(() => releaseVoiceAdvanceLock(token));
+  }
+
   function clearSoundEntry(entry) {
     if (!entry) return;
     (entry.timers || []).forEach(timer => window.clearTimeout(timer));
@@ -1042,6 +1139,7 @@
       soundAdvanceTimer = null;
     }
     document.documentElement.classList.remove("sound-advance-locked");
+    scheduleAutoPlay();
   }
 
   function setSoundAdvanceLock(durationMs = 0) {
@@ -1168,8 +1266,6 @@
 
   function stopVoice() {
     voiceToken += 1;
-    voiceAdvanceLocked = false;
-    document.documentElement.classList.remove("voice-advance-locked");
     if (!activeVoice) return;
     activeVoice.pause();
     activeVoice.removeAttribute("src");
@@ -1177,25 +1273,16 @@
     activeVoice = null;
   }
 
-  function playVoiceQueue(files, lockAdvance = false) {
+  function playVoiceQueue(files) {
     stopVoice();
     if (!files.length) return;
 
     const token = voiceToken;
     const queue = files.slice();
-    voiceAdvanceLocked = Boolean(lockAdvance);
-    document.documentElement.classList.toggle("voice-advance-locked", voiceAdvanceLocked);
-
-    const releaseAdvanceLock = () => {
-      if (token !== voiceToken) return;
-      voiceAdvanceLocked = false;
-      document.documentElement.classList.remove("voice-advance-locked");
-    };
 
     const playNext = () => {
       if (token !== voiceToken || !queue.length) {
         activeVoice = null;
-        releaseAdvanceLock();
         return;
       }
 
@@ -1217,7 +1304,6 @@
         attempt.catch(() => {
           if (token === voiceToken) {
             activeVoice = null;
-            releaseAdvanceLock();
           }
         });
       }
@@ -1228,7 +1314,7 @@
 
   function playFrameVoice(frame) {
     const files = frameVoiceFiles(frame);
-    playVoiceQueue(files, files.length > 0);
+    playVoiceQueue(files);
   }
 
   function clearInteraction() {
@@ -1386,7 +1472,7 @@
       <div class="trial-facts">
         <span><strong>40</strong>questions</span>
         <span><strong>37+</strong>to pass</span>
-        <span><strong>10:00</strong>time limit</span>
+        <span><strong>15:00</strong>time limit</span>
       </div>
       <div class="reward-actions">
         <a href="root-gate-test.html">Begin Root Gate Mastery Trial</a>
@@ -1404,6 +1490,7 @@
   }
 
   function renderFrame() {
+    clearAutoPlayTimer();
     const frame = frames[currentIndex];
     const boardReview = Boolean(frame.board && ["board", "chapterTwoBoard"].includes(frame.bg));
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
@@ -1430,17 +1517,20 @@
     nextBtn.disabled = false;
     nextBtn.textContent = frame.reward ? "Complete" : "Next";
     typeText(frameText(frame));
-    playVoiceQueue(voiceFiles, voiceFiles.length > 0);
+    playVoiceQueue(voiceFiles);
+    preloadUpcomingVoice(currentIndex);
     playSoundCues(soundCues);
     setSoundAdvanceLock(soundCueLockDuration(soundCues, voiceFiles.length > 0));
     updateProgress();
   }
 
   function goNext() {
+    clearAutoPlayTimer();
     const frame = frames[currentIndex];
     if (voiceAdvanceLocked || soundAdvanceLocked) return;
     if (isTyping) {
       stopTyping(true);
+      scheduleAutoPlay();
       return;
     }
     if (frame?.reward) {
@@ -1452,6 +1542,7 @@
   }
 
   function goBack() {
+    clearAutoPlayTimer();
     if (voiceAdvanceLocked || soundAdvanceLocked) return;
     stopTyping(false);
     currentIndex = Math.max(0, currentIndex - 1);
@@ -1472,6 +1563,8 @@
 
   nextBtn?.addEventListener("click", goNext);
   backBtn?.addEventListener("click", goBack);
+  autoPlayBtn?.addEventListener("click", toggleAutoPlay);
+  updateAutoPlayButton();
 
   document.addEventListener("click", event => {
     if (event.target.closest("button, a, input, label")) return;
