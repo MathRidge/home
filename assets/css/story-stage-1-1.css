@@ -113,7 +113,7 @@ a {
   left: max(14px, env(safe-area-inset-left));
   right: max(14px, env(safe-area-inset-right));
   top: max(18px, calc(env(safe-area-inset-top) + 12px));
-  z-index: 6;
+  z-index: 50;
   display: grid;
   grid-template-columns: 88px 1fr 88px;
   align-items: center;
@@ -138,6 +138,12 @@ a {
 
 .story-autoplay-toggle {
   font: inherit;
+  position: relative;
+  z-index: 1;
+  min-width: 88px;
+  padding: 0 12px;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .story-autoplay-toggle[aria-pressed="true"] {
@@ -1139,13 +1145,14 @@ a {
   }
 
   .story-topbar {
-    grid-template-columns: 64px 1fr 64px;
+    grid-template-columns: 64px 1fr 76px;
     left: 10px;
     right: 10px;
     min-height: 44px;
   }
 
-  .story-topbar a {
+  .story-topbar a,
+  .story-autoplay-toggle {
     min-height: 36px;
     font-size: 0.86rem;
   }
@@ -1278,7 +1285,7 @@ a {
     left: max(7px, env(safe-area-inset-left));
     right: max(7px, env(safe-area-inset-right));
     top: max(5px, env(safe-area-inset-top));
-    grid-template-columns: 50px minmax(0, 1fr) 50px;
+    grid-template-columns: 50px minmax(0, 1fr) 66px;
     min-height: 32px;
     padding: 0;
     gap: 6px;
@@ -1304,13 +1311,18 @@ a {
     pointer-events: auto;
   }
 
-  .story-topbar a {
+  .story-topbar a,
+  .story-autoplay-toggle {
     min-height: 26px;
     padding: 0 8px;
     border-radius: 999px;
     background: rgba(8, 15, 26, 0.46);
     font-size: 0.72rem;
     pointer-events: auto;
+  }
+
+  .story-autoplay-toggle {
+    min-width: 66px;
   }
 
   .scene-bg {

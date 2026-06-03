@@ -950,7 +950,8 @@
   function updateAutoPlayButton() {
     if (!autoPlayBtn) return;
     autoPlayBtn.setAttribute("aria-pressed", autoPlayEnabled ? "true" : "false");
-    autoPlayBtn.textContent = autoPlayEnabled ? "Auto On" : "Auto";
+    autoPlayBtn.textContent = "Auto";
+    autoPlayBtn.setAttribute("aria-label", autoPlayEnabled ? "Auto play on" : "Auto play off");
   }
 
   function isAutoPlayBlocked() {
