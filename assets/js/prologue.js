@@ -13,7 +13,7 @@
   const VOICE_TRIGGER_SCREEN_RATIO = 0.5;
   const NEXT_SCENE_PREFETCH = [
     "story-stage-1-1.html",
-    "assets/css/story-stage-1-1.css?v=20260604-readable-dialogue",
+    "assets/css/story-stage-1-1.css?v=20260604-tall-dialogue",
     "assets/js/story-stage-1-1.js?v=20260604-auto-ambient-retry",
     "assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png",
     "assets/images/bg-scene/Stage-1-1/story-bg-cipher_ridge.png",
