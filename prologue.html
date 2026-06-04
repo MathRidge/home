@@ -24,9 +24,17 @@
   <link rel="preload" as="image" href="assets/images/prologue/mathridge_prologue_page_08.png" />
   <link rel="preload" as="image" href="assets/images/prologue/bonus_mira_intro.webp" />
   <link rel="preload" as="audio" type="audio/mpeg" href="voice/Mira/mira-im-sorry-i-think-i-brought-you-here.mp3" />
-  <link rel="stylesheet" href="assets/css/prologue.css?v=20260604-prologue-loading-gate" />
+  <link rel="stylesheet" href="assets/css/prologue.css?v=20260604-prologue-prefetch-skip" />
 </head>
 <body class="prologue-loading">
+  <script>
+    try {
+      if (sessionStorage.getItem("mathRidge_prologueLoaded_v1") === "true") {
+        document.body.classList.add("prologue-preload-seen");
+      }
+    } catch (error) {}
+  </script>
+
   <div class="prologue-loading-gate" id="prologueLoadingGate" role="dialog" aria-modal="true" aria-labelledby="prologueLoadingTitle">
     <div class="prologue-loading-card">
       <p class="prologue-loading-kicker">Preparing The Manga</p>
@@ -52,7 +60,7 @@
     <h1 class="sr-only">Math Ridge Manga Prologue</h1>
     <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_01.png" alt="Math Ridge manga prologue page 1" fetchpriority="high" decoding="async" draggable="false" />
     <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_02.png" alt="Math Ridge manga prologue page 2" decoding="async" draggable="false" />
-    <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_03.png" alt="Math Ridge manga prologue page 3" decoding="async" draggable="false" data-voice-cue="mira-apology" data-voice-trigger="0.9" />
+    <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_03.png" alt="Math Ridge manga prologue page 3" decoding="async" draggable="false" data-voice-cue="mira-apology" data-voice-trigger="0.885" />
     <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_04.png" alt="Math Ridge manga prologue page 4" decoding="async" draggable="false" />
     <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_05.png" alt="Math Ridge manga prologue page 5" decoding="async" draggable="false" />
     <img class="manga-page" src="assets/images/prologue/mathridge_prologue_page_06.png" alt="Math Ridge manga prologue page 6" decoding="async" draggable="false" />
@@ -66,6 +74,6 @@
     </nav>
   </main>
 
-  <script src="assets/js/prologue.js?v=20260604-prologue-loading-gate"></script>
+  <script src="assets/js/prologue.js?v=20260604-golden-oval-voice-trigger"></script>
 </body>
 </html>

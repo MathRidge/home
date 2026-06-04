@@ -1026,12 +1026,12 @@
     guide.setAttribute("role", "dialog");
     guide.setAttribute("aria-modal", "true");
     guide.innerHTML = `
-      <div class="story-guide-cue story-guide-back">Tap the left side of the dialogue text to go back.</div>
+      <div class="story-guide-cue story-guide-back">Tap the left side of the screen to go back.</div>
       <div class="story-guide-cue story-guide-auto">Tap Auto to let the scene play by itself.</div>
       <div class="story-guide-cue story-guide-forward">Tap anywhere else to continue forward.</div>
       <div class="story-tap-guide-card">
         <strong>Story Controls</strong>
-        <span>Back on the left side of the dialogue. Auto at the top. Forward almost everywhere else.</span>
+        <span>Back on the left side. Auto at the top. Forward almost everywhere else.</span>
         <button type="button">Got it</button>
       </div>
     `;
@@ -1044,11 +1044,10 @@
   }
 
   function isDialogueBackTap(event) {
-    if (!dialogueText) return false;
-    const rect = dialogueText.getBoundingClientRect();
+    if (!window.matchMedia("(orientation: landscape)").matches) return false;
     const x = event.clientX;
-    const y = event.clientY;
-    return x >= rect.left && x <= rect.left + rect.width * 0.45 && y >= rect.top && y <= rect.bottom;
+    const leftZone = Math.min(window.innerWidth * 0.34, 360);
+    return x >= 0 && x <= leftZone;
   }
 
   function stopTyping(showFull = false) {

@@ -8,7 +8,21 @@
   const orientationNote = document.getElementById("prologueOrientationNote");
   const beginButton = document.getElementById("prologueBeginButton");
   const READ_KEY = "mathRidge_mangaPrologueSeen_v1";
+  const PROLOGUE_LOADED_KEY = "mathRidge_prologueLoaded_v1";
   const VOICE_BASE = "voice/Mira/";
+  const VOICE_TRIGGER_SCREEN_RATIO = 0.5;
+  const NEXT_SCENE_PREFETCH = [
+    "story-stage-1-1.html",
+    "assets/css/story-stage-1-1.css?v=20260603-guide-soft-landscape",
+    "assets/js/story-stage-1-1.js?v=20260604-auto-ambient-retry",
+    "assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png",
+    "assets/images/bg-scene/Stage-1-1/story-bg-cipher_ridge.png",
+    "assets/images/Mira-sprite/Mira-sprite-alpha-png/mira-holding-hat.png",
+    "assets/images/Mira-sprite/Mira-sprite-alpha-webp/mira-neutral-fb.webp",
+    "voice/Mira/mira-come-on.mp3",
+    "voice/Mira/mira-cipher-ridge-town-is-not-far-from-here.mp3",
+    "voice/sound/summer-outdoor-sounds.mp3"
+  ];
   const voiceCues = new Map([
     ["mira-apology", "mira-im-sorry-i-think-i-brought-you-here.mp3"]
   ]);
@@ -18,6 +32,7 @@
   let pendingVoiceCue = null;
   let prologueAssetsReady = false;
   let prologueStarted = false;
+  let nextScenePrefetched = false;
 
   function voiceUrl(file) {
     return `${VOICE_BASE}${encodeURIComponent(file)}`;
@@ -65,6 +80,16 @@
     }
   }
 
+  function hasLoadedThisSession() {
+    try { return sessionStorage.getItem(PROLOGUE_LOADED_KEY) === "true"; }
+    catch (error) { return false; }
+  }
+
+  function rememberLoadedThisSession() {
+    try { sessionStorage.setItem(PROLOGUE_LOADED_KEY, "true"); }
+    catch (error) {}
+  }
+
   function preloadImageElement(image) {
     return new Promise(resolve => {
       const done = () => {
@@ -101,17 +126,68 @@
     });
   }
 
+  function unlockPrologueAudio() {
+    const prepared = voiceAudioCache.values().next().value;
+    if (!prepared || typeof prepared.cloneNode !== "function") return;
+    const audio = prepared.cloneNode(true);
+    audio.muted = true;
+    audio.volume = 0;
+    const attempt = audio.play();
+    if (attempt && typeof attempt.then === "function") {
+      attempt.then(() => {
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+      }).catch(() => {});
+    }
+  }
+
   function beginPrologue() {
     if (!beginButton || beginButton.disabled || prologueStarted) return;
     prologueStarted = true;
+    rememberLoadedThisSession();
+    unlockPrologueAudio();
     retryPendingVoiceCue();
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    prefetchNextSceneAssets();
     loadingGate?.classList.add("is-hidden");
     document.body.classList.remove("prologue-loading");
     window.setTimeout(() => loadingGate?.setAttribute("hidden", ""), 380);
     updateProgress();
   }
 
+  function prefetchNextSceneAssets() {
+    if (nextScenePrefetched) return;
+    nextScenePrefetched = true;
+    NEXT_SCENE_PREFETCH.forEach(url => {
+      if (/\.(png|webp|jpe?g)$/i.test(url)) {
+        const image = new Image();
+        image.src = url;
+        return;
+      }
+      if (/\.(mp3|wav|ogg)$/i.test(url) && typeof Audio === "function") {
+        const audio = new Audio(url);
+        audio.preload = "auto";
+        try { audio.load(); } catch (error) {}
+        return;
+      }
+      fetch(url).catch(() => {});
+    });
+  }
+
   function preloadPrologueAssets() {
+    if (hasLoadedThisSession()) {
+      prologueAssetsReady = true;
+      prologueStarted = true;
+      document.body.classList.remove("prologue-loading");
+      document.body.classList.add("prologue-preload-seen");
+      loadingGate?.setAttribute("hidden", "");
+      prepareVoiceCues();
+      prefetchNextSceneAssets();
+      updateProgress();
+      return;
+    }
+
     const images = Array.from(document.querySelectorAll(".manga-page"));
     const voices = Array.from(voiceCues.values());
     const tasks = [
@@ -129,6 +205,7 @@
       setLoadingProgress(done, total, done >= total ? "Prologue ready." : `Loading ${done} of ${total} assets...`);
     }))).then(() => {
       prologueAssetsReady = true;
+      rememberLoadedThisSession();
       setLoadingProgress(total, total, "Prologue ready.");
       syncBeginState();
     });
@@ -198,7 +275,7 @@
 
       const triggerRatio = Number(page.dataset.voiceTrigger || 0.85);
       const triggerY = rect.top + rect.height * triggerRatio;
-      const triggerLine = window.innerHeight * 0.72;
+      const triggerLine = window.innerHeight * VOICE_TRIGGER_SCREEN_RATIO;
       if (triggerY > triggerLine) return;
 
       playVoiceCue(cue, voiceCues.get(cue));
