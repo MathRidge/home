@@ -1358,7 +1358,17 @@
     showTapGuide();
   }
 
+  function isGuideOrientationReady() {
+    return window.matchMedia("(orientation: landscape)").matches;
+  }
+
+  function syncTapGuideOrientation() {
+    if (isGuideOrientationReady()) return;
+    document.querySelector(".story-tap-guide")?.remove();
+  }
+
   function showTapGuide(force = false) {
+    if (!isGuideOrientationReady()) return;
     if (!force && hasSeenTapGuide()) return;
     document.querySelector(".story-tap-guide")?.remove();
     const guide = document.createElement("div");
@@ -1947,6 +1957,7 @@
 
   window.addEventListener("resize", () => {
     syncStandaloneMode();
+    syncTapGuideOrientation();
     const frame = frames[currentIndex];
     const nextSegments = frameSegments(frame);
     if (nextSegments.join("\n") === currentSegments.join("\n")) return;
