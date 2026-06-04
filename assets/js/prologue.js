@@ -4,8 +4,6 @@
   const progressBar = document.getElementById("readerProgressBar");
   const READ_KEY = "mathRidge_mangaPrologueSeen_v1";
   const VOICE_BASE = "voice/Mira/";
-  const VOICE_TRIGGER_DELAY_MS = 5000;
-  const voiceReadyAt = performance.now() + VOICE_TRIGGER_DELAY_MS;
   const voiceCues = new Map([
     ["mira-apology", "mira-im-sorry-i-think-i-brought-you-here.mp3"]
   ]);
@@ -89,7 +87,6 @@
   }
 
   function checkVoiceCues() {
-    if (performance.now() < voiceReadyAt) return;
     document.querySelectorAll("[data-voice-cue]").forEach(page => {
       const cue = page.dataset.voiceCue;
       if (!cue || playedVoiceCues.has(cue)) return;
@@ -142,7 +139,6 @@
     prepareVoiceCues();
     markImagesLoaded();
     updateProgress();
-    window.setTimeout(updateProgress, VOICE_TRIGGER_DELAY_MS);
   });
   window.addEventListener("load", updateProgress);
 })();
