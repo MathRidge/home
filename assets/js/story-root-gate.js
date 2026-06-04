@@ -18,6 +18,7 @@
   const soundBase = "voice/sound/";
   const AUTO_PLAY_DELAY_MS = 2500;
   const TAP_GUIDE_KEY = "mathRidge_storyTapGuideSeen_v1";
+  const UI_TAP_SOUND = { file: "first tap.mp3", volume: 0.42, start: 0.08 };
 
   const backgrounds = {
     cabin: `${bgBase}story-bg-Shellwick_cabin.png`,
@@ -1160,6 +1161,19 @@
     return createPreparedAudio(soundCueUrl(cue), preparedSoundAudio, volume);
   }
 
+  function prepareUiTapSound() {
+    prepareSoundSource(UI_TAP_SOUND);
+  }
+
+  function playUiTapSound() {
+    const audio = createSoundAudio(UI_TAP_SOUND);
+    if (!audio) return;
+    audio.volume = UI_TAP_SOUND.volume;
+    try { audio.currentTime = Math.max(0, Number(UI_TAP_SOUND.start || 0)); } catch (error) {}
+    const attempt = audio.play();
+    if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+  }
+
   function clearSoundEntry(entry) {
     if (!entry) return;
     (entry.timers || []).forEach(timer => window.clearTimeout(timer));
@@ -1656,6 +1670,12 @@
   storyHelpBtn?.addEventListener("click", resetTapGuide);
   updateAutoPlayButton();
 
+  document.addEventListener("pointerdown", event => {
+    if (!event.target.closest("button, a")) return;
+    prepareUiTapSound();
+    playUiTapSound();
+  }, { capture: true, passive: true });
+
   document.addEventListener("click", event => {
     if (event.target.closest("button, a, input, label")) return;
     if (!rewardPanel?.classList.contains("hidden")) return;
@@ -1691,6 +1711,7 @@
   window.addEventListener("resize", syncTapGuideOrientation);
   window.addEventListener("orientationchange", syncTapGuideOrientation);
 
+  prepareUiTapSound();
   prepareStoryAudio(currentIndex, 6);
   if (shouldShowIntroShortcut()) renderIntroShortcut();
   else renderFrame();

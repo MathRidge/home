@@ -15,6 +15,7 @@
   const soundBase = "voice/sound/";
   const AUTO_PLAY_DELAY_MS = 2500;
   const TAP_GUIDE_KEY = "mathRidge_storyTapGuideSeen_v1";
+  const UI_TAP_SOUND = { file: "first tap.mp3", volume: 0.42, start: 0.08 };
   const relicOrder = ["term", "sign", "parity", "factor"];
   const relicImageSources = {
     term: "assets/images/relic/term_stone.png",
@@ -927,6 +928,19 @@
   function createSoundAudio(cue) {
     const volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
     return createPreparedAudio(soundCueUrl(cue), preparedSoundAudio, volume);
+  }
+
+  function prepareUiTapSound() {
+    prepareSoundSource(UI_TAP_SOUND);
+  }
+
+  function playUiTapSound() {
+    const audio = createSoundAudio(UI_TAP_SOUND);
+    if (!audio) return;
+    audio.volume = UI_TAP_SOUND.volume;
+    try { audio.currentTime = Math.max(0, Number(UI_TAP_SOUND.start || 0)); } catch (error) {}
+    const attempt = audio.play();
+    if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
   }
 
   function clearSoundEntry(entry) {
@@ -1905,6 +1919,12 @@
   storyHelpBtn?.addEventListener("click", resetTapGuide);
   updateAutoPlayButton();
 
+  document.addEventListener("pointerdown", event => {
+    if (!event.target.closest("button, a")) return;
+    prepareUiTapSound();
+    playUiTapSound();
+  }, { capture: true, passive: true });
+
   document.addEventListener("click", event => {
     tryLockLandscape();
     if (event.target.closest("button, a, input, label")) return;
@@ -1967,6 +1987,7 @@
 
   syncStandaloneMode();
   preloadRelicImages();
+  prepareUiTapSound();
   prepareStoryAudio(currentIndex, 6);
   renderFrame();
   window.setTimeout(showTapGuide, 420);

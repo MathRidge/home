@@ -12,8 +12,8 @@
   const MOBILE_CONFIRM_NOTE = "Ridge controls use two taps: first to arm, second to enter.";
   const SHELL_SOUND_BASE = "voice/sound/";
   const shellSfxPresets = {
-    firstTap: { file: "first tap.mp3", volume: 0.55, maxMs: 1200, fadeOut: 240 },
-    secondTap: { file: "second tap.mp3", volume: 0.58, maxMs: 1200, fadeOut: 240 }
+    firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1120, fadeOut: 240 },
+    secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 }
   };
 
   let mobileConfirmTarget = null;
@@ -65,7 +65,7 @@
 
     audio.preload = "auto";
     audio.volume = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
-    try { audio.currentTime = 0; } catch (error) {}
+    try { audio.currentTime = Math.max(0, Number(cue.start || 0)); } catch (error) {}
     return audio;
   }
 
@@ -82,6 +82,7 @@
 
     audio.preload = "auto";
     audio.volume = volume;
+    try { audio.currentTime = Math.max(0, Number(cue.start || 0)); } catch (error) {}
     audio.addEventListener("ended", () => stopShellSfxAudio(audio), { once: true });
     audio.addEventListener("error", () => stopShellSfxAudio(audio), { once: true });
 
