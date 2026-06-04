@@ -960,6 +960,7 @@
   function isAutoPlayBlocked() {
     const frame = frames[currentIndex];
     if (!autoPlayEnabled || isTyping || voiceAdvanceLocked || soundAdvanceLocked) return true;
+    if (activeVoice && !activeVoice.paused && !activeVoice.ended) return true;
     if (nextBtn?.disabled) return true;
     if (!rewardPanel?.classList.contains("hidden")) return true;
     if (currentIndex >= frames.length - 1 && !frame?.reward) return true;
@@ -978,7 +979,11 @@
   function toggleAutoPlay() {
     autoPlayEnabled = !autoPlayEnabled;
     updateAutoPlayButton();
-    if (autoPlayEnabled) scheduleAutoPlay();
+    if (autoPlayEnabled) {
+      prepareStoryAudio(currentIndex, 6);
+      unlockPreparedAudio();
+      scheduleAutoPlay();
+    }
     else clearAutoPlayTimer();
   }
 
@@ -1307,6 +1312,22 @@
     }
   }
 
+  function unlockPreparedAudio() {
+    const prepared = preparedVoiceAudio.values().next().value || preparedSoundAudio.values().next().value;
+    if (!prepared || typeof prepared.cloneNode !== "function") return;
+    const audio = prepared.cloneNode(true);
+    audio.muted = true;
+    audio.volume = 0;
+    const attempt = audio.play();
+    if (attempt && typeof attempt.then === "function") {
+      attempt.then(() => {
+        audio.pause();
+        audio.removeAttribute("src");
+        audio.load();
+      }).catch(() => {});
+    }
+  }
+
   function soundCueLockDuration(cues, hasVoice = false) {
     if (!cues.length || hasVoice) return 0;
     return cues.reduce((max, cueLike) => {
@@ -1339,6 +1360,7 @@
     const playNext = () => {
       if (token !== voiceToken || !queue.length) {
         activeVoice = null;
+        scheduleAutoPlay();
         return;
       }
 
@@ -1360,6 +1382,7 @@
         attempt.catch(() => {
           if (token === voiceToken) {
             activeVoice = null;
+            scheduleAutoPlay();
           }
         });
       }
