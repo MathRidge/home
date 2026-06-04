@@ -963,7 +963,7 @@
   function isAutoPlayBlocked() {
     const frame = frames[currentIndex];
     if (!autoPlayEnabled || isTyping || voiceAdvanceLocked || soundAdvanceLocked) return true;
-    if (activeVoice && !activeVoice.paused && !activeVoice.ended) return true;
+    if (hasActiveVoicePlayback()) return true;
     if (nextBtn?.disabled) return true;
     if (!rewardPanel?.classList.contains("hidden")) return true;
     if (currentIndex >= frames.length - 1 && !frame?.reward) return true;
@@ -985,6 +985,7 @@
     if (autoPlayEnabled) {
       prepareStoryAudio(currentIndex, 6);
       unlockPreparedAudio();
+      retryCurrentFrameVoiceForAuto();
       scheduleAutoPlay();
     }
     else clearAutoPlayTimer();
@@ -1519,6 +1520,17 @@
 
   function playFrameVoice(frame) {
     const files = frameVoiceFiles(frame);
+    playVoiceQueue(files);
+  }
+
+  function hasActiveVoicePlayback() {
+    return Boolean(activeVoice && !activeVoice.paused && !activeVoice.ended);
+  }
+
+  function retryCurrentFrameVoiceForAuto() {
+    if (!autoPlayEnabled) return;
+    const files = frameVoiceFiles(frames[currentIndex]);
+    if (!files.length) return;
     playVoiceQueue(files);
   }
 

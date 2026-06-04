@@ -1294,6 +1294,17 @@
     playVoiceQueue(frameAudioFiles(frame));
   }
 
+  function hasActiveVoicePlayback() {
+    return Boolean(activeVoice && !activeVoice.paused && !activeVoice.ended);
+  }
+
+  function retryCurrentFrameVoiceForAuto() {
+    if (!autoPlayEnabled) return;
+    const files = frameVoiceFiles(frames[currentIndex]);
+    if (!files.length) return;
+    playVoiceQueue(files);
+  }
+
   function stopAmbient() {
     pendingAmbient = null;
     if (ambientStopTimer) {
@@ -1427,7 +1438,7 @@
   function isAutoPlayBlocked() {
     const frame = frames[currentIndex];
     if (!autoPlayEnabled || isTyping || voiceAdvanceLocked || soundAdvanceLocked) return true;
-    if (activeVoice && !activeVoice.paused && !activeVoice.ended) return true;
+    if (hasActiveVoicePlayback()) return true;
     if (nextBtn?.disabled) return true;
     if (frame?.action === "name" && !nameLockedOnFrame && !(readProfile()?.nickname || readProfile()?.certificateName)) return true;
     if (frame?.choices && !choiceSolvedOnFrame) return true;
@@ -1453,6 +1464,7 @@
       retryPendingAmbient();
       prepareStoryAudio(currentIndex, 6);
       unlockPreparedAudio();
+      retryCurrentFrameVoiceForAuto();
       scheduleAutoPlay();
     }
     else clearAutoPlayTimer();
