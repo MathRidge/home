@@ -23,6 +23,7 @@
 	const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
 	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 	const SOUND_BASE = "voice/sound/";
+	const CONFIRM_NAV_DELAY_MS = 780;
 	const sfxPresets = {
 		firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1200, fadeOut: 240 },
 		secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1200, fadeOut: 240 },
@@ -84,6 +85,20 @@
 		audio.pause();
 		audio.removeAttribute("src");
 		audio.load();
+	}
+
+	function warmNavigationTarget(url) {
+		if (!url || url === "#") return;
+		try { fetch(url, { cache: "force-cache" }).catch(() => {}); }
+		catch (error) {}
+	}
+
+	function navigateAfterConfirm(url) {
+		if (!url || url === "#") return;
+		warmNavigationTarget(url);
+		window.setTimeout(() => {
+			window.location.href = url;
+		}, CONFIRM_NAV_DELAY_MS);
 	}
 
 	function getPlayAudioContext() {
@@ -742,7 +757,10 @@
 				rememberMountainTrailReturn();
 			}
 			const href = target.getAttribute("href");
-			if (href) window.location.href = href;
+			if (href) {
+				playSfx("secondTap");
+				navigateAfterConfirm(target.href || href);
+			}
 		});
 		return modal;
 	}
@@ -798,6 +816,16 @@
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			showExitConfirm(target);
+			return;
+		}
+
+		if (target.tagName === "A") {
+			const href = target.getAttribute("href");
+			if (href && href !== "#") {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				navigateAfterConfirm(target.href);
+			}
 		}
 	}
 

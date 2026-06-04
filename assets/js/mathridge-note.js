@@ -37,6 +37,7 @@
   const state = {
     solved: new Set()
   };
+  const CONFIRM_NAV_DELAY_MS = 780;
 
   const storageKey = "mathRidge_noteComplete_" + note.noteId;
   const oldVisitedKey = "mathRidge_noteVisited_" + note.noteId;
@@ -76,6 +77,20 @@
   if (!hasNoteAccess(note.noteId)) {
     window.location.replace(note.noteId === "1_1" ? "prologue.html" : "index.html?view=quest");
     return;
+  }
+
+  function warmNavigationTarget(url) {
+    if (!url || url === "#") return;
+    try { fetch(url, { cache: "force-cache" }).catch(() => {}); }
+    catch (error) {}
+  }
+
+  function navigateAfterConfirm(url) {
+    if (!url || url === "#") return;
+    warmNavigationTarget(url);
+    window.setTimeout(() => {
+      window.location.href = url;
+    }, CONFIRM_NAV_DELAY_MS);
   }
 
   function normalizeAnswer(value) {
@@ -919,7 +934,10 @@
 
   window.goToPlay = function goToPlay() {
     if (!note.playLink) return;
-    window.location.href = note.playLink;
+    const suppressSound = Date.now() < Number(window.__mathRidgeSuppressNextGoToPlaySoundUntil || 0);
+    if (!suppressSound) window.MathRidgeMobileConfirm?.play?.("secondTap");
+    window.__mathRidgeSuppressNextGoToPlaySoundUntil = 0;
+    navigateAfterConfirm(note.playLink);
   };
 
   document.addEventListener("DOMContentLoaded", function () {

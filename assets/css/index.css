@@ -4126,6 +4126,8 @@ body.index-page .app-shell.message-bg {
 
   body.index-page .small-link.is-mobile-confirm-ready,
   body.index-page .jump-link.is-mobile-confirm-ready,
+  body.index-page .pill-btn.is-mobile-confirm-ready,
+  body.index-page .gold-btn.is-mobile-confirm-ready,
   body.index-page .hero-actions .pill-btn.is-mobile-confirm-ready,
   body.index-page .hero-actions .gold-btn.is-mobile-confirm-ready,
   body.index-page .panel-header .pill-btn.is-mobile-confirm-ready,
@@ -4142,6 +4144,8 @@ body.index-page .app-shell.message-bg {
 
   body.index-page .small-link.is-mobile-confirm-ready::before,
   body.index-page .jump-link.is-mobile-confirm-ready::before,
+  body.index-page .pill-btn.is-mobile-confirm-ready::before,
+  body.index-page .gold-btn.is-mobile-confirm-ready::before,
   body.index-page .hero-actions .pill-btn.is-mobile-confirm-ready::before,
   body.index-page .hero-actions .gold-btn.is-mobile-confirm-ready::before,
   body.index-page .panel-header .pill-btn.is-mobile-confirm-ready::before,

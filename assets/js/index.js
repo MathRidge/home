@@ -340,7 +340,7 @@ function renderRootGateCard() {
       <div class="root-gate-copy">
         <span>Chapter 1 Checkpoint</span>
         <h3>Root Gate Finale</h3>
-        <p>A story finale leads into the formal 40-question mastery trial. Score 92% or higher within 15 minutes to open Chapter 2.</p>
+        <p>The four relics have led to an ancient gate beneath Math Ridge. Watch the finale, face the gate's challenge, and prove the lower trail is truly yours.</p>
       </div>
       <div class="root-gate-actions">
         <strong>${escapeHTML(status)}</strong>
@@ -1129,9 +1129,13 @@ async function sendMessage(event) {
    - first tap gives the premium hover/pressed state
    - second tap confirms navigation/action
    - stage cards first select the card, then Manual/Trail buttons arm separately. */
-const PREMIUM_TOUCH_QUERY = "(max-width: 760px)";
+const PREMIUM_TOUCH_QUERY = "(max-width: 760px), (hover: none) and (pointer: coarse)";
 const STAGE_SHELF_AUTO_CLOSE_MS = 4600;
+const CONFIRM_NAV_DELAY_MS = 780;
 const CONFIRMABLE_INDEX_SELECTOR = [
+  "#noteTopActions .pill-btn",
+  ".pill-btn",
+  ".gold-btn",
   ".hero-actions .pill-btn",
   ".hero-actions .gold-btn",
   ".panel-header .pill-btn",
@@ -1142,6 +1146,9 @@ const CONFIRMABLE_INDEX_SELECTOR = [
   ".reset-progress-btn",
   ".jump-link:not(.locked)",
   ".root-gate-link:not(.locked)",
+  ".root-gate-replay-link",
+  ".root-gate-replay-jump",
+  ".root-gate-replay-pill",
   "#modalActions [data-mobile-confirm='modal-reset']"
 ].join(", ");
 
@@ -1156,6 +1163,20 @@ function isPremiumTouchDevice() {
 
 function mobileConfirm() {
   return window.MathRidgeMobileConfirm || null;
+}
+
+function warmNavigationTarget(url) {
+  if (!url || url === "#") return;
+  try { fetch(url, { cache: "force-cache" }).catch(() => {}); }
+  catch (error) {}
+}
+
+function navigateAfterConfirm(url) {
+  if (!url || url === "#") return;
+  warmNavigationTarget(url);
+  window.setTimeout(() => {
+    window.location.href = url;
+  }, CONFIRM_NAV_DELAY_MS);
 }
 
 function markPointerFirstTapPlayed(target) {
@@ -1224,7 +1245,7 @@ function selectStageCard(card) {
 function isConfirmableIndexTarget(target) {
   if (!target) return false;
   if (target.disabled || target.hasAttribute("disabled") || target.getAttribute("aria-disabled") === "true") return false;
-  if (target.closest("#noteTopActions")) return false; // the shared shell owns the drawer.
+  if (target.closest("#noteTopActions") && document.body.classList.contains("note-menu-open")) return false; // the shared shell owns the drawer.
   if (target.closest("#ridgeModal") && target.dataset.mobileConfirm !== "modal-reset") return false;
   if (target.classList.contains("locked")) return false; // locked Manual/Trail still opens its popup with one tap.
   return true;
@@ -1308,7 +1329,7 @@ function activateConfirmedIndexTarget(target) {
   if (target.tagName === "A") {
     const href = target.getAttribute("href");
     if (href && href !== "#") {
-      window.location.href = target.href;
+      navigateAfterConfirm(target.href);
       return true;
     }
   }

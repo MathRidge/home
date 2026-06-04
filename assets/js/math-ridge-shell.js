@@ -7,12 +7,13 @@
   "use strict";
 
   const MOBILE_MENU_QUERY = "(max-width: 680px)";
-  const MOBILE_CONFIRM_QUERY = "(max-width: 760px)";
+  const MOBILE_CONFIRM_QUERY = "(max-width: 760px), (hover: none) and (pointer: coarse)";
   const MOBILE_CONFIRM_DURATION = 5600;
   const MOBILE_CONFIRM_NOTE = "Ridge controls use two taps: first to arm, second to enter.";
   const SHELL_SOUND_BASE = "voice/sound/";
   const INDEX_LOADED_KEY = "mathRidge_indexLoaded_v1";
   const POINTER_TAP_GUARD_MS = 1400;
+  const CONFIRM_NAV_DELAY_MS = 780;
   const shellSfxPresets = {
     firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1120, fadeOut: 240 },
     secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 }
@@ -49,6 +50,20 @@
 
   function shellSoundUrl(file) {
     return `${SHELL_SOUND_BASE}${encodeURIComponent(file)}`;
+  }
+
+  function warmNavigationTarget(url) {
+    if (!url || url === "#") return;
+    try { fetch(url, { cache: "force-cache" }).catch(() => {}); }
+    catch (error) {}
+  }
+
+  function navigateAfterConfirm(url) {
+    if (!url || url === "#") return;
+    warmNavigationTarget(url);
+    window.setTimeout(() => {
+      window.location.href = url;
+    }, CONFIRM_NAV_DELAY_MS);
   }
 
   function getShellAudioContext() {
@@ -322,17 +337,18 @@
     }
 
     if (indexSectionMatch && typeof window.goToIndexSection === "function") {
-      window.goToIndexSection(indexSectionMatch[1]);
+      navigateAfterConfirm(indexSectionUrl(indexSectionMatch[1]));
       return true;
     }
 
     if (/goToPlay\(\)/.test(inlineAction) && typeof window.goToPlay === "function") {
+      window.__mathRidgeSuppressNextGoToPlaySoundUntil = Date.now() + 1200;
       window.goToPlay();
       return true;
     }
 
     if (target.tagName === "A" && target.href) {
-      window.location.href = target.href;
+      navigateAfterConfirm(target.href);
       return true;
     }
 
@@ -391,14 +407,17 @@
 
   function goToIndexSection(section) {
     toggleNoteMenu(false);
+    window.location.href = indexSectionUrl(section);
+  }
 
+  function indexSectionUrl(section) {
     const target = section === "trail" || section === "mountain-trail"
       ? "quest"
       : (section === "menu" ? "quick" : (section || "home"));
 
     const config = window.MathRidgeNote || {};
     const indexLink = (config.indexLink || "index.html").split("#")[0] || "index.html";
-    window.location.href = `${indexLink}#${encodeURIComponent(target)}`;
+    return `${indexLink}#${encodeURIComponent(target)}`;
   }
 
   function closeNoteMenuOnEscape(event) {
@@ -531,6 +550,25 @@
     requireMobileConfirm(event, target, { duration: MOBILE_CONFIRM_DURATION });
   }
 
+  function handleTopActionConfirmClick(event) {
+    if (!isMobileConfirmMode() || isDrawerOpen()) return;
+    if (document.body.classList.contains("index-page")) return;
+
+    const menu = getMenu();
+    const target = event.target?.closest?.("#noteTopActions button, #noteTopActions a");
+    if (!menu || !target || !menu.contains(target)) return;
+    if (target.classList.contains("mobile-confirm-note")) return;
+    if (isConfirmDisabled(target)) return;
+
+    if (target.dataset.mobileConfirmReady === "true" && activateConfirmedDrawerTarget(target)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+
+    requireMobileConfirm(event, target, { duration: MOBILE_CONFIRM_DURATION });
+  }
+
   function handleDrawerPointerDown(event) {
     unlockShellAudioContext();
     if (!isDrawerOpen()) return;
@@ -558,6 +596,33 @@
     window.setTimeout(() => target.classList.remove("is-pressed"), 260);
   }
 
+  function handleTopActionPointerDown(event) {
+    unlockShellAudioContext();
+    if (!isMobileConfirmMode() || isDrawerOpen()) return;
+    if (document.body.classList.contains("index-page")) return;
+    if (event.pointerType === "mouse") return;
+
+    const menu = getMenu();
+    const target = event.target?.closest?.("#noteTopActions button, #noteTopActions a");
+    if (!menu || !target || !menu.contains(target) || isConfirmDisabled(target)) return;
+
+    if (target.dataset.mobileConfirmReady === "true" && activateConfirmedDrawerTarget(target)) {
+      return;
+    }
+
+    playShellSfx("firstTap");
+    target.setAttribute("data-pointer-first-tap-played", "true");
+    target.setAttribute("data-pointer-first-tap-at", String(Date.now()));
+    window.setTimeout(() => {
+      if (Date.now() - Number(target.dataset.pointerFirstTapAt || 0) >= POINTER_TAP_GUARD_MS) {
+        target.removeAttribute("data-pointer-first-tap-played");
+        target.removeAttribute("data-pointer-first-tap-at");
+      }
+    }, POINTER_TAP_GUARD_MS + 80);
+    target.classList.add("is-pressed");
+    window.setTimeout(() => target.classList.remove("is-pressed"), 260);
+  }
+
   function bindShellEvents() {
     prepareShellSfx("firstTap");
     prepareShellSfx("secondTap");
@@ -566,7 +631,9 @@
 
     document.addEventListener("keydown", closeNoteMenuOnEscape);
     document.addEventListener("click", handleDrawerConfirmClick, true);
+    document.addEventListener("click", handleTopActionConfirmClick, true);
     document.addEventListener("pointerdown", handleDrawerPointerDown, { passive: true });
+    document.addEventListener("pointerdown", handleTopActionPointerDown, { passive: true });
 
     window.addEventListener("scroll", updateReadingProgress, { passive: true });
     window.addEventListener("resize", () => {
