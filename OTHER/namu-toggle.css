@@ -1,0 +1,147 @@
+:root {
+  color-scheme: light;
+  --paper: #fbfaf6;
+  --ink: #2d2922;
+  --muted: #736b5d;
+  --line: #e6dfd2;
+  --accent: #a76c24;
+  --accent-soft: #f1dfc4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "Noto Serif TC", "Microsoft JhengHei", "PingFang TC", serif;
+}
+
+.page-shell {
+  width: min(920px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px) 0;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.chant-list {
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.toggle-list {
+  display: grid;
+  gap: 4px;
+}
+
+.chant-line {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  margin: 0;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(230, 223, 210, 0.62);
+  font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+  line-height: 1.45;
+}
+
+.chant-line.fixed {
+  font-weight: 700;
+}
+
+.chant-line:last-child {
+  border-bottom: 0;
+}
+
+.number {
+  color: var(--muted);
+  font-size: 0.95em;
+  text-align: right;
+}
+
+.chant-text {
+  min-width: 0;
+}
+
+.toggle-phrase {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12em;
+  min-width: 0;
+}
+
+.toggle-middle {
+  min-width: min(44vw, 18rem);
+  min-height: 1.65em;
+  padding: 0 0.42em;
+  border: 0;
+  border-bottom: 2px solid var(--accent-soft);
+  color: var(--accent);
+  background: transparent;
+  font: inherit;
+  letter-spacing: 0;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.toggle-middle:hover,
+.toggle-middle:focus-visible {
+  border-color: var(--accent);
+  background: rgba(167, 108, 36, 0.08);
+  outline: none;
+}
+
+.toggle-middle[aria-expanded="false"] {
+  color: transparent;
+}
+
+.toggle-middle[aria-expanded="false"]::before {
+  content: "";
+}
+
+@media (max-width: 560px) {
+  .page-shell {
+    width: min(100% - 18px, 920px);
+    padding-top: 24px;
+  }
+
+  .chant-list {
+    padding: 12px;
+  }
+
+  .chant-line {
+    grid-template-columns: 2.4rem minmax(0, 1fr);
+    gap: 6px;
+    font-size: 1.12rem;
+  }
+
+  .toggle-middle {
+    min-width: min(48vw, 12rem);
+  }
+}
