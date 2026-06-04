@@ -1192,7 +1192,11 @@ function selectStageCard(card) {
   currentSelectedStageCard = card;
   card.classList.add("is-stage-selected", "is-touch-preview", "is-pressed");
   card.setAttribute("data-stage-selected", "true");
-  mobileConfirm()?.play?.("firstTap");
+  if (card.dataset.pointerFirstTapPlayed === "true") {
+    card.removeAttribute("data-pointer-first-tap-played");
+  } else {
+    mobileConfirm()?.play?.("firstTap");
+  }
 
   scheduleStageShelfClose(card);
 }
@@ -1362,6 +1366,11 @@ function handlePremiumPointerDown(event) {
 
   const stageCard = event.target?.closest?.(".node-card.stage-tappable:not(.locked)");
   if (stageCard) {
+    if (stageCard.dataset.stageSelected !== "true") {
+      mobileConfirm()?.play?.("firstTap");
+      stageCard.setAttribute("data-pointer-first-tap-played", "true");
+      window.setTimeout(() => stageCard.removeAttribute("data-pointer-first-tap-played"), 360);
+    }
     stageCard.classList.add("is-pressed");
     window.setTimeout(() => stageCard.classList.remove("is-pressed"), 280);
     return;
@@ -1369,6 +1378,11 @@ function handlePremiumPointerDown(event) {
 
   const target = event.target?.closest?.(CONFIRMABLE_INDEX_SELECTOR);
   if (target && isConfirmableIndexTarget(target)) {
+    if (target.dataset.mobileConfirmReady !== "true") {
+      mobileConfirm()?.play?.("firstTap");
+      target.setAttribute("data-pointer-first-tap-played", "true");
+      window.setTimeout(() => target.removeAttribute("data-pointer-first-tap-played"), 360);
+    }
     target.classList.add("is-pressed");
     window.setTimeout(() => target.classList.remove("is-pressed"), 280);
   }

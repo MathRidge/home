@@ -23,6 +23,125 @@ body.index-page .app-shell {
     url("../images/backgrounds/desktop/student-overlook-wide-desktop.webp") center/cover no-repeat;
 }
 
+body.index-page.is-index-loading {
+  overflow: hidden;
+}
+
+.index-loading-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 320;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: #fff7e8;
+  background:
+    linear-gradient(135deg, rgba(5, 9, 20, 0.76), rgba(16, 32, 51, 0.58)),
+    url("../images/backgrounds/desktop/student-overlook-wide-desktop.webp") center/cover no-repeat;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 360ms ease, visibility 360ms ease;
+}
+
+.index-loading-gate.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.index-loading-card {
+  width: min(390px, calc(100vw - 36px));
+  border: 1px solid rgba(255, 247, 232, 0.26);
+  border-radius: 18px;
+  padding: 24px;
+  background: rgba(16, 32, 51, 0.76);
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.36);
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.index-loading-mark {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  margin-bottom: 14px;
+  border: 3px solid rgba(255, 247, 232, 0.24);
+  border-top-color: #f2b84b;
+  animation: ridgeLoadSpin 960ms linear infinite;
+}
+
+.index-loading-gate.is-ready .index-loading-mark {
+  animation: none;
+  border-color: rgba(255, 247, 232, 0.28);
+  background: radial-gradient(circle at 50% 45%, #f2b84b 0 34%, #2f5d4a 36% 58%, transparent 60%);
+}
+
+.index-loading-kicker {
+  margin: 0 0 8px;
+  color: #ffe3a8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.index-loading-card h1 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2rem, 7vw, 2.7rem);
+  line-height: 1.02;
+}
+
+.index-loading-text {
+  min-height: 2.6em;
+  margin: 14px 0 18px;
+  color: rgba(255, 247, 232, 0.86);
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.index-loading-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 247, 232, 0.18);
+}
+
+.index-loading-bar span {
+  display: block;
+  width: 18%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f2b84b, #6ebc8b);
+  transition: width 260ms ease;
+}
+
+.index-begin-button {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 18px;
+  border: 0;
+  border-radius: 999px;
+  color: #102033;
+  background: #f2b84b;
+  font: inherit;
+  font-weight: 900;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.index-begin-button:disabled {
+  color: rgba(255, 247, 232, 0.62);
+  background: rgba(255, 247, 232, 0.16);
+  cursor: wait;
+  box-shadow: none;
+}
+
+@keyframes ridgeLoadSpin {
+  to { transform: rotate(360deg); }
+}
+
 body.index-page .app-shell.quest-bg {
   background:
     radial-gradient(circle at 78% 18%, rgba(242, 184, 75, 0.34), transparent 34%),

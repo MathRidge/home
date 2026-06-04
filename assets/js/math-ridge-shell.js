@@ -15,11 +15,22 @@
     firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1120, fadeOut: 240 },
     secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 }
   };
+  const INDEX_PRELOAD_IMAGES = [
+    "assets/images/logo/math-ridge-logo.webp",
+    "assets/images/backgrounds/desktop/student-overlook-wide-desktop.webp",
+    "assets/images/backgrounds/desktop/fantasy-trail-blue-desktop.webp",
+    "assets/images/backgrounds/desktop/study-cabin-desktop.webp",
+    "assets/images/backgrounds/desktop/study-room-template-desktop.webp",
+    "assets/images/backgrounds/desktop/desk-closeup-desktop.webp"
+  ];
 
   let mobileConfirmTarget = null;
   let mobileConfirmTimer = null;
   let drawerCloseTimer = null;
   const shellSfxCache = new Map();
+  const decodedShellSfxCache = new Map();
+  const shellSfxBuffers = new Map();
+  let shellAudioContext = null;
 
   function matchesQuery(query) {
     return Boolean(window.matchMedia && window.matchMedia(query).matches);
@@ -35,6 +46,72 @@
 
   function shellSoundUrl(file) {
     return `${SHELL_SOUND_BASE}${encodeURIComponent(file)}`;
+  }
+
+  function getShellAudioContext() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!shellAudioContext) shellAudioContext = new AudioContextClass();
+    return shellAudioContext;
+  }
+
+  function unlockShellAudioContext() {
+    const context = getShellAudioContext();
+    if (!context) return;
+    if (context.state === "suspended") context.resume().catch(() => {});
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+    gain.gain.value = 0;
+    source.buffer = context.createBuffer(1, 1, context.sampleRate);
+    source.connect(gain).connect(context.destination);
+    try { source.start(0); } catch (error) {}
+  }
+
+  function prepareShellSfxBuffer(name) {
+    const cue = shellSfxPresets[name];
+    const context = getShellAudioContext();
+    if (!cue?.file || !context) return null;
+    if (shellSfxBuffers.has(name)) return Promise.resolve(shellSfxBuffers.get(name));
+    if (decodedShellSfxCache.has(name)) return decodedShellSfxCache.get(name);
+    const promise = fetch(shellSoundUrl(cue.file))
+      .then(response => response.arrayBuffer())
+      .then(buffer => context.decodeAudioData(buffer))
+      .then(buffer => {
+        shellSfxBuffers.set(name, buffer);
+        return buffer;
+      });
+    decodedShellSfxCache.set(name, promise);
+    return promise;
+  }
+
+  function playShellBufferNow(name, buffer) {
+    const cue = shellSfxPresets[name];
+    const context = getShellAudioContext();
+    if (!cue?.file || !context || !buffer) return false;
+    if (context.state === "suspended") context.resume().catch(() => {});
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+    gain.gain.value = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
+    source.buffer = buffer;
+    source.connect(gain).connect(context.destination);
+    try {
+      source.start(0, Math.min(Math.max(0, Number(cue.start || 0)), Math.max(0, buffer.duration - 0.01)));
+    } catch (error) {
+      return false;
+    }
+    return true;
+  }
+
+  function playShellSfxBuffer(name) {
+    const cue = shellSfxPresets[name];
+    const context = getShellAudioContext();
+    if (!cue?.file || !context) return false;
+    if (context.state === "suspended") context.resume().catch(() => {});
+    if (shellSfxBuffers.has(name)) return playShellBufferNow(name, shellSfxBuffers.get(name));
+    const bufferPromise = prepareShellSfxBuffer(name);
+    if (!bufferPromise) return false;
+    bufferPromise.then(buffer => playShellBufferNow(name, buffer)).catch(() => {});
+    return true;
   }
 
   function stopShellSfxAudio(audio) {
@@ -54,6 +131,7 @@
     audio.volume = Math.max(0, Math.min(1, Number(cue.volume || 0.4)));
     try { audio.load(); } catch (error) {}
     shellSfxCache.set(name, audio);
+    prepareShellSfxBuffer(name)?.catch(() => {});
     return audio;
   }
 
@@ -72,6 +150,8 @@
   function playShellSfx(name) {
     const cue = shellSfxPresets[name];
     if (!cue?.file || typeof Audio !== "function") return null;
+    unlockShellAudioContext();
+    if (playShellSfxBuffer(name)) return null;
 
     const audio = createShellSfxAudio(name, cue);
     const durationMs = Math.max(0, Number(cue.maxMs || 0));
@@ -183,7 +263,11 @@
     }
 
     markMobileConfirm(target, options);
-    playShellSfx("firstTap");
+    if (target.dataset.pointerFirstTapPlayed === "true") {
+      target.removeAttribute("data-pointer-first-tap-played");
+    } else {
+      playShellSfx("firstTap");
+    }
     return true;
   }
 
@@ -312,6 +396,67 @@
     return isMobileDrawer() && document.body.classList.contains("note-menu-open");
   }
 
+  function preloadIndexImage(src) {
+    return new Promise(resolve => {
+      const image = new Image();
+      const done = () => resolve(src);
+      image.onload = done;
+      image.onerror = done;
+      image.src = src;
+    });
+  }
+
+  function setIndexLoadProgress(percent, text) {
+    const bar = document.getElementById("indexLoadingBar");
+    const label = document.getElementById("indexLoadingText");
+    if (bar) bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+    if (label && text) label.textContent = text;
+  }
+
+  function prepareIndexLoadingGate() {
+    const gate = document.getElementById("indexLoadingGate");
+    const beginButton = document.getElementById("indexBeginButton");
+    if (!gate || !beginButton) return;
+
+    const loadSounds = ["firstTap", "secondTap"].map(name => {
+      prepareShellSfx(name);
+      return prepareShellSfxBuffer(name);
+    }).filter(Boolean);
+    const loadImages = INDEX_PRELOAD_IMAGES.map(preloadIndexImage);
+    const preloadWork = Promise.allSettled([...loadSounds, ...loadImages]);
+    const minimumDisplay = new Promise(resolve => window.setTimeout(resolve, 620));
+    const safetyTimeout = new Promise(resolve => window.setTimeout(resolve, 3600));
+
+    setIndexLoadProgress(38, "Warming up sounds and trail paths...");
+
+    Promise.race([
+      Promise.all([preloadWork, minimumDisplay]),
+      safetyTimeout
+    ]).then(() => {
+      gate.classList.add("is-ready");
+      beginButton.disabled = false;
+      beginButton.textContent = "Begin";
+      setIndexLoadProgress(100, "Ready to climb.");
+    });
+
+    const begin = () => {
+      if (beginButton.disabled) return;
+      unlockShellAudioContext();
+      prepareShellSfx("firstTap");
+      prepareShellSfx("secondTap");
+      playShellSfx("secondTap");
+      gate.classList.add("is-hidden");
+      document.body.classList.remove("is-index-loading");
+      window.setTimeout(() => gate.setAttribute("hidden", ""), 420);
+    };
+
+    beginButton.addEventListener("pointerdown", unlockShellAudioContext, { passive: true });
+    beginButton.addEventListener("click", begin);
+    beginButton.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") begin();
+    });
+  }
+
   function handleDrawerConfirmClick(event) {
     if (!isDrawerOpen()) return;
 
@@ -327,7 +472,11 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       markMobileConfirm(target, { duration: 1200 });
-      playShellSfx("firstTap");
+      if (target.dataset.pointerFirstTapPlayed === "true") {
+        target.removeAttribute("data-pointer-first-tap-played");
+      } else {
+        playShellSfx("firstTap");
+      }
       return;
     }
 
@@ -341,6 +490,7 @@
   }
 
   function handleDrawerPointerDown(event) {
+    unlockShellAudioContext();
     if (!isDrawerOpen()) return;
     const menu = getMenu();
     const target = event.target?.closest?.("button, a");
@@ -351,6 +501,11 @@
     }
 
     if (event.pointerType === "mouse") return;
+    if (target.dataset.mobileConfirmReady !== "true") {
+      playShellSfx("firstTap");
+      target.setAttribute("data-pointer-first-tap-played", "true");
+      window.setTimeout(() => target.removeAttribute("data-pointer-first-tap-played"), 360);
+    }
     target.classList.add("is-pressed");
     window.setTimeout(() => target.classList.remove("is-pressed"), 260);
   }
@@ -359,6 +514,7 @@
     prepareShellSfx("firstTap");
     prepareShellSfx("secondTap");
     injectMobileConfirmNote();
+    prepareIndexLoadingGate();
 
     document.addEventListener("keydown", closeNoteMenuOnEscape);
     document.addEventListener("click", handleDrawerConfirmClick, true);

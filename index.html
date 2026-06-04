@@ -18,10 +18,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260602-cabin-certificate-official" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260604-index-loading-gate" />
 </head>
 
-<body class="index-page" data-index-page="true">
+<body class="index-page is-index-loading" data-index-page="true">
+  <div class="index-loading-gate" id="indexLoadingGate" role="dialog" aria-modal="true" aria-labelledby="indexLoadingTitle">
+    <div class="index-loading-card">
+      <span class="index-loading-mark" aria-hidden="true"></span>
+      <p class="index-loading-kicker">Preparing the Ridge</p>
+      <h1 id="indexLoadingTitle">Loading Math Ridge</h1>
+      <p class="index-loading-text" id="indexLoadingText">Warming up sounds and trail paths...</p>
+      <div class="index-loading-bar" aria-hidden="true">
+        <span id="indexLoadingBar"></span>
+      </div>
+      <button class="index-begin-button" id="indexBeginButton" type="button" disabled>Loading</button>
+    </div>
+  </div>
+
   <div class="site-bg home-bg" id="siteBg" aria-hidden="true"></div>
   <div class="reading-progress" aria-hidden="true"></div>
 
@@ -221,7 +234,7 @@
     </div>
   </main>
 
-  <script src="assets/js/math-ridge-shell.js?v=20260604-tap-sound-start"></script>
-  <script src="assets/js/index.js?v=20260602-button-audio"></script>
+  <script src="assets/js/math-ridge-shell.js?v=20260604-index-preload-gate"></script>
+  <script src="assets/js/index.js?v=20260604-pointerdown-taps"></script>
 </body>
 </html>

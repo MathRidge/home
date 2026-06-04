@@ -656,6 +656,8 @@
   let activeSoundCues = [];
   const preparedVoiceAudio = new Map();
   const preparedSoundAudio = new Map();
+  const decodedAudioBuffers = new Map();
+  let instantAudioContext = null;
   let voiceToken = 0;
   let voiceAdvanceLocked = false;
   let soundAdvanceLocked = false;
@@ -881,6 +883,79 @@
     return `${item.base}${encodeURIComponent(item.file)}`;
   }
 
+  function getInstantAudioContext() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!instantAudioContext) instantAudioContext = new AudioContextClass();
+    return instantAudioContext;
+  }
+
+  function unlockInstantAudioContext() {
+    const context = getInstantAudioContext();
+    if (!context) return;
+    if (context.state === "suspended") context.resume().catch(() => {});
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+    gain.gain.value = 0;
+    source.buffer = context.createBuffer(1, 1, context.sampleRate);
+    source.connect(gain).connect(context.destination);
+    try { source.start(0); } catch (error) {}
+  }
+
+  function decodeAudioBuffer(url) {
+    const context = getInstantAudioContext();
+    if (!context || !url) return null;
+    if (decodedAudioBuffers.has(url)) return decodedAudioBuffers.get(url);
+    const promise = fetch(url)
+      .then(response => response.arrayBuffer())
+      .then(buffer => context.decodeAudioData(buffer));
+    decodedAudioBuffers.set(url, promise);
+    return promise;
+  }
+
+  function prepareDecodedAudio(url) {
+    decodeAudioBuffer(url)?.catch(() => {});
+  }
+
+  function playDecodedAudio(url, options = {}) {
+    const context = getInstantAudioContext();
+    if (!context || !url) return null;
+    if (context.state === "suspended") context.resume().catch(() => {});
+    const bufferPromise = decodeAudioBuffer(url);
+    if (!bufferPromise) return null;
+
+    const handle = { ended: false, paused: false, source: null, stop: () => {} };
+    bufferPromise
+      .then(buffer => {
+        if (handle.ended) return;
+        const source = context.createBufferSource();
+        const gain = context.createGain();
+        const volume = Math.max(0, Math.min(1, Number(options.volume ?? 0.9)));
+        const startAt = Math.max(0, Number(options.start || 0));
+        gain.gain.value = volume;
+        source.buffer = buffer;
+        source.connect(gain).connect(context.destination);
+        source.onended = () => {
+          handle.ended = true;
+          handle.paused = true;
+          options.onEnded?.();
+        };
+        handle.source = source;
+        handle.stop = () => {
+          handle.ended = true;
+          handle.paused = true;
+          try { source.stop(); } catch (error) {}
+        };
+        source.start(0, Math.min(startAt, Math.max(0, buffer.duration - 0.01)));
+      })
+      .catch(() => {
+        handle.ended = true;
+        handle.paused = true;
+        options.onError?.();
+      });
+    return handle;
+  }
+
   function prepareAudioUrl(url, cache, volume = 0.9) {
     if (!url || !cache || cache.has(url) || typeof Audio !== "function") return cache?.get(url) || null;
 
@@ -906,7 +981,9 @@
 
   function prepareVoiceSource(source) {
     if (!source || source.pause) return;
-    prepareAudioUrl(voiceUrl(source), preparedVoiceAudio, 0.95);
+    const url = voiceUrl(source);
+    prepareAudioUrl(url, preparedVoiceAudio, 0.95);
+    prepareDecodedAudio(url);
   }
 
   function createVoiceAudio(source) {
@@ -922,7 +999,9 @@
     const cue = normalizeSoundCue(source);
     if (!cue?.file) return;
     const volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
-    prepareAudioUrl(soundCueUrl(cue), preparedSoundAudio, volume);
+    const url = soundCueUrl(cue);
+    prepareAudioUrl(url, preparedSoundAudio, volume);
+    prepareDecodedAudio(url);
   }
 
   function createSoundAudio(cue) {
@@ -935,6 +1014,8 @@
   }
 
   function playUiTapSound() {
+    unlockInstantAudioContext();
+    if (playDecodedAudio(soundCueUrl(UI_TAP_SOUND), { volume: UI_TAP_SOUND.volume, start: UI_TAP_SOUND.start })) return;
     const audio = createSoundAudio(UI_TAP_SOUND);
     if (!audio) return;
     audio.volume = UI_TAP_SOUND.volume;
@@ -1108,6 +1189,7 @@
   }
 
   function unlockPreparedAudio() {
+    unlockInstantAudioContext();
     const prepared = preparedVoiceAudio.values().next().value || preparedSoundAudio.values().next().value;
     if (!prepared || typeof prepared.cloneNode !== "function") return;
     const audio = prepared.cloneNode(true);
@@ -1141,9 +1223,12 @@
   function stopVoice() {
     voiceToken += 1;
     if (!activeVoice) return;
-    activeVoice.pause();
-    activeVoice.removeAttribute("src");
-    activeVoice.load();
+    if (typeof activeVoice.stop === "function") activeVoice.stop();
+    else {
+      activeVoice.pause();
+      activeVoice.removeAttribute("src");
+      activeVoice.load();
+    }
     activeVoice = null;
   }
 
@@ -1167,22 +1252,39 @@
         return;
       }
 
-      const audio = createVoiceAudio(source);
-      activeVoice = audio;
-      audio.preload = "auto";
-      audio.volume = 0.95;
-      audio.addEventListener("ended", playNext, { once: true });
-      audio.addEventListener("error", playNext, { once: true });
+      const playHtmlVoice = () => {
+        const audio = createVoiceAudio(source);
+        activeVoice = audio;
+        audio.preload = "auto";
+        audio.volume = 0.95;
+        audio.addEventListener("ended", playNext, { once: true });
+        audio.addEventListener("error", playNext, { once: true });
 
-      const attempt = audio.play();
-      if (attempt && typeof attempt.catch === "function") {
-        attempt.catch(() => {
-          if (token === voiceToken) {
-            activeVoice = null;
-            scheduleAutoPlay();
-          }
-        });
+        const attempt = audio.play();
+        if (attempt && typeof attempt.catch === "function") {
+          attempt.catch(() => {
+            if (token === voiceToken) {
+              activeVoice = null;
+              scheduleAutoPlay();
+            }
+          });
+        }
+      };
+
+      const url = voiceUrl(source);
+      const decodedVoice = playDecodedAudio(url, {
+        volume: 0.95,
+        onEnded: playNext,
+        onError: () => {
+          if (token === voiceToken) playHtmlVoice();
+        }
+      });
+      if (decodedVoice) {
+        activeVoice = decodedVoice;
+        return;
       }
+
+      playHtmlVoice();
     };
 
     playNext();
