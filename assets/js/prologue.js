@@ -2,6 +2,11 @@
   "use strict";
 
   const progressBar = document.getElementById("readerProgressBar");
+  const loadingGate = document.getElementById("prologueLoadingGate");
+  const loadingBar = document.getElementById("prologueLoadingBar");
+  const loadingText = document.getElementById("prologueLoadingText");
+  const orientationNote = document.getElementById("prologueOrientationNote");
+  const beginButton = document.getElementById("prologueBeginButton");
   const READ_KEY = "mathRidge_mangaPrologueSeen_v1";
   const VOICE_BASE = "voice/Mira/";
   const voiceCues = new Map([
@@ -11,6 +16,8 @@
   const voiceAudioCache = new Map();
   let activeVoice = null;
   let pendingVoiceCue = null;
+  let prologueAssetsReady = false;
+  let prologueStarted = false;
 
   function voiceUrl(file) {
     return `${VOICE_BASE}${encodeURIComponent(file)}`;
@@ -30,6 +37,101 @@
 
   function prepareVoiceCues() {
     voiceCues.forEach(file => prepareVoiceFile(file));
+  }
+
+  function isPhonePortrait() {
+    return Boolean(window.matchMedia && window.matchMedia("(max-width: 920px) and (orientation: portrait)").matches);
+  }
+
+  function setLoadingProgress(done, total, text) {
+    const percent = total ? Math.round((done / total) * 100) : 0;
+    if (loadingBar) loadingBar.style.width = `${Math.max(8, Math.min(100, percent))}%`;
+    if (loadingText) loadingText.textContent = text || `Loading ${percent}%`;
+  }
+
+  function syncBeginState() {
+    if (!beginButton) return;
+    const needsLandscape = isPhonePortrait();
+    beginButton.disabled = !prologueAssetsReady || needsLandscape;
+    beginButton.textContent = !prologueAssetsReady
+      ? "Loading"
+      : needsLandscape
+        ? "Turn Sideways"
+        : "Begin";
+    if (orientationNote) {
+      orientationNote.textContent = needsLandscape
+        ? "Turn your phone sideways before beginning so the story opens in a wider view."
+        : "Ready. Tap Begin when you are comfortable.";
+    }
+  }
+
+  function preloadImageElement(image) {
+    return new Promise(resolve => {
+      const done = () => {
+        image.classList.add("is-loaded");
+        resolve(image.currentSrc || image.src);
+      };
+      if (image.complete && image.naturalWidth) {
+        if (typeof image.decode === "function") image.decode().then(done).catch(done);
+        else done();
+        return;
+      }
+      image.addEventListener("load", done, { once: true });
+      image.addEventListener("error", done, { once: true });
+    });
+  }
+
+  function preloadVoiceFile(file) {
+    return new Promise(resolve => {
+      const audio = prepareVoiceFile(file);
+      if (!audio) {
+        resolve(file);
+        return;
+      }
+      if (audio.readyState >= 3) {
+        resolve(file);
+        return;
+      }
+      const done = () => resolve(file);
+      audio.addEventListener("canplaythrough", done, { once: true });
+      audio.addEventListener("loadeddata", done, { once: true });
+      audio.addEventListener("error", done, { once: true });
+      try { audio.load(); } catch (error) { done(); }
+      window.setTimeout(done, 4200);
+    });
+  }
+
+  function beginPrologue() {
+    if (!beginButton || beginButton.disabled || prologueStarted) return;
+    prologueStarted = true;
+    retryPendingVoiceCue();
+    loadingGate?.classList.add("is-hidden");
+    document.body.classList.remove("prologue-loading");
+    window.setTimeout(() => loadingGate?.setAttribute("hidden", ""), 380);
+    updateProgress();
+  }
+
+  function preloadPrologueAssets() {
+    const images = Array.from(document.querySelectorAll(".manga-page"));
+    const voices = Array.from(voiceCues.values());
+    const tasks = [
+      ...images.map(image => () => preloadImageElement(image)),
+      ...voices.map(file => () => preloadVoiceFile(file))
+    ];
+    const total = Math.max(1, tasks.length);
+    let done = 0;
+
+    setLoadingProgress(0, total, "Loading manga pages and Mira's voice...");
+    syncBeginState();
+
+    Promise.allSettled(tasks.map(task => task().finally(() => {
+      done += 1;
+      setLoadingProgress(done, total, done >= total ? "Prologue ready." : `Loading ${done} of ${total} assets...`);
+    }))).then(() => {
+      prologueAssetsReady = true;
+      setLoadingProgress(total, total, "Prologue ready.");
+      syncBeginState();
+    });
   }
 
   function createVoiceAudio(file) {
@@ -129,8 +231,16 @@
   }
 
   window.addEventListener("scroll", updateProgress, { passive: true });
-  window.addEventListener("resize", updateProgress);
-  window.addEventListener("orientationchange", updateProgress);
+  window.addEventListener("resize", () => {
+    syncBeginState();
+    updateProgress();
+  });
+  window.addEventListener("orientationchange", () => {
+    window.setTimeout(() => {
+      syncBeginState();
+      updateProgress();
+    }, 180);
+  });
   window.addEventListener("pointerdown", retryPendingVoiceCue, { passive: true });
   window.addEventListener("touchstart", retryPendingVoiceCue, { passive: true });
   window.addEventListener("keydown", retryPendingVoiceCue);
@@ -138,7 +248,9 @@
   document.addEventListener("DOMContentLoaded", () => {
     prepareVoiceCues();
     markImagesLoaded();
-    updateProgress();
+    preloadPrologueAssets();
+    beginButton?.addEventListener("click", beginPrologue);
+    syncBeginState();
   });
   window.addEventListener("load", updateProgress);
 })();

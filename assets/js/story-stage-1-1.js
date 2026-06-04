@@ -1445,13 +1445,13 @@
     return `${config.file}|${Number(config.start || 0)}`;
   }
 
-  function playAmbient(config) {
+  function playAmbient(config, options = {}) {
     const nextAmbientKey = ambientKey(config);
     if (!config) {
       stopAmbient();
       return;
     }
-    if (activeAmbient && activeAmbientKey === nextAmbientKey && !activeAmbient.paused) return;
+    if (!options.force && activeAmbient && activeAmbientKey === nextAmbientKey && !activeAmbient.paused && !pendingAmbient) return;
 
     stopAmbient();
 
@@ -1500,13 +1500,18 @@
     }
   }
 
-  function playFrameAmbient(frame) {
-    playAmbient(ambientAudioByBg.get(frame?.bg) || null);
+  function playFrameAmbient(frame, options = {}) {
+    playAmbient(ambientAudioByBg.get(frame?.bg) || null, options);
   }
 
-  function retryPendingAmbient() {
+  function retryPendingAmbient(options = {}) {
     if (!pendingAmbient) return;
-    playAmbient(pendingAmbient.config);
+    playAmbient(pendingAmbient.config, options);
+  }
+
+  function retryCurrentFrameAmbientForAuto() {
+    if (!autoPlayEnabled) return;
+    playFrameAmbient(frames[currentIndex], { force: true });
   }
 
   function frameSegments(frame) {
@@ -1578,9 +1583,10 @@
     autoPlayEnabled = !autoPlayEnabled;
     updateAutoPlayButton();
     if (autoPlayEnabled) {
-      retryPendingAmbient();
       prepareStoryAudio(currentIndex, 6);
       unlockPreparedAudio();
+      retryPendingAmbient({ force: true });
+      retryCurrentFrameAmbientForAuto();
       retryCurrentFrameVoiceForAuto();
       retryCurrentFrameSoundCuesForAuto();
       scheduleAutoPlay();

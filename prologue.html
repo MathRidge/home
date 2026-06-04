@@ -24,9 +24,22 @@
   <link rel="preload" as="image" href="assets/images/prologue/mathridge_prologue_page_08.png" />
   <link rel="preload" as="image" href="assets/images/prologue/bonus_mira_intro.webp" />
   <link rel="preload" as="audio" type="audio/mpeg" href="voice/Mira/mira-im-sorry-i-think-i-brought-you-here.mp3" />
-  <link rel="stylesheet" href="assets/css/prologue.css?v=20260604-top-return" />
+  <link rel="stylesheet" href="assets/css/prologue.css?v=20260604-prologue-loading-gate" />
 </head>
-<body>
+<body class="prologue-loading">
+  <div class="prologue-loading-gate" id="prologueLoadingGate" role="dialog" aria-modal="true" aria-labelledby="prologueLoadingTitle">
+    <div class="prologue-loading-card">
+      <p class="prologue-loading-kicker">Preparing The Manga</p>
+      <h1 id="prologueLoadingTitle">Math Ridge Prologue</h1>
+      <p class="prologue-loading-text" id="prologueLoadingText">Loading pages and warming Mira's voice...</p>
+      <div class="prologue-loading-bar" aria-hidden="true">
+        <span id="prologueLoadingBar"></span>
+      </div>
+      <p class="prologue-orientation-note" id="prologueOrientationNote">For the best story view, turn your phone sideways before beginning.</p>
+      <button class="reader-btn primary prologue-begin-button" id="prologueBeginButton" type="button" disabled>Loading</button>
+    </div>
+  </div>
+
   <div class="reader-progress" aria-hidden="true">
     <span id="readerProgressBar"></span>
   </div>
@@ -53,6 +66,6 @@
     </nav>
   </main>
 
-  <script src="assets/js/prologue.js?v=20260604-preloaded-voice-trigger"></script>
+  <script src="assets/js/prologue.js?v=20260604-prologue-loading-gate"></script>
 </body>
 </html>
