@@ -986,6 +986,7 @@
       prepareStoryAudio(currentIndex, 6);
       unlockPreparedAudio();
       retryCurrentFrameVoiceForAuto();
+      retryCurrentFrameSoundCuesForAuto();
       scheduleAutoPlay();
     }
     else clearAutoPlayTimer();
@@ -1258,8 +1259,11 @@
 
   function clearSoundEntry(entry) {
     if (!entry) return;
+    entry.cancelled = true;
     (entry.timers || []).forEach(timer => window.clearTimeout(timer));
+    if (entry.fadeInTimer) window.clearInterval(entry.fadeInTimer);
     if (entry.fadeTimer) window.clearInterval(entry.fadeTimer);
+    try { entry.source?.stop(); } catch (error) {}
     if (entry.audio) {
       entry.audio.pause();
       entry.audio.removeAttribute("src");
@@ -1351,6 +1355,108 @@
     entry.timers.push(stopTimer);
   }
 
+  function scheduleSoundCueFadeIn(entry, audio, targetVolume, fadeMs = 0) {
+    const duration = Math.max(0, Number(fadeMs || 0));
+    if (!duration) {
+      audio.volume = targetVolume;
+      return;
+    }
+
+    audio.volume = 0;
+    const started = performance.now();
+    const fadeTimer = window.setInterval(() => {
+      const progress = Math.min(1, (performance.now() - started) / duration);
+      audio.volume = Math.max(0, targetVolume * progress);
+      if (progress >= 1) {
+        window.clearInterval(fadeTimer);
+        if (entry.fadeInTimer === fadeTimer) entry.fadeInTimer = null;
+      }
+    }, 40);
+    entry.fadeInTimer = fadeTimer;
+  }
+
+  function playDecodedSoundCue(cue, entry) {
+    const context = getInstantAudioContext();
+    const url = soundCueUrl(cue);
+    if (!context || !url) return false;
+    if (context.state === "suspended") context.resume().catch(() => {});
+    const bufferPromise = decodeAudioBuffer(url);
+    if (!bufferPromise) return false;
+
+    const startAt = Math.max(0, Number(cue.start || 0));
+    const targetVolume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
+    const fadeInMs = Math.max(0, Number(cue.fadeIn || 0));
+    const audioLike = {
+      paused: false,
+      ended: false,
+      volume: targetVolume,
+      pause() {
+        entry.cancelled = true;
+        this.paused = true;
+        this.ended = true;
+        try { entry.source?.stop(); } catch (error) {}
+      },
+      removeAttribute() {},
+      load() {}
+    };
+    entry.audio = audioLike;
+
+    bufferPromise.then(buffer => {
+      if (entry.cancelled) return;
+      const source = context.createBufferSource();
+      const gain = context.createGain();
+      const safeStart = Math.min(startAt, Math.max(0, buffer.duration - 0.01));
+      source.buffer = buffer;
+      gain.gain.value = fadeInMs ? 0 : targetVolume;
+      source.connect(gain).connect(context.destination);
+      entry.source = source;
+      entry.gain = gain;
+      audioLike.stop = () => {
+        entry.cancelled = true;
+        audioLike.paused = true;
+        audioLike.ended = true;
+        try { source.stop(); } catch (error) {}
+      };
+      source.onended = () => {
+        audioLike.paused = true;
+        audioLike.ended = true;
+        clearSoundEntry(entry);
+      };
+
+      if (fadeInMs) {
+        const now = context.currentTime;
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(targetVolume, now + fadeInMs / 1000);
+      }
+
+      const endAt = Number(cue.end);
+      const maxMs = Number(cue.maxMs);
+      const hasEnd = Number.isFinite(endAt) && endAt > startAt;
+      const durationMs = hasEnd
+        ? (endAt - startAt) * 1000
+        : Number.isFinite(maxMs) && maxMs > 0
+          ? maxMs
+          : 0;
+      const fadeOutMs = Math.max(0, Number(cue.fadeOut || 0));
+      if (durationMs) {
+        if (fadeOutMs && durationMs > fadeOutMs + 80) {
+          entry.timers.push(window.setTimeout(() => {
+            const now = context.currentTime;
+            gain.gain.cancelScheduledValues(now);
+            gain.gain.setValueAtTime(gain.gain.value, now);
+            gain.gain.linearRampToValueAtTime(0, now + fadeOutMs / 1000);
+          }, Math.max(0, durationMs - fadeOutMs)));
+        }
+        entry.timers.push(window.setTimeout(() => clearSoundEntry(entry), durationMs));
+      }
+
+      try { source.start(0, safeStart); }
+      catch (error) { clearSoundEntry(entry); }
+    }).catch(() => clearSoundEntry(entry));
+
+    return true;
+  }
+
   function playSoundCue(source) {
     const cue = normalizeSoundCue(source);
     if (!cue?.file) return null;
@@ -1360,11 +1466,13 @@
     const start = () => {
       const url = soundCueUrl(cue);
       if (!url) return;
+      if (playDecodedSoundCue(cue, entry)) return;
       const audio = createSoundAudio(cue);
       const startAt = Math.max(0, Number(cue.start || 0));
       entry.audio = audio;
       audio.preload = "auto";
-      audio.volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
+      const targetVolume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42;
+      audio.volume = targetVolume;
       audio.loop = Boolean(cue.loop);
       audio.addEventListener("ended", () => clearSoundEntry(entry), { once: true });
       audio.addEventListener("error", () => clearSoundEntry(entry), { once: true });
@@ -1374,6 +1482,7 @@
         if (startAt && audio.duration && startAt < audio.duration) {
           try { audio.currentTime = startAt; } catch (error) {}
         }
+        scheduleSoundCueFadeIn(entry, audio, targetVolume, cue.fadeIn);
         scheduleSoundCueStop(entry, cue, startAt);
         const attempt = audio.play();
         if (attempt && typeof attempt.catch === "function") {
@@ -1532,6 +1641,15 @@
     const files = frameVoiceFiles(frames[currentIndex]);
     if (!files.length) return;
     playVoiceQueue(files);
+  }
+
+  function retryCurrentFrameSoundCuesForAuto() {
+    if (!autoPlayEnabled || activeSoundCues.length) return;
+    const frame = frames[currentIndex];
+    const cues = frameSoundCues(frame);
+    if (!cues.length) return;
+    playSoundCues(cues);
+    setSoundAdvanceLock(soundCueLockDuration(cues, frameVoiceFiles(frame).length > 0));
   }
 
   function clearInteraction() {

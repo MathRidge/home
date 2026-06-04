@@ -27,6 +27,10 @@ body.index-page.is-index-loading {
   overflow: hidden;
 }
 
+body.index-page.index-preload-seen {
+  overflow-x: hidden;
+}
+
 .index-loading-gate {
   position: fixed;
   inset: 0;
@@ -41,6 +45,10 @@ body.index-page.is-index-loading {
   opacity: 1;
   visibility: visible;
   transition: opacity 360ms ease, visibility 360ms ease;
+}
+
+body.index-page.index-preload-seen .index-loading-gate {
+  display: none;
 }
 
 .index-loading-gate.is-hidden {

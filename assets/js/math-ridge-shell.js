@@ -11,6 +11,8 @@
   const MOBILE_CONFIRM_DURATION = 5600;
   const MOBILE_CONFIRM_NOTE = "Ridge controls use two taps: first to arm, second to enter.";
   const SHELL_SOUND_BASE = "voice/sound/";
+  const INDEX_LOADED_KEY = "mathRidge_indexLoaded_v1";
+  const POINTER_TAP_GUARD_MS = 1400;
   const shellSfxPresets = {
     firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1120, fadeOut: 240 },
     secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 }
@@ -30,6 +32,7 @@
   const shellSfxCache = new Map();
   const decodedShellSfxCache = new Map();
   const shellSfxBuffers = new Map();
+  const shellSfxLastPlayedAt = new Map();
   let shellAudioContext = null;
 
   function matchesQuery(query) {
@@ -147,9 +150,14 @@
     return audio;
   }
 
-  function playShellSfx(name) {
+  function playSingleShellSfx(name, options = {}) {
     const cue = shellSfxPresets[name];
     if (!cue?.file || typeof Audio !== "function") return null;
+    const now = performance.now();
+    if (!options.force && name === "firstTap" && now - (shellSfxLastPlayedAt.get(name) || 0) < 130) {
+      return null;
+    }
+    shellSfxLastPlayedAt.set(name, now);
     unlockShellAudioContext();
     if (playShellSfxBuffer(name)) return null;
 
@@ -195,6 +203,16 @@
       });
     }
     return audio;
+  }
+
+  function playShellSfx(name, options = {}) {
+    if (name === "secondTap" && !options.single) {
+      playSingleShellSfx("firstTap", { force: true });
+      window.setTimeout(() => playSingleShellSfx("secondTap", { force: true }), 58);
+      return null;
+    }
+
+    return playSingleShellSfx(name, options);
   }
 
   function getMenu() {
@@ -244,6 +262,15 @@
       target.getAttribute("aria-disabled") === "true";
   }
 
+  function consumePointerFirstTapPlayed(target) {
+    if (!target?.dataset || target.dataset.pointerFirstTapPlayed !== "true") return false;
+    const playedAt = Number(target.dataset.pointerFirstTapAt || 0);
+    const isFresh = !playedAt || Date.now() - playedAt <= POINTER_TAP_GUARD_MS;
+    target.removeAttribute("data-pointer-first-tap-played");
+    target.removeAttribute("data-pointer-first-tap-at");
+    return isFresh;
+  }
+
   function requireMobileConfirm(event, target, options = {}) {
     if (!isMobileConfirmMode() || !target || isConfirmDisabled(target)) return false;
 
@@ -263,9 +290,7 @@
     }
 
     markMobileConfirm(target, options);
-    if (target.dataset.pointerFirstTapPlayed === "true") {
-      target.removeAttribute("data-pointer-first-tap-played");
-    } else {
+    if (!consumePointerFirstTapPlayed(target)) {
       playShellSfx("firstTap");
     }
     return true;
@@ -413,10 +438,27 @@
     if (label && text) label.textContent = text;
   }
 
+  function hasIndexLoadedThisSession() {
+    try { return sessionStorage.getItem(INDEX_LOADED_KEY) === "true"; }
+    catch (error) { return false; }
+  }
+
+  function rememberIndexLoadedThisSession() {
+    try { sessionStorage.setItem(INDEX_LOADED_KEY, "true"); }
+    catch (error) {}
+  }
+
   function prepareIndexLoadingGate() {
     const gate = document.getElementById("indexLoadingGate");
     const beginButton = document.getElementById("indexBeginButton");
     if (!gate || !beginButton) return;
+    const skipGate = hasIndexLoadedThisSession();
+    if (skipGate) {
+      gate.classList.add("is-hidden");
+      gate.setAttribute("hidden", "");
+      document.body.classList.remove("is-index-loading");
+      document.body.classList.add("index-preload-seen");
+    }
 
     const loadSounds = ["firstTap", "secondTap"].map(name => {
       prepareShellSfx(name);
@@ -427,12 +469,13 @@
     const minimumDisplay = new Promise(resolve => window.setTimeout(resolve, 620));
     const safetyTimeout = new Promise(resolve => window.setTimeout(resolve, 3600));
 
-    setIndexLoadProgress(38, "Warming up sounds and trail paths...");
+    if (!skipGate) setIndexLoadProgress(38, "Warming up sounds and trail paths...");
 
     Promise.race([
       Promise.all([preloadWork, minimumDisplay]),
       safetyTimeout
     ]).then(() => {
+      if (skipGate) return;
       gate.classList.add("is-ready");
       beginButton.disabled = false;
       beginButton.textContent = "Begin";
@@ -445,6 +488,7 @@
       prepareShellSfx("firstTap");
       prepareShellSfx("secondTap");
       playShellSfx("secondTap");
+      rememberIndexLoadedThisSession();
       gate.classList.add("is-hidden");
       document.body.classList.remove("is-index-loading");
       window.setTimeout(() => gate.setAttribute("hidden", ""), 420);
@@ -472,9 +516,7 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       markMobileConfirm(target, { duration: 1200 });
-      if (target.dataset.pointerFirstTapPlayed === "true") {
-        target.removeAttribute("data-pointer-first-tap-played");
-      } else {
+      if (!consumePointerFirstTapPlayed(target)) {
         playShellSfx("firstTap");
       }
       return;
@@ -504,7 +546,13 @@
     if (target.dataset.mobileConfirmReady !== "true") {
       playShellSfx("firstTap");
       target.setAttribute("data-pointer-first-tap-played", "true");
-      window.setTimeout(() => target.removeAttribute("data-pointer-first-tap-played"), 360);
+      target.setAttribute("data-pointer-first-tap-at", String(Date.now()));
+      window.setTimeout(() => {
+        if (Date.now() - Number(target.dataset.pointerFirstTapAt || 0) >= POINTER_TAP_GUARD_MS) {
+          target.removeAttribute("data-pointer-first-tap-played");
+          target.removeAttribute("data-pointer-first-tap-at");
+        }
+      }, POINTER_TAP_GUARD_MS + 80);
     }
     target.classList.add("is-pressed");
     window.setTimeout(() => target.classList.remove("is-pressed"), 260);

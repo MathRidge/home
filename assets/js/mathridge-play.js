@@ -24,8 +24,8 @@
 	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 	const SOUND_BASE = "voice/sound/";
 	const sfxPresets = {
-		firstTap: { file: "first tap.mp3", volume: 0.55, maxMs: 1200, fadeOut: 240 },
-		secondTap: { file: "second tap.mp3", volume: 0.58, maxMs: 1200, fadeOut: 240 },
+		firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1200, fadeOut: 240 },
+		secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1200, fadeOut: 240 },
 		correct: { file: "correct.mp3", volume: 0.44, maxMs: 1500, fadeOut: 320 },
 		wrong: { file: "wrong.mp3", volume: 0.3, maxMs: 900, fadeOut: 180 },
 		relic: { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.36, fadeOut: 220 },
@@ -56,6 +56,10 @@
 	let armedBottomControlTimer = null;
 	let pendingExitTarget = null;
 	const sfxAudioCache = new Map();
+	const decodedSfxCache = new Map();
+	const sfxBuffers = new Map();
+	const sfxLastPlayedAt = new Map();
+	let playAudioContext = null;
 
 	function byId(id) {
 		return document.getElementById(id);
@@ -82,6 +86,84 @@
 		audio.load();
 	}
 
+	function getPlayAudioContext() {
+		const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+		if (!AudioContextClass) return null;
+		if (!playAudioContext) playAudioContext = new AudioContextClass();
+		return playAudioContext;
+	}
+
+	function unlockPlayAudioContext() {
+		const context = getPlayAudioContext();
+		if (!context) return;
+		if (context.state === "suspended") context.resume().catch(() => {});
+		const source = context.createBufferSource();
+		const gain = context.createGain();
+		gain.gain.value = 0;
+		source.buffer = context.createBuffer(1, 1, context.sampleRate);
+		source.connect(gain).connect(context.destination);
+		try { source.start(0); } catch (error) {}
+	}
+
+	function prepareSfxBuffer(cueLike) {
+		const cue = normalizeSfx(cueLike);
+		const context = getPlayAudioContext();
+		if (!cue?.file || !context) return null;
+		const cacheName = cue._cacheName || cue.file;
+		if (sfxBuffers.has(cacheName)) return Promise.resolve(sfxBuffers.get(cacheName));
+		if (decodedSfxCache.has(cacheName)) return decodedSfxCache.get(cacheName);
+		const promise = fetch(soundUrl(cue.file))
+			.then(response => response.arrayBuffer())
+			.then(buffer => context.decodeAudioData(buffer))
+			.then(buffer => {
+				sfxBuffers.set(cacheName, buffer);
+				return buffer;
+			});
+		decodedSfxCache.set(cacheName, promise);
+		return promise;
+	}
+
+	function playSfxBufferNow(cue) {
+		const context = getPlayAudioContext();
+		const cacheName = cue._cacheName || cue.file;
+		const buffer = sfxBuffers.get(cacheName);
+		if (!context || !buffer) return false;
+		if (context.state === "suspended") context.resume().catch(() => {});
+
+		const source = context.createBufferSource();
+		const gain = context.createGain();
+		const startAt = Math.max(0, Number(cue.start || 0));
+		const endAt = Number(cue.end);
+		const maxMs = Number(cue.maxMs);
+		const hasEnd = Number.isFinite(endAt) && endAt > startAt;
+		const durationMs = hasEnd
+			? (endAt - startAt) * 1000
+			: Number.isFinite(maxMs) && maxMs > 0
+				? maxMs
+				: 0;
+		const fadeMs = Math.max(0, Number(cue.fadeOut || 0));
+		const volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.35;
+		const safeStart = Math.min(startAt, Math.max(0, buffer.duration - 0.01));
+
+		source.buffer = buffer;
+		gain.gain.value = volume;
+		source.connect(gain).connect(context.destination);
+		if (durationMs && fadeMs && durationMs > fadeMs + 80) {
+			window.setTimeout(() => {
+				const now = context.currentTime;
+				gain.gain.cancelScheduledValues(now);
+				gain.gain.setValueAtTime(gain.gain.value, now);
+				gain.gain.linearRampToValueAtTime(0, now + fadeMs / 1000);
+			}, Math.max(0, durationMs - fadeMs));
+		}
+		if (durationMs) window.setTimeout(() => {
+			try { source.stop(); } catch (error) {}
+		}, durationMs);
+		try { source.start(0, safeStart); }
+		catch (error) { return false; }
+		return true;
+	}
+
 	function prepareSfx(name) {
 		const cue = normalizeSfx(name);
 		if (!cue?.file || typeof Audio !== "function") return null;
@@ -93,6 +175,7 @@
 		audio.volume = Number.isFinite(cue.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.35;
 		try { audio.load(); } catch (error) {}
 		sfxAudioCache.set(cacheName, audio);
+		prepareSfxBuffer(cue)?.catch(() => {});
 		return audio;
 	}
 
@@ -109,9 +192,21 @@
 		return audio;
 	}
 
-	function playSfx(cueLike, options = {}) {
+	function playSingleSfx(cueLike, options = {}) {
 		const cue = normalizeSfx(cueLike);
 		if (!cue?.file) return null;
+		const delay = Math.max(0, Number(options.delay ?? cue.delay ?? 0));
+		if (delay && !options._delayed) {
+			window.setTimeout(() => playSingleSfx(cueLike, Object.assign({}, options, { delay: 0, _delayed: true })), delay);
+			return null;
+		}
+		const cacheName = cue._cacheName || cue.file;
+		const now = performance.now();
+		if (!options.force && cacheName === "firstTap" && now - (sfxLastPlayedAt.get(cacheName) || 0) < 130) return null;
+		sfxLastPlayedAt.set(cacheName, now);
+		unlockPlayAudioContext();
+		if (playSfxBufferNow(cue)) return null;
+		prepareSfxBuffer(cue)?.catch(() => {});
 
 		const play = () => {
 			const audio = createSfxAudio(cue);
@@ -177,12 +272,17 @@
 			return audio;
 		};
 
-		const delay = Math.max(0, Number(options.delay ?? cue.delay ?? 0));
-		if (delay) {
-			window.setTimeout(play, delay);
+		return play();
+	}
+
+	function playSfx(cueLike, options = {}) {
+		const cue = normalizeSfx(cueLike);
+		if (cue?._cacheName === "secondTap" && !options.single) {
+			playSingleSfx("firstTap", { force: true });
+			window.setTimeout(() => playSingleSfx("secondTap", { force: true }), 58);
 			return null;
 		}
-		return play();
+		return playSingleSfx(cueLike, options);
 	}
 
 	function playCertificateSfx() {
@@ -679,13 +779,21 @@
 			armedBottomControl = target;
 			target.dataset.playArmed = "true";
 			target.classList.add("is-play-armed");
-			playSfx("firstTap");
+			if (target.dataset.playPointerFirstTapPlayed === "true") {
+				target.removeAttribute("data-play-pointer-first-tap-played");
+			} else {
+				playSfx("firstTap");
+			}
 			armedBottomControlTimer = window.setTimeout(clearArmedBottomControl, 3400);
 			return;
 		}
 
 		clearArmedBottomControl();
-		playSfx("secondTap");
+		if (target.dataset.playPointerSecondTapPlayed === "true") {
+			target.removeAttribute("data-play-pointer-second-tap-played");
+		} else {
+			playSfx("secondTap");
+		}
 		if (isExitControl(target) && isActiveClimbRisk()) {
 			event.preventDefault();
 			event.stopImmediatePropagation();
@@ -715,6 +823,12 @@
 			if (controls.classList.contains("is-open")) closeBottomDrawer();
 			else openBottomDrawer({ temporary: false });
 		});
+		launcher.addEventListener("pointerdown", () => {
+			if (isMobilePlayView()) {
+				unlockPlayAudioContext();
+				playSfx("firstTap");
+			}
+		}, { passive: true });
 		document.body.appendChild(launcher);
 
 		const tab = document.createElement("button");
@@ -729,6 +843,24 @@
 		controls.insertBefore(tab, controls.firstChild);
 
 		controls.addEventListener("focusin", () => openBottomDrawer({ temporary: false }));
+		controls.addEventListener("pointerdown", event => {
+			if (!isMobilePlayView()) return;
+			const target = event.target?.closest?.("#bottomControls a, #bottomControls button");
+			if (!target || target.classList.contains("play-bottom-drawer-tab")) return;
+			if (target.disabled || target.getAttribute("aria-disabled") === "true") return;
+
+			unlockPlayAudioContext();
+			if (target.dataset.playArmed === "true") {
+				playSfx("secondTap");
+				target.setAttribute("data-play-pointer-second-tap-played", "true");
+				window.setTimeout(() => target.removeAttribute("data-play-pointer-second-tap-played"), 360);
+				return;
+			}
+
+			playSfx("firstTap");
+			target.setAttribute("data-play-pointer-first-tap-played", "true");
+			window.setTimeout(() => target.removeAttribute("data-play-pointer-first-tap-played"), 360);
+		}, { passive: true });
 		document.addEventListener("click", handleBottomControlClick, true);
 		document.addEventListener("pointerdown", event => {
 			if (!isMobilePlayView()) return;

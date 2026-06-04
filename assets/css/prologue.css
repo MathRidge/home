@@ -63,6 +63,16 @@ body::-webkit-scrollbar {
   background: var(--reader-bg);
 }
 
+.prologue-top-nav {
+  width: 100%;
+  padding: calc(12px + env(safe-area-inset-top)) 14px 14px;
+  background: linear-gradient(180deg, #030508 0%, rgba(3, 5, 8, 0.92) 72%, rgba(3, 5, 8, 0) 100%);
+}
+
+.prologue-top-nav .reader-btn {
+  width: min(260px, 100%);
+}
+
 .manga-page {
   display: block;
   width: 100%;
