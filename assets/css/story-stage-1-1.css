@@ -826,7 +826,7 @@ a {
   z-index: 5;
   width: min(880px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 12px 14px 13px;
+  padding: 14px 16px 15px;
   border: 1px solid rgba(255, 247, 232, 0.26);
   border-radius: 8px;
   background: linear-gradient(135deg, rgba(8, 15, 26, 0.92), rgba(18, 35, 48, 0.86));
@@ -842,6 +842,7 @@ a {
   justify-content: space-between;
   gap: 12px;
   color: var(--gold-light);
+  font-size: 1.02rem;
   font-weight: 900;
 }
 
@@ -852,15 +853,15 @@ a {
 
 #sceneCounter {
   color: rgba(255, 247, 232, 0.64);
-  font-size: 0.9rem;
+  font-size: 0.96rem;
 }
 
 #dialogueText {
-  min-height: 3.05em;
-  margin: 9px 0 0;
+  min-height: 3.25em;
+  margin: 10px 0 0;
   color: var(--ink);
-  font-size: clamp(0.98rem, 1.65vw, 1.18rem);
-  line-height: 1.42;
+  font-size: clamp(1.16rem, 1.9vw, 1.38rem);
+  line-height: 1.46;
   overflow: hidden;
 }
 
@@ -1430,9 +1431,9 @@ a {
   }
 
   #dialogueText {
-    min-height: 2.92em;
-    font-size: 0.94rem;
-    line-height: 1.35;
+    min-height: 3.08em;
+    font-size: 1.08rem;
+    line-height: 1.4;
   }
 
   .choice-row,
@@ -1605,9 +1606,9 @@ a {
     left: max(8px, env(safe-area-inset-left));
     right: auto;
     bottom: max(7px, env(safe-area-inset-bottom));
-    width: min(540px, calc(68vw - env(safe-area-inset-left)));
-    padding: 5px 8px 6px;
-    max-height: min(34svh, 132px);
+    width: min(600px, calc(72vw - env(safe-area-inset-left)));
+    padding: 8px 10px 9px;
+    max-height: min(39svh, 168px);
   }
 
   .interaction-panel {
@@ -1631,19 +1632,19 @@ a {
   }
 
   .dialogue-meta {
-    font-size: 0.64rem;
+    font-size: 0.78rem;
     line-height: 1.1;
   }
 
   #sceneCounter {
-    font-size: 0.62rem;
+    font-size: 0.74rem;
   }
 
   #dialogueText {
-    min-height: 2.28em;
-    margin-top: 3px;
-    font-size: clamp(0.68rem, 1.62vw, 0.78rem);
-    line-height: 1.2;
+    min-height: 2.65em;
+    margin-top: 5px;
+    font-size: clamp(0.92rem, 2vw, 1.08rem);
+    line-height: 1.28;
   }
 
   .dialogue-actions {
