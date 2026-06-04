@@ -115,7 +115,7 @@ a {
   top: max(18px, calc(env(safe-area-inset-top) + 12px));
   z-index: 50;
   display: grid;
-  grid-template-columns: 88px 1fr 88px;
+  grid-template-columns: 88px 1fr 138px;
   align-items: center;
   gap: 10px;
   min-height: 48px;
@@ -136,14 +136,43 @@ a {
   text-overflow: ellipsis;
 }
 
-.story-autoplay-toggle {
+.story-topbar-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  pointer-events: auto;
+}
+
+.story-autoplay-toggle,
+.story-help-toggle {
   font: inherit;
   position: relative;
   z-index: 1;
-  min-width: 88px;
-  padding: 0 12px;
   pointer-events: auto;
   touch-action: manipulation;
+}
+
+.story-autoplay-toggle {
+  min-width: 84px;
+  padding: 0 12px;
+}
+
+.story-help-toggle {
+  width: 40px;
+  min-width: 40px;
+  padding: 0;
+  border-color: rgba(255, 231, 168, 0.7);
+  background: rgba(255, 216, 126, 0.18);
+  color: var(--gold-light);
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 900;
+}
+
+.story-help-toggle:hover,
+.story-help-toggle:focus-visible {
+  background: rgba(255, 216, 126, 0.28);
 }
 
 .story-autoplay-toggle[aria-pressed="true"] {
@@ -153,8 +182,112 @@ a {
   box-shadow: 0 0 0 1px rgba(255, 247, 232, 0.22), 0 10px 24px rgba(90, 215, 178, 0.22);
 }
 
+.story-tap-guide {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: rgba(5, 9, 20, 0.46);
+  color: var(--ink);
+}
+
+.story-tap-guide-card {
+  align-self: center;
+  justify-self: center;
+  width: min(520px, calc(100vw - 36px));
+  padding: 18px;
+  border: 1px solid rgba(255, 247, 232, 0.28);
+  border-radius: 8px;
+  background: rgba(8, 15, 26, 0.88);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(14px);
+}
+
+.story-tap-guide-card strong {
+  display: block;
+  color: var(--gold-light);
+  font-size: 1.08rem;
+}
+
+.story-tap-guide-card span {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 247, 232, 0.82);
+  line-height: 1.4;
+}
+
+.story-tap-guide button {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 14px;
+  border: 1px solid rgba(255, 231, 168, 0.68);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffe7a8, var(--gold) 58%, #b9782c);
+  color: #182334;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.story-guide-cue {
+  position: absolute;
+  display: grid;
+  gap: 6px;
+  max-width: 190px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 247, 232, 0.24);
+  border-radius: 8px;
+  background: rgba(8, 15, 26, 0.82);
+  color: rgba(255, 247, 232, 0.92);
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: none;
+}
+
+.story-guide-cue::after {
+  content: "";
+  justify-self: center;
+  width: 26px;
+  height: 26px;
+  border-right: 3px solid var(--gold-light);
+  border-bottom: 3px solid var(--gold-light);
+}
+
+.story-guide-back {
+  left: max(18px, env(safe-area-inset-left));
+  bottom: clamp(86px, 18svh, 150px);
+}
+
+.story-guide-back::after {
+  transform: rotate(135deg);
+}
+
+.story-guide-auto {
+  right: max(20px, env(safe-area-inset-right));
+  top: max(70px, calc(env(safe-area-inset-top) + 58px));
+}
+
+.story-guide-auto::after {
+  transform: rotate(225deg);
+}
+
+.story-guide-forward {
+  right: max(22px, env(safe-area-inset-right));
+  bottom: clamp(96px, 22svh, 180px);
+}
+
+.story-guide-forward::after {
+  transform: rotate(-45deg);
+}
+
 .story-topbar a,
 .story-autoplay-toggle,
+.story-help-toggle,
 .dialogue-actions button,
 .name-row button,
 .reward-actions a,
@@ -176,6 +309,8 @@ a {
 .story-topbar a:focus-visible,
 .story-autoplay-toggle:hover,
 .story-autoplay-toggle:focus-visible,
+.story-help-toggle:hover,
+.story-help-toggle:focus-visible,
 .dialogue-actions button:hover,
 .dialogue-actions button:focus-visible,
 .choice-row button:hover,
@@ -234,6 +369,15 @@ a {
 
 .elder-sprite {
   height: min(52svh, 430px, calc(100svh - 216px));
+}
+
+.story-vn[data-scene-bg="cabinInside"] .elder-stage {
+  left: clamp(4px, 3vw, 58px);
+  bottom: clamp(4px, 1.5vh, 20px);
+}
+
+.story-vn[data-scene-bg="cabinInside"] .elder-sprite {
+  height: min(66svh, 560px, calc(100svh - 118px));
 }
 
 .character-stage.is-hidden {
@@ -1145,16 +1289,30 @@ a {
   }
 
   .story-topbar {
-    grid-template-columns: 64px 1fr 76px;
+    grid-template-columns: 64px 1fr 104px;
     left: 10px;
     right: 10px;
     min-height: 44px;
   }
 
   .story-topbar a,
-  .story-autoplay-toggle {
+  .story-autoplay-toggle,
+  .story-help-toggle {
     min-height: 36px;
     font-size: 0.86rem;
+  }
+
+  .story-topbar-tools {
+    gap: 5px;
+  }
+
+  .story-autoplay-toggle {
+    min-width: 64px;
+  }
+
+  .story-help-toggle {
+    width: 34px;
+    min-width: 34px;
   }
 
   .scene-bg {
@@ -1174,6 +1332,11 @@ a {
     bottom: clamp(48px, 16vh, 78px);
   }
 
+  .story-vn[data-scene-bg="cabinInside"] .elder-stage {
+    left: clamp(0px, 2vw, 16px);
+    bottom: clamp(-10px, -1vh, 8px);
+  }
+
   .mira-sprite {
     width: auto;
     height: min(142svh, 760px, calc(100svh + 334px));
@@ -1181,6 +1344,10 @@ a {
 
   .elder-sprite {
     height: min(54svh, 340px, calc(100svh - 132px));
+  }
+
+  .story-vn[data-scene-bg="cabinInside"] .elder-sprite {
+    height: min(66svh, 430px, calc(100svh - 74px));
   }
 
   .relic-reveal-stage {
@@ -1285,7 +1452,7 @@ a {
     left: max(7px, env(safe-area-inset-left));
     right: max(7px, env(safe-area-inset-right));
     top: max(5px, env(safe-area-inset-top));
-    grid-template-columns: 50px minmax(0, 1fr) 66px;
+    grid-template-columns: 50px minmax(0, 1fr) 88px;
     min-height: 32px;
     padding: 0;
     gap: 6px;
@@ -1312,7 +1479,8 @@ a {
   }
 
   .story-topbar a,
-  .story-autoplay-toggle {
+  .story-autoplay-toggle,
+  .story-help-toggle {
     min-height: 26px;
     padding: 0 8px;
     border-radius: 999px;
@@ -1322,7 +1490,17 @@ a {
   }
 
   .story-autoplay-toggle {
-    min-width: 66px;
+    min-width: 56px;
+  }
+
+  .story-topbar-tools {
+    gap: 4px;
+  }
+
+  .story-help-toggle {
+    width: 28px;
+    min-width: 28px;
+    padding: 0;
   }
 
   .scene-bg {
@@ -1344,8 +1522,17 @@ a {
     bottom: clamp(54px, 15svh, 68px);
   }
 
+  .story-vn[data-scene-bg="cabinInside"] .elder-stage {
+    left: clamp(134px, 23vw, 218px);
+    bottom: clamp(10px, 3svh, 24px);
+  }
+
   .elder-sprite {
     height: min(60svh, 330px, calc(100svh - 72px));
+  }
+
+  .story-vn[data-scene-bg="cabinInside"] .elder-sprite {
+    height: min(74svh, 410px, calc(100svh - 34px));
   }
 
   .relic-reveal-stage {

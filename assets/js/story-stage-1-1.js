@@ -14,6 +14,7 @@
   const elderVoiceBase = "voice/elder/";
   const soundBase = "voice/sound/";
   const AUTO_PLAY_DELAY_MS = 2500;
+  const TAP_GUIDE_KEY = "mathRidge_storyTapGuideSeen_v1";
   const relicOrder = ["term", "sign", "parity", "factor"];
   const relicImageSources = {
     term: "assets/images/relic/term_stone.png",
@@ -683,6 +684,7 @@
   const backBtn = document.getElementById("backBtn");
   const nextBtn = document.getElementById("nextBtn");
   const autoPlayBtn = document.getElementById("autoPlayBtn");
+  const storyHelpBtn = document.getElementById("storyHelpBtn");
   const progressBar = document.getElementById("storyProgressBar");
   const interactionPanel = document.getElementById("interactionPanel");
   const nameForm = document.getElementById("nameForm");
@@ -1316,6 +1318,55 @@
     else clearAutoPlayTimer();
   }
 
+  function hasSeenTapGuide() {
+    try { return localStorage.getItem(TAP_GUIDE_KEY) === "true"; }
+    catch (error) { return true; }
+  }
+
+  function rememberTapGuide() {
+    try { localStorage.setItem(TAP_GUIDE_KEY, "true"); }
+    catch (error) {}
+  }
+
+  function resetTapGuide() {
+    try { localStorage.removeItem(TAP_GUIDE_KEY); }
+    catch (error) {}
+    showTapGuide();
+  }
+
+  function showTapGuide(force = false) {
+    if (!force && hasSeenTapGuide()) return;
+    document.querySelector(".story-tap-guide")?.remove();
+    const guide = document.createElement("div");
+    guide.className = "story-tap-guide";
+    guide.setAttribute("role", "dialog");
+    guide.setAttribute("aria-modal", "true");
+    guide.innerHTML = `
+      <div class="story-guide-cue story-guide-back">Tap the left side of the dialogue text to go back.</div>
+      <div class="story-guide-cue story-guide-auto">Tap Auto to let the scene play by itself.</div>
+      <div class="story-guide-cue story-guide-forward">Tap anywhere else to continue forward.</div>
+      <div class="story-tap-guide-card">
+        <strong>Story Controls</strong>
+        <span>Back on the left side of the dialogue. Auto at the top. Forward almost everywhere else.</span>
+        <button type="button">Got it</button>
+      </div>
+    `;
+    const closeGuide = () => {
+      rememberTapGuide();
+      guide.remove();
+    };
+    guide.querySelector("button")?.addEventListener("click", closeGuide);
+    document.body.appendChild(guide);
+  }
+
+  function isDialogueBackTap(event) {
+    if (!dialogueText) return false;
+    const rect = dialogueText.getBoundingClientRect();
+    const x = event.clientX;
+    const y = event.clientY;
+    return x >= rect.left && x <= rect.left + rect.width * 0.45 && y >= rect.top && y <= rect.bottom;
+  }
+
   function stopTyping(showFull = false) {
     if (typeTimer) {
       window.clearTimeout(typeTimer);
@@ -1383,6 +1434,7 @@
     if (nextKey === currentBgKey) return;
 
     currentBgKey = nextKey;
+    if (storyVn) storyVn.dataset.sceneBg = nextKey;
     storyVn?.classList.add("is-scene-changing");
     window.setTimeout(() => {
       sceneBg.style.backgroundImage = `url("${backgrounds[nextKey] || backgrounds.arrival}")`;
@@ -1816,6 +1868,7 @@
   nextBtn.addEventListener("click", goNext);
   backBtn.addEventListener("click", goBack);
   autoPlayBtn?.addEventListener("click", toggleAutoPlay);
+  storyHelpBtn?.addEventListener("click", resetTapGuide);
   updateAutoPlayButton();
 
   document.addEventListener("click", event => {
@@ -1824,6 +1877,10 @@
     if (!nameForm.classList.contains("hidden")) return;
     if (!choiceRow.classList.contains("hidden")) return;
     if (!rewardPanel.classList.contains("hidden")) return;
+    if (isDialogueBackTap(event)) {
+      goBack();
+      return;
+    }
     goNext();
   });
 
@@ -1877,4 +1934,5 @@
   preloadRelicImages();
   prepareStoryAudio(currentIndex, 6);
   renderFrame();
+  window.setTimeout(showTapGuide, 420);
 })();
