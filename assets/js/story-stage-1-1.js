@@ -327,6 +327,11 @@
     ["shellwickBoard", cabinAmbience],
     ["pumpkinCart", townAmbience]
   ]);
+  const ambientAudioByPage = new Map([
+    [1, forestAmbience],
+    [144, townAmbience],
+    [168, cabinAmbience]
+  ]);
 
   const frames = [
     { bg: "arrival", sprite: "none", speaker: "Narrator", text: "Scene 1: The Journey Begins" },
@@ -1465,14 +1470,24 @@
     audio.volume = Number.isFinite(config.volume) ? config.volume : 0.1;
     audio.loop = config.loop !== false;
 
-    const begin = () => {
+    const applyStartPosition = () => {
       if (activeAmbient !== audio) return;
       if (startAt && audio.duration && startAt < audio.duration) {
         try {
           audio.currentTime = startAt;
         } catch (error) {}
       }
+    };
 
+    const scheduleAmbientStop = () => {
+      if (!config.maxMs || audio.loop || ambientStopTimer) return;
+      ambientStopTimer = window.setTimeout(() => {
+        if (activeAmbient === audio) stopAmbient();
+      }, config.maxMs);
+    };
+
+    const beginPlayback = () => {
+      if (activeAmbient !== audio) return;
       const attempt = audio.play();
       if (attempt && typeof attempt.then === "function") {
         attempt.then(() => {
@@ -1481,27 +1496,32 @@
           if (activeAmbient === audio) pendingAmbient = { config };
         });
       }
-
-      if (config.maxMs && !audio.loop) {
-        ambientStopTimer = window.setTimeout(() => {
-          if (activeAmbient === audio) stopAmbient();
-        }, config.maxMs);
-      }
+      scheduleAmbientStop();
     };
 
     if (audio.readyState >= 1) {
-      begin();
+      applyStartPosition();
     } else {
-      audio.addEventListener("loadedmetadata", begin, { once: true });
+      audio.addEventListener("loadedmetadata", applyStartPosition, { once: true });
       audio.addEventListener("error", () => {
         if (activeAmbient === audio) stopAmbient();
       }, { once: true });
       audio.load();
     }
+    beginPlayback();
   }
 
-  function playFrameAmbient(frame, options = {}) {
-    playAmbient(ambientAudioByBg.get(frame?.bg) || null, options);
+  function frameAmbientConfig(frame, index = currentIndex) {
+    const pageNumber = index + 1;
+    if (ambientAudioByPage.has(pageNumber)) {
+      return { config: ambientAudioByPage.get(pageNumber), isPageCue: true };
+    }
+    return { config: ambientAudioByBg.get(frame?.bg) || null, isPageCue: false };
+  }
+
+  function playFrameAmbient(frame, options = {}, index = currentIndex) {
+    const { config, isPageCue } = frameAmbientConfig(frame, index);
+    playAmbient(config, Object.assign({}, options, isPageCue ? { force: true } : null));
   }
 
   function retryPendingAmbient(options = {}) {
