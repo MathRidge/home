@@ -14,7 +14,7 @@
   const NEXT_SCENE_PREFETCH = [
     "story-stage-1-1.html",
     "assets/css/story-stage-1-1.css?v=20260604-fit-dialogue",
-    "assets/js/story-stage-1-1.js?v=20260604-page-ambient",
+    "assets/js/story-stage-1-1.js?v=20260604-sprite-decode",
     "assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png",
     "assets/images/bg-scene/Stage-1-1/story-bg-cipher_ridge.png",
     "assets/images/Mira-sprite/Mira-sprite-alpha-png/mira-holding-hat.png",

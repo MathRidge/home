@@ -4,8 +4,8 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Math Ridge | Trail 1-1 Term Stone Trial</title>
-<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260531-slow-scroll" />
-	<link rel="stylesheet" href="assets/css/play1.css?v=20260531-original-given" />
+<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260605-play1-size-next" />
+	<link rel="stylesheet" href="assets/css/play1.css?v=20260605-size-compare" />
 </head>
 
 <body class="play-page play-1">
@@ -90,7 +90,7 @@
 				<div class="gate-kicker">Relic Trial 1-1</div>
 				<h3>The Term Stone</h3>
 				<p>The lower trail is testing the rule from your manual. Find the bigger size first. Its sign goes outside. Then look at the other term: same signs add, different signs subtract. Start when you are ready — the climb timer begins after you press the button.</p>
-				<div class="stage-clarity-note"><strong>What makes 1-1 different:</strong> you build the whole signed-term box yourself: bigger term, bigger sign, operation, box placement, and final answer.</div>
+				<div class="stage-clarity-note"><strong>What makes 1-1 different:</strong> you build the whole signed-size box yourself: bigger size, bigger sign, operation, box placement, and final answer.</div>
 				<button class="primary-action start-climb-btn" onclick="startClimbFromGate()">START the Climb</button>
 			</div>
 		</div>
@@ -99,11 +99,12 @@
 			<div class="problem-card" id="problemCard">
 				<p>Term Stone challenge:</p>
 				<div class="problem" id="problemText"></div>
-				<p>Follow the steps: bigger term, bigger sign, operation, box setup, final answer.</p>
+				<p>Follow the steps: bigger size, bigger sign, operation, box setup, final answer.</p>
 			</div>
 
 			<div class="step hidden" id="step1">
-				<h2>Step 1: Which term is bigger?</h2>
+				<h2>Step 1: Which size is bigger?</h2>
+				<p class="size-compare-note" id="sizeCompareNote">Compare size only right now. For example, -8 carries size 8, and +3 carries size 3.</p>
 				<div class="options" id="sizeOptions"></div>
 			</div>
 
@@ -119,7 +120,7 @@
 
 			<div class="step builder hidden" id="builder">
 				<h2>Step 3: What operation should happen inside?</h2>
-				<p>Compare the other term with the bigger term. Same sign means addition. Different sign means subtraction.</p>
+				<p id="operationRuleText">Look at the other term. Same sign uses addition. Different sign uses subtraction.</p>
 
 				<div class="mini-problem" id="miniProblem"></div>
 
@@ -183,12 +184,13 @@
 
 				<button class="primary-action" onclick="checkFinalAnswer()">Check Answer</button>
 				<div id="answerFeedback"></div>
+				<div class="next-climb-inline-tray play1-answer-next-tray" id="nextClimbInlineTray"></div>
 			</div>
 
 			<div class="feedback" id="feedback"></div>
 
 			<div class="rule-box">
-				Pattern: use the bigger number's sign outside, then put bigger size first and smaller size second.
+				Pattern: use the bigger size's sign outside, then put bigger size first and smaller size second.
 			</div>
 		</div>
 
@@ -205,7 +207,7 @@
 		<div class="game-footer">Math Ridge | Trail 1-1 Term Stone Trial</div>
 	</div>
 
-<script src="assets/js/mathridge-play.js?v=20260604-confirm-nav-delay"></script>
-	<script src="assets/js/play1.js?v=20260602-official-certificate"></script>
+<script src="assets/js/mathridge-play.js?v=20260605-play1-size-next"></script>
+	<script src="assets/js/play1.js?v=20260605-size-compare"></script>
 </body>
 </html>

@@ -60,6 +60,19 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
+	const playAmbienceByPage = new Map([
+		[1, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.08, loop: true }],
+		[2, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.08, loop: true }],
+		[3, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.075, loop: true }],
+		[4, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.075, loop: true }],
+		[5, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }],
+		[6, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }],
+		[7, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }],
+		[8, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }]
+	]);
+	let activePlayAmbience = null;
+	let activePlayAmbienceKey = "";
+	let pendingPlayAmbience = null;
 	let playAudioContext = null;
 
 	function byId(id) {
@@ -300,6 +313,99 @@
 		return playSingleSfx(cueLike, options);
 	}
 
+	function playAmbienceKey(config) {
+		if (!config) return "";
+		return `${config.file}|${Number(config.start || 0)}`;
+	}
+
+	function stopPlayAmbience() {
+		pendingPlayAmbience = null;
+		if (!activePlayAmbience) {
+			activePlayAmbienceKey = "";
+			return;
+		}
+		activePlayAmbience.pause();
+		activePlayAmbience.removeAttribute("src");
+		activePlayAmbience.load();
+		activePlayAmbience = null;
+		activePlayAmbienceKey = "";
+	}
+
+	function playPageAmbience(options = {}) {
+		const ambience = playAmbienceByPage.get(Number(config.playNumber)) || null;
+		if (!ambience) {
+			stopPlayAmbience();
+			return false;
+		}
+
+		const key = playAmbienceKey(ambience);
+		if (!options.force && activePlayAmbience && activePlayAmbienceKey === key && !activePlayAmbience.paused && !pendingPlayAmbience) {
+			return true;
+		}
+
+		stopPlayAmbience();
+		unlockPlayAudioContext();
+
+		const audio = new Audio(soundUrl(ambience.file));
+		const startAt = Math.max(0, Number(ambience.start || 0));
+		const targetVolume = Number.isFinite(ambience.volume) ? Math.max(0, Math.min(1, Number(ambience.volume))) : 0.07;
+		activePlayAmbience = audio;
+		activePlayAmbienceKey = key;
+		pendingPlayAmbience = { config: ambience };
+
+		audio.preload = "auto";
+		audio.loop = ambience.loop !== false;
+		audio.volume = targetVolume;
+
+		const applyStartPosition = () => {
+			if (activePlayAmbience !== audio) return;
+			if (startAt && audio.duration && startAt < audio.duration) {
+				try { audio.currentTime = startAt; } catch (error) {}
+			}
+		};
+
+		const beginPlayback = () => {
+			if (activePlayAmbience !== audio) return;
+			const attempt = audio.play();
+			if (attempt && typeof attempt.then === "function") {
+				attempt.then(() => {
+					if (activePlayAmbience === audio) pendingPlayAmbience = null;
+				}).catch(() => {
+					if (activePlayAmbience === audio) pendingPlayAmbience = { config: ambience };
+				});
+			} else {
+				pendingPlayAmbience = null;
+			}
+		};
+
+		if (audio.readyState >= 1) {
+			applyStartPosition();
+		} else {
+			audio.addEventListener("loadedmetadata", applyStartPosition, { once: true });
+			audio.addEventListener("error", () => {
+				if (activePlayAmbience === audio) stopPlayAmbience();
+			}, { once: true });
+			audio.load();
+		}
+		beginPlayback();
+		return true;
+	}
+
+	function retryPlayAmbience() {
+		if (!pendingPlayAmbience) return false;
+		return playPageAmbience({ force: true });
+	}
+
+	function preparePlayAmbience() {
+		const ambience = playAmbienceByPage.get(Number(config.playNumber));
+		if (!ambience || typeof Audio !== "function") return null;
+		const audio = new Audio(soundUrl(ambience.file));
+		audio.preload = "auto";
+		audio.volume = 0;
+		try { audio.load(); } catch (error) {}
+		return audio;
+	}
+
 	function playCertificateSfx() {
 		playSfx("certificatePaper");
 		playSfx("certificateStamp", { delay: 620 });
@@ -537,6 +643,7 @@
 	}
 
 	function startClimbTimer(options = {}) {
+		playPageAmbience();
 		if (options.hideNext !== false) hideNextClimbButton({ force: true });
 		if (climbStartMs !== null) return false;
 
@@ -1220,33 +1327,33 @@
 		ctx.save();
 		ctx.translate(x, y);
 		ctx.scale(flipX, flipY);
-		ctx.strokeStyle = "rgba(120, 73, 27, 0.56)";
-		ctx.fillStyle = "rgba(198, 143, 55, 0.18)";
-		ctx.lineWidth = 4;
-
+		ctx.lineCap = "round";
+		ctx.lineJoin = "round";
+		ctx.strokeStyle = "rgba(112, 69, 27, 0.58)";
+		ctx.lineWidth = 5;
 		ctx.beginPath();
-		ctx.moveTo(0, 54);
-		ctx.bezierCurveTo(34, 20, 72, 16, 106, 0);
+		ctx.moveTo(0, 0);
+		ctx.lineTo(96, 0);
+		ctx.moveTo(0, 0);
+		ctx.lineTo(0, 96);
 		ctx.stroke();
 
+		ctx.strokeStyle = "rgba(200, 150, 55, 0.68)";
+		ctx.lineWidth = 2;
 		ctx.beginPath();
-		ctx.moveTo(54, 0);
-		ctx.bezierCurveTo(20, 34, 16, 72, 0, 106);
+		ctx.moveTo(18, 18);
+		ctx.lineTo(82, 18);
+		ctx.moveTo(18, 18);
+		ctx.lineTo(18, 82);
+		ctx.moveTo(38, 36);
+		ctx.lineTo(68, 36);
+		ctx.moveTo(36, 38);
+		ctx.lineTo(36, 68);
 		ctx.stroke();
 
-		for (let i = 0; i < 3; i++) {
-			const offset = 24 + i * 26;
-			ctx.beginPath();
-			ctx.ellipse(offset, 30 + i * 10, 13, 6, -0.6, 0, Math.PI * 2);
-			ctx.fill();
-			ctx.stroke();
-		}
-
+		ctx.fillStyle = "rgba(200, 150, 55, 0.46)";
 		ctx.beginPath();
-		ctx.arc(48, 48, 18, 0, Math.PI * 2);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.arc(48, 48, 5, 0, Math.PI * 2);
+		ctx.arc(18, 18, 5, 0, Math.PI * 2);
 		ctx.fill();
 		ctx.restore();
 	}
@@ -1273,20 +1380,11 @@
 
 		ctx.save();
 		ctx.translate(width / 2, height / 2);
-		ctx.rotate(-Math.PI / 10);
 		ctx.textAlign = "center";
-		ctx.fillStyle = "rgba(88, 55, 22, 0.035)";
-		ctx.font = "bold 112px Georgia, serif";
-		for (let y = -420; y <= 420; y += 180) {
-			ctx.fillText("MATH RIDGE", 0, y);
-		}
-		ctx.restore();
-
-		ctx.save();
-		ctx.textAlign = "center";
-		ctx.fillStyle = "rgba(88, 55, 22, 0.055)";
-		ctx.font = "bold 330px Georgia, serif";
-		ctx.fillText("MR", width / 2, height / 2 + 110);
+		ctx.textBaseline = "middle";
+		ctx.fillStyle = "rgba(88, 55, 22, 0.042)";
+		ctx.font = "bold 315px Georgia, serif";
+		ctx.fillText("MR", 0, 54);
 		ctx.restore();
 	}
 
@@ -1316,10 +1414,10 @@
 		ctx.lineTo(width - 260, height - 126);
 		ctx.stroke();
 
-		drawCertificateCorner(ctx, 122, 122, 1, 1);
-		drawCertificateCorner(ctx, width - 122, 122, -1, 1);
-		drawCertificateCorner(ctx, 122, height - 122, 1, -1);
-		drawCertificateCorner(ctx, width - 122, height - 122, -1, -1);
+		drawCertificateCorner(ctx, 126, 126, 1, 1);
+		drawCertificateCorner(ctx, width - 126, 126, -1, 1);
+		drawCertificateCorner(ctx, 126, height - 126, 1, -1);
+		drawCertificateCorner(ctx, width - 126, height - 126, -1, -1);
 		ctx.restore();
 	}
 
@@ -1366,34 +1464,34 @@
 
 		drawOfficialCertificateBackground(ctx, width, height);
 		drawOfficialCertificateFrame(ctx, width, height);
-		drawOfficialCertificateSeal(ctx, width / 2, 214, 56);
+		drawOfficialCertificateSeal(ctx, width / 2, 192, 50);
 
 		ctx.textAlign = "center";
 		ctx.textBaseline = "alphabetic";
 		ctx.fillStyle = "#684019";
-		ctx.font = "bold 28px Georgia, serif";
-		ctx.fillText("OFFICIAL MATH RIDGE CERTIFICATE", width / 2, 154);
+		ctx.font = "bold 27px Georgia, serif";
+		ctx.fillText("OFFICIAL MATH RIDGE CERTIFICATE", width / 2, 150);
 
 		ctx.fillStyle = "#7a4b00";
-		ctx.font = "bold 78px Georgia, serif";
-		ctx.fillText("Math Ridge", width / 2, 310);
+		ctx.font = "bold 70px Georgia, serif";
+		ctx.fillText("Math Ridge", width / 2, 294);
 
 		ctx.fillStyle = "#24304f";
-		ctx.font = "bold 58px Georgia, serif";
-		ctx.fillText("Certificate of Achievement", width / 2, 394);
+		ctx.font = "bold 54px Georgia, serif";
+		ctx.fillText("Certificate of Achievement", width / 2, 374);
 
 		ctx.fillStyle = "#b87900";
-		ctx.font = certificateTitle.length > 36 ? "bold 42px Georgia, serif" : "bold 48px Georgia, serif";
-		const titleEnd = drawCenteredCanvasText(ctx, certificateTitle, width / 2, 462, 1080, 52, 2);
+		ctx.font = certificateTitle.length > 36 ? "bold 40px Georgia, serif" : "bold 46px Georgia, serif";
+		const titleEnd = drawCenteredCanvasText(ctx, certificateTitle, width / 2, 436, 1080, 50, 2);
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia, serif";
-		ctx.fillText("This certifies that", width / 2, titleEnd + 70);
+		ctx.fillText("This certifies that", width / 2, titleEnd + 60);
 
 		ctx.fillStyle = "#0f5a9a";
 		const nameFontSize = studentName.length > 28 ? 56 : 68;
 		ctx.font = `bold ${nameFontSize}px Georgia, serif`;
-		const nameEnd = drawCenteredCanvasText(ctx, studentName, width / 2, titleEnd + 150, 1120, nameFontSize + 10, 2);
+		const nameEnd = drawCenteredCanvasText(ctx, studentName, width / 2, titleEnd + 136, 1120, nameFontSize + 10, 2);
 
 		ctx.strokeStyle = "rgba(126, 77, 26, 0.54)";
 		ctx.lineWidth = 3;
@@ -1404,11 +1502,11 @@
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "30px Georgia, serif";
-		const bodyEnd = drawCenteredCanvasText(ctx, bodyText, width / 2, nameEnd + 86, 1080, 42, 3);
+		const bodyEnd = drawCenteredCanvasText(ctx, bodyText, width / 2, nameEnd + 74, 1080, 42, 3);
 
 		ctx.fillStyle = "#5f381c";
 		ctx.font = "bold 25px Georgia, serif";
-		const dateY = bodyEnd + 94;
+		const dateY = bodyEnd + 64;
 
 		ctx.fillStyle = "#24304f";
 		ctx.font = "bold 25px Georgia, serif";
@@ -1417,13 +1515,13 @@
 		ctx.strokeStyle = "rgba(126, 77, 26, 0.48)";
 		ctx.lineWidth = 2;
 		ctx.beginPath();
-		ctx.moveTo(width / 2 - 360, height - 188);
-		ctx.lineTo(width / 2 + 360, height - 188);
+		ctx.moveTo(width / 2 - 360, height - 198);
+		ctx.lineTo(width / 2 + 360, height - 198);
 		ctx.stroke();
 
 		ctx.fillStyle = "#5f381c";
 		ctx.font = "italic 30px Georgia, serif";
-		drawCenteredCanvasText(ctx, signature, width / 2, height - 146, 900, 34, 2);
+		drawCenteredCanvasText(ctx, signature, width / 2, height - 156, 900, 34, 2);
 
 		ctx.fillStyle = "rgba(63, 42, 22, 0.76)";
 		ctx.font = "bold 18px Georgia, serif";
@@ -1460,12 +1558,21 @@
 
 	document.addEventListener("DOMContentLoaded", () => {
 		["firstTap", "secondTap", "correct", "wrong", "relic", "certificatePaper", "certificateStamp", "certificateFanfare"].forEach(prepareSfx);
+		preparePlayAmbience();
 		updateTimerPanel();
 		ensureTopNextClimbButton();
 		hideNextClimbButton({ force: true });
 		setupBottomDrawer();
 		watchPlayerProfileNameInput();
 	});
+
+	document.addEventListener("pointerdown", event => {
+		if (!pendingPlayAmbience) return;
+		if (!event.target.closest("button, a, input, select, textarea, label")) return;
+		retryPlayAmbience();
+	}, { capture: true, passive: true });
+
+	window.addEventListener("pagehide", stopPlayAmbience);
 
 	const api = {
 		config,
@@ -1506,6 +1613,8 @@
 		reviveProgressTurtle,
 		updateShelf,
 		playSfx,
+		playPageAmbience,
+		stopPlayAmbience,
 		playCertificateSfx,
 		createOfficialCertificateCanvas,
 		downloadOfficialCertificate

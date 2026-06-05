@@ -360,17 +360,20 @@
 	function updateGuidanceText() {
 		const outsideTitle = byId("outsideSignTitle");
 		const operationTitle = byId("operationTitle");
+		const operationRuleText = byId("operationRuleText");
 
-		if (!outsideTitle || !operationTitle) return;
+		if (!outsideTitle || !operationTitle || !operationRuleText) return;
 
 		if (turtleScore <= 3) {
-			outsideTitle.textContent = "Tap the sign carried by the bigger term. That sign goes outside.";
+			outsideTitle.textContent = "Tap the sign carried by the bigger size. That sign goes outside.";
 			operationTitle.textContent = "Look at the other term. Same sign uses addition. Different sign uses subtraction.";
+			operationRuleText.hidden = false;
 			return;
 		}
 
-		outsideTitle.textContent = "Bigger term sign goes outside.";
-		operationTitle.textContent = "Choose the operation from the other term.";
+		outsideTitle.textContent = "Bigger size sign goes outside.";
+		operationTitle.textContent = "Same sign uses addition. Different sign uses subtraction.";
+		operationRuleText.hidden = true;
 	}
 
 	function renderProblem() {
@@ -399,12 +402,12 @@
 			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('first', this)">
 				<span class="term-choice-label">1st term</span>
 				<strong class="${currentProblem.a >= 0 ? "plus-text" : "minus-text"}">${aText}</strong>
-				<span class="term-choice-size">size ${aSize}</span>
+				<span class="term-choice-size">carries size ${aSize}</span>
 			</button>
 			<button class="choice-btn size-choice term-choice" onclick="chooseBiggerTerm('second', this)">
 				<span class="term-choice-label">2nd term</span>
 				<strong class="${currentProblem.b >= 0 ? "plus-text" : "minus-text"}">${bText}</strong>
-				<span class="term-choice-size">size ${bSize}</span>
+				<span class="term-choice-size">carries size ${bSize}</span>
 			</button>
 		`;
 
@@ -587,7 +590,7 @@
 
 		if (term !== expected.biggerTerm) {
 			const label = expected.biggerTerm === "first" ? "1st" : "2nd";
-			markWrong(button, `Look at the sizes. The bigger term is the ${label} term.`);
+			markWrong(button, `Look at the sizes only. The bigger size is carried by the ${label} term.`);
 			return;
 		}
 
@@ -599,7 +602,7 @@
 		scrollToCenter("step2");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Good. Now choose the sign carried by that bigger term.";
+		if (feedback) feedback.textContent = "Good. Now choose the sign carried by that bigger size.";
 	}
 
 	function chooseBiggerSize(size, button) {
@@ -647,7 +650,7 @@
 		scrollToCenter("builder");
 
 		const feedback = byId("feedback");
-		if (feedback) feedback.textContent = "Correct. The bigger sign is locked outside. Now choose the operation from the other term.";
+		if (feedback) feedback.textContent = "Correct. The bigger size sign is locked outside. Now choose the operation from the other term.";
 	}
 
 	function pickOutsideSign(sign, button) {

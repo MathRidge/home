@@ -320,7 +320,7 @@ body[data-final-correct-ready="true"] .next-climb-inline-tray {
 	transform: translateY(0);
 }
 
-.challenge-board #nextClimbButton.inline-next-climb-button {
+.next-climb-inline-tray #nextClimbButton.inline-next-climb-button {
 	min-height: 38px;
 	padding: 9px 22px;
 	border-radius: 999px;
@@ -333,7 +333,7 @@ body[data-final-correct-ready="true"] .next-climb-inline-tray {
 		inset 0 1px 0 rgba(255,255,255,0.38);
 }
 
-.challenge-board #nextClimbButton.inline-next-climb-button.is-ready-pulse {
+.next-climb-inline-tray #nextClimbButton.inline-next-climb-button.is-ready-pulse {
 	animation: nextClimbReadyPop .52s ease;
 }
 

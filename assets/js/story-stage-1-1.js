@@ -661,6 +661,7 @@
   let activeSoundCues = [];
   const preparedVoiceAudio = new Map();
   const preparedSoundAudio = new Map();
+  const preparedSpriteImages = new Map();
   const decodedAudioBuffers = new Map();
   let instantAudioContext = null;
   let voiceToken = 0;
@@ -1298,7 +1299,42 @@
       const frame = frames[index];
       frameVoiceFiles(frame).forEach(prepareVoiceSource);
       frameSoundCues(frame).forEach(prepareSoundSource);
+      prepareFrameVisuals(frame);
     }
+  }
+
+  function spriteSourceForKey(key) {
+    const sprite = sprites[key];
+    return typeof sprite === "string" ? sprite : sprite?.src || "";
+  }
+
+  function prepareSpriteSource(src) {
+    if (!src || typeof Image !== "function") return Promise.resolve(false);
+    if (preparedSpriteImages.has(src)) return preparedSpriteImages.get(src);
+
+    const promise = new Promise(resolve => {
+      const image = new Image();
+      image.decoding = "async";
+      image.onload = () => {
+        if (typeof image.decode === "function") {
+          image.decode().catch(() => {}).finally(() => resolve(true));
+          return;
+        }
+        resolve(true);
+      };
+      image.onerror = () => resolve(false);
+      image.src = src;
+    });
+
+    preparedSpriteImages.set(src, promise);
+    return promise;
+  }
+
+  function prepareFrameVisuals(frame) {
+    const spriteKey = resolveFrameSprite(frame);
+    const spriteSrc = spriteSourceForKey(spriteKey);
+    if (spriteSrc) prepareSpriteSource(spriteSrc);
+    if (isShellwickScene(frame)) prepareSpriteSource(spriteSourceForKey("elder"));
   }
 
   function unlockPreparedAudio() {
@@ -1933,16 +1969,17 @@
     };
 
     if (changed) {
-      stage.classList.add("is-loading");
-      img.onload = show;
-      img.onerror = () => {
+      prepareSpriteSource(src).then(ready => {
         if (actor.loadToken !== token) return;
-        hideActor(character);
-      };
-      img.src = src;
-      if (img.complete && img.naturalWidth) {
+        if (!ready) {
+          hideActor(character);
+          return;
+        }
+        img.onload = null;
+        img.onerror = null;
+        img.src = src;
         window.requestAnimationFrame(show);
-      }
+      });
       return;
     }
 

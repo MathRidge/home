@@ -293,6 +293,7 @@
   let activeSoundCues = [];
   const preparedVoiceAudio = new Map();
   const preparedSoundAudio = new Map();
+  const preparedSpriteImages = new Map();
   const decodedAudioBuffers = new Map();
   let instantAudioContext = null;
   let voiceToken = 0;
@@ -792,11 +793,17 @@
     };
 
     if (changed) {
-      actor.stage.classList.add("is-loading");
-      actor.img.onload = show;
-      actor.img.onerror = () => hideActor(character);
-      actor.img.src = sprite.src;
-      if (actor.img.complete && actor.img.naturalWidth) window.requestAnimationFrame(show);
+      prepareSpriteSource(sprite.src).then(ready => {
+        if (actor.loadToken !== token) return;
+        if (!ready) {
+          hideActor(character);
+          return;
+        }
+        actor.img.onload = null;
+        actor.img.onerror = null;
+        actor.img.src = sprite.src;
+        window.requestAnimationFrame(show);
+      });
       return;
     }
 
@@ -1523,7 +1530,42 @@
       const frame = frames[index];
       frameVoiceFiles(frame).forEach(prepareVoiceSource);
       frameSoundCues(frame).forEach(prepareSoundSource);
+      prepareFrameVisuals(frame);
     }
+  }
+
+  function spriteSourceForKey(key) {
+    const sprite = sprites[key];
+    return sprite?.src || "";
+  }
+
+  function prepareSpriteSource(src) {
+    if (!src || typeof Image !== "function") return Promise.resolve(false);
+    if (preparedSpriteImages.has(src)) return preparedSpriteImages.get(src);
+
+    const promise = new Promise(resolve => {
+      const image = new Image();
+      image.decoding = "async";
+      image.onload = () => {
+        if (typeof image.decode === "function") {
+          image.decode().catch(() => {}).finally(() => resolve(true));
+          return;
+        }
+        resolve(true);
+      };
+      image.onerror = () => resolve(false);
+      image.src = src;
+    });
+
+    preparedSpriteImages.set(src, promise);
+    return promise;
+  }
+
+  function prepareFrameVisuals(frame) {
+    const miraKey = frame?.sprite;
+    const elderKey = frame?.elder || (frame?.speaker === "Elder Shellwick" ? "elder" : "");
+    if (miraKey && miraKey !== "none") prepareSpriteSource(spriteSourceForKey(miraKey));
+    if (elderKey && elderKey !== "none") prepareSpriteSource(spriteSourceForKey(elderKey));
   }
 
   function unlockPreparedAudio() {
