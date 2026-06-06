@@ -23,6 +23,7 @@
 	const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
 	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 	const SOUND_BASE = "voice/sound/";
+	const MUSIC_BASE = "bg-music/";
 	const CONFIRM_NAV_DELAY_MS = 780;
 	const sfxPresets = {
 		firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1200, fadeOut: 240 },
@@ -39,8 +40,9 @@
 		"1_1": { section: "1-1", title: "Terms", certificateTitle: "Signed Term Structure", playFile: "play1.html", nextId: "1_2" },
 		"1_2": { section: "1-2", title: "Team Terms", certificateTitle: "Positive and Negative Term Balance", playFile: "play2.html", nextId: "1_3" },
 		"1_3": { section: "1-3", title: "Sign Simplify", certificateTitle: "Sign Simplification Fluency", playFile: "play3.html", nextId: "1_4" },
-		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Distribution and Grouping Foundations", playFile: "play4.html", nextId: "2_1" },
-		"2_1": { section: "2-1", title: "Fraction Shelves", certificateTitle: "Fraction Equivalence and Reduction", playFile: "play5.html", nextId: "2_2" },
+		"1_4": { section: "1-4", title: "Chunking", certificateTitle: "Distribution and Grouping Foundations", playFile: "play4.html", nextId: "2_1a" },
+		"2_1a": { section: "2-1a", title: "Split Shelf", certificateTitle: "Split Shelf Division", playFile: "play2-1a.html", nextId: "2_1" },
+		"2_1": { section: "2-1b", title: "Fraction Shelves", certificateTitle: "Fraction Equivalence and Reduction", playFile: "play5.html", nextId: "2_2" },
 		"2_2": { section: "2-2", title: "Prime Pieces", certificateTitle: "Prime Factorization Fluency", playFile: "play6.html", nextId: "2_3" },
 		"2_3": { section: "2-3", title: "Fraction Products", certificateTitle: "Fraction Product Structure", playFile: "play7.html", nextId: "2_4" },
 		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponential Pattern Recognition", playFile: "play8.html", nextId: "" }
@@ -60,15 +62,16 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.016, loop: true, crossfade: 4.8, fadeIn: 2200 };
 	const playAmbienceByPage = new Map([
-		[1, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.08, loop: true }],
-		[2, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.08, loop: true }],
-		[3, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.075, loop: true }],
-		[4, { file: "nematoki-pine-forest-birds-insects.mp3", start: 120, volume: 0.075, loop: true }],
-		[5, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }],
-		[6, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }],
-		[7, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }],
-		[8, { file: "summer-outdoor-sounds.mp3", start: 0, volume: 0.07, loop: true }]
+		[1, trialMusicCue],
+		[2, trialMusicCue],
+		[3, trialMusicCue],
+		[4, trialMusicCue],
+		[5, trialMusicCue],
+		[6, trialMusicCue],
+		[7, trialMusicCue],
+		[8, trialMusicCue]
 	]);
 	let activePlayAmbience = null;
 	let activePlayAmbienceKey = "";
@@ -81,6 +84,11 @@
 
 	function soundUrl(file) {
 		return `${SOUND_BASE}${encodeURIComponent(file)}`;
+	}
+
+	function ambienceUrl(cue) {
+		if (cue?.path) return cue.path;
+		return soundUrl(cue?.file || "");
 	}
 
 	function normalizeSfx(cue) {
@@ -315,7 +323,7 @@
 
 	function playAmbienceKey(config) {
 		if (!config) return "";
-		return `${config.file}|${Number(config.start || 0)}`;
+		return `${config.path || config.file}|${Number(config.start || 0)}`;
 	}
 
 	function stopPlayAmbience() {
@@ -324,11 +332,120 @@
 			activePlayAmbienceKey = "";
 			return;
 		}
-		activePlayAmbience.pause();
-		activePlayAmbience.removeAttribute("src");
-		activePlayAmbience.load();
+		if (activePlayAmbience.timers) {
+			activePlayAmbience.timers.forEach(timer => window.clearTimeout(timer));
+			activePlayAmbience.timers.clear();
+		}
+		if (activePlayAmbience.fadeTimers) {
+			activePlayAmbience.fadeTimers.forEach(timer => window.clearInterval(timer));
+			activePlayAmbience.fadeTimers.clear();
+		}
+		if (activePlayAmbience.audios) {
+			activePlayAmbience.audios.forEach(audio => {
+				audio.pause();
+				audio.removeAttribute("src");
+				audio.load();
+			});
+			activePlayAmbience.audios.clear();
+		} else {
+			activePlayAmbience.pause?.();
+			activePlayAmbience.removeAttribute?.("src");
+			activePlayAmbience.load?.();
+		}
 		activePlayAmbience = null;
 		activePlayAmbienceKey = "";
+	}
+
+	function fadeAmbienceVolume(session, audio, targetVolume, durationMs = 1200, onDone = null) {
+		if (!session || !audio) return;
+		const startVolume = Number(audio.volume || 0);
+		const startedAt = performance.now();
+		const safeDuration = Math.max(80, Number(durationMs || 0));
+		const timer = window.setInterval(() => {
+			if (activePlayAmbience !== session) {
+				window.clearInterval(timer);
+				return;
+			}
+			const progress = Math.min(1, (performance.now() - startedAt) / safeDuration);
+			audio.volume = startVolume + (targetVolume - startVolume) * progress;
+			if (progress >= 1) {
+				window.clearInterval(timer);
+				session.fadeTimers.delete(timer);
+				if (onDone) onDone();
+			}
+		}, 40);
+		session.fadeTimers.add(timer);
+	}
+
+	function createAmbienceAudio(ambience) {
+		const audio = new Audio(ambienceUrl(ambience));
+		audio.preload = "auto";
+		audio.loop = false;
+		audio.volume = 0;
+		return audio;
+	}
+
+	function scheduleAmbienceCrossfade(session, audio, ambience, targetVolume) {
+		if (!session || activePlayAmbience !== session || ambience.loop === false) return;
+		const crossfadeSeconds = Math.max(0, Number(ambience.crossfade || 0));
+		if (!crossfadeSeconds || !audio.duration || audio.duration <= crossfadeSeconds + 4) {
+			audio.loop = true;
+			return;
+		}
+
+		const leadMs = Math.max(900, (audio.duration - crossfadeSeconds) * 1000);
+		const timer = window.setTimeout(() => {
+			if (activePlayAmbience !== session) return;
+			const nextAudio = createAmbienceAudio(ambience);
+			session.audios.add(nextAudio);
+			startAmbienceAudio(session, nextAudio, ambience, targetVolume, { skipStart: true });
+			fadeAmbienceVolume(session, audio, 0, crossfadeSeconds * 1000, () => {
+				audio.pause();
+				session.audios.delete(audio);
+				audio.removeAttribute("src");
+				audio.load();
+			});
+		}, leadMs);
+		session.timers.add(timer);
+	}
+
+	function startAmbienceAudio(session, audio, ambience, targetVolume, options = {}) {
+		if (!session || activePlayAmbience !== session) return false;
+		const startAt = options.skipStart ? 0 : Math.max(0, Number(ambience.start || 0));
+		const applyStartPosition = () => {
+			if (activePlayAmbience !== session) return;
+			if (startAt && audio.duration && startAt < audio.duration) {
+				try { audio.currentTime = startAt; } catch (error) {}
+			}
+		};
+		const afterMetadata = () => {
+			applyStartPosition();
+			scheduleAmbienceCrossfade(session, audio, ambience, targetVolume);
+		};
+		if (audio.readyState >= 1) afterMetadata();
+		else {
+			audio.addEventListener("loadedmetadata", afterMetadata, { once: true });
+			audio.addEventListener("error", () => {
+				if (activePlayAmbience === session) stopPlayAmbience();
+			}, { once: true });
+			audio.load();
+		}
+
+		const attempt = audio.play();
+		if (attempt && typeof attempt.then === "function") {
+			attempt.then(() => {
+				if (activePlayAmbience === session) {
+					pendingPlayAmbience = null;
+					fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 1200));
+				}
+			}).catch(() => {
+				if (activePlayAmbience === session) pendingPlayAmbience = { config: ambience };
+			});
+		} else {
+			pendingPlayAmbience = null;
+			fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 1200));
+		}
+		return true;
 	}
 
 	function playPageAmbience(options = {}) {
@@ -339,56 +456,25 @@
 		}
 
 		const key = playAmbienceKey(ambience);
-		if (!options.force && activePlayAmbience && activePlayAmbienceKey === key && !activePlayAmbience.paused && !pendingPlayAmbience) {
+		if (!options.force && activePlayAmbience && activePlayAmbienceKey === key && !pendingPlayAmbience) {
 			return true;
 		}
 
 		stopPlayAmbience();
 		unlockPlayAudioContext();
 
-		const audio = new Audio(soundUrl(ambience.file));
-		const startAt = Math.max(0, Number(ambience.start || 0));
-		const targetVolume = Number.isFinite(ambience.volume) ? Math.max(0, Math.min(1, Number(ambience.volume))) : 0.07;
-		activePlayAmbience = audio;
+		const targetVolume = Number.isFinite(ambience.volume) ? Math.max(0, Math.min(1, Number(ambience.volume))) : 0.025;
+		const session = {
+			audios: new Set(),
+			timers: new Set(),
+			fadeTimers: new Set()
+		};
+		const audio = createAmbienceAudio(ambience);
+		session.audios.add(audio);
+		activePlayAmbience = session;
 		activePlayAmbienceKey = key;
 		pendingPlayAmbience = { config: ambience };
-
-		audio.preload = "auto";
-		audio.loop = ambience.loop !== false;
-		audio.volume = targetVolume;
-
-		const applyStartPosition = () => {
-			if (activePlayAmbience !== audio) return;
-			if (startAt && audio.duration && startAt < audio.duration) {
-				try { audio.currentTime = startAt; } catch (error) {}
-			}
-		};
-
-		const beginPlayback = () => {
-			if (activePlayAmbience !== audio) return;
-			const attempt = audio.play();
-			if (attempt && typeof attempt.then === "function") {
-				attempt.then(() => {
-					if (activePlayAmbience === audio) pendingPlayAmbience = null;
-				}).catch(() => {
-					if (activePlayAmbience === audio) pendingPlayAmbience = { config: ambience };
-				});
-			} else {
-				pendingPlayAmbience = null;
-			}
-		};
-
-		if (audio.readyState >= 1) {
-			applyStartPosition();
-		} else {
-			audio.addEventListener("loadedmetadata", applyStartPosition, { once: true });
-			audio.addEventListener("error", () => {
-				if (activePlayAmbience === audio) stopPlayAmbience();
-			}, { once: true });
-			audio.load();
-		}
-		beginPlayback();
-		return true;
+		return startAmbienceAudio(session, audio, ambience, targetVolume);
 	}
 
 	function retryPlayAmbience() {
@@ -399,7 +485,7 @@
 	function preparePlayAmbience() {
 		const ambience = playAmbienceByPage.get(Number(config.playNumber));
 		if (!ambience || typeof Audio !== "function") return null;
-		const audio = new Audio(soundUrl(ambience.file));
+		const audio = new Audio(ambienceUrl(ambience));
 		audio.preload = "auto";
 		audio.volume = 0;
 		try { audio.load(); } catch (error) {}
