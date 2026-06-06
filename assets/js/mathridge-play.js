@@ -725,12 +725,13 @@
 	}
 
 	function syncCompletedStepLocks() {
+		const finalReady = document.body.dataset.finalCorrectReady === "true";
 		document.querySelectorAll(".play-area").forEach(area => {
 			const steps = Array.from(area.querySelectorAll(".step-card"));
 			const visibleSteps = steps.filter(step => !step.hidden && !step.classList.contains("hidden"));
 			const lastVisible = visibleSteps[visibleSteps.length - 1] || null;
 			steps.forEach(step => {
-				const shouldLock = Boolean(lastVisible && step !== lastVisible && visibleSteps.includes(step));
+				const shouldLock = Boolean(lastVisible && visibleSteps.includes(step) && (finalReady || step !== lastVisible));
 				setStepControlsLocked(step, shouldLock);
 			});
 		});
@@ -922,6 +923,7 @@
 		button.style.removeProperty("pointer-events");
 		button.style.removeProperty("opacity");
 		byId("playBottomDrawerLauncher")?.classList.remove("is-ready");
+		syncCompletedStepLocks();
 		return true;
 	}
 
@@ -948,6 +950,7 @@
 			playSfx(options.sound || "correct");
 			button.dataset.nextClimbSoundPlayed = "true";
 		}
+		syncCompletedStepLocks();
 		pulseTopNextClimbButton();
 		if (options.scroll) {
 			scrollToPremiumElement("nextClimbInlineTray", 18, {

@@ -1377,6 +1377,7 @@
   }
 
   function waitForAudioReady(source, type = "voice") {
+    if (!source || source.pause) return Promise.resolve(false);
     const cue = type === "sound" ? normalizeSoundCue(source) : null;
     const url = type === "sound" ? soundCueUrl(cue) : voiceUrl(source);
     const volume = type === "sound"
