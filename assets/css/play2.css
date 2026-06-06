@@ -436,7 +436,14 @@
 
 .relic-assist-card.is-active {
 	border-color: rgba(255,231,168,0.88);
-	box-shadow: 0 14px 34px rgba(0,0,0,0.24), 0 0 28px rgba(242,184,75,0.34), inset 0 1px 0 rgba(255,255,255,0.18);
+	background:
+		linear-gradient(180deg, rgba(231,255,238,0.20), rgba(214,247,224,0.08)),
+		rgba(16, 55, 38, 0.94);
+	box-shadow: 0 14px 34px rgba(0,0,0,0.24), 0 0 28px rgba(96,196,132,0.28), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+.relic-assist-card.is-active .relic-assist-button {
+	display: none;
 }
 
 .relic-assist-button {
@@ -447,6 +454,97 @@
 	white-space: nowrap;
 	box-shadow: 0 0 18px rgba(242,184,75,0.22), inset 0 1px 0 rgba(255,255,255,0.30);
 	animation: relicAssistButtonGlow 2.2s ease-in-out infinite;
+}
+
+.manual-ring-card {
+	grid-column: 1 / -1;
+	width: min(100%, 620px);
+	margin: 2px auto 10px;
+	padding: 14px;
+	border-radius: 18px;
+	border: 1px solid rgba(73, 45, 18, 0.16);
+	background: linear-gradient(180deg, rgba(255,252,239,0.96), rgba(255,239,198,0.94));
+	color: #2d1b0d;
+	box-shadow: 0 12px 26px rgba(42, 24, 8, 0.14), inset 0 1px 0 rgba(255,255,255,0.70);
+}
+
+.manual-ring-card h3 {
+	margin: 0 0 4px;
+	font-family: "Playfair Display", Georgia, serif;
+	font-size: 1.18rem;
+	color: #4c2c08;
+}
+
+.manual-ring-card p {
+	margin: 0 0 10px;
+	font-size: 0.9rem;
+	font-weight: 850;
+	color: #70451b;
+}
+
+.manual-ring-row,
+.manual-ring-inputs {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 8px 0;
+}
+
+.manual-ring-row > span {
+	min-width: 126px;
+	font-weight: 950;
+	color: #70451b;
+}
+
+.manual-sign-btn,
+.manual-op-btn {
+	min-width: 52px;
+	min-height: 44px;
+	border-radius: 14px;
+	font-size: 1.3rem;
+	font-weight: 950;
+	background: linear-gradient(180deg, #fffaf0, #f2dfad);
+	color: #2d1b0d;
+}
+
+.manual-sign-btn.selected,
+.manual-op-btn.selected {
+	outline: 4px solid rgba(242,184,75,0.36);
+	box-shadow: 0 0 0 3px rgba(255,247,232,0.92), 0 10px 20px rgba(42,24,8,0.14);
+}
+
+.manual-ring-inputs label {
+	display: grid;
+	justify-items: center;
+	gap: 4px;
+	font-weight: 950;
+	color: #70451b;
+}
+
+.manual-ring-card.is-locked {
+	opacity: 0.92;
+}
+
+.relic-safe-step {
+	background:
+		linear-gradient(180deg, rgba(231,255,238,0.94), rgba(207,244,220,0.90)) !important;
+	border-color: rgba(83, 174, 111, 0.56) !important;
+	box-shadow:
+		0 16px 34px rgba(18, 73, 42, 0.18),
+		0 0 24px rgba(96, 196, 132, 0.18),
+		inset 0 1px 0 rgba(255,255,255,0.72) !important;
+}
+
+.relic-safe-step h2,
+.relic-safe-step h3 {
+	color: #14542e !important;
+}
+
+.relic-safe-step .build-ring,
+.relic-safe-step .step-instruction {
+	color: #183923;
 }
 
 @keyframes relicAssistSweep {
@@ -701,6 +799,21 @@
 	.relic-assist-img {
 		width: 48px;
 		height: 48px;
+	}
+
+	.manual-ring-row,
+	.manual-ring-inputs {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.manual-ring-row > span {
+		grid-column: 1 / -1;
+		min-width: 0;
+	}
+
+	.manual-ring-card .primary-action {
+		width: 100%;
 	}
 
 	.sign-choice-card {

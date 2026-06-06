@@ -576,6 +576,7 @@
 
 	function markMistake() {
 		if (finalAnswered) return;
+		shell()?.playSfx?.("wrong");
 		stopClimbTimer(true);
 		mistakesThisStage++;
 		runCorrectCount = 0;

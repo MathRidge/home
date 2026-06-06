@@ -1076,6 +1076,7 @@ function markCorrectStep(stepKey = ""){
 }
 
 function markMistake(){
+  shell()?.playSfx?.("wrong");
   stopStageTimer(true);
   mistakesThisStage++;
   runCorrectCount = 0;

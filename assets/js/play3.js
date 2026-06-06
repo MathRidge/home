@@ -378,6 +378,7 @@
 	function markMistake(message = "Not yet. Try again.") {
 		if (roundScoreAwarded || finalAnswered) return message;
 
+		shell()?.playSfx?.("wrong");
 		stopClimbTimer(true);
 		mistakesThisRound++;
 		runCorrectCount = 0;

@@ -722,6 +722,7 @@
 
 	function markMistake() {
 		if (finalAnswered) return;
+		shell()?.playSfx?.("wrong");
 		stopClimbTimer(true);
 		mistakesThisGame++;
 		runCorrectCount = 0;

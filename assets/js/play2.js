@@ -17,6 +17,8 @@
 	let wrongAnswerCount = 0;
 	let finalAnswerSign = null;
 	let termStoneRelicActive = false;
+	let manualOutsideSign = null;
+	let manualOperation = null;
 
 	let termCountComplete = false;
 	let positiveTotalComplete = false;
@@ -464,6 +466,7 @@
 
 	function markMistake() {
 		if (finalAnswerCompleted) return;
+		shell?.playSfx?.("wrong");
 
 		// Match the original Play2 timing behavior: a mistake clears the active
 		// progress run and banks the time already spent. The timer starts again
@@ -768,6 +771,8 @@
 		ringSecondComplete = false;
 		finalAnswerSign = null;
 		termStoneRelicActive = false;
+		manualOutsideSign = null;
+		manualOperation = null;
 
 		ringData = {
 			plus: { sign: "+", size: positiveTotal, value: positiveTotal },
@@ -796,8 +801,29 @@
 				</div>
 				<button type="button" class="relic-assist-button" onclick="useTermStoneRelic()">Use Relic</button>
 			</div>
+			<div class="manual-ring-card" id="manualRingSetup">
+				<h3>Manual Ring Build</h3>
+				<p>Select the outside sign, select the inner operation, then type both box sizes.</p>
+				<div class="manual-ring-row">
+					<span>Outside sign</span>
+					<button type="button" class="manual-sign-btn plus" onclick="selectManualOutsideSign('+', this)">+</button>
+					<button type="button" class="manual-sign-btn minus" onclick="selectManualOutsideSign('−', this)">−</button>
+				</div>
+				<div class="manual-ring-row">
+					<span>Inside operation</span>
+					<button type="button" class="manual-op-btn" onclick="selectManualOperation('+', this)">+</button>
+					<button type="button" class="manual-op-btn" onclick="selectManualOperation('-', this)">-</button>
+				</div>
+				<div class="manual-ring-inputs">
+					<label>First size<input id="manualFirstSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
+					<label>Second size<input id="manualSecondSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
+				</div>
+				<button type="button" class="primary-action" onclick="checkManualRingSetup()">Check Ring Setup</button>
+			</div>
+			<div class="relic-total-row hidden" id="relicTotalChoices">
 			<div class="total-choice plus" onclick="chooseRingNumber('plus', this)">+${positiveTotal}</div>
 			<div class="total-choice minus" onclick="chooseRingNumber('minus', this)">−${Math.abs(negativeTotal)}</div>
+			</div>
 		`;
 
 		if (feedback) {
@@ -809,13 +835,17 @@
 	function useTermStoneRelic() {
 		if (ringStep !== 1 || finalAnswerCompleted) return;
 		termStoneRelicActive = true;
+		byId("manualRingSetup")?.classList.add("hidden");
+		byId("relicTotalChoices")?.classList.remove("hidden");
 		const card = byId("termStoneAssist");
 		const text = byId("termStoneAssistText");
 		const button = card?.querySelector("button");
+		byId("ringBuilder")?.classList.add("relic-safe-step");
 		card?.classList.add("is-active");
 		if (text) text.textContent = "Relic active: pick the larger size first, then the other total. The ring will place itself.";
 		if (button) {
 			button.disabled = true;
+			button.hidden = true;
 			button.textContent = "Relic Active";
 		}
 		if (feedback) {
@@ -825,6 +855,97 @@
 		shell?.playSfx?.("relic");
 	}
 
+	function selectManualOutsideSign(sign, button) {
+		manualOutsideSign = sign;
+		document.querySelectorAll(".manual-sign-btn").forEach(btn => btn.classList.remove("selected"));
+		button?.classList.add("selected");
+		byId("outsideSign").textContent = sign;
+		if (feedback) {
+			feedback.textContent = "Outside sign selected. Now choose the inside operation and fill the sizes.";
+			feedback.className = "feedback good-text";
+		}
+	}
+
+	function selectManualOperation(operation, button) {
+		manualOperation = operation;
+		document.querySelectorAll(".manual-op-btn").forEach(btn => btn.classList.remove("selected"));
+		button?.classList.add("selected");
+		if (feedback) {
+			feedback.textContent = "Operation selected. Fill both box sizes, then check the ring setup.";
+			feedback.className = "feedback good-text";
+		}
+	}
+
+	function checkManualRingSetup() {
+		const firstInput = byId("manualFirstSize");
+		const secondInput = byId("manualSecondSize");
+		if (!firstInput || !secondInput || finalAnswerCompleted || ringStep >= 3) return;
+		startClimbTimer();
+
+		const firstSize = Number(sanitizeDigitText(firstInput.value));
+		const secondSize = Number(sanitizeDigitText(secondInput.value));
+		firstInput.value = firstSize ? String(firstSize) : "";
+		secondInput.value = secondSize ? String(secondSize) : "";
+
+		const plusSize = positiveTotal;
+		const minusSize = Math.abs(negativeTotal);
+		const positiveLeads = plusSize >= minusSize;
+		const correctSign = positiveLeads ? "+" : "−";
+		const correctFirst = Math.max(plusSize, minusSize);
+		const correctSecond = Math.min(plusSize, minusSize);
+		const correctOperation = "-";
+
+		if (!manualOutsideSign || !manualOperation || !firstInput.value || !secondInput.value) {
+			if (feedback) {
+				feedback.textContent = "Fill every part: outside sign, inside operation, first size, and second size.";
+				feedback.className = "feedback warning-text";
+			}
+			return;
+		}
+
+		const correct = manualOutsideSign === correctSign
+			&& manualOperation === correctOperation
+			&& firstSize === correctFirst
+			&& secondSize === correctSecond;
+
+		if (!correct) {
+			if (feedback) {
+				feedback.textContent = "Not yet. Build it like the Term Stone would: bigger size first, smaller size second, subtract inside.";
+				feedback.className = "feedback bad-text";
+			}
+			markMistake();
+			return;
+		}
+
+		ringData.first = { sign: correctSign, size: correctFirst, value: positiveLeads ? positiveTotal : negativeTotal };
+		ringData.second = { sign: positiveLeads ? "−" : "+", size: correctSecond, value: positiveLeads ? negativeTotal : positiveTotal };
+		byId("outsideSign").textContent = correctSign;
+		byId("firstSize").textContent = correctFirst;
+		byId("secondSize").textContent = correctSecond;
+		byId("finalBuilt").innerHTML = "";
+
+		byId("manualRingSetup")?.classList.add("is-locked");
+		byId("manualRingSetup")?.querySelectorAll("button, input").forEach(control => {
+			control.disabled = true;
+			control.setAttribute("aria-disabled", "true");
+		});
+
+		if (!ringFirstComplete) {
+			ringFirstComplete = true;
+			markCorrectStep();
+		}
+		if (!ringSecondComplete) {
+			ringSecondComplete = true;
+			markCorrectStep();
+		}
+		if (feedback) {
+			feedback.textContent = "Correct. You built the ring manually. Now simplify the term.";
+			feedback.className = "feedback good-text";
+		}
+		showRingAnswerInput();
+		ringStep = 3;
+	}
+
 	function chooseRingNumber(type, clickedButton) {
 		const chosen = ringData[type];
 		if (!chosen || finalAnswerCompleted) return;
@@ -832,6 +953,48 @@
 		startClimbTimer();
 
 		const allChoices = document.querySelectorAll(".total-choice");
+		if (termStoneRelicActive && ringStep === 1) {
+			const plusSize = positiveTotal;
+			const minusSize = Math.abs(negativeTotal);
+			const positiveLeads = plusSize >= minusSize;
+			const firstType = positiveLeads ? "plus" : "minus";
+			const secondType = positiveLeads ? "minus" : "plus";
+			ringData.first = {
+				sign: positiveLeads ? "+" : "−",
+				size: Math.max(plusSize, minusSize),
+				value: positiveLeads ? positiveTotal : negativeTotal
+			};
+			ringData.second = {
+				sign: positiveLeads ? "−" : "+",
+				size: Math.min(plusSize, minusSize),
+				value: positiveLeads ? negativeTotal : positiveTotal
+			};
+			selectedRingChoice = firstType;
+			allChoices.forEach(button => {
+				button.classList.toggle("selected", button.getAttribute("onclick")?.includes(`'${firstType}'`));
+				button.classList.add("is-locked");
+				button.setAttribute("aria-disabled", "true");
+			});
+			byId("outsideSign").textContent = ringData.first.sign;
+			byId("firstSize").textContent = ringData.first.size;
+			byId("secondSize").textContent = ringData.second.size;
+			byId("finalBuilt").innerHTML = "";
+			if (!ringFirstComplete) {
+				ringFirstComplete = true;
+				markCorrectStep();
+			}
+			if (!ringSecondComplete) {
+				ringSecondComplete = true;
+				markCorrectStep();
+			}
+			if (feedback) {
+				feedback.textContent = `Term Stone placed the ring: ${ringData.first.sign}${ringData.first.size} leads, then ${ringData.second.size} goes inside.`;
+				feedback.className = "feedback good-text";
+			}
+			showRingAnswerInput();
+			ringStep = 3;
+			return;
+		}
 
 		if (ringStep === 1) {
 			allChoices.forEach(button => {
@@ -914,9 +1077,10 @@
 
 		const finalBuilt = byId("finalBuilt");
 		if (!finalBuilt) return;
+		byId("step6RingSolve")?.classList.remove("relic-safe-step");
 
 		finalBuilt.innerHTML = `
-			<div id="step6RingSolve" class="final-answer-builder ring-solve-step">
+			<div id="step6RingSolve" class="final-answer-builder ring-solve-step ${termStoneRelicActive ? "relic-safe-step" : ""}">
 				<h2>Step 6: Simplify the Term</h2>
 
 				<div class="build-ring step6-ring-copy" aria-label="ring expression">
@@ -1431,6 +1595,9 @@
 	window.checkPositiveTotal = checkPositiveTotal;
 	window.checkNegativeTotal = checkNegativeTotal;
 	window.useTermStoneRelic = useTermStoneRelic;
+	window.selectManualOutsideSign = selectManualOutsideSign;
+	window.selectManualOperation = selectManualOperation;
+	window.checkManualRingSetup = checkManualRingSetup;
 	window.chooseRingNumber = chooseRingNumber;
 	window.selectFinalAnswerSign = selectFinalAnswerSign;
 	window.checkRingAnswer = checkRingAnswer;

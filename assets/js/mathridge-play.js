@@ -31,7 +31,7 @@
 		secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1200, fadeOut: 240 },
 		correct: { file: "correct.mp3", volume: 0.44, maxMs: 1500, fadeOut: 320 },
 		wrong: { file: "wrong.mp3", volume: 0.3, maxMs: 900, fadeOut: 180 },
-		relic: { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.36, fadeOut: 220 },
+		relic: { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.34, fadeOut: 260 },
 		certificatePaper: { file: "certificate-paper-rustle.mp3", start: 0, end: 2.2, volume: 0.42, fadeOut: 520 },
 		certificateStamp: { file: "certificate-stamp.mp3", start: 0, end: 2.1, volume: 0.48, fadeOut: 460 },
 		certificateFanfare: { file: "certificate-fanfare.mp3", start: 0, end: 2.25, volume: 0.48, fadeOut: 700 }
@@ -65,7 +65,7 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3?v=20260606-softened`, start: 0, volume: 1, restartOnEnd: true, crossfade: 0, fadeIn: 0, useElementAudio: true };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mov?v=20260606-softened-mov`, start: 0, volume: 1, restartOnEnd: true, crossfade: 0, fadeIn: 0, useElementAudio: true };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
@@ -619,7 +619,18 @@
 		}
 
 		button.classList.add("inline-next-climb-button");
+		syncNextClimbPreviewTheme(button);
 		return button;
+	}
+
+	function syncNextClimbPreviewTheme(button = byId("nextClimbButton")) {
+		if (!button) return;
+		const local = window.MathRidgeLocal || {};
+		const score = typeof local.getScore === "function" ? Number(local.getScore()) : Number(local.score || 0);
+		const previewTheme = getProgressThemeNameByScore(score + 1);
+		button.classList.remove("next-climb-preview-neutral", "next-climb-preview-blue", "next-climb-preview-purple");
+		button.classList.add(`next-climb-preview-${previewTheme}`);
+		button.dataset.nextClimbPreview = previewTheme;
 	}
 
 	function pulseTopNextClimbButton() {
@@ -831,6 +842,7 @@
 
 		document.body.dataset.finalCorrectReady = "false";
 		button.dataset.finalCorrectReady = "false";
+		delete button.dataset.nextClimbSoundPlayed;
 		button.classList.add("hidden", "locked-button");
 		button.hidden = true;
 		button.disabled = true;
@@ -845,11 +857,13 @@
 	}
 
 	function showNextClimbButton(options = {}) {
+		if (typeof options === "boolean") options = { scroll: options };
 		const button = ensureTopNextClimbButton() || byId("nextClimbButton");
 		if (!button) return false;
 
 		document.body.dataset.finalCorrectReady = "true";
 		button.dataset.finalCorrectReady = "true";
+		syncNextClimbPreviewTheme(button);
 		button.classList.remove("hidden", "locked-button", "disabled", "is-disabled");
 		button.hidden = false;
 		button.disabled = false;
@@ -861,6 +875,10 @@
 		button.style.setProperty("pointer-events", "auto", "important");
 		button.style.setProperty("opacity", "1", "important");
 		button.textContent = button.textContent.trim() || "Next Climb";
+		if (options.sound !== false && button.dataset.nextClimbSoundPlayed !== "true") {
+			playSfx(options.sound || "correct");
+			button.dataset.nextClimbSoundPlayed = "true";
+		}
 		pulseTopNextClimbButton();
 		if (options.scroll) {
 			scrollToPremiumElement("nextClimbInlineTray", 18, {
@@ -926,9 +944,8 @@
 
 	function finishCorrectClimb(options = {}) {
 		stopClimbTimer(true);
-		if (options.sound !== false) playSfx(options.sound || "correct");
 		if (options.message) setStatusMessage(options.message);
-		showNextClimbButton({ scroll: options.scroll !== false });
+		showNextClimbButton({ scroll: options.scroll !== false, sound: options.sound });
 		return true;
 	}
 

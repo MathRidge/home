@@ -486,6 +486,7 @@
 
 	function markMistake() {
 		if (stageStarted) shell().startClimbTimer();
+		shell().playSfx?.("wrong");
 		mistakesThisProblem += 1;
 		runCorrectCount = 0;
 

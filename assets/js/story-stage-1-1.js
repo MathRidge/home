@@ -248,8 +248,9 @@
   elderVoiceFilesByText.set("And following glowing insects.", ["elder-And-following-glowing-insects.mp3"]);
   elderVoiceFilesByText.set("And walking into storage closets while looking for doors.", ["elder-And-[audience-laughing]walking-into-storage-clos.mp3"]);
 
-  const relicRevealCue = { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.36, fadeOut: 220, lockMs: 650 };
-  const softRelicCue = { file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.22, fadeOut: 200, lockMs: 520 };
+  const relicRevealCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.34, fadeOut: 260, lockMs: 760 };
+  const softRelicCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 240, lockMs: 560 };
+  const relicFadeCue = { file: "whoosh.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 260, lockMs: 500 };
   const chalkCueA = { file: "chuck-writing.mp3", start: 0.45, end: 2.3, volume: 0.34, fadeOut: 260, lockMs: 1200 };
   const chalkCueB = { file: "chuck-writing.mp3", start: 3.2, end: 5.1, volume: 0.3, fadeOut: 260, lockMs: 1200 };
   const chalkCueC = { file: "chuck-writing.mp3", start: 6.35, end: 8.35, volume: 0.32, fadeOut: 300, lockMs: 1200 };
@@ -258,12 +259,12 @@
   const satchelCueC = { file: "satchel search.mp3", start: 5.0, end: 8.15, volume: 0.34, fadeOut: 760 };
   const manualRewardCues = [
     { file: "certificate-paper-rustle.mp3", start: 0, end: 2.15, volume: 0.38, fadeOut: 520, lockMs: 1000 },
-    { file: "universfield-button.mp3", start: 0, end: 1.35, volume: 0.32, delay: 160, fadeOut: 220, lockMs: 750 }
+    { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.3, delay: 160, fadeOut: 260, lockMs: 780 }
   ];
 
   const sceneSoundCuesByText = new Map([
     ["The door of Mira's cabin creaked open. Outside, the mountain waited.", [{ file: "cabin-door-creaking-open.mp3", volume: 0.42, end: 3.0, fadeOut: 820 }]],
-    ["A small butterfly-shaped symbol floated past her.", [{ file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.16, fadeOut: 200 }]],
+    ["A small butterfly-shaped symbol floated past her.", [{ file: "enchanted-spell-casting.mp3", start: 0, end: 1.15, volume: 0.14, fadeOut: 240 }]],
     ["She marched forward with serious confidence.", [{ file: "walk-steps.mp3", start: 0.1, end: 5.8, volume: 0.24, fadeOut: 900, lockMs: 900 }]],
     ["Then quietly turned around and walked the other direction.", [{ file: "walk-steps.mp3", start: 1.35, end: 6.4, volume: 0.22, fadeOut: 900, lockMs: 900 }]],
     ["Mira walked beside you, still hugging her little satchel close.", [{ file: "walk-steps.mp3", start: 0.2, end: 5.2, volume: 0.18, fadeOut: 900, lockMs: 800 }]],
@@ -279,16 +280,16 @@
     ["She pulled out a book. The cover was scratched, bent, and painfully familiar.", [{ file: "satchel search.mp3", start: 9.8, end: 11.35, volume: 0.28, fadeOut: 420 }]],
     ["Before you could ask what that meant, Mira hurried down a narrow side path.", [{ file: "walk-steps.mp3", start: 2.0, end: 6.6, volume: 0.2, fadeOut: 900, lockMs: 800 }]],
     ["She walked confidently toward a pumpkin cart.", [{ file: "walk-steps.mp3", start: 3.0, end: 7.2, volume: 0.22, fadeOut: 900, lockMs: 800 }]],
-    ["Mira knocked twice. Then once more.", [{ file: "freesound_community-wood-door-knock-106669.mp3", start: 0.05, end: 1.85, volume: 0.44, fadeOut: 260 }]],
+    ["Mira knocked three times.", [{ file: "freesound_community-wood-door-knock-106669.mp3", start: 0.05, end: 1.85, volume: 0.44, fadeOut: 260 }]],
     ["The door opened by itself. Inside, the cabin smelled like tea, parchment, and old rain.", [{ file: "elder-creaking-door-open.mp3", volume: 0.42, end: 2.2, fadeOut: 520 }]],
     ["He tapped the table with one claw. Four small lights appeared in the air.", [softRelicCue]],
-    ["Each became the shape of a relic.", [softRelicCue]],
+    ["Each became the shape of a relic.", []],
     ["The first light became a rough stone marked with positive and negative signs.", [relicRevealCue]],
-    ["Relic 1-1: The Term Stone", [relicRevealCue]],
+    ["Relic 1-1: The Term Stone", []],
     ["The second became a compass with two glowing needles, one positive and one negative. Relic 1-2: The Sign Compass", [relicRevealCue]],
     ["The third became a crystal prism that split stacked signs into one true direction. Relic 1-3: The Parity Prism", [relicRevealCue]],
     ["The fourth became a small forge that gathered equal pieces into faster groups. Relic 1-4: The Factor Forge", [relicRevealCue]],
-    ["The lights faded. Mira clenched her fists.", [{ file: "universfield-button.mp3", start: 0, end: 1.15, volume: 0.16, fadeOut: 220 }]],
+    ["The lights faded. Mira clenched her fists.", [relicFadeCue]],
     ["He handed Mira a thin booklet. The cover read: Term Manual: The Bigger Sign Rule.", manualRewardCues],
     ["Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 2.05, volume: 0.24, fadeOut: 520 }]],
     ["He took a piece of chalk and wrote: -8 - 3", [chalkCueA]],
@@ -504,7 +505,7 @@
     { bg: "evening", sprite: "none", speaker: "Narrator", text: "At the far edge of town stood a small cabin surrounded by old stones." },
     { bg: "evening", sprite: "none", speaker: "Narrator", text: "The roof was covered in moss. The windows were round. A wooden sign hung beside the door." },
     { bg: "evening", sprite: "none", speaker: "Narrator", text: "Elder Orin Shellwick. Keeper of Gate Wisdom." },
-    { bg: "evening", sprite: "shy", motion: "fade-in", speaker: "Narrator", text: "Mira knocked twice. Then once more." },
+    { bg: "evening", sprite: "shy", motion: "fade-in", speaker: "Narrator", text: "Mira knocked three times." },
     { bg: "evening", sprite: "shy", speaker: "Mira", text: "He is very wise. Please be respectful." },
     { bg: "evening", sprite: "none", speaker: "Elder Shellwick", text: "Come in, Mira." },
     { bg: "cabinInside", sprite: "none", speaker: "Narrator", text: "The door opened by itself. Inside, the cabin smelled like tea, parchment, and old rain." },
