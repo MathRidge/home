@@ -357,6 +357,10 @@ a {
   z-index: 2;
 }
 
+.mira-stage[data-sprite="magicSatchel"] {
+  bottom: clamp(-410px, calc(-48vh + 58px), -242px);
+}
+
 .elder-stage {
   left: clamp(18px, 6vw, 108px);
   bottom: clamp(44px, 8vh, 86px);
@@ -1337,6 +1341,10 @@ a {
     width: auto;
     height: auto;
     overflow: visible;
+  }
+
+  .mira-stage[data-sprite="magicSatchel"] {
+    bottom: clamp(-260px, calc(-44vh + 42px), -134px);
   }
 
   .elder-stage {

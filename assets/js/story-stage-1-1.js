@@ -252,6 +252,7 @@
   const relicRevealCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.34, fadeOut: 260, lockMs: 760 };
   const softRelicCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 240, lockMs: 560 };
   const relicFadeCue = { file: "whoosh.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 260, lockMs: 500 };
+  const funnyPipeCue = { file: "funny-pipe-effect.mp3", start: 0, end: 1.35, volume: 0.24, fadeOut: 220, lockMs: 620 };
   const chalkCueA = { file: "chuck-writing.mp3", start: 0.45, end: 2.3, volume: 0.34, fadeOut: 260, lockMs: 1200 };
   const chalkCueB = { file: "chuck-writing.mp3", start: 3.2, end: 5.1, volume: 0.3, fadeOut: 260, lockMs: 1200 };
   const chalkCueC = { file: "chuck-writing.mp3", start: 6.35, end: 8.35, volume: 0.32, fadeOut: 300, lockMs: 1200 };
@@ -265,6 +266,7 @@
 
   const sceneSoundCuesByText = new Map([
     ["The door of Mira's cabin creaked open. Outside, the mountain waited.", [{ file: "cabin-door-creaking-open.mp3", volume: 0.42, end: 3.0, fadeOut: 820 }]],
+    ["Probably.", [funnyPipeCue]],
     ["A small butterfly-shaped symbol floated past her.", [{ file: "enchanted-spell-casting.mp3", start: 0, end: 1.15, volume: 0.14, fadeOut: 240 }]],
     ["She marched forward with serious confidence.", [{ file: "walk-steps.mp3", start: 0.1, end: 5.8, volume: 0.24, fadeOut: 900, lockMs: 900 }]],
     ["Then quietly turned around and walked the other direction.", [{ file: "walk-steps.mp3", start: 1.35, end: 6.4, volume: 0.22, fadeOut: 900, lockMs: 900 }]],
@@ -276,11 +278,12 @@
     ["She pulled out a wooden spoon.", [{ file: "satchel search.mp3", start: 4.75, end: 5.55, volume: 0.24, fadeOut: 220 }]],
     ["She pulled out a sock.", [{ file: "satchel search.mp3", start: 6.0, end: 6.75, volume: 0.22, fadeOut: 220 }]],
     ["She pulled out a tiny bag labeled Emergency Cup Noodles. She froze. Her ears twitched.", [satchelCueB]],
-    ["You raised an eyebrow. Mira quickly shoved it back in.", [{ file: "satchel search.mp3", start: 8.3, end: 9.55, volume: 0.24, fadeOut: 420 }]],
+    ["You raised an eyebrow. Mira quickly shoved it back in.", [{ file: "satchel search.mp3", start: 8.3, end: 9.55, volume: 0.24, fadeOut: 420 }, funnyPipeCue]],
     ["She dug deeper. A glowing pebble rolled out. Then a folded map. Then three pencils. Then a half-eaten cracker.", [satchelCueC]],
     ["She pulled out a book. The cover was scratched, bent, and painfully familiar.", [{ file: "satchel search.mp3", start: 9.8, end: 11.35, volume: 0.28, fadeOut: 420 }]],
     ["Before you could ask what that meant, Mira hurried down a narrow side path.", [{ file: "walk-steps.mp3", start: 2.0, end: 6.6, volume: 0.2, fadeOut: 900, lockMs: 800 }]],
     ["She walked confidently toward a pumpkin cart.", [{ file: "walk-steps.mp3", start: 3.0, end: 7.2, volume: 0.22, fadeOut: 900, lockMs: 800 }]],
+    ["No, wait. This way.", [funnyPipeCue]],
     ["Mira knocked three times.", [{ file: "freesound_community-wood-door-knock-106669.mp3", start: 0.05, end: 1.85, volume: 0.44, fadeOut: 260 }]],
     ["The door opened by itself. Inside, the cabin smelled like tea, parchment, and old rain.", [{ file: "elder-creaking-door-open.mp3", volume: 0.42, end: 2.2, fadeOut: 520 }]],
     ["He tapped the table with one claw. Four small lights appeared in the air.", [softRelicCue]],
@@ -297,7 +300,9 @@
     ["He wrote beneath it: -8 + (-3)", [chalkCueB]],
     ["He wrote: -11", [chalkCueC]],
     ["She looked proud. Then Elder Shellwick wrote: 5 + (-8)", [{ file: "chuck-writing.mp3", start: 8.95, end: 10.8, volume: 0.32, fadeOut: 300 }]],
-    ["Elder Shellwick nodded. 5 + (-8) = -3", [{ file: "chuck-writing.mp3", start: 11.15, end: 12.55, volume: 0.22, fadeOut: 260 }]]
+    ["Elder Shellwick nodded. 5 + (-8) = -3", [{ file: "chuck-writing.mp3", start: 11.15, end: 12.55, volume: 0.22, fadeOut: 260 }]],
+    ["You eat noodles and try again?", [funnyPipeCue]],
+    ["And walking into storage closets while looking for doors.", [funnyPipeCue]]
   ]);
 
   const forestAmbience = {
@@ -1957,6 +1962,7 @@
     actor.lastKey = key;
 
     stage.dataset.character = character;
+    stage.dataset.sprite = key;
     stage.removeAttribute("data-motion");
     stage.classList.toggle("is-listening", Boolean(isListening));
 

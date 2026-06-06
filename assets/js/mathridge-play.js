@@ -24,6 +24,7 @@
 	const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
 	const SOUND_BASE = "voice/sound/";
 	const MUSIC_BASE = "bg-music/";
+	const MUSIC_ENABLED_KEY = "mathRidge_trialMusicEnabled_v1";
 	const CONFIRM_NAV_DELAY_MS = 780;
 	const POINTER_SFX_SUPPRESS_MS = 1400;
 	const sfxPresets = {
@@ -80,6 +81,7 @@
 	let activePlayAmbienceKey = "";
 	let pendingPlayAmbience = null;
 	let playAudioContext = null;
+	let trialMusicEnabled = readTrialMusicEnabled();
 
 	function byId(id) {
 		return document.getElementById(id);
@@ -92,6 +94,66 @@
 	function ambienceUrl(cue) {
 		if (cue?.path) return cue.path;
 		return soundUrl(cue?.file || "");
+	}
+
+	function readTrialMusicEnabled() {
+		try {
+			return localStorage.getItem(MUSIC_ENABLED_KEY) !== "false";
+		} catch (error) {
+			return true;
+		}
+	}
+
+	function saveTrialMusicEnabled(enabled) {
+		trialMusicEnabled = Boolean(enabled);
+		try {
+			localStorage.setItem(MUSIC_ENABLED_KEY, trialMusicEnabled ? "true" : "false");
+		} catch (error) {}
+	}
+
+	function syncMusicToggleButton() {
+		const button = byId("trialMusicToggle");
+		if (!button) return;
+		button.classList.toggle("is-muted", !trialMusicEnabled);
+		button.setAttribute("aria-pressed", trialMusicEnabled ? "false" : "true");
+		button.setAttribute("aria-label", trialMusicEnabled ? "Turn music off" : "Turn music on");
+		button.title = trialMusicEnabled ? "Turn music off" : "Turn music on";
+	}
+
+	function setTrialMusicEnabled(enabled, options = {}) {
+		saveTrialMusicEnabled(enabled);
+		syncMusicToggleButton();
+		if (!trialMusicEnabled) {
+			stopPlayAmbience();
+			return false;
+		}
+		return options.play !== false ? playPageAmbience({ force: true }) : true;
+	}
+
+	function toggleTrialMusic() {
+		setTrialMusicEnabled(!trialMusicEnabled);
+	}
+
+	function ensureTrialMusicToggle() {
+		let button = byId("trialMusicToggle");
+		if (!button) {
+			button = document.createElement("button");
+			button.type = "button";
+			button.id = "trialMusicToggle";
+			button.className = "trial-music-toggle";
+			button.innerHTML = '<span class="trial-music-note" aria-hidden="true">𝅘𝅥𝅯</span>';
+			button.addEventListener("click", toggleTrialMusic);
+			document.body.appendChild(button);
+		}
+		syncMusicToggleButton();
+		return button;
+	}
+
+	function setupDoubleTapZoomGuard() {
+		document.addEventListener("dblclick", event => {
+			if (!document.body?.classList.contains("play-page")) return;
+			event.preventDefault();
+		}, { capture: true });
 	}
 
 	function normalizeSfx(cue) {
@@ -534,6 +596,11 @@
 	}
 
 	function playPageAmbience(options = {}) {
+		if (!trialMusicEnabled) {
+			stopPlayAmbience();
+			return false;
+		}
+
 		const ambience = playAmbienceByPage.get(Number(config.playNumber)) || null;
 		if (!ambience) {
 			stopPlayAmbience();
@@ -566,11 +633,13 @@
 	}
 
 	function retryPlayAmbience() {
+		if (!trialMusicEnabled) return false;
 		if (!pendingPlayAmbience) return false;
 		return playPageAmbience({ force: true });
 	}
 
 	function preparePlayAmbience() {
+		if (!trialMusicEnabled) return null;
 		const ambience = playAmbienceByPage.get(Number(config.playNumber));
 		if (!ambience || typeof Audio !== "function") return null;
 		const audio = new Audio(ambienceUrl(ambience));
@@ -1880,6 +1949,8 @@
 	document.addEventListener("DOMContentLoaded", () => {
 		["firstTap", "secondTap", "correct", "wrong", "relic", "certificatePaper", "certificateStamp", "certificateFanfare"].forEach(prepareSfx);
 		preparePlayAmbience();
+		ensureTrialMusicToggle();
+		setupDoubleTapZoomGuard();
 		updateTimerPanel();
 		ensureTopNextClimbButton();
 		hideNextClimbButton({ force: true });
@@ -1940,6 +2011,8 @@
 		playSfx,
 		playPageAmbience,
 		stopPlayAmbience,
+		setTrialMusicEnabled,
+		toggleTrialMusic,
 		playCertificateSfx,
 		createOfficialCertificateCanvas,
 		downloadOfficialCertificate

@@ -656,6 +656,23 @@
 		return String(raw || "").replace(/[^0-9]/g, "");
 	}
 
+	function getExpectedManualSize(inputId) {
+		if (inputId !== "manualFirstSize" && inputId !== "manualSecondSize") return 0;
+		const biggerSize = Math.max(positiveTotal, Math.abs(negativeTotal));
+		const smallerSize = Math.min(positiveTotal, Math.abs(negativeTotal));
+		return inputId === "manualFirstSize" ? biggerSize : smallerSize;
+	}
+
+	function trimManualSizeInput(input) {
+		const expectedSize = getExpectedManualSize(input.id);
+		if (!expectedSize) return;
+		const expectedDigits = String(expectedSize).length;
+		input.value = input.value.slice(0, expectedDigits);
+		if (input.id === "manualFirstSize" && input.value.length >= expectedDigits) {
+			byId("manualSecondSize")?.focus();
+		}
+	}
+
 	function setupMathInputFiltering() {
 		document.addEventListener("input", event => {
 			if (!event.target.classList) return;
@@ -671,6 +688,7 @@
 
 			if (event.target.classList.contains("size-input")) {
 				event.target.value = sanitizeDigitText(event.target.value);
+				trimManualSizeInput(event.target);
 
 				if (event.target.id === "positiveInput") {
 					updateSizePreview("positiveInput", "positivePreviewSize", "positivePreview");
@@ -794,11 +812,6 @@
 		byId("finalBuilt").textContent = "";
 
 		totalButtons.innerHTML = `
-			<div class="ring-working-terms" aria-label="current signed totals for the ring">
-				<span>Working with</span>
-				<strong class="ring-working-term plus">${formatSigned(positiveTotal)}</strong>
-				<strong class="ring-working-term minus">${formatSigned(negativeTotal)}</strong>
-			</div>
 			<div class="relic-assist-card" id="termStoneAssist">
 				<img class="relic-assist-img" src="assets/images/relic/term_stone.png" alt="" loading="lazy" decoding="async">
 				<div>
@@ -807,9 +820,14 @@
 				</div>
 				<button type="button" class="relic-assist-button" onclick="useTermStoneRelic()">Use Relic</button>
 			</div>
+			<div class="ring-working-terms" aria-label="current signed totals for the ring">
+				<span>Working with</span>
+				<strong class="ring-working-term plus">${formatSigned(positiveTotal)}</strong>
+				<strong class="ring-working-term minus">${formatSigned(negativeTotal)}</strong>
+			</div>
 			<div class="manual-ring-card" id="manualRingSetup">
 				<h3>Manual Ring Build</h3>
-				<p>Select the outside sign, select the inner operation, then type both box sizes.</p>
+				<p>Select the outside sign, select the inner operation, then type the bigger and smaller sizes.</p>
 				<div class="manual-ring-row">
 					<span>Outside sign</span>
 					<button type="button" class="manual-sign-btn plus" onclick="selectManualOutsideSign('+', this)">+</button>
@@ -821,8 +839,8 @@
 					<button type="button" class="manual-op-btn" onclick="selectManualOperation('-', this)">-</button>
 				</div>
 				<div class="manual-ring-inputs">
-					<label>First size<input id="manualFirstSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
-					<label>Second size<input id="manualSecondSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
+					<label>Bigger size<input id="manualFirstSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
+					<label>Smaller size<input id="manualSecondSize" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
 				</div>
 				<button type="button" class="primary-action" onclick="checkManualRingSetup()">Check Ring Setup</button>
 			</div>
@@ -903,7 +921,7 @@
 
 		if (!manualOutsideSign || !manualOperation || !firstInput.value || !secondInput.value) {
 			if (feedback) {
-				feedback.textContent = "Fill every part: outside sign, inside operation, first size, and second size.";
+				feedback.textContent = "Fill every part: outside sign, inside operation, bigger size, and smaller size.";
 				feedback.className = "feedback warning-text";
 			}
 			return;
@@ -966,13 +984,41 @@
 			const firstType = positiveLeads ? "plus" : "minus";
 			const secondType = positiveLeads ? "minus" : "plus";
 			if (ringStep === 1) {
+				if (type !== firstType) {
+					allChoices.forEach(button => button.classList.remove("selected", "wrong-pick"));
+					clickedButton.classList.add("wrong-pick");
+					window.setTimeout(() => clickedButton.classList.remove("wrong-pick"), 450);
+					if (feedback) {
+						feedback.textContent = "Term Stone is looking for the bigger size first. Tap the larger total to begin.";
+						feedback.className = "feedback good-text";
+					}
+					return;
+				}
 				selectedRingChoice = type;
+				ringData.first = {
+					sign: positiveLeads ? "+" : "−",
+					size: Math.max(plusSize, minusSize),
+					value: positiveLeads ? positiveTotal : negativeTotal
+				};
+				ringData.second = {
+					sign: positiveLeads ? "−" : "+",
+					size: Math.min(plusSize, minusSize),
+					value: positiveLeads ? negativeTotal : positiveTotal
+				};
 				allChoices.forEach(button => {
 					button.classList.remove("selected", "wrong-pick");
 				});
 				clickedButton.classList.add("selected");
+				byId("outsideSign").textContent = ringData.first.sign;
+				byId("firstSize").textContent = ringData.first.size;
+				byId("secondSize").textContent = "__";
+				byId("finalBuilt").innerHTML = "";
+				if (!ringFirstComplete) {
+					ringFirstComplete = true;
+					markCorrectStep();
+				}
 				if (feedback) {
-					feedback.textContent = `${chosen.sign}${chosen.size} selected. Now tap the other total so the Term Stone can place the ring.`;
+					feedback.textContent = `${chosen.sign}${chosen.size} leads. Now tap the smaller total to finish the ring.`;
 					feedback.className = "feedback good-text";
 				}
 				ringStep = 2;
@@ -985,16 +1031,13 @@
 				}
 				return;
 			}
-			ringData.first = {
-				sign: positiveLeads ? "+" : "−",
-				size: Math.max(plusSize, minusSize),
-				value: positiveLeads ? positiveTotal : negativeTotal
-			};
-			ringData.second = {
-				sign: positiveLeads ? "−" : "+",
-				size: Math.min(plusSize, minusSize),
-				value: positiveLeads ? negativeTotal : positiveTotal
-			};
+			if (type !== secondType) {
+				if (feedback) {
+					feedback.textContent = "The bigger size is already in the ring. Tap the smaller total next.";
+					feedback.className = "feedback good-text";
+				}
+				return;
+			}
 			selectedRingChoice = firstType;
 			allChoices.forEach(button => {
 				const isUsed = button.getAttribute("onclick")?.includes(`'${firstType}'`) || button.getAttribute("onclick")?.includes(`'${secondType}'`);
@@ -1144,6 +1187,7 @@
 	}
 
 	function selectFinalAnswerSign(sign) {
+		if (finalAnswerCompleted) return;
 		finalAnswerSign = sign;
 		const preview = byId("finalSignPreview");
 		const positive = byId("chooseFinalPositive");
@@ -1180,9 +1224,20 @@
 		preview.textContent = finalAnswerSign && size ? `${finalAnswerSign}${size}` : "__";
 	}
 
+	function lockFinalAnswerStep() {
+		const step = byId("step6RingSolve");
+		if (!step) return;
+		step.classList.add("is-locked");
+		step.querySelectorAll("button, input").forEach(control => {
+			control.disabled = true;
+			control.setAttribute("aria-disabled", "true");
+		});
+	}
+
 	function finishPlay2FinalAnswer(finalText, scroll = true) {
 		finalAnswerCompleted = true;
 		document.body.dataset.play2FinalAnswerCorrect = "true";
+		lockFinalAnswerStep();
 
 		const earnedScore = mistakesThisGame === 0;
 		const message = earnedScore

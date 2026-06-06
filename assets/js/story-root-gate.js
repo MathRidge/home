@@ -98,6 +98,7 @@
     { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.3, fadeOut: 260, lockMs: 780 },
     { file: "certificate-fanfare.mp3", start: 0.12, end: 2.1, volume: 0.3, delay: 640, fadeOut: 700, lockMs: 2000 }
   ];
+  const funnyPipeCue = { file: "funny-pipe-effect.mp3", start: 0, end: 1.35, volume: 0.24, fadeOut: 220, lockMs: 620 };
   const sceneSoundCuesByText = new Map([
     ["The door of Elder Shellwick's cabin opened by itself. Warm lantern light spilled onto the path.", [{ file: "elder-creaking-door-open.mp3", volume: 0.4, end: 2.25, fadeOut: 520, lockMs: 900 }]],
     ["The Term Stone. The Sign Compass. The Parity Prism. And the Factor Forge.", [softRevealCue]],
@@ -130,6 +131,7 @@
     ["Root Gate Trial complete. Prime Element Vision awakens.", chapterUnlockCues],
     ["The fortieth star faded. The Root Gate remained closed.", [{ file: "wrong.mp3", volume: 0.3, lockMs: 500 }]],
     ["Somehow, Shellwick was already there. He opened the cabin door before either of you knocked. Warm light spilled out.", [{ file: "elder-creaking-door-open.mp3", volume: 0.38, end: 2.25, fadeOut: 520, lockMs: 900 }]],
+    ["Probably wise.", [funnyPipeCue]],
     ["Mira walked very carefully, still holding her certificate high enough to read.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 2.0, volume: 0.24, fadeOut: 520, lockMs: 760 }]],
     ["Mira considered this. Then very carefully placed her certificate on the table.", [{ file: "certificate-paper-rustle.mp3", start: 0.1, end: 2.0, volume: 0.22, fadeOut: 520, lockMs: 760 }]],
     ["Mira looked relieved and immediately tucked the certificate back into her satchel.", [satchelCue]],
@@ -145,7 +147,10 @@
     ["The Power Tally.", [relicRevealCue]],
     ["Small glowing tally marks rose upward. Then doubled. Then doubled again.", [relicRevealCue]],
     ["The chalkboard shimmered. The number 12 split into different forms.", [chalkCueB, softRevealCue]],
-    ["She reached inside her satchel and pulled out a pencil. Then a spoon. Then the same emergency cup noodles.", [satchelCue]],
+    ["Tiny glasses for numbers?", [funnyPipeCue]],
+    ["It heard me reflectively.", [funnyPipeCue]],
+    ["Shellwick decided not to argue.", [funnyPipeCue]],
+    ["She reached inside her satchel and pulled out a pencil. Then a spoon. Then the same emergency cup noodles.", [satchelCue, funnyPipeCue]],
     ["The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time.", [softRevealCue]]
   ]);
 

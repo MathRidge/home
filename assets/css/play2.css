@@ -480,23 +480,29 @@
 }
 
 .ring-working-term {
-	min-width: 72px;
-	padding: 7px 12px;
-	border-radius: 999px;
+	min-width: 86px;
+	padding: 9px 14px;
+	border-radius: 18px;
 	font-size: clamp(1.08rem, 3vw, 1.42rem);
 	line-height: 1;
 	text-align: center;
-	color: #fff;
-	text-shadow: 0 1px 0 rgba(0,0,0,0.20);
-	box-shadow: inset 0 1px 0 rgba(255,255,255,0.34), 0 8px 16px rgba(42,24,8,0.14);
+	border: 3px solid #ffd36e;
+	background: linear-gradient(180deg, #fffbe8, #fff0bb);
+	color: #2d1b0d;
+	text-shadow: none;
+	box-shadow: inset 0 1px 0 rgba(255,255,255,0.76), 0 8px 16px rgba(42,24,8,0.14);
 }
 
 .ring-working-term.plus {
-	background: linear-gradient(180deg, #35b877, #16804f);
+	border-color: #ffd36e;
+	background: linear-gradient(180deg, #fffbe8, #fff0bb);
+	color: #16804f;
 }
 
 .ring-working-term.minus {
-	background: linear-gradient(180deg, #e95f68, #a92f3f);
+	border-color: #86c7ff;
+	background: linear-gradient(180deg, #f4fbff, #dff2ff);
+	color: #a92f3f;
 }
 
 .relic-assist-card.is-active {
@@ -590,6 +596,15 @@
 
 .manual-ring-card.is-locked {
 	opacity: 0.92;
+}
+
+.ring-solve-step.is-locked {
+	opacity: 0.94;
+}
+
+.ring-solve-step.is-locked button,
+.ring-solve-step.is-locked input {
+	cursor: default;
 }
 
 .relic-safe-step {

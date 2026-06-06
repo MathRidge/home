@@ -25,6 +25,7 @@ html {
 	min-height: 100%;
 	background: #000;
 	scroll-padding-top: 150px;
+	-webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -43,6 +44,18 @@ body.play-page {
 	background-attachment: fixed;
 	overflow-x: hidden;
 	overflow-y: auto;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+}
+
+body.play-page button,
+body.play-page a,
+body.play-page [role="button"],
+body.play-page .term,
+body.play-page .choice-card,
+body.play-page .total-choice,
+body.play-page .sign-choice-card {
+	touch-action: manipulation;
 }
 
 body.play-page::before {
@@ -126,6 +139,71 @@ body.play-page.play-8 {
 	border-radius: 0;
 	box-shadow: none;
 	overflow: visible;
+}
+
+.trial-music-toggle {
+	position: fixed;
+	top: max(12px, env(safe-area-inset-top));
+	right: max(12px, env(safe-area-inset-right));
+	z-index: 6200;
+	width: 46px;
+	height: 46px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 247, 232, 0.32);
+	background:
+		radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.26), transparent 36%),
+		linear-gradient(180deg, rgba(41, 63, 92, 0.94), rgba(10, 22, 38, 0.94));
+	color: var(--mr-gold-soft);
+	box-shadow:
+		0 12px 28px rgba(0, 0, 0, 0.34),
+		0 0 0 1px rgba(242, 184, 75, 0.10),
+		inset 0 1px 0 rgba(255, 247, 232, 0.16);
+	backdrop-filter: blur(12px);
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.trial-music-toggle .trial-music-note {
+	position: relative;
+	display: inline-block;
+	font-family: "Times New Roman", Georgia, serif;
+	font-size: 1.72rem;
+	line-height: 1;
+	transform: translateY(-1px);
+}
+
+.trial-music-toggle.is-muted {
+	color: rgba(255, 247, 232, 0.76);
+	background:
+		radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.18), transparent 36%),
+		linear-gradient(180deg, rgba(74, 39, 50, 0.94), rgba(30, 18, 28, 0.94));
+}
+
+.trial-music-toggle.is-muted::after {
+	content: "";
+	position: absolute;
+	width: 31px;
+	height: 4px;
+	border-radius: 999px;
+	background: #ffdf91;
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
+	transform: rotate(-42deg);
+}
+
+@media (max-width: 880px) {
+	.trial-music-toggle {
+		top: calc(max(10px, env(safe-area-inset-top)) + 118px);
+		right: max(10px, env(safe-area-inset-right));
+		width: 42px;
+		height: 42px;
+	}
+
+	.trial-music-toggle .trial-music-note {
+		font-size: 1.58rem;
+	}
 }
 
 .challenge-board {
