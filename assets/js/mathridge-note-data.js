@@ -197,15 +197,60 @@ window.MathRidgeNotes["1_4"] = {
   ]
 };
 
+window.MathRidgeNotes["2_1a"] = {
+  noteId: "2_1a",
+  playLink: "play2-1a.html",
+  startLabel: "Start Climb 2-1a",
+  readyTitle: "Ready for the next climb: 2-1a Play",
+  lockedText: "Locked until all four split-shelf checks are correct.",
+  unlockedText: "Unlocked! You may begin 2-1a Play.",
+  modalTitle: "2-1a Play Unlocked!",
+  modalText: "You have unlocked Split Shelf Division. Would you like to begin the next climb now?",
+  problems: [
+    {
+      prompt: '1) Split and divide: <strong>132 &divide; 3</strong>. Final group count?',
+      answer: 44,
+      inputMode: "numeric",
+      inputLabel: "Final group count",
+      placeholder: "answer",
+      hint: "132 = 120 + 12. Then 120 ÷ 3 = 40 and 12 ÷ 3 = 4. Add 40 + 4."
+    },
+    {
+      prompt: '2) Split and divide: <strong>141 &divide; 3</strong>. Final group count?',
+      answer: 47,
+      inputMode: "numeric",
+      inputLabel: "Final group count",
+      placeholder: "answer",
+      hint: "Use 120 because 12 ÷ 3 = 4, so 120 ÷ 3 = 40. The leftover is 21, and 21 ÷ 3 = 7."
+    },
+    {
+      prompt: '3) Split and divide: <strong>56 &divide; 2</strong>. Final group count?',
+      answer: 28,
+      inputMode: "numeric",
+      inputLabel: "Final group count",
+      placeholder: "answer",
+      hint: "56 = 40 + 16. Then 40 ÷ 2 = 20 and 16 ÷ 2 = 8. Add 20 + 8."
+    },
+    {
+      prompt: '4) Split and divide: <strong>165 &divide; 5</strong>. Final group count?',
+      answer: 33,
+      inputMode: "numeric",
+      inputLabel: "Final group count",
+      placeholder: "answer",
+      hint: "165 = 150 + 15. Then 150 ÷ 5 = 30 and 15 ÷ 5 = 3. Add 30 + 3."
+    }
+  ]
+};
+
 window.MathRidgeNotes["2_1"] = {
   noteId: "2_1",
   playLink: "play5.html",
-  startLabel: "Start Climb 2-1",
-  readyTitle: "Ready for the next climb: 2-1 Play",
+  startLabel: "Start Climb 2-1b",
+  readyTitle: "Ready for the next climb: 2-1b Play",
   lockedText: "Locked until all four fraction checks are correct.",
   unlockedText: "Unlocked! You may begin 2-1 Play.",
-  modalTitle: "2-1 Play Unlocked!",
-  modalText: "You have unlocked 2-1 Play. Would you like to begin the next climb now?",
+  modalTitle: "2-1b Play Unlocked!",
+  modalText: "You have unlocked 2-1b Play. Would you like to begin the next climb now?",
   problems: [
     {
       prompt: '1) Reduce <span class="fraction"><span class="top">14</span><span class="bottom">22</span></span> to its simplest name.',

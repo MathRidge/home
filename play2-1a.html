@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Ridge | Trail 2-1a Split Shelf Division</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260605-play1-size-next" />
+  <link rel="stylesheet" href="assets/css/play2-1a.css?v=20260605-split-shelf" />
+  <script>
+    window.MathRidgePlayConfig = {
+      playNumber: 5,
+      playId: "2_1a",
+      gameKey: "play2_1a",
+      stageLabel: "2-1a",
+      recordWorkerBase: "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/"
+    };
+  </script>
+</head>
+<body class="play-page play-5 split-shelf-play" data-play-id="2_1a">
+  <div class="confetti-layer" id="confettiLayer"></div>
+
+  <div class="achievement-popup" id="namePopup">
+    <div class="name-card">
+      <h2>🎉 Split Shelf Complete!</h2>
+      <p>You reached Score 10 in Split Shelf Division.</p>
+      <p class="proof-note">Save this certificate as proof that big division can be handled with friendly chunks.</p>
+      <label for="playerNameInput">Name on Certificate</label>
+      <input id="playerNameInput" type="text" placeholder="Math Ridge Champion">
+      <button class="primary-action" onclick="createCertificateFromName()">Create My Certificate</button>
+    </div>
+  </div>
+
+  <div class="achievement-popup" id="certificatePopup">
+    <div class="certificate-card" id="certificateCard">
+      <div class="cert-school">Math Ridge</div>
+      <div class="cert-border">
+        <div class="cert-watermark">MATH RIDGE</div>
+        <div class="cert-leaves">❦ ❦ ❦</div>
+        <h2>Certificate of Achievement</h2>
+        <h3>Split Shelf Division</h3>
+        <p>Presented to</p>
+        <div class="cert-name" id="certName">Math Ridge Champion</div>
+        <p>for demonstrating division through friendly chunks, leftover shelves, and distributed group counts.</p>
+        <div class="cert-date cert-game-stat" id="certRaceTime" hidden></div>
+        <div class="cert-rank cert-game-stat" id="certRank" hidden></div>
+        <div class="cert-date" id="certDate"></div>
+        <div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
+      </div>
+      <div class="unlock-note">2-1b is unlocked!
+        <span class="relic-clarity-note">Next stage difference: use Split Shelf thinking to reduce fractions by the same group on top and bottom.</span>
+      </div>
+      <div class="trail-complete-actions">
+        <button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
+        <a class="trail-button primary-action" href="note5.html">Continue to 2-1b Note</a>
+        <a class="trail-button secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
+        <button class="secondary-action" onclick="closeCertificatePopup()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="achievement-popup" id="ladderPopup">
+    <div class="ladder-card">
+      <h2>🐢 Trail Ladder</h2>
+      <p class="proof-note">Your current climb record and the Trail 2-1a world time ladder.</p>
+      <div class="ladder-run-box" id="ladderRunBox"></div>
+      <h3>🌎 World Time Ladder</h3>
+      <div id="ladderRecordList" class="record-list empty">Loading world records...</div>
+      <div class="ladder-actions">
+        <button class="secondary-action" onclick="loadLadderRecords(false)">Refresh Top 3</button>
+        <button class="secondary-action" onclick="loadLadderRecords(true)">View All Records</button>
+        <button class="secondary-action" onclick="closeLadderPopup()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="game">
+    <div class="challenge-board" id="challengeBoard">
+      <h2>🐢 Progress Bar</h2>
+      <div class="stage-badge" id="stageText">Stage: 1</div>
+      <div class="score-badge" id="scoreText">Score: 0</div>
+      <div class="turtle-track theme-neutral" id="turtleTrack"><div class="progress-fill"></div><div class="progress-turtle">🐢</div></div>
+      <div class="challenge-text" id="challengeMessage">Press START the Climb when you are ready.</div>
+      <div class="timer-panel" id="timerPanel">⏱ Time: 0:00 | This climb: 0:00</div>
+    </div>
+
+    <h1>Split Shelf Division</h1>
+    <p class="subtitle">Break a large shelf into friendly chunks, divide each chunk by the group, then add the group counts.</p>
+    <div class="certificate-note-wide">🐢 Reach Score 10 to earn the Split Shelf certificate!</div>
+
+    <div class="climb-gate" id="climbStartGate">
+      <div class="climb-cover-card">
+        <div class="gate-kicker">Math Ridge Trail 2-1a</div>
+        <h3>Split Shelf Division</h3>
+        <p>Big division becomes easier when the shelf splits into a friendly chunk and a leftover. Start when you are ready — the climb timer begins after you press the button.</p>
+        <div class="stage-clarity-note"><strong>What makes 2-1a different:</strong> you are learning the hidden bridge before fraction reduction: division by distribution.</div>
+        <button class="primary-action start-climb-btn" onclick="startClimbFromGate()">START the Climb</button>
+      </div>
+    </div>
+
+    <div class="play-area hidden" id="playArea">
+      <div class="instruction" id="instruction">Choose a friendly chunk, find the leftover, divide both pieces, then add the group counts.</div>
+      <div class="problem-card">
+        <div class="division-display" id="divisionDisplay"></div>
+        <div class="read-line" id="problemHint"></div>
+      </div>
+
+      <div class="step-card" id="chunkStep">
+        <h2>Step 1: Choose the friendly chunk</h2>
+        <p>A friendly chunk is close, below the shelf, and easy for the group to divide.</p>
+        <div class="choice-grid" id="chunkChoices"></div>
+        <div class="feedback" id="chunkFeedback"></div>
+      </div>
+
+      <div class="step-card hidden" id="leftoverStep">
+        <h2>Step 2: Find the leftover shelf</h2>
+        <div class="split-preview" id="splitPreview"></div>
+        <div class="blank-expression"><input id="leftoverInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="leftover shelf"></div>
+        <button class="primary-action" onclick="checkLeftover()">Check Leftover</button>
+        <div class="feedback" id="leftoverFeedback"></div>
+      </div>
+
+      <div class="step-card hidden" id="divideStep">
+        <h2>Step 3: Divide each chunk</h2>
+        <div class="split-preview" id="dividePreview"></div>
+        <div class="chunk-answer-grid">
+          <label><span id="friendlyDivideLabel"></span><input id="friendlyAnswerInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
+          <label><span id="leftoverDivideLabel"></span><input id="leftoverAnswerInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off"></label>
+        </div>
+        <button class="primary-action" onclick="checkChunkAnswers()">Check Chunk Answers</button>
+        <div class="feedback" id="divideFeedback"></div>
+      </div>
+
+      <div class="step-card hidden" id="finalStep">
+        <h2>Step 4: Add the group counts</h2>
+        <div class="split-preview" id="finalPreview"></div>
+        <div class="blank-expression"><input id="finalInput" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="final quotient"></div>
+        <button class="primary-action" onclick="checkFinalAnswer()">Check Final Answer</button>
+        <div class="feedback" id="finalFeedback"></div>
+      </div>
+
+      <div class="step-card hidden" id="completeStep">
+        <h2>✅ Split Shelf Solved!</h2>
+        <div class="math-flow" id="completedFlow"></div>
+        <div class="read-line">Nice. You used distribution to divide a large shelf.</div>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="bottom-controls controls" id="bottomControls">
+      <a class="trail-button note-return secondary-action" href="note2-1a.html">← Back to 2-1a Note</a>
+      <div class="center-controls">
+        <button id="nextClimbButton" class="primary-action locked-button hidden" onclick="nextClimb()" disabled>Next Climb</button>
+        <button class="secondary-action" onclick="showLadderPopup()">View Current Ladder</button>
+      </div>
+      <a class="trail-button trail-return secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
+    </div>
+
+    <div id="recordList" class="record-list empty hidden">Loading world records...</div>
+    <div class="game-footer">Math Ridge | Trail 2-1a Split Shelf Division</div>
+  </div>
+
+  <script src="assets/js/mathridge-play.js?v=20260605-play1-size-next" defer></script>
+  <script src="assets/js/play2-1a.js?v=20260605-split-shelf" defer></script>
+</body>
+</html>

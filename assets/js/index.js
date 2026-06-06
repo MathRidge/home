@@ -6,7 +6,8 @@ const lessons = [
   { id: "1_2", section: "1-2", tag: "Teams", title: "Team Terms", description: "Group many terms into two teams before combining.", noteFile: "note2.html", playFile: "play2.html", chapter: "Chapter 1: Term Vision", chapterNote: "Recognize terms before calculating." },
   { id: "1_3", section: "1-3", tag: "Signs", title: "Sign Simplify", description: "Many signs simplify into one final sign behavior.", noteFile: "note3.html", playFile: "play3.html", chapter: "Chapter 1: Term Vision", chapterNote: "Recognize terms before calculating." },
   { id: "1_4", section: "1-4", tag: "Chunking", title: "Chunking", description: "Multiplication, grouping, and distribution without negative signs yet.", noteFile: "note4.html", playFile: "play4.html", chapter: "Chapter 1: Term Vision", chapterNote: "Recognize terms before calculating." },
-  { id: "2_1", section: "2-1", tag: "Shelves", title: "Fraction Shelves", description: "Top shelf and bottom shelf. Equal fractions and reduction.", noteFile: "note5.html", playFile: "play5.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." },
+  { id: "2_1a", section: "2-1a", tag: "Split", title: "Split Shelf", description: "Break large shelf numbers into friendly chunks before dividing.", noteFile: "note2-1a.html", playFile: "play2-1a.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." },
+  { id: "2_1", section: "2-1b", tag: "Shelves", title: "Fraction Shelves", description: "Top shelf and bottom shelf. Equal fractions and reduction.", noteFile: "note5.html", playFile: "play5.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." },
   { id: "2_2", section: "2-2", tag: "Prime", title: "Prime Pieces", description: "Break values into 2, 3, 5, and 7 quickly.", noteFile: "note6.html", playFile: "play6.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." },
   { id: "2_3", section: "2-3", tag: "Fractions", title: "Fraction Products", description: "Use prime pieces across top and bottom shelves.", noteFile: "note7.html", playFile: "play7.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." },
   { id: "2_4", section: "2-4", tag: "Exponents", title: "Exponential Count", description: "Repeated prime pieces become counted pieces.", noteFile: "note8.html", playFile: "play8.html", chapter: "Chapter 2: Prime Element Vision", chapterNote: "See values as prime pieces before making them bigger." }
@@ -17,6 +18,7 @@ const certificateTitles = {
   "1_2": "Positive and Negative Term Balance",
   "1_3": "Sign Simplification Fluency",
   "1_4": "Distribution and Grouping Foundations",
+  "2_1a": "Split Shelf Division",
   "2_1": "Fraction Equivalence and Reduction",
   "2_2": "Prime Factorization Fluency",
   "2_3": "Fraction Product Structure",
@@ -36,6 +38,7 @@ const stageCardThemes = {
   "1_2": "stage-1-2-mountain-peak",
   "1_3": "stage-1-3-mountain-trail",
   "1_4": "stage-1-4-mountain-cabin",
+  "2_1a": "stage-2-1-mountain-library",
   "2_1": "stage-2-1-mountain-library",
   "2_2": "stage-2-2-ancient-tree",
   "2_3": "stage-2-3-math-workstation",
@@ -266,7 +269,7 @@ function isNoteUnlocked(index) {
 
   if (lesson.chapter.startsWith("Chapter 2")) {
     if (!isRootGatePassed()) return false;
-    if (lesson.id === "2_1") return true;
+    if (lesson.id === "2_1a") return true;
   }
 
   if (index === 0) return true;

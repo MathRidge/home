@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math Ridge | Note 2-1a | Split Shelf Division</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
+<link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260605-split-shelf">
+<link rel="stylesheet" href="assets/css/note2-1a.css?v=20260605-split-shelf">
+</head>
+<body class="note-page note-2-1a" data-note-id="2_1a">
+<nav class="topbar" aria-label="Math Ridge main navigation">
+  <a class="brand" href="index.html" onclick="goToIndexSection('home'); return false;" aria-label="Math Ridge Home">
+    <img class="brand-logo" src="assets/images/logo/math-ridge-logo.webp" alt="Math Ridge logo" />
+    <div class="brand-text"><strong>Math Ridge</strong><span>Climb Higher. Achieve More.</span></div>
+  </a>
+  <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false"><span class="hamburger-lines" aria-hidden="true"></span></button>
+  <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+    <button class="pill-btn" type="button" onclick="goToIndexSection('home')">Home</button>
+    <button class="pill-btn active-section" type="button" onclick="goToIndexSection('quest')">Trail</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('cabin')">Cabin</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('message')">Message</button>
+    <button class="pill-btn" type="button" onclick="goToIndexSection('quick')">Menu</button>
+    <button id="topClimbBtn" class="gold-btn note-start-action" type="button" disabled onclick="goToPlay()">Start Climb 2-1a</button>
+  </div>
+</nav>
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleNoteMenu(false)" aria-hidden="true"></div>
+<div class="reading-progress" aria-hidden="true"></div>
+
+<main class="page split-shelf-page">
+  <section class="hero split-shelf-hero">
+    <p class="eyebrow">Math Ridge Manual 2-1a | Split Shelf</p>
+    <h1>Split Shelf Division</h1>
+    <p class="subtitle">Large shelf numbers are easier when you split them into friendly chunks. This is division by distribution: divide each friendly piece, then add the group counts.</p>
+    <div class="hero-note focus-route" aria-label="lesson focus route">
+      <div class="mini-card">1. Friendly chunk<span>Choose a close value the group can divide.</span></div>
+      <div class="mini-card">2. Leftover shelf<span>Subtract to see what remains.</span></div>
+      <div class="mini-card">3. Add group counts<span>Each chunk gives part of the answer.</span></div>
+    </div>
+  </section>
+
+  <section class="section split-section">
+    <h2><span class="section-kicker">01</span> Why Split the Shelf?</h2>
+    <p>Some students know small division facts but freeze when the shelf number is large. Split Shelf turns a big value into friendlier pieces.</p>
+    <div class="split-board" aria-label="one hundred thirty two divided by three split shelf example">
+      <div class="split-card start"><strong>132 &divide; 3</strong><span>too large to see at once</span></div>
+      <div class="split-arrow">&rarr;</div>
+      <div class="split-card"><strong>120 + 12</strong><span>friendly chunk plus leftover</span></div>
+      <div class="split-arrow">&rarr;</div>
+      <div class="split-card final"><strong>40 + 4 = 44</strong><span>group counts add together</span></div>
+    </div>
+  </section>
+
+  <section class="section split-section">
+    <h2><span class="section-kicker">02</span> Pick a Friendly Chunk</h2>
+    <p>A friendly chunk is not random. It is close, below the shelf number, and easy for the group to divide.</p>
+    <div class="friendly-grid" aria-label="friendly chunk check">
+      <article><strong>141 &divide; 3</strong><span>140 is not friendly for 3.</span></article>
+      <article><strong>130</strong><span>130 is not friendly for 3.</span></article>
+      <article class="friendly"><strong>120</strong><span>12 &divide; 3 = 4, so 120 &divide; 3 = 40.</span></article>
+    </div>
+    <div class="focus-callout"><strong>Search rule:</strong> move down to a chunk that belongs to the group.</div>
+  </section>
+
+  <section class="section split-section">
+    <h2><span class="section-kicker">03</span> The 141 Example</h2>
+    <p>Once the friendly chunk is chosen, the rest of the problem becomes smaller.</p>
+    <div class="route-stack split-route" aria-label="one hundred forty one divided by three route">
+      <div class="route-step"><span>Start</span><strong>141 &divide; 3</strong></div>
+      <div class="route-step"><span>Split</span><strong>141 = 120 + 21</strong></div>
+      <div class="route-step"><span>Divide</span><strong>120 &divide; 3 = 40</strong></div>
+      <div class="route-step"><span>Divide</span><strong>21 &divide; 3 = 7</strong></div>
+      <div class="route-step final-route"><span>Add</span><strong>40 + 7 = 47</strong></div>
+    </div>
+  </section>
+
+  <section class="section split-section">
+    <h2><span class="section-kicker">04</span> The Hidden Rule</h2>
+    <p>This is the same kind of thinking as chunking multiplication. The shelf splits, then the group works on each piece.</p>
+    <div class="distribution-line">(120 + 21) &divide; 3 = (120 &divide; 3) + (21 &divide; 3)</div>
+    <div class="memory-line"><span>split shelf</span><strong>divide chunks</strong><span>add group counts</span></div>
+  </section>
+
+  <section class="section practice split-practice" id="practice">
+    <h2><span class="section-kicker">05</span> Unlock Practice</h2>
+    <p>Find each final group count. Use the split route from the manual.</p>
+    <div class="practice-progress" aria-label="Practice progress">
+      <div class="progress-bar" id="bar0"><span></span></div>
+      <div class="progress-bar" id="bar1"><span></span></div>
+      <div class="progress-bar" id="bar2"><span></span></div>
+      <div class="progress-bar" id="bar3"><span></span></div>
+    </div>
+    <div class="practice-list" id="practiceList"></div>
+  </section>
+
+  <section class="unlock-dock" aria-label="Next climb unlock">
+    <div><strong>Ready for the next climb: 2-1a Play</strong><span id="unlockText">Locked until all four split-shelf checks are correct.</span></div>
+    <button id="dockClimbBtn" class="gold-btn" type="button" disabled onclick="goToPlay()">Start Climb 2-1a</button>
+  </section>
+
+  <section class="footer-rule" aria-label="Math Ridge quote">"Big division becomes smaller when the shelf splits into friendly chunks." - Math Ridge</section>
+  <p class="footer-note">Math Ridge Manual 2-1a | Split Shelf Division</p>
+</main>
+
+<div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <h2 id="modalTitle">2-1a Play Unlocked!</h2>
+    <p>You have unlocked Split Shelf Division. Would you like to begin the climb now?</p>
+    <div class="modal-actions"><button class="gold-btn ready" type="button" onclick="goToPlay()">Yes</button><button class="pill-btn" type="button" onclick="closeModal()">No</button></div>
+  </div>
+</div>
+
+<script src="assets/js/mathridge-note-data.js?v=20260605-split-shelf" defer></script>
+<script src="assets/js/math-ridge-shell.js?v=20260604-confirm-nav-delay" defer></script>
+<script src="assets/js/mathridge-note.js?v=20260605-split-shelf" defer></script>
+</body>
+</html>

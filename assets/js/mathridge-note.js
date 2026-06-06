@@ -41,6 +41,7 @@
 
   const storageKey = "mathRidge_noteComplete_" + note.noteId;
   const oldVisitedKey = "mathRidge_noteVisited_" + note.noteId;
+  const ROOT_GATE_PASS_KEYS = ["mathRidge_rootGatePassed_chapter_1", "mathRidge_testPassed_chapter_1"];
 
   function noteUnlockedKey(id) {
     return "mathRidge_noteUnlocked_" + id;
@@ -62,9 +63,18 @@
     }
   }
 
+  function hasRootGatePass() {
+    try {
+      return ROOT_GATE_PASS_KEYS.some(key => localStorage.getItem(key) === "true");
+    } catch (error) {
+      return false;
+    }
+  }
+
   function hasNoteAccess(id) {
     try {
       const cert = readNoteCertificate(id);
+      if (id === "2_1a" && hasRootGatePass()) return true;
       return localStorage.getItem(noteUnlockedKey(id)) === "true" ||
         localStorage.getItem("mathRidge_noteComplete_" + id) === "true" ||
         localStorage.getItem(notePlayCompleteKey(id)) === "true" ||

@@ -1,0 +1,130 @@
+/* Split Shelf Division play styles. */
+.instruction,
+.problem-card,
+.step-card,
+.feedback {
+  width: min(100%, 820px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.instruction {
+  text-align: center;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,247,232,0.94), rgba(255,225,150,0.82));
+  border: 1px solid rgba(242,184,75,0.56);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.70);
+  color: #5d3600;
+  font-weight: 900;
+}
+
+.problem-card,
+.step-card,
+.feedback {
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--mr-paper-strong), var(--mr-paper-soft));
+  border: 1px solid rgba(255,247,232,0.64);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.34);
+  color: #102033;
+}
+
+.problem-card {
+  padding: clamp(18px, 3vw, 28px);
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.division-display {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2.6rem, 9vw, 5rem);
+  font-weight: 950;
+  color: #173454;
+}
+
+.step-card {
+  margin-top: 18px;
+  padding: clamp(16px, 2.4vw, 24px);
+  text-align: center;
+}
+
+.step-card h2 {
+  margin-bottom: 8px;
+  color: #1b2b46;
+  font-size: clamp(1.18rem, 3vw, 1.5rem);
+  font-weight: 950;
+}
+
+.choice-grid,
+.chunk-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.choice-grid button {
+  min-height: 86px;
+  flex-direction: column;
+  gap: 5px;
+  color: #24304f;
+  background: linear-gradient(180deg, #fffaf0, #f2dfad);
+  border: 2px solid rgba(112, 69, 27, 0.22);
+}
+
+.choice-grid button.selected {
+  outline: 4px solid rgba(255,247,232,0.88);
+  box-shadow: 0 0 0 6px rgba(242,184,75,0.22), 0 16px 28px rgba(0,0,0,0.24);
+}
+
+.choice-grid button.wrong {
+  outline: 5px solid #ef7777;
+}
+
+.split-preview,
+.math-flow {
+  margin: 12px auto;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 248, 226, 0.92);
+  border: 1px solid rgba(16,32,51,0.14);
+  color: #1b2b46;
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-weight: 950;
+}
+
+.blank-expression input,
+.chunk-answer-grid input {
+  width: 116px;
+  margin: 8px;
+}
+
+.chunk-answer-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chunk-answer-grid label {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(16,32,51,0.06);
+  font-weight: 950;
+}
+
+.feedback {
+  min-height: 32px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  font-weight: 950;
+  background: rgba(255,247,232,0.88);
+}
+
+@media (max-width: 760px) {
+  .choice-grid,
+  .chunk-answer-grid {
+    grid-template-columns: 1fr;
+  }
+}
