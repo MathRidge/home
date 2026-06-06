@@ -320,6 +320,13 @@ body[data-final-correct-ready="true"] .next-climb-inline-tray {
 	transform: translateY(0);
 }
 
+body[data-final-correct-ready="true"] .next-climb-inline-tray.is-after-complete-card {
+	grid-column: auto;
+	grid-row: auto;
+	max-height: 76px;
+	margin: 12px 0 6px;
+}
+
 .next-climb-inline-tray #nextClimbButton.inline-next-climb-button {
 	min-height: 38px;
 	padding: 9px 22px;

@@ -64,7 +64,7 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.003, restartOnEnd: true, crossfade: 0, fadeIn: 1800 };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.0015, restartOnEnd: true, crossfade: 0, fadeIn: 1800 };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
@@ -544,12 +544,21 @@
 			tray = document.createElement("div");
 			tray.id = "nextClimbInlineTray";
 			tray.className = "next-climb-inline-tray";
+		}
+
+		const completeStep = byId("completeStep");
+		const finalCardReady = completeStep && !completeStep.classList.contains("hidden") && !completeStep.hidden;
+		if (finalCardReady && completeStep.parentElement) {
+			completeStep.insertAdjacentElement("afterend", tray);
+			tray.classList.add("is-after-complete-card");
+		} else {
 			const status = byId("challengeMessage");
 			if (status?.parentNode === board) {
 				status.insertAdjacentElement("afterend", tray);
 			} else {
 				board.appendChild(tray);
 			}
+			tray.classList.remove("is-after-complete-card");
 		}
 
 		if (button.parentElement !== tray) {
