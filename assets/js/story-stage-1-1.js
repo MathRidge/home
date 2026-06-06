@@ -669,6 +669,7 @@
   const preparedVoiceAudio = new Map();
   const preparedSoundAudio = new Map();
   const preparedSpriteImages = new Map();
+  const preparedSceneImages = new Map();
   const decodedAudioBuffers = new Map();
   let instantAudioContext = null;
   let voiceToken = 0;
@@ -681,6 +682,8 @@
   let pendingAmbient = null;
   const TYPE_SPEED_MS = 28;
   const PRELOAD_AHEAD_FRAMES = 4;
+  const STARTUP_PRELOAD_FRAMES = 18;
+  const STARTUP_PRELOAD_TIMEOUT_MS = 7200;
   const elderFirstVisibleIndex = frames.findIndex(frame => frame.sprite === "elder" || frame.sprite === "elderWriting");
   const shellwickSceneBackgrounds = new Set(["cabinInside", "shellwickTable"]);
 
@@ -708,6 +711,7 @@
   const choiceRow = document.getElementById("choiceRow");
   const feedbackText = document.getElementById("feedbackText");
   const rewardPanel = document.getElementById("rewardPanel");
+  const storyLoadingOverlay = createStoryLoadingOverlay();
   let relicRevealState = "";
   let relicNewTimer = null;
   let relicImagesReady = false;
@@ -1302,12 +1306,14 @@
   function prepareStoryAudio(startIndex = currentIndex, ahead = PRELOAD_AHEAD_FRAMES) {
     const from = Math.max(0, Number(startIndex) || 0);
     const to = Math.min(frames.length - 1, from + Math.max(0, Number(ahead) || 0));
+    const jobs = [];
     for (let index = from; index <= to; index += 1) {
       const frame = frames[index];
       frameVoiceFiles(frame).forEach(prepareVoiceSource);
       frameSoundCues(frame).forEach(prepareSoundSource);
-      prepareFrameVisuals(frame);
+      jobs.push(...prepareFrameVisuals(frame));
     }
+    return jobs;
   }
 
   function spriteSourceForKey(key) {
@@ -1337,11 +1343,127 @@
     return promise;
   }
 
+  function prepareSceneImageSource(src) {
+    if (!src || typeof Image !== "function") return Promise.resolve(false);
+    if (preparedSceneImages.has(src)) return preparedSceneImages.get(src);
+
+    const promise = new Promise(resolve => {
+      const image = new Image();
+      image.decoding = "async";
+      image.onload = () => {
+        if (typeof image.decode === "function") {
+          image.decode().catch(() => {}).finally(() => resolve(true));
+          return;
+        }
+        resolve(true);
+      };
+      image.onerror = () => resolve(false);
+      image.src = src;
+    });
+
+    preparedSceneImages.set(src, promise);
+    return promise;
+  }
+
   function prepareFrameVisuals(frame) {
+    const jobs = [];
+    const bgSrc = backgrounds[frame?.bg];
+    if (bgSrc) jobs.push(prepareSceneImageSource(bgSrc));
     const spriteKey = resolveFrameSprite(frame);
     const spriteSrc = spriteSourceForKey(spriteKey);
-    if (spriteSrc) prepareSpriteSource(spriteSrc);
-    if (isShellwickScene(frame)) prepareSpriteSource(spriteSourceForKey("elder"));
+    if (spriteSrc) jobs.push(prepareSpriteSource(spriteSrc));
+    if (isShellwickScene(frame)) jobs.push(prepareSpriteSource(spriteSourceForKey("elder")));
+    return jobs;
+  }
+
+  function waitForAudioReady(source, type = "voice") {
+    const cue = type === "sound" ? normalizeSoundCue(source) : null;
+    const url = type === "sound" ? soundCueUrl(cue) : voiceUrl(source);
+    const volume = type === "sound"
+      ? Number.isFinite(cue?.volume) ? Math.max(0, Math.min(1, Number(cue.volume))) : 0.42
+      : 0.95;
+    const cache = type === "sound" ? preparedSoundAudio : preparedVoiceAudio;
+    const audio = prepareAudioUrl(url, cache, volume);
+    prepareDecodedAudio(url);
+    if (!audio) return Promise.resolve(false);
+    if (audio.readyState >= 2) return Promise.resolve(true);
+
+    return new Promise(resolve => {
+      let done = false;
+      const finish = ready => {
+        if (done) return;
+        done = true;
+        window.clearTimeout(timer);
+        audio.removeEventListener("canplaythrough", onReady);
+        audio.removeEventListener("loadeddata", onReady);
+        audio.removeEventListener("error", onError);
+        resolve(Boolean(ready));
+      };
+      const onReady = () => finish(true);
+      const onError = () => finish(false);
+      const timer = window.setTimeout(() => finish(false), 1800);
+      audio.addEventListener("canplaythrough", onReady, { once: true });
+      audio.addEventListener("loadeddata", onReady, { once: true });
+      audio.addEventListener("error", onError, { once: true });
+      try { audio.load(); } catch (error) { finish(false); }
+    });
+  }
+
+  function createStoryLoadingOverlay() {
+    const overlay = document.createElement("div");
+    overlay.className = "story-loading-screen";
+    overlay.setAttribute("role", "status");
+    overlay.setAttribute("aria-live", "polite");
+    overlay.innerHTML = `
+      <div class="story-loading-card">
+        <span class="story-loading-rune" aria-hidden="true">MR</span>
+        <strong>Loading Story Scene</strong>
+        <span class="story-loading-text">Preparing images and voices...</span>
+        <div class="story-loading-bar" aria-hidden="true"><span></span></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+
+  function updateStoryLoading(progress) {
+    if (!storyLoadingOverlay) return;
+    const fill = storyLoadingOverlay.querySelector(".story-loading-bar span");
+    if (fill) fill.style.transform = `scaleX(${Math.min(1, Math.max(0.08, progress))})`;
+  }
+
+  function hideStoryLoading() {
+    if (!storyLoadingOverlay) return;
+    storyLoadingOverlay.classList.add("is-done");
+    window.setTimeout(() => storyLoadingOverlay.remove(), 420);
+  }
+
+  function preloadStoryStartup() {
+    const from = Math.max(0, currentIndex);
+    const to = Math.min(frames.length - 1, from + STARTUP_PRELOAD_FRAMES);
+    const jobs = [];
+
+    for (let index = from; index <= to; index += 1) {
+      const frame = frames[index];
+      jobs.push(...prepareFrameVisuals(frame));
+      frameVoiceFiles(frame).forEach(source => jobs.push(waitForAudioReady(source, "voice")));
+      frameSoundCues(frame).forEach(source => jobs.push(waitForAudioReady(source, "sound")));
+    }
+
+    if (!jobs.length) return Promise.resolve();
+    let completed = 0;
+    updateStoryLoading(0.08);
+    jobs.forEach(job => {
+      Promise.resolve(job).catch(() => false).finally(() => {
+        completed += 1;
+        updateStoryLoading(completed / jobs.length);
+      });
+    });
+
+    return Promise.race([
+      Promise.allSettled(jobs),
+      new Promise(resolve => window.setTimeout(resolve, STARTUP_PRELOAD_TIMEOUT_MS))
+    ]);
   }
 
   function unlockPreparedAudio() {
@@ -2291,6 +2413,9 @@
   preloadRelicImages();
   prepareUiTapSound();
   prepareStoryAudio(currentIndex, 6);
-  renderFrame();
-  window.setTimeout(showTapGuide, 420);
+  preloadStoryStartup().finally(() => {
+    renderFrame();
+    hideStoryLoading();
+    window.setTimeout(showTapGuide, 420);
+  });
 })();
