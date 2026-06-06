@@ -16,6 +16,7 @@
 	let ringData = {};
 	let wrongAnswerCount = 0;
 	let finalAnswerSign = null;
+	let termStoneRelicActive = false;
 
 	let termCountComplete = false;
 	let positiveTotalComplete = false;
@@ -766,6 +767,7 @@
 		ringFirstComplete = false;
 		ringSecondComplete = false;
 		finalAnswerSign = null;
+		termStoneRelicActive = false;
 
 		ringData = {
 			plus: { sign: "+", size: positiveTotal, value: positiveTotal },
@@ -786,6 +788,14 @@
 		byId("finalBuilt").textContent = "";
 
 		totalButtons.innerHTML = `
+			<div class="relic-assist-card" id="termStoneAssist">
+				<img class="relic-assist-img" src="assets/images/relic/term_stone.png" alt="" loading="lazy" decoding="async">
+				<div>
+					<strong>Term Stone Support</strong>
+					<span id="termStoneAssistText">Optional: let the Term Stone guide the bigger-first ring setup.</span>
+				</div>
+				<button type="button" class="relic-assist-button" onclick="useTermStoneRelic()">Use Relic</button>
+			</div>
 			<div class="total-choice plus" onclick="chooseRingNumber('plus', this)">+${positiveTotal}</div>
 			<div class="total-choice minus" onclick="chooseRingNumber('minus', this)">−${Math.abs(negativeTotal)}</div>
 		`;
@@ -796,10 +806,30 @@
 		}
 	}
 
+	function useTermStoneRelic() {
+		if (ringStep !== 1 || finalAnswerCompleted) return;
+		termStoneRelicActive = true;
+		const card = byId("termStoneAssist");
+		const text = byId("termStoneAssistText");
+		const button = card?.querySelector("button");
+		card?.classList.add("is-active");
+		if (text) text.textContent = "Relic active: pick the larger size first, then the other total. The ring will place itself.";
+		if (button) {
+			button.disabled = true;
+			button.textContent = "Relic Active";
+		}
+		if (feedback) {
+			feedback.textContent = "Term Stone is awake. Compare sizes only: larger first, smaller second.";
+			feedback.className = "feedback good-text";
+		}
+		shell?.playSfx?.("relic");
+	}
+
 	function chooseRingNumber(type, clickedButton) {
-		startClimbTimer();
 		const chosen = ringData[type];
 		if (!chosen || finalAnswerCompleted) return;
+		if (ringStep >= 3) return;
+		startClimbTimer();
 
 		const allChoices = document.querySelectorAll(".total-choice");
 
@@ -815,10 +845,12 @@
 			if (chosen.size < other.size) {
 				clickedButton.classList.add("wrong-pick");
 				if (feedback) {
-					feedback.textContent = `${chosen.sign}${chosen.size} is smaller. It cannot lead. Try the bigger total first.`;
-					feedback.className = "feedback bad-text";
+					feedback.textContent = termStoneRelicActive
+						? `The Term Stone hums. ${chosen.sign}${chosen.size} is smaller, so choose the larger size first.`
+						: `${chosen.sign}${chosen.size} is smaller. It cannot lead. Try the bigger total first.`;
+					feedback.className = termStoneRelicActive ? "feedback good-text" : "feedback bad-text";
 				}
-				markMistake();
+				if (!termStoneRelicActive) markMistake();
 				window.setTimeout(() => clickedButton.classList.remove("wrong-pick"), 500);
 				return;
 			}
@@ -867,6 +899,10 @@
 				markCorrectStep();
 			}
 
+			allChoices.forEach(button => {
+				button.classList.add("is-locked");
+				button.setAttribute("aria-disabled", "true");
+			});
 			showRingAnswerInput();
 			ringStep = 3;
 		}
@@ -1394,6 +1430,7 @@
 	window.checkTermCountFromInput = checkTermCountFromInput;
 	window.checkPositiveTotal = checkPositiveTotal;
 	window.checkNegativeTotal = checkNegativeTotal;
+	window.useTermStoneRelic = useTermStoneRelic;
 	window.chooseRingNumber = chooseRingNumber;
 	window.selectFinalAnswerSign = selectFinalAnswerSign;
 	window.checkRingAnswer = checkRingAnswer;
