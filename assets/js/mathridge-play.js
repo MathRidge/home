@@ -62,7 +62,7 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music-quiet.mp3`, start: 0, volume: 0.016, loop: true, crossfade: 4.8, fadeIn: 2200 };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.008, loop: true, crossfade: 4.8, fadeIn: 2200 };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
@@ -412,12 +412,11 @@
 			if (activePlayAmbience !== session) return;
 			const nextAudio = createAmbienceAudio(ambience);
 			session.audios.add(nextAudio);
-			const started = startAmbienceAudio(session, nextAudio, ambience, targetVolume, { skipStart: true, fallbackAudio: audio });
-			fadeAmbienceVolume(session, audio, 0, crossfadeSeconds * 1000, () => {
-				audio.pause();
-				session.audios.delete(audio);
-				audio.removeAttribute("src");
-				audio.load();
+			const started = startAmbienceAudio(session, nextAudio, ambience, targetVolume, {
+				skipStart: true,
+				fallbackAudio: audio,
+				crossfadeFrom: audio,
+				crossfadeMs: crossfadeSeconds * 1000
 			});
 			if (!started) restartAmbienceAudio(session, audio, ambience, targetVolume);
 		}, leadMs);
@@ -455,6 +454,14 @@
 				if (activePlayAmbience === session) {
 					pendingPlayAmbience = null;
 					fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 1200));
+					if (options.crossfadeFrom) {
+						fadeAmbienceVolume(session, options.crossfadeFrom, 0, Number(options.crossfadeMs || 1200), () => {
+							options.crossfadeFrom.pause();
+							session.audios.delete(options.crossfadeFrom);
+							options.crossfadeFrom.removeAttribute("src");
+							options.crossfadeFrom.load();
+						});
+					}
 				}
 			}).catch(() => {
 				if (activePlayAmbience === session) {
