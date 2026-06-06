@@ -45,12 +45,12 @@
   <section class="section split-section">
     <h2><span class="section-kicker">01</span> Why Split the Shelf?</h2>
     <p>Some students know small division facts but freeze when the shelf number is large. Split Shelf turns a big value into friendlier pieces.</p>
-    <div class="split-board" aria-label="one hundred thirty two divided by three split shelf example">
-      <div class="split-card start"><strong>132 &divide; 3</strong><span>too large to see at once</span></div>
+    <div class="split-board" aria-label="one hundred thirty two split by group three">
+      <div class="split-card start"><strong><span class="fraction split-fraction"><span class="top">132</span><span class="bottom">3</span></span></strong><span>too large to see at once</span></div>
       <div class="split-arrow">&rarr;</div>
       <div class="split-card"><strong>120 + 12</strong><span>friendly chunk plus leftover</span></div>
       <div class="split-arrow">&rarr;</div>
-      <div class="split-card final"><strong>40 + 4 = 44</strong><span>group counts add together</span></div>
+      <div class="split-card final"><strong>40 + 4 &rarr; 44</strong><span>group counts add together</span></div>
     </div>
   </section>
 
@@ -58,9 +58,9 @@
     <h2><span class="section-kicker">02</span> Pick a Friendly Chunk</h2>
     <p>A friendly chunk is not random. It is close, below the shelf number, and easy for the group to divide.</p>
     <div class="friendly-grid" aria-label="friendly chunk check">
-      <article><strong>141 &divide; 3</strong><span>140 is not friendly for 3.</span></article>
+      <article><strong><span class="fraction split-fraction"><span class="top">141</span><span class="bottom">3</span></span></strong><span>140 is not friendly for 3.</span></article>
       <article><strong>130</strong><span>130 is not friendly for 3.</span></article>
-      <article class="friendly"><strong>120</strong><span>12 &divide; 3 = 4, so 120 &divide; 3 = 40.</span></article>
+      <article class="friendly"><strong>120</strong><span><span class="fraction"><span class="top">12</span><span class="bottom">3</span></span> &rarr; 4, so <span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> &rarr; 40.</span></article>
     </div>
     <div class="focus-callout"><strong>Search rule:</strong> move down to a chunk that belongs to the group.</div>
   </section>
@@ -68,19 +68,19 @@
   <section class="section split-section">
     <h2><span class="section-kicker">03</span> The 141 Example</h2>
     <p>Once the friendly chunk is chosen, the rest of the problem becomes smaller.</p>
-    <div class="route-stack split-route" aria-label="one hundred forty one divided by three route">
-      <div class="route-step"><span>Start</span><strong>141 &divide; 3</strong></div>
-      <div class="route-step"><span>Split</span><strong>141 = 120 + 21</strong></div>
-      <div class="route-step"><span>Divide</span><strong>120 &divide; 3 = 40</strong></div>
-      <div class="route-step"><span>Divide</span><strong>21 &divide; 3 = 7</strong></div>
-      <div class="route-step final-route"><span>Add</span><strong>40 + 7 = 47</strong></div>
+    <div class="route-stack split-route" aria-label="one hundred forty one split by group three route">
+      <div class="route-step"><span>Start</span><strong><span class="fraction split-fraction"><span class="top">141</span><span class="bottom">3</span></span></strong></div>
+      <div class="route-step"><span>Split</span><strong>141 &rarr; 120 + 21</strong></div>
+      <div class="route-step"><span>Chunk</span><strong><span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> &rarr; 40</strong></div>
+      <div class="route-step"><span>Leftover</span><strong><span class="fraction"><span class="top">21</span><span class="bottom">3</span></span> &rarr; 7</strong></div>
+      <div class="route-step final-route"><span>Add</span><strong>40 + 7 &rarr; 47</strong></div>
     </div>
   </section>
 
   <section class="section split-section">
     <h2><span class="section-kicker">04</span> The Hidden Rule</h2>
     <p>This is the same kind of thinking as chunking multiplication. The shelf splits, then the group works on each piece.</p>
-    <div class="distribution-line">(120 + 21) &divide; 3 = (120 &divide; 3) + (21 &divide; 3)</div>
+    <div class="distribution-line"><span class="fraction"><span class="top">120 + 21</span><span class="bottom">3</span></span> &rarr; <span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> + <span class="fraction"><span class="top">21</span><span class="bottom">3</span></span></div>
     <div class="memory-line"><span>split shelf</span><strong>divide chunks</strong><span>add group counts</span></div>
   </section>
 
@@ -101,7 +101,10 @@
     <button id="dockClimbBtn" class="gold-btn" type="button" disabled onclick="goToPlay()">Start Climb 2-1a</button>
   </section>
 
-  <section class="footer-rule" aria-label="Math Ridge quote">"Big division becomes smaller when the shelf splits into friendly chunks." - Math Ridge</section>
+  <section class="footer-rule note-quote-card" aria-label="Math Ridge quote">
+    <img class="note-quote-logo" src="assets/images/logo/logold.svg" alt="Math Ridge logo" />
+    <blockquote>"Big division becomes smaller when the shelf splits into friendly chunks."</blockquote>
+  </section>
   <p class="footer-note">Math Ridge Manual 2-1a | Split Shelf Division</p>
 </main>
 
