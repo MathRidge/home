@@ -62,7 +62,7 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.016, loop: true, crossfade: 4.8, fadeIn: 2200 };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music-quiet.mp3`, start: 0, volume: 0.016, loop: true, crossfade: 4.8, fadeIn: 2200 };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
@@ -385,6 +385,20 @@
 		return audio;
 	}
 
+	function restartAmbienceAudio(session, audio, ambience, targetVolume) {
+		if (!session || activePlayAmbience !== session || ambience.loop === false) return;
+		try { audio.currentTime = Math.max(0, Number(ambience.start || 0)); } catch (error) {}
+		audio.volume = 0;
+		const attempt = audio.play();
+		if (attempt && typeof attempt.then === "function") {
+			attempt.then(() => fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 900))).catch(() => {
+				if (activePlayAmbience === session) pendingPlayAmbience = { config: ambience };
+			});
+		} else {
+			fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 900));
+		}
+	}
+
 	function scheduleAmbienceCrossfade(session, audio, ambience, targetVolume) {
 		if (!session || activePlayAmbience !== session || ambience.loop === false) return;
 		const crossfadeSeconds = Math.max(0, Number(ambience.crossfade || 0));
@@ -398,13 +412,14 @@
 			if (activePlayAmbience !== session) return;
 			const nextAudio = createAmbienceAudio(ambience);
 			session.audios.add(nextAudio);
-			startAmbienceAudio(session, nextAudio, ambience, targetVolume, { skipStart: true });
+			const started = startAmbienceAudio(session, nextAudio, ambience, targetVolume, { skipStart: true, fallbackAudio: audio });
 			fadeAmbienceVolume(session, audio, 0, crossfadeSeconds * 1000, () => {
 				audio.pause();
 				session.audios.delete(audio);
 				audio.removeAttribute("src");
 				audio.load();
 			});
+			if (!started) restartAmbienceAudio(session, audio, ambience, targetVolume);
 		}, leadMs);
 		session.timers.add(timer);
 	}
@@ -430,6 +445,9 @@
 			}, { once: true });
 			audio.load();
 		}
+		audio.addEventListener("ended", () => {
+			restartAmbienceAudio(session, audio, ambience, targetVolume);
+		});
 
 		const attempt = audio.play();
 		if (attempt && typeof attempt.then === "function") {
@@ -439,7 +457,10 @@
 					fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 1200));
 				}
 			}).catch(() => {
-				if (activePlayAmbience === session) pendingPlayAmbience = { config: ambience };
+				if (activePlayAmbience === session) {
+					pendingPlayAmbience = { config: ambience };
+					if (options.fallbackAudio) restartAmbienceAudio(session, options.fallbackAudio, ambience, targetVolume);
+				}
 			});
 		} else {
 			pendingPlayAmbience = null;
