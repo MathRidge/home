@@ -45,6 +45,15 @@
     "date": "2026-05-20T16:47:01.802Z"
   },
   {
+    "name": "Troy",
+    "timeSeconds": 251,
+    "timeDisplay": "4:11",
+    "game": "Play1 - Build the Box",
+    "gameKey": "play1",
+    "stage": null,
+    "date": "2026-06-06T16:01:36.834Z"
+  },
+  {
     "name": "Perry Grey",
     "timeSeconds": 264,
     "timeDisplay": "4:24",
