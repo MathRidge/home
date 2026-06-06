@@ -122,9 +122,18 @@
   background: rgba(255,247,232,0.88);
 }
 
+.split-shelf-play .play-area {
+  padding-bottom: clamp(120px, 32svh, 260px);
+}
+
 @media (max-width: 760px) {
   .choice-grid,
   .chunk-answer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .split-shelf-play .step-card {
+    scroll-margin-top: 140px;
+    scroll-margin-bottom: 34svh;
   }
 }

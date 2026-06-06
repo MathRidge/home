@@ -819,6 +819,13 @@
 		button.style.setProperty("opacity", "1", "important");
 		button.textContent = button.textContent.trim() || "Next Climb";
 		pulseTopNextClimbButton();
+		if (options.scroll) {
+			scrollToPremiumElement("nextClimbInlineTray", 18, {
+				delay: 180,
+				duration: 760,
+				slow: true
+			});
+		}
 
 		return true;
 	}

@@ -200,7 +200,6 @@
     text("leftoverDivideLabel", `${current.leftover} ÷ ${current.group}`);
     show("divideStep", true);
     markStep("Leftover found. Now divide each chunk.");
-    shell().scrollToPremiumElement?.("divideStep");
   };
 
   window.checkChunkAnswers = function checkChunkAnswers() {
@@ -229,7 +228,6 @@
     text("finalPreview", `${current.chunkAnswer} + ${current.leftoverAnswer} = ___`);
     show("finalStep", true);
     markStep("Both chunks divided. Add the group counts.");
-    shell().scrollToPremiumElement?.("finalStep");
   };
 
   window.checkFinalAnswer = function checkFinalAnswer() {
