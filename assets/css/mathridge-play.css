@@ -152,15 +152,15 @@ body.play-page.play-8 {
 	align-items: center;
 	justify-content: center;
 	border-radius: 999px;
-	border: 1px solid rgba(255, 247, 232, 0.32);
+	border: 1px solid rgba(59, 79, 118, 0.20);
 	background:
-		radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.26), transparent 36%),
-		linear-gradient(180deg, rgba(41, 63, 92, 0.94), rgba(10, 22, 38, 0.94));
+		radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.92), transparent 42%),
+		linear-gradient(180deg, rgba(255, 245, 197, 0.98), rgba(255, 214, 125, 0.98));
 	color: var(--mr-gold-soft);
 	box-shadow:
-		0 12px 28px rgba(0, 0, 0, 0.34),
-		0 0 0 1px rgba(242, 184, 75, 0.10),
-		inset 0 1px 0 rgba(255, 247, 232, 0.16);
+		0 12px 28px rgba(20, 31, 54, 0.24),
+		0 0 0 2px rgba(255, 247, 232, 0.42),
+		inset 0 1px 0 rgba(255, 255, 255, 0.74);
 	backdrop-filter: blur(12px);
 	cursor: pointer;
 	-webkit-tap-highlight-color: transparent;
@@ -184,14 +184,14 @@ body.play-page.play-8 {
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
-	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.34));
+	filter: drop-shadow(0 2px 3px rgba(32, 44, 74, 0.28));
 }
 
 .trial-music-toggle.is-muted {
 	color: rgba(255, 247, 232, 0.76);
 	background:
-		radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.18), transparent 36%),
-		linear-gradient(180deg, rgba(74, 39, 50, 0.94), rgba(30, 18, 28, 0.94));
+		radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.54), transparent 42%),
+		linear-gradient(180deg, rgba(211, 205, 220, 0.96), rgba(151, 145, 166, 0.96));
 }
 
 .trial-music-toggle.is-muted::after {
@@ -200,7 +200,7 @@ body.play-page.play-8 {
 	width: 31px;
 	height: 4px;
 	border-radius: 999px;
-	background: #ffdf91;
+	background: #59344a;
 	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
 	transform: rotate(-42deg);
 }
