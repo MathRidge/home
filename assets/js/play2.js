@@ -786,6 +786,7 @@
 		if (!ringBuilder || !totalButtons) return;
 
 		ringBuilder.classList.remove("hidden");
+		ringBuilder.classList.remove("relic-safe-step");
 		byId("buildRing")?.classList.remove("hidden");
 		byId("outsideSign").textContent = "?";
 		byId("firstSize").textContent = "__";
@@ -793,6 +794,11 @@
 		byId("finalBuilt").textContent = "";
 
 		totalButtons.innerHTML = `
+			<div class="ring-working-terms" aria-label="current signed totals for the ring">
+				<span>Working with</span>
+				<strong class="ring-working-term plus">${formatSigned(positiveTotal)}</strong>
+				<strong class="ring-working-term minus">${formatSigned(negativeTotal)}</strong>
+			</div>
 			<div class="relic-assist-card" id="termStoneAssist">
 				<img class="relic-assist-img" src="assets/images/relic/term_stone.png" alt="" loading="lazy" decoding="async">
 				<div>
@@ -821,8 +827,8 @@
 				<button type="button" class="primary-action" onclick="checkManualRingSetup()">Check Ring Setup</button>
 			</div>
 			<div class="relic-total-row hidden" id="relicTotalChoices">
-			<div class="total-choice plus" onclick="chooseRingNumber('plus', this)">+${positiveTotal}</div>
-			<div class="total-choice minus" onclick="chooseRingNumber('minus', this)">−${Math.abs(negativeTotal)}</div>
+				<div class="total-choice plus" onclick="chooseRingNumber('plus', this)">+${positiveTotal}</div>
+				<div class="total-choice minus" onclick="chooseRingNumber('minus', this)">−${Math.abs(negativeTotal)}</div>
 			</div>
 		`;
 
@@ -953,12 +959,32 @@
 		startClimbTimer();
 
 		const allChoices = document.querySelectorAll(".total-choice");
-		if (termStoneRelicActive && ringStep === 1) {
+		if (termStoneRelicActive && (ringStep === 1 || ringStep === 2)) {
 			const plusSize = positiveTotal;
 			const minusSize = Math.abs(negativeTotal);
 			const positiveLeads = plusSize >= minusSize;
 			const firstType = positiveLeads ? "plus" : "minus";
 			const secondType = positiveLeads ? "minus" : "plus";
+			if (ringStep === 1) {
+				selectedRingChoice = type;
+				allChoices.forEach(button => {
+					button.classList.remove("selected", "wrong-pick");
+				});
+				clickedButton.classList.add("selected");
+				if (feedback) {
+					feedback.textContent = `${chosen.sign}${chosen.size} selected. Now tap the other total so the Term Stone can place the ring.`;
+					feedback.className = "feedback good-text";
+				}
+				ringStep = 2;
+				return;
+			}
+			if (type === selectedRingChoice) {
+				if (feedback) {
+					feedback.textContent = "That total is already selected. Tap the other total to finish the relic setup.";
+					feedback.className = "feedback good-text";
+				}
+				return;
+			}
 			ringData.first = {
 				sign: positiveLeads ? "+" : "−",
 				size: Math.max(plusSize, minusSize),
@@ -971,7 +997,8 @@
 			};
 			selectedRingChoice = firstType;
 			allChoices.forEach(button => {
-				button.classList.toggle("selected", button.getAttribute("onclick")?.includes(`'${firstType}'`));
+				const isUsed = button.getAttribute("onclick")?.includes(`'${firstType}'`) || button.getAttribute("onclick")?.includes(`'${secondType}'`);
+				button.classList.toggle("selected", isUsed);
 				button.classList.add("is-locked");
 				button.setAttribute("aria-disabled", "true");
 			});
@@ -1355,6 +1382,7 @@
 		byId("positiveTotalStep")?.classList.add("hidden");
 		byId("negativeTotalStep")?.classList.add("hidden");
 		byId("ringBuilder")?.classList.add("hidden");
+		byId("ringBuilder")?.classList.remove("relic-safe-step");
 		byId("buildRing")?.classList.remove("hidden");
 
 		const totalButtons = byId("totalButtons");

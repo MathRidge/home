@@ -65,7 +65,7 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mov?v=20260606-softened-mov`, start: 0, volume: 1, restartOnEnd: true, crossfade: 0, fadeIn: 0, useElementAudio: true };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.MOV?v=20260606-current-mov`, start: 0, volume: 1, restartOnEnd: true, crossfade: 0, fadeIn: 0, useElementAudio: true };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
