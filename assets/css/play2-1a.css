@@ -122,6 +122,20 @@
   background: rgba(255,247,232,0.88);
 }
 
+.split-shelf-play .step-card.is-step-locked {
+  opacity: 0.92;
+}
+
+.split-shelf-play .step-card.is-step-locked button,
+.split-shelf-play .step-card.is-step-locked input {
+  cursor: default;
+}
+
+.split-shelf-play .step-card.is-step-locked button:not(.selected),
+.split-shelf-play .step-card.is-step-locked input {
+  filter: grayscale(0.15);
+}
+
 .split-shelf-play .play-area {
   padding-bottom: clamp(120px, 32svh, 260px);
 }

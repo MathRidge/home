@@ -25,6 +25,7 @@
 	const SOUND_BASE = "voice/sound/";
 	const MUSIC_BASE = "bg-music/";
 	const CONFIRM_NAV_DELAY_MS = 780;
+	const POINTER_SFX_SUPPRESS_MS = 1400;
 	const sfxPresets = {
 		firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1200, fadeOut: 240 },
 		secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1200, fadeOut: 240 },
@@ -64,7 +65,7 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.0015, restartOnEnd: true, crossfade: 0, fadeIn: 1800 };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3?v=20260606-softened`, start: 0, volume: 1, restartOnEnd: true, crossfade: 0, fadeIn: 0, useElementAudio: true };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
@@ -406,7 +407,7 @@
 
 	function fadeAmbienceVolume(session, audio, targetVolume, durationMs = 1200, onDone = null) {
 		if (!session || !audio) return;
-		attachAmbienceGain(session, audio);
+		if (!session.useElementAudio) attachAmbienceGain(session, audio);
 		const startVolume = getAmbienceLevel(session, audio);
 		const startedAt = performance.now();
 		const safeDuration = Math.max(80, Number(durationMs || 0));
@@ -477,7 +478,7 @@
 
 	function startAmbienceAudio(session, audio, ambience, targetVolume, options = {}) {
 		if (!session || activePlayAmbience !== session) return false;
-		attachAmbienceGain(session, audio);
+		if (!session.useElementAudio) attachAmbienceGain(session, audio);
 		const startAt = options.skipStart ? 0 : Math.max(0, Number(ambience.start || 0));
 		const applyStartPosition = () => {
 			if (activePlayAmbience !== session) return;
@@ -553,7 +554,8 @@
 			timers: new Set(),
 			fadeTimers: new Set(),
 			gains: new Map(),
-			sources: new Map()
+			sources: new Map(),
+			useElementAudio: ambience.useElementAudio === true
 		};
 		const audio = createAmbienceAudio(ambience);
 		session.audios.add(audio);
@@ -597,7 +599,8 @@
 		}
 
 		const completeStep = byId("completeStep");
-		const finalCardReady = completeStep && !completeStep.classList.contains("hidden") && !completeStep.hidden;
+		const canMoveAfterComplete = config.nextClimbAfterComplete !== false;
+		const finalCardReady = canMoveAfterComplete && completeStep && !completeStep.classList.contains("hidden") && !completeStep.hidden;
 		if (finalCardReady && completeStep.parentElement) {
 			completeStep.insertAdjacentElement("afterend", tray);
 			tray.classList.add("is-after-complete-card");
@@ -625,6 +628,46 @@
 		button.classList.remove("is-ready-pulse");
 		void button.offsetWidth;
 		button.classList.add("is-ready-pulse");
+	}
+
+	function setStepControlsLocked(step, locked) {
+		if (!step) return;
+		step.classList.toggle("is-step-locked", locked);
+		step.querySelectorAll("button, input, select, textarea").forEach(control => {
+			if (locked) {
+				control.disabled = true;
+				control.setAttribute("aria-disabled", "true");
+			} else {
+				control.disabled = false;
+				control.removeAttribute("aria-disabled");
+			}
+		});
+	}
+
+	function syncCompletedStepLocks() {
+		document.querySelectorAll(".play-area").forEach(area => {
+			const steps = Array.from(area.querySelectorAll(".step-card"));
+			const visibleSteps = steps.filter(step => !step.hidden && !step.classList.contains("hidden"));
+			const lastVisible = visibleSteps[visibleSteps.length - 1] || null;
+			steps.forEach(step => {
+				const shouldLock = Boolean(lastVisible && step !== lastVisible && visibleSteps.includes(step));
+				setStepControlsLocked(step, shouldLock);
+			});
+		});
+	}
+
+	function watchStepLocks() {
+		if (typeof MutationObserver === "undefined") return;
+		const area = document.querySelector(".play-area");
+		if (!area || area.dataset.stepLockObserverReady === "true") return;
+		area.dataset.stepLockObserverReady = "true";
+		const observer = new MutationObserver(() => syncCompletedStepLocks());
+		observer.observe(area, {
+			attributes: true,
+			attributeFilter: ["class", "hidden"],
+			subtree: true
+		});
+		syncCompletedStepLocks();
 	}
 
 	function readPlayerProfile() {
@@ -1129,6 +1172,7 @@
 			armedTrialControl.classList.remove("is-play-armed");
 			armedTrialControl.removeAttribute("data-trial-armed");
 			armedTrialControl.removeAttribute("aria-describedby");
+			armedTrialControl.removeAttribute("data-trial-pointer-first-arm");
 		}
 
 		if (!exceptTarget) armedTrialControl = null;
@@ -1139,28 +1183,56 @@
 		}
 	}
 
+	function isTrialCheckButton(target) {
+		if (!target || !target.matches("button")) return false;
+		const action = target.getAttribute("onclick") || "";
+		const label = (target.textContent || "").trim();
+		return /\bcheck[A-Z_\(]/.test(action) || /^check\b/i.test(label);
+	}
+
 	function isTrialArmTarget(target) {
 		if (!target || target.disabled || target.getAttribute("aria-disabled") === "true") return false;
 		if (!target.closest(".play-area")) return false;
 		if (target.closest("#bottomControls, .achievement-popup, .modal-backdrop, .play-exit-confirm")) return false;
 		if (target.matches("a, input, select, textarea, label")) return false;
-		if (!target.matches("button")) return false;
+		if (!isTrialCheckButton(target)) return false;
 		return true;
+	}
+
+	function armTrialControl(target) {
+		clearArmedTrialControl(target);
+		armedTrialControl = target;
+		target.dataset.trialArmed = "true";
+		target.classList.add("is-play-armed");
+		playSfx("firstTap");
+		armedTrialControlTimer = window.setTimeout(() => clearArmedTrialControl(), 3600);
+	}
+
+	function handleTrialControlPointerDown(event) {
+		const target = event.target?.closest?.("button");
+		if (!isTrialArmTarget(target)) return;
+		if (armedTrialControl === target && target.dataset.trialArmed === "true") return;
+		event.preventDefault();
+		event.stopImmediatePropagation();
+		target.dataset.trialPointerFirstArm = "true";
+		armTrialControl(target);
 	}
 
 	function handleTrialControlClick(event) {
 		const target = event.target?.closest?.("button");
 		if (!isTrialArmTarget(target)) return;
 
+		if (target.dataset.trialPointerFirstArm === "true") {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			target.removeAttribute("data-trial-pointer-first-arm");
+			return;
+		}
+
 		if (armedTrialControl !== target || target.dataset.trialArmed !== "true") {
 			event.preventDefault();
 			event.stopImmediatePropagation();
-			clearArmedTrialControl(target);
-			armedTrialControl = target;
-			target.dataset.trialArmed = "true";
-			target.classList.add("is-play-armed");
-			playSfx("firstTap");
-			armedTrialControlTimer = window.setTimeout(() => clearArmedTrialControl(), 3600);
+			armTrialControl(target);
 			return;
 		}
 
@@ -1220,13 +1292,13 @@
 			if (target.dataset.playArmed === "true") {
 				playSfx("secondTap");
 				target.setAttribute("data-play-pointer-second-tap-played", "true");
-				window.setTimeout(() => target.removeAttribute("data-play-pointer-second-tap-played"), 360);
+				window.setTimeout(() => target.removeAttribute("data-play-pointer-second-tap-played"), POINTER_SFX_SUPPRESS_MS);
 				return;
 			}
 
 			playSfx("firstTap");
 			target.setAttribute("data-play-pointer-first-tap-played", "true");
-			window.setTimeout(() => target.removeAttribute("data-play-pointer-first-tap-played"), 360);
+			window.setTimeout(() => target.removeAttribute("data-play-pointer-first-tap-played"), POINTER_SFX_SUPPRESS_MS);
 		}, { passive: true });
 		document.addEventListener("click", handleBottomControlClick, true);
 		document.addEventListener("pointerdown", event => {
@@ -1795,6 +1867,7 @@
 		ensureTopNextClimbButton();
 		hideNextClimbButton({ force: true });
 		setupBottomDrawer();
+		watchStepLocks();
 		watchPlayerProfileNameInput();
 	});
 
@@ -1804,6 +1877,7 @@
 		retryPlayAmbience();
 	}, { capture: true, passive: true });
 
+	document.addEventListener("pointerdown", handleTrialControlPointerDown, { capture: true });
 	document.addEventListener("click", handleTrialControlClick, { capture: true });
 
 	window.addEventListener("pagehide", stopPlayAmbience);

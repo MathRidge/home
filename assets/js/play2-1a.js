@@ -47,6 +47,26 @@
     byId(id)?.classList.toggle("hidden", !visible);
   }
 
+  function lockStep(id) {
+    const step = byId(id);
+    if (!step) return;
+    step.classList.add("is-step-locked");
+    step.querySelectorAll("button, input").forEach(control => {
+      control.disabled = true;
+      control.setAttribute("aria-disabled", "true");
+    });
+  }
+
+  function unlockStep(id) {
+    const step = byId(id);
+    if (!step) return;
+    step.classList.remove("is-step-locked");
+    step.querySelectorAll("button, input").forEach(control => {
+      control.disabled = false;
+      control.removeAttribute("aria-disabled");
+    });
+  }
+
   function cleanNumberInput(input) {
     if (!input) return "";
     input.value = String(input.value || "").replace(/\D/g, "").slice(0, 4);
@@ -103,6 +123,7 @@
   }
 
   function resetInputs() {
+    ["chunkStep", "leftoverStep", "divideStep", "finalStep"].forEach(unlockStep);
     ["leftoverInput", "friendlyAnswerInput", "leftoverAnswerInput", "finalInput"].forEach(id => {
       const input = byId(id);
       if (input) {
@@ -172,6 +193,7 @@
     button.classList.add("selected");
     text("chunkFeedback", `Correct. ${current.chunk} is friendly for groups of ${current.group}.`);
     text("splitPreview", `${current.value} = ${current.chunk} + ___`);
+    lockStep("chunkStep");
     show("leftoverStep", true);
     markStep("Friendly chunk chosen. Now find the leftover shelf.");
     shell().scrollToPremiumElement?.("leftoverStep");
@@ -198,6 +220,7 @@
     text("dividePreview", `${current.chunk} ÷ ${current.group} = ___ and ${current.leftover} ÷ ${current.group} = ___`);
     text("friendlyDivideLabel", `${current.chunk} ÷ ${current.group}`);
     text("leftoverDivideLabel", `${current.leftover} ÷ ${current.group}`);
+    lockStep("leftoverStep");
     show("divideStep", true);
     markStep("Leftover found. Now divide each chunk.");
   };
@@ -226,6 +249,7 @@
     leftoverInput.style.borderColor = "#6cc070";
     text("divideFeedback", "Correct. Now add the group counts.");
     text("finalPreview", `${current.chunkAnswer} + ${current.leftoverAnswer} = ___`);
+    lockStep("divideStep");
     show("finalStep", true);
     markStep("Both chunks divided. Add the group counts.");
   };
@@ -257,6 +281,7 @@
     score = Math.min(10, score + (mistakes ? 0 : 1));
     text("finalFeedback", `Finished. ${current.value} ÷ ${current.group} = ${current.answer}.`);
     byId("completedFlow").innerHTML = `${current.value} = ${current.chunk} + ${current.leftover}<br>${current.chunk} ÷ ${current.group} = ${current.chunkAnswer}<br>${current.leftover} ÷ ${current.group} = ${current.leftoverAnswer}<br>${current.chunkAnswer} + ${current.leftoverAnswer} = ${current.answer}`;
+    lockStep("finalStep");
     show("completeStep", true);
 
     if (score >= 10) {

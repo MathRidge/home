@@ -328,26 +328,80 @@ body[data-final-correct-ready="true"] .next-climb-inline-tray.is-after-complete-
 }
 
 .next-climb-inline-tray #nextClimbButton.inline-next-climb-button {
+	position: relative;
 	min-height: 38px;
 	padding: 9px 22px;
 	border-radius: 999px;
 	font-size: clamp(0.82rem, 1.55vw, 0.98rem);
 	letter-spacing: 0;
 	white-space: nowrap;
+	overflow: hidden;
 	box-shadow:
 		0 12px 30px rgba(242,184,75,0.30),
 		0 0 20px rgba(242,184,75,0.18),
 		inset 0 1px 0 rgba(255,255,255,0.38);
 }
 
+body[data-final-correct-ready="true"] .next-climb-inline-tray #nextClimbButton.inline-next-climb-button {
+	border-color: rgba(255,231,168,0.86);
+	background:
+		linear-gradient(180deg, rgba(255,247,232,0.22), rgba(255,247,232,0.03)),
+		linear-gradient(135deg, #1b314f, #0d1b31 48%, #2a1e13);
+	box-shadow:
+		0 16px 34px rgba(0,0,0,0.28),
+		0 0 26px rgba(242,184,75,0.34),
+		0 0 46px rgba(255,221,145,0.18),
+		inset 0 1px 0 rgba(255,255,255,0.44);
+	animation: nextClimbRelicGlow 2.3s ease-in-out infinite;
+}
+
+body[data-final-correct-ready="true"] .next-climb-inline-tray #nextClimbButton.inline-next-climb-button::before {
+	content: "";
+	position: absolute;
+	inset: -55% -35%;
+	background:
+		linear-gradient(115deg, transparent 34%, rgba(255,247,232,0.70) 47%, rgba(255,221,145,0.42) 53%, transparent 66%);
+	transform: translateX(-70%) rotate(6deg);
+	animation: nextClimbRelicSweep 2.8s ease-in-out infinite;
+	pointer-events: none;
+}
+
+.next-climb-inline-tray #nextClimbButton.inline-next-climb-button > *,
+.next-climb-inline-tray #nextClimbButton.inline-next-climb-button {
+	isolation: isolate;
+}
+
 .next-climb-inline-tray #nextClimbButton.inline-next-climb-button.is-ready-pulse {
-	animation: nextClimbReadyPop .52s ease;
+	animation: nextClimbReadyPop .52s ease, nextClimbRelicGlow 2.3s ease-in-out .52s infinite;
 }
 
 @keyframes nextClimbReadyPop {
 	0% { transform: scale(0.94); filter: brightness(1); }
 	48% { transform: scale(1.055); filter: brightness(1.08); }
 	100% { transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes nextClimbRelicGlow {
+	0%, 100% { filter: brightness(1) saturate(1); }
+	50% { filter: brightness(1.1) saturate(1.14); }
+}
+
+@keyframes nextClimbRelicSweep {
+	0% { transform: translateX(-72%) rotate(6deg); opacity: 0; }
+	22% { opacity: 0.88; }
+	55% { transform: translateX(72%) rotate(6deg); opacity: 0; }
+	100% { transform: translateX(72%) rotate(6deg); opacity: 0; }
+}
+
+.step-card.is-step-locked {
+	position: relative;
+}
+
+.step-card.is-step-locked button,
+.step-card.is-step-locked input,
+.step-card.is-step-locked select,
+.step-card.is-step-locked textarea {
+	cursor: default;
 }
 
 .score-pop {
