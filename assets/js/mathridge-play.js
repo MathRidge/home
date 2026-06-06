@@ -141,7 +141,7 @@
 			button.type = "button";
 			button.id = "trialMusicToggle";
 			button.className = "trial-music-toggle";
-			button.innerHTML = '<span class="trial-music-note" aria-hidden="true">𝅘𝅥𝅯</span>';
+			button.innerHTML = '<span class="trial-music-note" aria-hidden="true"><i></i><i></i></span>';
 			button.addEventListener("click", toggleTrialMusic);
 			document.body.appendChild(button);
 		}
@@ -1273,7 +1273,10 @@
 		if (!target || !target.matches("button")) return false;
 		const action = target.getAttribute("onclick") || "";
 		const label = (target.textContent || "").trim();
-		return /\bcheck[A-Z_\(]/.test(action) || /^check\b/i.test(label);
+		return /\bcheck[A-Z_\(]/.test(action)
+			|| /\bconfirm[A-Z_\(]/.test(action)
+			|| /^check\b/i.test(label)
+			|| /^confirm\b/i.test(label);
 	}
 
 	function isTrialArmTarget(target) {

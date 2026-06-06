@@ -4,8 +4,8 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Math Ridge | Trail 1-2 Positive Negative Showdown</title>
-<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260606-no-doubletap-zoom" />
-	<link rel="stylesheet" href="assets/css/play2.css?v=20260606-step5-instruction" />
+<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260606-drawn-music-confirm" />
+	<link rel="stylesheet" href="assets/css/play2.css?v=20260606-team-confirm-ring-box" />
 </head>
 
 <body class="play-page play-2">
@@ -114,22 +114,23 @@
 
 			<div class="step-card hidden" id="sortStep">
 				<h2>Step 2: Sort Positives and Negatives</h2>
-				<p>Now the fixed line becomes movable objects. Tap a number, then tap the correct team.</p>
+				<p>Now the fixed line becomes movable objects. Arrange every number into a team, then confirm when the teams look right.</p>
 			</div>
 
 			<div class="terms hidden" id="termBank"></div>
 
 			<div class="zones hidden" id="zones">
 				<div class="zone plus-zone" data-zone="plus">
-					<h2>☀️ Positive Team</h2>
+					<h2>+ Positive Team</h2>
 					<div class="zone-drop" id="plusTeam"></div>
 				</div>
 
 				<div class="zone minus-zone" data-zone="minus">
-					<h2>🌙 Negative Team</h2>
+					<h2>&minus; Negative Team</h2>
 					<div class="zone-drop" id="minusTeam"></div>
 				</div>
 			</div>
+			<button id="confirmTeamsButton" class="primary-action locked-button sort-confirm-button hidden" onclick="confirmTeams()" disabled aria-disabled="true">Confirm Teams</button>
 
 			<div class="feedback" id="feedback"></div>
 
@@ -192,7 +193,7 @@
 					<span id="outsideSign">?</span>
 					<span class="ring-box">
 						<span id="firstSize">__</span>
-						<span class="inside-minus">−</span>
+						<span id="ringOperation" class="inside-minus">−</span>
 						<span id="secondSize">__</span>
 					</span>
 				</div>
@@ -212,7 +213,7 @@
 		<div class="game-footer">Math Ridge | Trail 1-2 Positive Negative Showdown</div>
 	</div>
 
-<script src="assets/js/mathridge-play.js?v=20260606-no-doubletap-zoom"></script>
-	<script src="assets/js/play2.js?v=20260606-step5-instruction"></script>
+<script src="assets/js/mathridge-play.js?v=20260606-drawn-music-confirm"></script>
+	<script src="assets/js/play2.js?v=20260606-team-confirm-ring-box"></script>
 </body>
 </html>

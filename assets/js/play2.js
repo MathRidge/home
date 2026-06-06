@@ -21,6 +21,7 @@
 	let manualOperation = null;
 
 	let termCountComplete = false;
+	let teamSortComplete = false;
 	let positiveTotalComplete = false;
 	let negativeTotalComplete = false;
 	let ringFirstComplete = false;
@@ -200,9 +201,9 @@
 	}
 
 	function getRequiredProgressSteps() {
-		// 1 term-count answer + each sorted term + positive total + negative total
-		// + bigger total pick + second total pick + final ring answer.
-		return terms.length > 0 ? terms.length + 6 : 10;
+		// Term count + confirmed sorting + positive total + negative total
+		// + two ring setup steps + final ring answer.
+		return terms.length > 0 ? 7 : 7;
 	}
 
 	function getTermCountRange() {
@@ -343,6 +344,7 @@
 		byId("termBank")?.classList.remove("hidden");
 		byId("sortStep")?.classList.remove("hidden");
 		byId("zones")?.classList.remove("hidden");
+		byId("confirmTeamsButton")?.classList.remove("hidden");
 		markCorrectStep();
 		scrollToCenter("sortStep");
 	}
@@ -541,6 +543,7 @@
 	}
 
 	function selectTerm(term) {
+		if (teamSortComplete || term?.getAttribute("aria-disabled") === "true") return;
 		startClimbTimer();
 		if (!termCountComplete) {
 			const countFeedback = byId("countFeedback");
@@ -563,6 +566,7 @@
 	function attachTermBankAndZoneEvents() {
 		if (termBank) {
 			termBank.addEventListener("click", () => {
+				if (teamSortComplete) return;
 				if (selectedTerm) startClimbTimer();
 				if (!selectedTerm) {
 					if (feedback) feedback.textContent = "Tap a number first.";
@@ -573,11 +577,13 @@
 				selectedTerm.classList.remove("selected");
 				selectedTerm = null;
 				if (feedback) feedback.textContent = "Moved back to the middle.";
+				updateTeamConfirmState();
 			});
 		}
 
 		zones.forEach(zone => {
 			zone.addEventListener("click", () => {
+				if (teamSortComplete) return;
 				if (selectedTerm) startClimbTimer();
 				if (!selectedTerm) {
 					if (feedback) feedback.textContent = "Tap a number first.";
@@ -585,20 +591,7 @@
 				}
 
 				const value = Number(selectedTerm.dataset.value);
-				const correctZone = value > 0 ? "plus" : "minus";
 				const tappedZone = zone.dataset.zone;
-
-				if (tappedZone !== correctZone) {
-					if (feedback) {
-						feedback.textContent = value > 0
-							? "Check the sign. A plus number belongs with the Positive Team."
-							: "Check the sign. A minus number belongs with the Negative Team.";
-						feedback.className = "feedback bad-text";
-					}
-					markMistake();
-					return;
-				}
-
 				const target = tappedZone === "plus" ? byId("plusTeam") : byId("minusTeam");
 				if (!target) return;
 
@@ -607,11 +600,10 @@
 				selectedTerm = null;
 
 				if (feedback) {
-					feedback.textContent = "Good. Keep sorting.";
-					feedback.className = "feedback good-text";
+					feedback.textContent = "Placed. You can still move it before confirming.";
+					feedback.className = "feedback";
 				}
-				markCorrectStep();
-				checkIfSortingFinished();
+				updateTeamConfirmState();
 			});
 		});
 	}
@@ -627,14 +619,74 @@
 
 		if (placedCount === terms.length) {
 			if (feedback) {
-				feedback.textContent = "✅ Correct sorting. Now add the positive team total.";
+				feedback.textContent = "All terms are placed. Double tap Confirm Teams when you are ready.";
 				feedback.className = "feedback good-text";
 			}
-			renderMiniList("positiveMiniList", getTeamValues("plusTeam"));
-			byId("positiveTotalStep")?.classList.remove("hidden");
-			scrollToCenter("positiveTotalStep");
-			window.setTimeout(() => byId("positiveInput")?.focus(), 450);
 		}
+	}
+
+	function updateTeamConfirmState() {
+		const button = byId("confirmTeamsButton");
+		if (!button || teamSortComplete) return;
+		const placedCount = getTeamValues("plusTeam").length + getTeamValues("minusTeam").length;
+		const ready = placedCount === terms.length;
+		button.disabled = !ready;
+		button.classList.toggle("locked-button", !ready);
+		button.setAttribute("aria-disabled", ready ? "false" : "true");
+		checkIfSortingFinished();
+	}
+
+	function lockSortedTeams() {
+		byId("sortStep")?.classList.add("is-locked");
+		document.querySelectorAll("#termBank .term, #zones .term").forEach(term => {
+			term.classList.remove("selected");
+			term.setAttribute("aria-disabled", "true");
+		});
+		const button = byId("confirmTeamsButton");
+		if (button) {
+			button.disabled = true;
+			button.setAttribute("aria-disabled", "true");
+			button.classList.add("is-locked");
+		}
+		selectedTerm = null;
+	}
+
+	function confirmTeams() {
+		startClimbTimer();
+		if (teamSortComplete) return;
+		const plusValues = getTeamValues("plusTeam");
+		const minusValues = getTeamValues("minusTeam");
+		const placedCount = plusValues.length + minusValues.length;
+		if (placedCount !== terms.length) {
+			if (feedback) {
+				feedback.textContent = "Place every term before confirming the teams.";
+				feedback.className = "feedback warning-text";
+			}
+			return;
+		}
+
+		const wrongPlus = plusValues.some(value => value < 0);
+		const wrongMinus = minusValues.some(value => value > 0);
+		if (wrongPlus || wrongMinus) {
+			if (feedback) {
+				feedback.textContent = "Not yet. Check the signs, move anything misplaced, then confirm again.";
+				feedback.className = "feedback bad-text";
+			}
+			markMistake();
+			return;
+		}
+
+		teamSortComplete = true;
+		lockSortedTeams();
+		if (feedback) {
+			feedback.textContent = "Correct sorting. Now add the positive team total.";
+			feedback.className = "feedback good-text";
+		}
+		markCorrectStep();
+		renderMiniList("positiveMiniList", plusValues);
+		byId("positiveTotalStep")?.classList.remove("hidden");
+		scrollToCenter("positiveTotalStep");
+		window.setTimeout(() => byId("positiveInput")?.focus(), 450);
 	}
 
 	function renderMiniList(containerId, values) {
@@ -700,6 +752,10 @@
 
 				if (event.target.id === "ringAnswerSize") {
 					updateFinalAnswerPreview();
+				}
+
+				if (event.target.id === "manualFirstSize" || event.target.id === "manualSecondSize") {
+					updateManualRingPreview();
 				}
 			}
 		});
@@ -808,6 +864,7 @@
 		byId("buildRing")?.classList.remove("hidden");
 		byId("outsideSign").textContent = "?";
 		byId("firstSize").textContent = "__";
+		byId("ringOperation").textContent = "−";
 		byId("secondSize").textContent = "__";
 		byId("finalBuilt").textContent = "";
 
@@ -883,7 +940,7 @@
 		manualOutsideSign = sign;
 		document.querySelectorAll(".manual-sign-btn").forEach(btn => btn.classList.remove("selected"));
 		button?.classList.add("selected");
-		byId("outsideSign").textContent = sign;
+		updateManualRingPreview();
 		if (feedback) {
 			feedback.textContent = "Outside sign selected. Now choose the inside operation and fill the sizes.";
 			feedback.className = "feedback good-text";
@@ -894,10 +951,21 @@
 		manualOperation = operation;
 		document.querySelectorAll(".manual-op-btn").forEach(btn => btn.classList.remove("selected"));
 		button?.classList.add("selected");
+		updateManualRingPreview();
 		if (feedback) {
 			feedback.textContent = "Operation selected. Fill both box sizes, then check the ring setup.";
 			feedback.className = "feedback good-text";
 		}
+	}
+
+	function updateManualRingPreview() {
+		if (termStoneRelicActive || ringStep >= 3) return;
+		const firstValue = sanitizeDigitText(byId("manualFirstSize")?.value || "");
+		const secondValue = sanitizeDigitText(byId("manualSecondSize")?.value || "");
+		if (manualOutsideSign) byId("outsideSign").textContent = manualOutsideSign;
+		byId("ringOperation").textContent = manualOperation || "−";
+		byId("firstSize").textContent = firstValue || "__";
+		byId("secondSize").textContent = secondValue || "__";
 	}
 
 	function checkManualRingSetup() {
@@ -945,6 +1013,7 @@
 		ringData.second = { sign: positiveLeads ? "−" : "+", size: correctSecond, value: positiveLeads ? negativeTotal : positiveTotal };
 		byId("outsideSign").textContent = correctSign;
 		byId("firstSize").textContent = correctFirst;
+		byId("ringOperation").textContent = correctOperation;
 		byId("secondSize").textContent = correctSecond;
 		byId("finalBuilt").innerHTML = "";
 
@@ -1011,6 +1080,7 @@
 				clickedButton.classList.add("selected");
 				byId("outsideSign").textContent = ringData.first.sign;
 				byId("firstSize").textContent = ringData.first.size;
+				byId("ringOperation").textContent = "−";
 				byId("secondSize").textContent = "__";
 				byId("finalBuilt").innerHTML = "";
 				if (!ringFirstComplete) {
@@ -1047,6 +1117,7 @@
 			});
 			byId("outsideSign").textContent = ringData.first.sign;
 			byId("firstSize").textContent = ringData.first.size;
+			byId("ringOperation").textContent = "−";
 			byId("secondSize").textContent = ringData.second.size;
 			byId("finalBuilt").innerHTML = "";
 			if (!ringFirstComplete) {
@@ -1094,6 +1165,7 @@
 			ringData.second = other;
 			byId("outsideSign").textContent = chosen.sign;
 			byId("firstSize").textContent = chosen.size;
+			byId("ringOperation").textContent = "−";
 			byId("secondSize").textContent = "__";
 			byId("finalBuilt").innerHTML = "";
 
@@ -1122,6 +1194,7 @@
 			}
 
 			byId("secondSize").textContent = ringData.second.size;
+			byId("ringOperation").textContent = "−";
 			if (feedback) {
 				feedback.textContent = "Great. Now simplify the term: choose + or -, then fill in the size.";
 				feedback.className = "feedback good-text";
@@ -1376,6 +1449,7 @@
 		selectedTerm = null;
 		selectedRingChoice = null;
 		termCountComplete = false;
+		teamSortComplete = false;
 		positiveTotalComplete = false;
 		negativeTotalComplete = false;
 		ringFirstComplete = false;
@@ -1389,6 +1463,7 @@
 
 		document.querySelectorAll(".term").forEach(term => {
 			term.classList.remove("selected");
+			term.removeAttribute("aria-disabled");
 			if (termBank) termBank.appendChild(term);
 		});
 
@@ -1431,7 +1506,17 @@
 
 		byId("termBank")?.classList.add("hidden");
 		byId("sortStep")?.classList.add("hidden");
+		byId("sortStep")?.classList.remove("is-locked");
 		byId("zones")?.classList.add("hidden");
+		const confirmTeamsButton = byId("confirmTeamsButton");
+		if (confirmTeamsButton) {
+			confirmTeamsButton.disabled = true;
+			confirmTeamsButton.classList.add("hidden");
+			confirmTeamsButton.classList.add("locked-button");
+			confirmTeamsButton.classList.remove("is-locked", "is-play-armed");
+			confirmTeamsButton.setAttribute("aria-disabled", "true");
+			confirmTeamsButton.removeAttribute("data-trial-armed");
+		}
 		const instruction = byId("instruction");
 		if (instruction) instruction.textContent = "Step 1: Count the signed numbers first.";
 		byId("positiveTotalStep")?.classList.add("hidden");
@@ -1446,6 +1531,8 @@
 		if (outsideSign) outsideSign.textContent = "?";
 		const firstSize = byId("firstSize");
 		if (firstSize) firstSize.textContent = "__";
+		const ringOperation = byId("ringOperation");
+		if (ringOperation) ringOperation.textContent = "−";
 		const secondSize = byId("secondSize");
 		if (secondSize) secondSize.textContent = "__";
 		const finalBuilt = byId("finalBuilt");
@@ -1675,6 +1762,7 @@
 
 	window.startClimbFromGate = startClimbFromGate;
 	window.checkTermCountFromInput = checkTermCountFromInput;
+	window.confirmTeams = confirmTeams;
 	window.checkPositiveTotal = checkPositiveTotal;
 	window.checkNegativeTotal = checkNegativeTotal;
 	window.useTermStoneRelic = useTermStoneRelic;
