@@ -57,12 +57,14 @@
 	let bottomDrawerCloseTimer = null;
 	let armedBottomControl = null;
 	let armedBottomControlTimer = null;
+	let armedTrialControl = null;
+	let armedTrialControlTimer = null;
 	let pendingExitTarget = null;
 	const sfxAudioCache = new Map();
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
-	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.008, loop: true, crossfade: 4.8, fadeIn: 2200 };
+	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.mp3`, start: 0, volume: 0.003, restartOnEnd: true, crossfade: 0, fadeIn: 1800 };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
 		[2, trialMusicCue],
@@ -385,8 +387,12 @@
 		return audio;
 	}
 
+	function shouldRestartAmbience(ambience) {
+		return Boolean(ambience && ambience.restartOnEnd);
+	}
+
 	function restartAmbienceAudio(session, audio, ambience, targetVolume) {
-		if (!session || activePlayAmbience !== session || ambience.loop === false) return;
+		if (!session || activePlayAmbience !== session || !shouldRestartAmbience(ambience)) return;
 		try { audio.currentTime = Math.max(0, Number(ambience.start || 0)); } catch (error) {}
 		audio.volume = 0;
 		const attempt = audio.play();
@@ -400,10 +406,9 @@
 	}
 
 	function scheduleAmbienceCrossfade(session, audio, ambience, targetVolume) {
-		if (!session || activePlayAmbience !== session || ambience.loop === false) return;
+		if (!session || activePlayAmbience !== session || !shouldRestartAmbience(ambience)) return;
 		const crossfadeSeconds = Math.max(0, Number(ambience.crossfade || 0));
 		if (!crossfadeSeconds || !audio.duration || audio.duration <= crossfadeSeconds + 4) {
-			audio.loop = true;
 			return;
 		}
 
@@ -444,9 +449,12 @@
 			}, { once: true });
 			audio.load();
 		}
-		audio.addEventListener("ended", () => {
-			restartAmbienceAudio(session, audio, ambience, targetVolume);
-		});
+		if (!audio._mathRidgeEndedRestartBound) {
+			audio._mathRidgeEndedRestartBound = true;
+			audio.addEventListener("ended", () => {
+				restartAmbienceAudio(session, audio, ambience, targetVolume);
+			});
+		}
 
 		const attempt = audio.play();
 		if (attempt && typeof attempt.then === "function") {
@@ -1048,6 +1056,50 @@
 				navigateAfterConfirm(target.href);
 			}
 		}
+	}
+
+	function clearArmedTrialControl(exceptTarget = null) {
+		if (armedTrialControl && armedTrialControl !== exceptTarget) {
+			armedTrialControl.classList.remove("is-play-armed");
+			armedTrialControl.removeAttribute("data-trial-armed");
+			armedTrialControl.removeAttribute("aria-describedby");
+		}
+
+		if (!exceptTarget) armedTrialControl = null;
+
+		if (armedTrialControlTimer) {
+			window.clearTimeout(armedTrialControlTimer);
+			armedTrialControlTimer = null;
+		}
+	}
+
+	function isTrialArmTarget(target) {
+		if (!target || target.disabled || target.getAttribute("aria-disabled") === "true") return false;
+		if (!target.closest(".play-area")) return false;
+		if (target.closest("#bottomControls, .achievement-popup, .modal-backdrop, .play-exit-confirm")) return false;
+		if (target.matches("a, input, select, textarea, label")) return false;
+		if (!target.matches("button")) return false;
+		return true;
+	}
+
+	function handleTrialControlClick(event) {
+		const target = event.target?.closest?.("button");
+		if (!isTrialArmTarget(target)) return;
+
+		if (armedTrialControl !== target || target.dataset.trialArmed !== "true") {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			clearArmedTrialControl(target);
+			armedTrialControl = target;
+			target.dataset.trialArmed = "true";
+			target.classList.add("is-play-armed");
+			playSfx("firstTap");
+			armedTrialControlTimer = window.setTimeout(() => clearArmedTrialControl(), 3600);
+			return;
+		}
+
+		clearArmedTrialControl();
+		playSfx("secondTap");
 	}
 
 	function setupBottomDrawer() {
@@ -1685,6 +1737,8 @@
 		if (!event.target.closest("button, a, input, select, textarea, label")) return;
 		retryPlayAmbience();
 	}, { capture: true, passive: true });
+
+	document.addEventListener("click", handleTrialControlClick, { capture: true });
 
 	window.addEventListener("pagehide", stopPlayAmbience);
 
