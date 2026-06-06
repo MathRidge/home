@@ -342,6 +342,18 @@
 			activePlayAmbience.fadeTimers.forEach(timer => window.clearInterval(timer));
 			activePlayAmbience.fadeTimers.clear();
 		}
+		if (activePlayAmbience.gains) {
+			activePlayAmbience.gains.forEach(gain => {
+				try { gain.disconnect(); } catch (error) {}
+			});
+			activePlayAmbience.gains.clear();
+		}
+		if (activePlayAmbience.sources) {
+			activePlayAmbience.sources.forEach(source => {
+				try { source.disconnect(); } catch (error) {}
+			});
+			activePlayAmbience.sources.clear();
+		}
 		if (activePlayAmbience.audios) {
 			activePlayAmbience.audios.forEach(audio => {
 				audio.pause();
@@ -358,9 +370,44 @@
 		activePlayAmbienceKey = "";
 	}
 
+	function attachAmbienceGain(session, audio) {
+		if (!session || !audio || session.gains?.has(audio)) return session?.gains?.get(audio) || null;
+		const context = getPlayAudioContext();
+		if (!context) return null;
+		if (!session.gains) session.gains = new Map();
+		if (!session.sources) session.sources = new Map();
+		try {
+			const source = context.createMediaElementSource(audio);
+			const gain = context.createGain();
+			gain.gain.value = 0;
+			source.connect(gain).connect(context.destination);
+			session.sources.set(audio, source);
+			session.gains.set(audio, gain);
+			return gain;
+		} catch (error) {
+			return null;
+		}
+	}
+
+	function getAmbienceLevel(session, audio) {
+		const gain = session?.gains?.get(audio);
+		return gain ? Number(gain.gain.value || 0) : Number(audio?.volume || 0);
+	}
+
+	function setAmbienceLevel(session, audio, value) {
+		const safeValue = Math.max(0, Math.min(1, Number(value || 0)));
+		const gain = session?.gains?.get(audio);
+		if (gain) {
+			gain.gain.value = safeValue;
+		} else if (audio) {
+			audio.volume = safeValue;
+		}
+	}
+
 	function fadeAmbienceVolume(session, audio, targetVolume, durationMs = 1200, onDone = null) {
 		if (!session || !audio) return;
-		const startVolume = Number(audio.volume || 0);
+		attachAmbienceGain(session, audio);
+		const startVolume = getAmbienceLevel(session, audio);
 		const startedAt = performance.now();
 		const safeDuration = Math.max(80, Number(durationMs || 0));
 		const timer = window.setInterval(() => {
@@ -369,7 +416,7 @@
 				return;
 			}
 			const progress = Math.min(1, (performance.now() - startedAt) / safeDuration);
-			audio.volume = startVolume + (targetVolume - startVolume) * progress;
+			setAmbienceLevel(session, audio, startVolume + (targetVolume - startVolume) * progress);
 			if (progress >= 1) {
 				window.clearInterval(timer);
 				session.fadeTimers.delete(timer);
@@ -394,7 +441,7 @@
 	function restartAmbienceAudio(session, audio, ambience, targetVolume) {
 		if (!session || activePlayAmbience !== session || !shouldRestartAmbience(ambience)) return;
 		try { audio.currentTime = Math.max(0, Number(ambience.start || 0)); } catch (error) {}
-		audio.volume = 0;
+		setAmbienceLevel(session, audio, 0);
 		const attempt = audio.play();
 		if (attempt && typeof attempt.then === "function") {
 			attempt.then(() => fadeAmbienceVolume(session, audio, targetVolume, Number(ambience.fadeIn || 900))).catch(() => {
@@ -430,6 +477,7 @@
 
 	function startAmbienceAudio(session, audio, ambience, targetVolume, options = {}) {
 		if (!session || activePlayAmbience !== session) return false;
+		attachAmbienceGain(session, audio);
 		const startAt = options.skipStart ? 0 : Math.max(0, Number(ambience.start || 0));
 		const applyStartPosition = () => {
 			if (activePlayAmbience !== session) return;
@@ -503,7 +551,9 @@
 		const session = {
 			audios: new Set(),
 			timers: new Set(),
-			fadeTimers: new Set()
+			fadeTimers: new Set(),
+			gains: new Map(),
+			sources: new Map()
 		};
 		const audio = createAmbienceAudio(ambience);
 		session.audios.add(audio);
