@@ -141,7 +141,7 @@
 			button.type = "button";
 			button.id = "trialMusicToggle";
 			button.className = "trial-music-toggle";
-			button.innerHTML = '<span class="trial-music-note" aria-hidden="true"><i></i><i></i></span>';
+			button.innerHTML = '<span class="trial-music-note" aria-hidden="true"><img src="assets/images/logo/mathridge_eighth_notes_true_alpha_v2_256px.png" alt="" /></span>';
 			button.addEventListener("click", toggleTrialMusic);
 			document.body.appendChild(button);
 		}
