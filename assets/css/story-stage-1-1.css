@@ -434,7 +434,7 @@ a {
 }
 
 .mira-stage[data-sprite="magicSatchel"] {
-  bottom: clamp(-410px, calc(-48vh + 58px), -242px);
+  bottom: clamp(-314px, calc(-48vh + 154px), -146px);
 }
 
 .elder-stage {
@@ -1420,7 +1420,7 @@ a {
   }
 
   .mira-stage[data-sprite="magicSatchel"] {
-    bottom: clamp(-260px, calc(-44vh + 42px), -134px);
+    bottom: clamp(-164px, calc(-44vh + 138px), -38px);
   }
 
   .elder-stage {
@@ -1608,6 +1608,10 @@ a {
   .mira-stage {
     right: clamp(-30px, calc(-5vw + 18px), 6px);
     bottom: clamp(-238px, -43svh, -118px);
+  }
+
+  .mira-stage[data-sprite="magicSatchel"] {
+    bottom: clamp(-142px, calc(-43svh + 96px), -22px);
   }
 
   .mira-sprite {
