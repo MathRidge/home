@@ -28,6 +28,13 @@
 	let boxPickStep = 0;
 	let pickedBigger = false;
 	let pickedSmaller = false;
+	let totalsConfirmed = false;
+	let boxComplete = false;
+	let signCompassRelicActive = false;
+	let termStoneRelicActive = false;
+	let manualOutsideSign = null;
+	let manualOperation = null;
+	let boxData = {};
 	let finalAnswered = false;
 	let finalAnswerSign = null;
 	let pageHasStartedClimb = false;
@@ -71,6 +78,25 @@
 
 	function getCorrectFinalSign() {
 		return currentProblem && currentProblem.finalValue < 0 ? "-" : "+";
+	}
+
+	function getBoxSolution() {
+		if (!currentProblem) return null;
+		const pos = currentProblem.positiveTotal;
+		const neg = currentProblem.negativeTotal;
+		const posSize = Math.abs(pos);
+		const negSize = Math.abs(neg);
+		const positiveLeads = posSize > negSize;
+		const larger = positiveLeads ? pos : neg;
+		const smaller = positiveLeads ? neg : pos;
+		return {
+			larger,
+			smaller,
+			firstSize: Math.max(posSize, negSize),
+			secondSize: Math.min(posSize, negSize),
+			outsideSign: larger > 0 ? "+" : "-",
+			operation: "-"
+		};
 	}
 
 	function hasOppositeSizePair(values) {
@@ -549,22 +575,127 @@
 		markCorrectStep();
 
 		if (byId("termBank") && byId("termBank").querySelectorAll(".term").length === 0) {
-			showBoxStep();
+			showTotalStep();
 		}
+	}
+
+	function renderMiniTeamList(id, values) {
+		const list = byId(id);
+		if (!list) return;
+		list.innerHTML = "";
+		values.forEach(value => {
+			const item = document.createElement("span");
+			item.className = `term ${value > 0 ? "plus" : "minus"}`;
+			item.textContent = formatSigned(value);
+			list.appendChild(item);
+		});
+	}
+
+	function showTotalStep() {
+		totalsConfirmed = false;
+		signCompassRelicActive = false;
+		renderMiniTeamList("positiveTeamList", currentProblem.values.filter(value => value > 0));
+		renderMiniTeamList("negativeTeamList", currentProblem.values.filter(value => value < 0));
+
+		["positiveTotalInput", "negativeTotalInput"].forEach(id => {
+			const input = byId(id);
+			if (!input) return;
+			input.value = "";
+			input.disabled = false;
+			input.removeAttribute("aria-disabled");
+			input.style.borderColor = "";
+		});
+		const confirmButton = byId("confirmTotalsButton");
+		if (confirmButton) {
+			confirmButton.disabled = false;
+			confirmButton.removeAttribute("aria-disabled");
+			confirmButton.classList.remove("is-play-armed");
+			confirmButton.removeAttribute("data-trial-armed");
+		}
+		const assist = byId("signCompassAssist");
+		assist?.classList.remove("is-active", "relic-safe-step");
+		const relicButton = assist?.querySelector("button");
+		if (relicButton) {
+			relicButton.disabled = false;
+			relicButton.removeAttribute("aria-disabled");
+		}
+		setText("totalFeedback", "");
+		byId("totalFeedback").className = "feedback";
+		byId("totalStep")?.classList.remove("hidden");
+		scrollToPremiumElement("totalStep", 12, 80);
+	}
+
+	function useSignCompassRelic() {
+		if (totalsConfirmed) return;
+		signCompassRelicActive = true;
+		const positiveInput = byId("positiveTotalInput");
+		const negativeInput = byId("negativeTotalInput");
+		if (positiveInput) positiveInput.value = Math.abs(currentProblem.positiveTotal);
+		if (negativeInput) negativeInput.value = Math.abs(currentProblem.negativeTotal);
+		const assist = byId("signCompassAssist");
+		assist?.classList.add("is-active", "relic-safe-step");
+		const button = assist?.querySelector("button");
+		if (button) {
+			button.disabled = true;
+			button.setAttribute("aria-disabled", "true");
+		}
+		setText("totalFeedback", "Sign Compass filled both team totals. Double tap Confirm Totals when you are ready.");
+		byId("totalFeedback").className = "feedback good-text";
+	}
+
+	function confirmTeamTotals() {
+		startClimbTimer();
+		if (totalsConfirmed) return;
+		const positiveInput = byId("positiveTotalInput");
+		const negativeInput = byId("negativeTotalInput");
+		const positiveSize = Number(keepDigitsOnly(positiveInput?.value || ""));
+		const negativeSize = Number(keepDigitsOnly(negativeInput?.value || ""));
+		if (positiveInput) positiveInput.value = positiveSize || "";
+		if (negativeInput) negativeInput.value = negativeSize || "";
+
+		if (!positiveSize || !negativeSize) {
+			setText("totalFeedback", "Fill both team totals before confirming.");
+			byId("totalFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		if (positiveSize !== Math.abs(currentProblem.positiveTotal) || negativeSize !== Math.abs(currentProblem.negativeTotal)) {
+			setText("totalFeedback", markMistake("Not yet. Add each team again before confirming."));
+			byId("totalFeedback").className = "feedback bad-text";
+			return;
+		}
+
+		totalsConfirmed = true;
+		[positiveInput, negativeInput, byId("confirmTotalsButton")].forEach(control => {
+			if (!control) return;
+			control.disabled = true;
+			control.setAttribute("aria-disabled", "true");
+		});
+		setText("totalFeedback", "Correct totals. Now build the bigger-sign box.");
+		byId("totalFeedback").className = "feedback good-text";
+		markCorrectStep();
+		showBoxStep();
+	}
+
+	function resetBoxPreview() {
+		setText("outsideSign", "?");
+		setText("firstSize", "__");
+		setText("insideOperation", displaySign("-"));
+		setText("secondSize", "__");
 	}
 
 	function showBoxStep() {
 		boxPickStep = 0;
 		pickedBigger = false;
 		pickedSmaller = false;
-		finalAnswered = false;
-		finalAnswerSign = null;
-
+		boxComplete = false;
+		termStoneRelicActive = false;
+		manualOutsideSign = null;
+		manualOperation = null;
+		boxData = {};
 		const pos = currentProblem.positiveTotal;
 		const neg = currentProblem.negativeTotal;
-		const bigger = Math.abs(pos) > Math.abs(neg) ? pos : neg;
-		const smaller = Math.abs(pos) > Math.abs(neg) ? neg : pos;
-		const outside = bigger > 0 ? "+" : "-";
+		const solution = getBoxSolution();
 
 		const summary = byId("teamSummary");
 		if (summary) {
@@ -574,20 +705,16 @@
 			`;
 		}
 
-		setText("outsideSign", "?");
-		setText("firstSize", "__");
-		setText("secondSize", "__");
-		setText("answerPreviewSign", "?");
-		setText("answerPreviewSize", "__");
-		byId("answerPreview")?.classList.remove("filled");
-		byId("chooseFinalPositive")?.classList.remove("selected");
-		byId("chooseFinalNegative")?.classList.remove("selected");
-		const finalInput = byId("finalAnswerInput");
-		if (finalInput) {
-			finalInput.value = "";
-			finalInput.style.borderColor = "#b9dcff";
+		resetBoxPreview();
+		setText("boxFeedback", "");
+		byId("boxFeedback").className = "feedback";
+		byId("termStoneAssist")?.classList.remove("is-active", "relic-safe-step");
+		const relicButton = byId("termStoneAssist")?.querySelector("button");
+		if (relicButton) {
+			relicButton.disabled = false;
+			relicButton.removeAttribute("aria-disabled");
 		}
-		setText("finalFeedback", "");
+		byId("manualBoxControls")?.classList.remove("hidden");
 
 		const buttons = [
 			{ value: pos, text: `+${Math.abs(pos)}` },
@@ -597,31 +724,103 @@
 		const holder = byId("totalButtons");
 		if (holder) {
 			holder.innerHTML = "";
+			holder.classList.add("hidden");
 			shuffle(buttons).forEach(data => {
 				const button = document.createElement("button");
 				button.type = "button";
 				button.className = "total-choice";
 				button.textContent = data.text;
 				button.dataset.value = String(data.value);
-				button.onclick = () => pickTotal(button, Number(data.value), bigger, smaller);
+				button.onclick = () => pickTotal(button, Number(data.value), solution.larger, solution.smaller);
 				holder.appendChild(button);
 			});
+		}
+
+		["boxFirstSizeInput", "boxSecondSizeInput"].forEach(id => {
+			const input = byId(id);
+			if (!input) return;
+			input.value = "";
+			input.disabled = false;
+			input.removeAttribute("aria-disabled");
+			input.style.borderColor = "";
+		});
+		document.querySelectorAll(".manual-sign-btn, .manual-op-btn").forEach(button => {
+			button.classList.remove("selected");
+			button.disabled = false;
+			button.removeAttribute("aria-disabled");
+		});
+		const checkButton = byId("checkBoxButton");
+		if (checkButton) {
+			checkButton.disabled = false;
+			checkButton.removeAttribute("aria-disabled");
+			checkButton.classList.remove("is-play-armed");
+			checkButton.removeAttribute("data-trial-armed");
 		}
 
 		byId("boxStep")?.classList.remove("hidden");
 		scrollToPremiumElement("boxStep", 12, 80);
 	}
 
+	function updateManualBoxPreview() {
+		if (termStoneRelicActive || boxComplete) return;
+		const firstValue = keepDigitsOnly(byId("boxFirstSizeInput")?.value || "");
+		const secondValue = keepDigitsOnly(byId("boxSecondSizeInput")?.value || "");
+		if (manualOutsideSign) setText("outsideSign", displaySign(manualOutsideSign));
+		setText("insideOperation", displaySign(manualOperation || "-"));
+		setText("firstSize", firstValue || "__");
+		setText("secondSize", secondValue || "__");
+	}
+
+	function selectBoxOutsideSign(sign, button) {
+		if (boxComplete) return;
+		manualOutsideSign = sign === "-" ? "-" : "+";
+		document.querySelectorAll(".manual-sign-btn").forEach(item => item.classList.remove("selected"));
+		button?.classList.add("selected");
+		updateManualBoxPreview();
+		setText("boxFeedback", "Outside sign selected. Choose the operation and fill the sizes.");
+		byId("boxFeedback").className = "feedback";
+	}
+
+	function selectBoxOperation(operation, button) {
+		if (boxComplete) return;
+		manualOperation = operation === "+" ? "+" : "-";
+		document.querySelectorAll(".manual-op-btn").forEach(item => item.classList.remove("selected"));
+		button?.classList.add("selected");
+		updateManualBoxPreview();
+		setText("boxFeedback", "Operation selected. Fill the box sizes, then check the box.");
+		byId("boxFeedback").className = "feedback";
+	}
+
+	function useTermStoneRelic() {
+		if (boxComplete) return;
+		termStoneRelicActive = true;
+		boxPickStep = 0;
+		pickedBigger = false;
+		pickedSmaller = false;
+		byId("termStoneAssist")?.classList.add("is-active", "relic-safe-step");
+		const relicButton = byId("termStoneAssist")?.querySelector("button");
+		if (relicButton) {
+			relicButton.disabled = true;
+			relicButton.setAttribute("aria-disabled", "true");
+		}
+		byId("manualBoxControls")?.classList.add("hidden");
+		byId("totalButtons")?.classList.remove("hidden");
+		resetBoxPreview();
+		setText("boxFeedback", "Tap the larger size total first, then the smaller size total.");
+		byId("boxFeedback").className = "feedback good-text";
+	}
+
 	function pickTotal(button, value, bigger, smaller) {
 		startClimbTimer();
+		if (!termStoneRelicActive || boxComplete) return;
 
 		if (button.classList.contains("selected")) return;
 
 		if (boxPickStep === 0) {
 			if (value !== bigger) {
 				button.classList.add("wrong-pick");
-				setText("finalFeedback", markMistake("Tap the bigger total first."));
-				byId("finalFeedback").className = "feedback bad-text";
+				setText("boxFeedback", "The Term Stone is asking for the larger size first.");
+				byId("boxFeedback").className = "feedback warning-text";
 				window.setTimeout(() => button.classList.remove("wrong-pick"), 500);
 				return;
 			}
@@ -630,19 +829,19 @@
 			button.disabled = true;
 			setText("outsideSign", displaySign(bigger > 0 ? "+" : "-"));
 			setText("firstSize", Math.abs(bigger));
+			setText("insideOperation", displaySign("-"));
 			boxPickStep = 1;
 			pickedBigger = true;
-			setText("finalFeedback", "✅ Bigger total placed. Now tap the smaller total.");
-			byId("finalFeedback").className = "feedback good-text";
-			markCorrectStep();
+			setText("boxFeedback", "Larger size placed. Now tap the smaller size.");
+			byId("boxFeedback").className = "feedback good-text";
 			return;
 		}
 
 		if (boxPickStep === 1) {
 			if (value !== smaller) {
 				button.classList.add("wrong-pick");
-				setText("finalFeedback", markMistake("The second spot needs the smaller total."));
-				byId("finalFeedback").className = "feedback bad-text";
+				setText("boxFeedback", "The second box needs the smaller size.");
+				byId("boxFeedback").className = "feedback warning-text";
 				window.setTimeout(() => button.classList.remove("wrong-pick"), 500);
 				return;
 			}
@@ -652,13 +851,97 @@
 			setText("secondSize", Math.abs(smaller));
 			boxPickStep = 2;
 			pickedSmaller = true;
-			setText("finalFeedback", "✅ Box is built. Now choose the final sign and type the answer size.");
-			byId("finalFeedback").className = "feedback good-text";
-			markCorrectStep();
-			byId("chooseFinalPositive")?.focus();
+			setText("boxFeedback", "Box filled. Double tap Check Box to confirm it.");
+			byId("boxFeedback").className = "feedback good-text";
 		}
 	}
 
+	function lockBoxStepControls() {
+		byId("boxStep")?.classList.add("is-locked");
+		byId("boxStep")?.querySelectorAll("button, input").forEach(control => {
+			control.disabled = true;
+			control.setAttribute("aria-disabled", "true");
+		});
+	}
+
+	function setFinalStepLocked(isLocked) {
+		byId("finalStep")?.classList.toggle("is-locked", isLocked);
+		byId("finalStep")?.querySelectorAll("button, input").forEach(control => {
+			control.disabled = isLocked;
+			if (isLocked) {
+				control.setAttribute("aria-disabled", "true");
+			} else {
+				control.removeAttribute("aria-disabled");
+			}
+		});
+	}
+
+	function copyBoxToFinalStep(solution) {
+		setText("finalOutsideSign", displaySign(solution.outsideSign));
+		setText("finalFirstSize", solution.firstSize);
+		setText("finalInsideOperation", displaySign(solution.operation));
+		setText("finalSecondSize", solution.secondSize);
+	}
+
+	function showFinalStep() {
+		const solution = boxData.firstSize ? boxData : getBoxSolution();
+		copyBoxToFinalStep(solution);
+		finalAnswered = false;
+		finalAnswerSign = null;
+		setFinalStepLocked(false);
+		setText("answerPreviewSign", "?");
+		setText("answerPreviewSize", "__");
+		byId("answerPreview")?.classList.remove("filled");
+		byId("chooseFinalPositive")?.classList.remove("selected");
+		byId("chooseFinalNegative")?.classList.remove("selected");
+		const finalInput = byId("finalAnswerInput");
+		if (finalInput) {
+			finalInput.value = "";
+			finalInput.style.borderColor = "#b9dcff";
+			finalInput.disabled = false;
+			finalInput.removeAttribute("aria-disabled");
+		}
+		setText("finalFeedback", "");
+		byId("finalFeedback").className = "feedback";
+		byId("finalStep")?.classList.remove("hidden");
+		scrollToPremiumElement("finalStep", 12, 80);
+	}
+
+	function checkBoxSetup() {
+		startClimbTimer();
+		if (boxComplete) return;
+		const solution = getBoxSolution();
+		const firstSize = Number(keepDigitsOnly(byId("boxFirstSizeInput")?.value || byId("firstSize")?.textContent || ""));
+		const secondSize = Number(keepDigitsOnly(byId("boxSecondSizeInput")?.value || byId("secondSize")?.textContent || ""));
+		const outside = termStoneRelicActive ? solution.outsideSign : manualOutsideSign;
+		const operation = termStoneRelicActive ? "-" : manualOperation;
+
+		if (!outside || !operation || !firstSize || !secondSize) {
+			setText("boxFeedback", "Finish the outside sign, operation, and both box sizes first.");
+			byId("boxFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		if (outside !== solution.outsideSign || operation !== solution.operation || firstSize !== solution.firstSize || secondSize !== solution.secondSize) {
+			setText("boxFeedback", markMistake("Not yet. The larger size goes first, the smaller size goes second, and the larger sign goes outside."));
+			byId("boxFeedback").className = "feedback bad-text";
+			return;
+		}
+
+		boxComplete = true;
+		pickedBigger = true;
+		pickedSmaller = true;
+		boxData = Object.assign({}, solution);
+		setText("outsideSign", displaySign(solution.outsideSign));
+		setText("firstSize", solution.firstSize);
+		setText("insideOperation", displaySign(solution.operation));
+		setText("secondSize", solution.secondSize);
+		lockBoxStepControls();
+		setText("boxFeedback", "Box confirmed. Now simplify it.");
+		byId("boxFeedback").className = "feedback good-text";
+		markCorrectStep();
+		showFinalStep();
+	}
 	function selectFinalAnswerSign(sign) {
 		finalAnswerSign = sign === "-" ? "-" : "+";
 		byId("chooseFinalPositive")?.classList.toggle("selected", finalAnswerSign === "+");
@@ -682,7 +965,7 @@
 	function checkFinalAnswer() {
 		startClimbTimer();
 
-		if (!pickedBigger || !pickedSmaller) {
+		if (!boxComplete) {
 			setText("finalFeedback", "Build the box first.");
 			byId("finalFeedback").className = "feedback bad-text";
 			return;
@@ -732,6 +1015,7 @@
 		byId("answerPreview")?.classList.add("filled");
 		setText("finalFeedback", "✅ Correct final answer.");
 		byId("finalFeedback").className = "feedback good-text";
+		setFinalStepLocked(true);
 		completeRoundAfterFinalAnswer();
 	}
 
@@ -739,18 +1023,34 @@
 		setText("problemDisplay", currentProblem.original);
 		byId("signFixStep")?.classList.remove("hidden");
 		byId("sortStep")?.classList.add("hidden");
+		byId("totalStep")?.classList.add("hidden");
 		byId("boxStep")?.classList.add("hidden");
+		byId("boxStep")?.classList.remove("is-locked");
+		setFinalStepLocked(false);
+		byId("finalStep")?.classList.add("hidden");
 
-		["signFeedback", "sortFeedback", "finalFeedback"].forEach(id => setText(id, ""));
-		["plusTeam", "minusTeam", "termBank", "totalButtons", "choiceGrid"].forEach(id => {
+		["signFeedback", "sortFeedback", "totalFeedback", "boxFeedback", "finalFeedback"].forEach(id => setText(id, ""));
+		["plusTeam", "minusTeam", "termBank", "totalButtons", "choiceGrid", "positiveTeamList", "negativeTeamList"].forEach(id => {
 			const element = byId(id);
 			if (element) element.innerHTML = "";
 		});
 
 		setText("outsideSign", "?");
 		setText("firstSize", "__");
+		setText("insideOperation", displaySign("-"));
 		setText("secondSize", "__");
+		setText("finalOutsideSign", "?");
+		setText("finalFirstSize", "__");
+		setText("finalInsideOperation", displaySign("-"));
+		setText("finalSecondSize", "__");
 		finalAnswerSign = null;
+		manualOutsideSign = null;
+		manualOperation = null;
+		boxData = {};
+		signCompassRelicActive = false;
+		termStoneRelicActive = false;
+		totalsConfirmed = false;
+		boxComplete = false;
 		const finalInput = byId("finalAnswerInput");
 		if (finalInput) {
 			finalInput.value = "";
@@ -761,6 +1061,20 @@
 		byId("answerPreview")?.classList.remove("filled");
 		byId("chooseFinalPositive")?.classList.remove("selected");
 		byId("chooseFinalNegative")?.classList.remove("selected");
+		["positiveTotalInput", "negativeTotalInput", "boxFirstSizeInput", "boxSecondSizeInput"].forEach(id => {
+			const input = byId(id);
+			if (!input) return;
+			input.value = "";
+			input.disabled = false;
+			input.removeAttribute("aria-disabled");
+			input.style.borderColor = "";
+		});
+		document.querySelectorAll(".manual-sign-btn, .manual-op-btn").forEach(button => {
+			button.classList.remove("selected");
+			button.disabled = false;
+			button.removeAttribute("aria-disabled");
+		});
+		document.querySelectorAll("#signCompassAssist, #termStoneAssist").forEach(card => card.classList.remove("is-active", "relic-safe-step"));
 
 		renderChoices();
 	}
@@ -774,6 +1088,13 @@
 		boxPickStep = 0;
 		pickedBigger = false;
 		pickedSmaller = false;
+		totalsConfirmed = false;
+		boxComplete = false;
+		signCompassRelicActive = false;
+		termStoneRelicActive = false;
+		manualOutsideSign = null;
+		manualOperation = null;
+		boxData = {};
 		finalAnswered = false;
 		setNextClimbLocked(true);
 		resetRoundUI();
@@ -1142,6 +1463,21 @@
 			});
 		}
 
+		["positiveTotalInput", "negativeTotalInput", "boxFirstSizeInput", "boxSecondSizeInput"].forEach(id => {
+			const input = byId(id);
+			if (!input) return;
+			input.addEventListener("input", () => {
+				input.value = keepDigitsOnly(input.value);
+				if (id === "boxFirstSizeInput" || id === "boxSecondSizeInput") updateManualBoxPreview();
+			});
+			input.addEventListener("keydown", event => {
+				if (event.key === "Enter") {
+					if (id === "positiveTotalInput" || id === "negativeTotalInput") confirmTeamTotals();
+					else checkBoxSetup();
+				}
+			});
+		});
+
 		document.addEventListener("keydown", event => {
 			if (event.key !== "Escape") return;
 
@@ -1175,6 +1511,12 @@
 
 	window.startClimbFromGate = startClimbFromGate;
 	window.checkSignChoice = checkSignChoice;
+	window.useSignCompassRelic = useSignCompassRelic;
+	window.confirmTeamTotals = confirmTeamTotals;
+	window.useTermStoneRelic = useTermStoneRelic;
+	window.selectBoxOutsideSign = selectBoxOutsideSign;
+	window.selectBoxOperation = selectBoxOperation;
+	window.checkBoxSetup = checkBoxSetup;
 	window.selectFinalAnswerSign = selectFinalAnswerSign;
 	window.checkFinalAnswer = checkFinalAnswer;
 	window.nextClimb = nextClimb;

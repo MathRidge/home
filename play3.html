@@ -10,7 +10,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260606-finish-lock-image-note" />
-	<link rel="stylesheet" href="assets/css/play3.css?v=20260524-play3-final-sign" />
+	<link rel="stylesheet" href="assets/css/play3.css?v=20260607-relic-step-flow" />
 </head>
 
 <body class="play-page play-3" data-play-id="1_3">
@@ -135,27 +135,111 @@
 				<div class="feedback" id="sortFeedback"></div>
 			</div>
 
-			<div class="step-card hidden" id="boxStep">
-				<h2>Step 3: Build the Box</h2>
-				<div class="summary-box" id="teamSummary"></div>
+			<div class="step-card hidden" id="totalStep">
+				<h2>Step 3: Add Each Team Total</h2>
+				<p class="step-note">Add the positive team and the negative team. The Sign Compass can fill the totals, but you still confirm.</p>
 
-				<p class="step-note">Tap the bigger total first. Its sign moves outside the box.</p>
-				<div class="total-buttons" id="totalButtons"></div>
+				<div class="relic-assist-card" id="signCompassAssist">
+					<button type="button" class="relic-use-button" onclick="useSignCompassRelic()">
+						<img src="assets/images/relic/sign_compass_relic_alpha.png" alt="" />
+						<span>Use Relic</span>
+					</button>
+					<div>
+						<strong>Sign Compass</strong>
+						<span>Auto-fills the team totals from your sorted cards.</span>
+					</div>
+				</div>
+
+				<div class="team-total-layout">
+					<div class="mini-helper">
+						<div class="mini-title">Positive team</div>
+						<div class="mini-list" id="positiveTeamList"></div>
+						<div class="answer-size-row">
+							<span class="fixed-sign">+</span>
+							<input id="positiveTotalInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="size" aria-label="positive team total size">
+						</div>
+					</div>
+
+					<div class="mini-helper negative-helper">
+						<div class="mini-title">Negative team</div>
+						<div class="mini-list" id="negativeTeamList"></div>
+						<div class="answer-size-row">
+							<span class="fixed-sign">&minus;</span>
+							<input id="negativeTotalInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="size" aria-label="negative team total size">
+						</div>
+					</div>
+				</div>
+
+				<button id="confirmTotalsButton" class="primary-action" type="button" onclick="confirmTeamTotals()">Confirm Totals</button>
+				<div class="feedback" id="totalFeedback"></div>
+			</div>
+
+			<div class="step-card hidden" id="boxStep">
+				<h2>Step 4: Build the Box</h2>
+				<p class="step-note">Build the bigger-sign box manually, or use the Term Stone and tap the larger size then the smaller size.</p>
+
+				<div class="relic-assist-card" id="termStoneAssist">
+					<button type="button" class="relic-use-button" onclick="useTermStoneRelic()">
+						<img src="assets/images/relic/term_stone.png" alt="" />
+						<span>Use Relic</span>
+					</button>
+					<div>
+						<strong>Term Stone</strong>
+						<span>Tap larger size, then smaller size, and watch the box fill.</span>
+					</div>
+				</div>
+
+				<div class="summary-box" id="teamSummary"></div>
+				<div class="total-buttons hidden" id="totalButtons"></div>
+
+				<div class="manual-box-controls" id="manualBoxControls">
+					<div class="manual-control-group">
+						<span>Outside sign</span>
+						<button type="button" class="manual-sign-btn" onclick="selectBoxOutsideSign('+', this)">+</button>
+						<button type="button" class="manual-sign-btn" onclick="selectBoxOutsideSign('-', this)">&minus;</button>
+					</div>
+					<div class="manual-control-group">
+						<span>Inside operation</span>
+						<button type="button" class="manual-op-btn" onclick="selectBoxOperation('+', this)">+</button>
+						<button type="button" class="manual-op-btn" onclick="selectBoxOperation('-', this)">&minus;</button>
+					</div>
+					<div class="manual-size-row">
+						<label for="boxFirstSizeInput">First size</label>
+						<input id="boxFirstSizeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="larger">
+						<label for="boxSecondSizeInput">Second size</label>
+						<input id="boxSecondSizeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="smaller">
+					</div>
+				</div>
 
 				<div class="build-ring" id="buildRing">
 					<span id="outsideSign">?</span>
 					<span class="ring-box">
 						<span id="firstSize">__</span>
-						<span class="inside-minus">−</span>
+						<span id="insideOperation" class="inside-minus">&minus;</span>
 						<span id="secondSize">__</span>
 					</span>
 				</div>
 
+				<button id="checkBoxButton" class="primary-action" type="button" onclick="checkBoxSetup()">Check Box</button>
+				<div class="feedback" id="boxFeedback"></div>
+			</div>
+
+			<div class="step-card hidden" id="finalStep">
+				<h2>Step 5: Simplify the Box</h2>
+				<div class="build-ring final-ring-copy" id="finalBoxCopy">
+					<span id="finalOutsideSign">?</span>
+					<span class="ring-box">
+						<span id="finalFirstSize">__</span>
+						<span id="finalInsideOperation" class="inside-minus">&minus;</span>
+						<span id="finalSecondSize">__</span>
+					</span>
+				</div>
+
 				<div class="final-answer-panel">
-					<p>Now simplify it: choose the final sign, then type the answer size.</p>
+					<p>Choose the final sign, then type the answer size.</p>
 					<div class="final-sign-choice" role="group" aria-label="choose final answer sign">
 						<button type="button" id="chooseFinalPositive" class="sign-choice-card positive-choice" onclick="selectFinalAnswerSign('+')">+</button>
-						<button type="button" id="chooseFinalNegative" class="sign-choice-card negative-choice" onclick="selectFinalAnswerSign('-')">−</button>
+						<button type="button" id="chooseFinalNegative" class="sign-choice-card negative-choice" onclick="selectFinalAnswerSign('-')">&minus;</button>
 					</div>
 					<div class="input-row">
 						<label for="finalAnswerInput">Answer size:</label>
@@ -199,6 +283,6 @@
 		};
 	</script>
 <script src="assets/js/mathridge-play.js?v=20260606-finish-lock-image-note"></script>
-	<script src="assets/js/play3.js?v=20260606-wrong-sound"></script>
+	<script src="assets/js/play3.js?v=20260607-relic-step-flow"></script>
 </body>
 </html>
