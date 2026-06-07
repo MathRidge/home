@@ -26,11 +26,12 @@
 	const MUSIC_BASE = "bg-music/";
 	const MUSIC_ENABLED_KEY = "mathRidge_trialMusicEnabled_v1";
 	const OFFICIAL_CERTIFICATE_TEMPLATE = {
-		src: "assets/images/test-results/math_ridge_certificate_true_alpha.png?v=20260607-premium-certificate",
-		width: 1122,
-		height: 1402
+		src: "assets/images/test-results/math_ridge_certificate_prefilled_template_true_alpha.png?v=20260607-prefilled-certificate",
+		width: 1086,
+		height: 1448
 	};
 	const CERT_SERIF = '"Playfair Display", "Palatino Linotype", Georgia, serif';
+	const CERT_SCRIPT = '"Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive';
 	const CERT_BODY_SERIF = '"Inter", "Trebuchet MS", Arial, sans-serif';
 	const CONFIRM_NAV_DELAY_MS = 780;
 	const POINTER_SFX_SUPPRESS_MS = 1400;
@@ -1804,6 +1805,29 @@
 		return Promise.resolve();
 	}
 
+	function prepareOfficialCertificatePopup() {
+		const border = document.querySelector("#certificateCard .cert-border");
+		if (!border) return;
+
+		border.classList.add("prefilled-certificate-template");
+		const title = String(border.querySelector("h3")?.textContent || "Math Ridge Achievement").trim();
+		let stageLine = border.querySelector("#certStage");
+		if (!stageLine) {
+			stageLine = document.createElement("div");
+			stageLine.id = "certStage";
+			stageLine.className = "cert-stage";
+			const firstDate = border.querySelector(".cert-date, .cert-rank, .cert-signature");
+			if (firstDate) border.insertBefore(stageLine, firstDate);
+			else border.appendChild(stageLine);
+		} else {
+			stageLine.classList.add("cert-stage");
+		}
+
+		if (!stageLine.textContent.trim()) {
+			stageLine.textContent = `Academic Focus: ${title}`;
+		}
+	}
+
 	function drawCertificateCorner(ctx, x, y, flipX = 1, flipY = 1) {
 		ctx.save();
 		ctx.translate(x, y);
@@ -1939,7 +1963,10 @@
 		const studentName = cleanCertificateName(options.studentName || options.name, "Math Ridge Champion");
 		const certificateTitle = String(options.certificateTitle || "Math Ridge Achievement").trim();
 		const dateText = String(options.dateText || options.date || "").trim();
-		const signature = String(options.signature || "Presented by Math Ridge Creator: Kuan-Yuan Huang").trim();
+		const focusText = String(options.focusText || options.stageText || `Academic Focus: ${certificateTitle}`).trim();
+		const completedText = dateText
+			? (/^completed/i.test(dateText) ? dateText : `Completed on ${dateText}`)
+			: "";
 		const bodyText = Array.isArray(options.bodyLines)
 			? options.bodyLines.join(" ")
 			: String(options.bodyText || options.bodyLines || "for demonstrating understanding, persistence, and careful mathematical reasoning.");
@@ -1954,72 +1981,62 @@
 
 		ctx.textAlign = "center";
 		ctx.textBaseline = "alphabetic";
-		ctx.shadowColor = "rgba(255,255,255,0.58)";
-		ctx.shadowBlur = 7;
-		ctx.fillStyle = "#775018";
-		setCanvasFont(ctx, { weight: "800", size: Math.round(width * 0.029), family: CERT_BODY_SERIF });
-		ctx.fillText("OFFICIAL MATH RIDGE CERTIFICATE", width / 2, height * 0.185);
-
-		ctx.shadowColor = "rgba(93,58,14,0.18)";
-		ctx.shadowBlur = 9;
-		ctx.fillStyle = "#8a5c12";
-		setCanvasFont(ctx, { weight: "800", size: Math.round(width * 0.066), family: CERT_SERIF });
-		ctx.fillText("Math Ridge", width / 2, height * 0.248);
-
-		ctx.shadowBlur = 0;
-		ctx.fillStyle = "#253653";
-		setCanvasFont(ctx, { weight: "700", size: Math.round(width * 0.048), family: CERT_SERIF });
-		ctx.fillText("Certificate of Achievement", width / 2, height * 0.314);
-
-		ctx.fillStyle = "#a87416";
-		setCanvasFont(ctx, { weight: "700", size: certificateTitle.length > 36 ? width * 0.034 : width * 0.039, family: CERT_SERIF });
-		const titleEnd = drawCenteredCanvasText(ctx, certificateTitle, width / 2, height * 0.372, width * 0.72, height * 0.04, 2);
-
-		ctx.fillStyle = "#24304f";
-		setCanvasFont(ctx, { weight: "500", size: width * 0.029, family: CERT_BODY_SERIF });
-		ctx.fillText("This certifies that", width / 2, titleEnd + height * 0.057);
-
-		ctx.fillStyle = "#174d78";
-		ctx.shadowColor = "rgba(255,255,255,0.76)";
-		ctx.shadowBlur = 8;
-		const nameY = titleEnd + height * 0.129;
-		const nameFont = drawFittedCenteredText(ctx, studentName, width / 2, nameY, width * 0.72, {
-			style: "italic",
-			weight: "800",
-			maxSize: width * 0.068,
-			minSize: width * 0.041,
+		ctx.shadowColor = "rgba(255,255,255,0.72)";
+		ctx.shadowBlur = 5;
+		ctx.fillStyle = "#4f351c";
+		const titleSize = fitCanvasFont(ctx, certificateTitle.toUpperCase(), {
+			weight: "700",
+			maxSize: width * 0.034,
+			minSize: width * 0.023,
+			family: CERT_SERIF,
+			maxWidth: width * 0.70
+		});
+		setCanvasFont(ctx, {
+			weight: "700",
+			size: titleSize,
 			family: CERT_SERIF
+		});
+		drawCenteredCanvasText(ctx, certificateTitle.toUpperCase(), width / 2, height * 0.365, width * 0.70, height * 0.034, 2);
+
+		ctx.fillStyle = "#4d2d12";
+		ctx.shadowColor = "rgba(255,255,255,0.70)";
+		ctx.shadowBlur = 8;
+		const nameFont = drawFittedCenteredText(ctx, studentName, width / 2, height * 0.525, width * 0.70, {
+			style: "italic",
+			weight: "400",
+			maxSize: width * 0.082,
+			minSize: width * 0.046,
+			family: CERT_SCRIPT
 		});
 		const nameEnd = nameFont.y;
 		ctx.shadowBlur = 0;
 
-		ctx.strokeStyle = "rgba(143, 98, 30, 0.52)";
+		ctx.strokeStyle = "rgba(143, 98, 30, 0.34)";
 		ctx.lineWidth = Math.max(2, width * 0.002);
 		ctx.beginPath();
-		ctx.moveTo(width * 0.24, nameEnd + height * 0.025);
-		ctx.lineTo(width * 0.76, nameEnd + height * 0.025);
+		ctx.moveTo(width * 0.30, nameEnd + height * 0.028);
+		ctx.lineTo(width * 0.70, nameEnd + height * 0.028);
 		ctx.stroke();
 
-		ctx.fillStyle = "#24304f";
-		setCanvasFont(ctx, { weight: "500", size: width * 0.028, family: CERT_BODY_SERIF });
-		const bodyEnd = drawCenteredCanvasText(ctx, bodyText, width / 2, nameEnd + height * 0.072, width * 0.70, height * 0.034, 3);
+		ctx.fillStyle = "#51341c";
+		setCanvasFont(ctx, { style: "italic", weight: "500", size: width * 0.0235, family: CERT_SERIF });
+		drawCenteredCanvasText(ctx, bodyText, width / 2, height * 0.620, width * 0.68, height * 0.030, 3);
 
-		const dateY = bodyEnd + height * 0.058;
+		ctx.fillStyle = "#4f351c";
+		const focusLine = focusText.toUpperCase();
+		const focusSize = fitCanvasFont(ctx, focusLine, {
+			weight: "700",
+			maxSize: width * 0.021,
+			minSize: width * 0.015,
+			family: CERT_SERIF,
+			maxWidth: width * 0.72
+		});
+		setCanvasFont(ctx, { weight: "700", size: focusSize, family: CERT_SERIF });
+		ctx.fillText(focusLine, width / 2, height * 0.704);
 
-		ctx.fillStyle = "#24304f";
-		setCanvasFont(ctx, { weight: "800", size: width * 0.026, family: CERT_BODY_SERIF });
-		if (dateText) ctx.fillText(dateText, width / 2, dateY);
-
-		ctx.strokeStyle = "rgba(126, 77, 26, 0.36)";
-		ctx.lineWidth = 2;
-		ctx.beginPath();
-		ctx.moveTo(width * 0.30, height * 0.766);
-		ctx.lineTo(width * 0.70, height * 0.766);
-		ctx.stroke();
-
-		ctx.fillStyle = "#5f381c";
-		setCanvasFont(ctx, { style: "italic", weight: "600", size: width * 0.026, family: CERT_SERIF });
-		drawCenteredCanvasText(ctx, signature, width / 2, height * 0.798, width * 0.62, height * 0.030, 2);
+		ctx.fillStyle = "#51341c";
+		setCanvasFont(ctx, { weight: "650", size: width * 0.022, family: CERT_SERIF });
+		if (completedText) ctx.fillText(completedText, width / 2, height * 0.742);
 
 		return canvas;
 	}
@@ -2044,7 +2061,7 @@
 	}
 
 	function downloadOfficialCertificate(options = {}) {
-		const filename = options.filename || "math-ridge-official-certificate.png";
+		const filename = options.filename || options.fileName || "math-ridge-official-certificate.png";
 		const mimeType = options.mimeType || "image/png";
 		if (options.sound !== false) playCertificateSfx();
 
@@ -2071,6 +2088,7 @@
 		["firstTap", "secondTap", "correct", "wrong", "relic", "certificatePaper", "certificateStamp", "certificateFanfare"].forEach(prepareSfx);
 		loadOfficialCertificateTemplate().catch(() => {});
 		waitForCertificateFonts();
+		prepareOfficialCertificatePopup();
 		preparePlayAmbience();
 		ensureTrialMusicToggle();
 		setupDoubleTapZoomGuard();

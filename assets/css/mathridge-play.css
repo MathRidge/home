@@ -1694,3 +1694,146 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 		font-size: clamp(1.42rem, 7.2vw, 2.26rem);
 	}
 }
+
+/* === Prefilled official achievement template. Dynamic text fits the open spaces. === */
+.certificate-card {
+	width: min(94vw, 690px);
+}
+
+.certificate-card .cert-school {
+	display: none !important;
+}
+
+.cert-border.prefilled-certificate-template {
+	position: relative;
+	display: block;
+	width: min(100%, 520px);
+	aspect-ratio: 1086 / 1448;
+	margin: 0 auto;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	overflow: hidden;
+	background:
+		linear-gradient(180deg, rgba(255,250,240,0.04), rgba(255,250,240,0.02)),
+		url("../images/test-results/math_ridge_certificate_prefilled_template_true_alpha.png?v=20260607-prefilled-certificate") center / 100% 100% no-repeat;
+	box-shadow:
+		0 24px 58px rgba(0,0,0,0.34),
+		0 0 0 1px rgba(242,184,75,0.12);
+	color: #4d2d12;
+}
+
+.cert-border.prefilled-certificate-template::before,
+.cert-border.prefilled-certificate-template::after,
+.cert-border.prefilled-certificate-template .cert-watermark,
+.cert-border.prefilled-certificate-template .cert-leaves,
+.cert-border.prefilled-certificate-template h2,
+.cert-border.prefilled-certificate-template p:first-of-type,
+.cert-border.prefilled-certificate-template .cert-signature,
+.cert-border.prefilled-certificate-template .cert-game-stat {
+	display: none !important;
+}
+
+.cert-border.prefilled-certificate-template h3,
+.cert-border.prefilled-certificate-template .cert-name,
+.cert-border.prefilled-certificate-template p:not(:first-of-type),
+.cert-border.prefilled-certificate-template .cert-stage,
+.cert-border.prefilled-certificate-template .cert-date,
+.cert-border.prefilled-certificate-template .cert-rank {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 64%;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	text-align: center;
+	text-wrap: balance;
+	z-index: 1;
+}
+
+.cert-border.prefilled-certificate-template h3 {
+	top: 35.0%;
+	width: 70%;
+	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+	font-size: 1.1rem;
+	line-height: 1.13;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0;
+	color: #4f351c;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.72);
+}
+
+.cert-border.prefilled-certificate-template .cert-name {
+	top: 43.5%;
+	width: 72%;
+	font-family: "Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive;
+	font-size: 3rem;
+	line-height: 1;
+	font-style: italic;
+	font-weight: 400;
+	color: #4d2d12;
+	text-shadow: 0 1px 0 rgba(255,255,255,0.74), 0 5px 14px rgba(77,45,18,0.12);
+}
+
+.cert-border.prefilled-certificate-template p:not(:first-of-type) {
+	top: 60.3%;
+	width: 68%;
+	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+	font-size: 1.02rem;
+	line-height: 1.22;
+	font-style: italic;
+	font-weight: 500;
+	color: #51341c;
+}
+
+.cert-border.prefilled-certificate-template .cert-stage {
+	top: 68.7%;
+	width: 72%;
+	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+	font-size: 0.82rem;
+	line-height: 1.18;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0;
+	color: #4f351c;
+}
+
+.cert-border.prefilled-certificate-template .cert-date,
+.cert-border.prefilled-certificate-template .cert-rank {
+	top: 72.8%;
+	width: 58%;
+	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+	font-size: 0.93rem;
+	line-height: 1.18;
+	font-weight: 650;
+	color: #51341c;
+}
+
+@media (max-width: 700px) {
+	.cert-border.prefilled-certificate-template {
+		width: min(100%, 430px);
+	}
+
+	.cert-border.prefilled-certificate-template h3 {
+		font-size: 0.92rem;
+	}
+
+	.cert-border.prefilled-certificate-template .cert-name {
+		font-size: 2.34rem;
+	}
+
+	.cert-border.prefilled-certificate-template p:not(:first-of-type) {
+		font-size: 0.86rem;
+	}
+
+	.cert-border.prefilled-certificate-template .cert-stage {
+		font-size: 0.68rem;
+	}
+
+	.cert-border.prefilled-certificate-template .cert-date,
+	.cert-border.prefilled-certificate-template .cert-rank {
+		font-size: 0.76rem;
+	}
+}
