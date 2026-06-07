@@ -25,6 +25,7 @@
 	let latestRaceRank = null;
 	let latestSavedRaceSeconds = null;
 	let progressThemeTimer = null;
+	let sortConfirmed = false;
 	let boxPickStep = 0;
 	let pickedBigger = false;
 	let pickedSmaller = false;
@@ -286,7 +287,7 @@
 	}
 
 	function getRequiredProgressSteps() {
-		return currentProblem ? currentProblem.terms.length + 4 : 8;
+		return currentProblem ? 5 : 5;
 	}
 
 	function updateTurtleBoard(message = "") {
@@ -524,6 +525,14 @@
 		if (!bank) return;
 		bank.innerHTML = "";
 		selectedTerm = null;
+		sortConfirmed = false;
+		const confirmButton = byId("confirmSortButton");
+		if (confirmButton) {
+			confirmButton.disabled = false;
+			confirmButton.removeAttribute("aria-disabled");
+			confirmButton.classList.remove("is-play-armed");
+			confirmButton.removeAttribute("data-trial-armed");
+		}
 
 		currentProblem.values.forEach((value, index) => {
 			const term = document.createElement("div");
@@ -540,7 +549,7 @@
 	}
 
 	function selectTerm(term) {
-		if (term.classList.contains("placed")) return;
+		if (sortConfirmed) return;
 		document.querySelectorAll(".term").forEach(item => item.classList.remove("selected"));
 		selectedTerm = term;
 		term.classList.add("selected");
@@ -551,32 +560,56 @@
 
 		if (!selectedTerm) {
 			setText("sortFeedback", "Tap a signed number first.");
-			byId("sortFeedback").className = "feedback bad-text";
-			return;
-		}
-
-		const value = Number(selectedTerm.dataset.value);
-		const correctZone = value > 0 ? "plus" : "minus";
-
-		if (zone.dataset.zone !== correctZone) {
-			setText("sortFeedback", markMistake("Not that team. Check the sign."));
-			byId("sortFeedback").className = "feedback bad-text";
+			byId("sortFeedback").className = "feedback warning-text";
 			return;
 		}
 
 		selectedTerm.classList.remove("selected");
 		selectedTerm.classList.add("placed");
-		selectedTerm.onclick = null;
-		byId(correctZone === "plus" ? "plusTeam" : "minusTeam")?.appendChild(selectedTerm);
+		zone.querySelector(".zone-drop")?.appendChild(selectedTerm);
 		selectedTerm = null;
 
-		setText("sortFeedback", "✅ Good sort.");
+		setText("sortFeedback", "Placed. You may move it again, then double tap Confirm Sort.");
+		byId("sortFeedback").className = "feedback good-text";
+	}
+
+	function confirmSortTeams() {
+		startClimbTimer();
+		if (sortConfirmed) return;
+
+		if (byId("termBank")?.querySelectorAll(".term").length) {
+			setText("sortFeedback", "Place every signed term before confirming.");
+			byId("sortFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		const misplaced = Array.from(document.querySelectorAll("#plusTeam .term, #minusTeam .term")).filter(term => {
+			const value = Number(term.dataset.value);
+			const expectedParent = value > 0 ? "plusTeam" : "minusTeam";
+			return term.parentElement?.id !== expectedParent;
+		});
+
+		if (misplaced.length) {
+			setText("sortFeedback", "Not yet. Move each signed term to its matching team, then confirm again.");
+			byId("sortFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		sortConfirmed = true;
+		document.querySelectorAll("#sortStep .term").forEach(term => {
+			term.classList.remove("selected");
+			term.classList.add("placed");
+			term.onclick = null;
+		});
+		const confirmButton = byId("confirmSortButton");
+		if (confirmButton) {
+			confirmButton.disabled = true;
+			confirmButton.setAttribute("aria-disabled", "true");
+		}
+		setText("sortFeedback", "✅ Sort confirmed. Now add each team total.");
 		byId("sortFeedback").className = "feedback good-text";
 		markCorrectStep();
-
-		if (byId("termBank") && byId("termBank").querySelectorAll(".term").length === 0) {
-			showTotalStep();
-		}
+		showTotalStep();
 	}
 
 	function renderMiniTeamList(id, values) {
@@ -594,6 +627,7 @@
 	function showTotalStep() {
 		totalsConfirmed = false;
 		signCompassRelicActive = false;
+		byId("totalStep")?.classList.remove("relic-safe-step");
 		renderMiniTeamList("positiveTeamList", currentProblem.values.filter(value => value > 0));
 		renderMiniTeamList("negativeTeamList", currentProblem.values.filter(value => value < 0));
 
@@ -639,6 +673,8 @@
 			button.disabled = true;
 			button.setAttribute("aria-disabled", "true");
 		}
+		byId("totalStep")?.classList.add("relic-safe-step");
+		shell()?.playSfx?.("relic");
 		setText("totalFeedback", "Sign Compass filled both team totals. Double tap Confirm Totals when you are ready.");
 		byId("totalFeedback").className = "feedback good-text";
 	}
@@ -708,6 +744,7 @@
 		resetBoxPreview();
 		setText("boxFeedback", "");
 		byId("boxFeedback").className = "feedback";
+		byId("boxStep")?.classList.remove("relic-safe-step");
 		byId("termStoneAssist")?.classList.remove("is-active", "relic-safe-step");
 		const relicButton = byId("termStoneAssist")?.querySelector("button");
 		if (relicButton) {
@@ -805,7 +842,9 @@
 		}
 		byId("manualBoxControls")?.classList.add("hidden");
 		byId("totalButtons")?.classList.remove("hidden");
+		byId("boxStep")?.classList.add("relic-safe-step");
 		resetBoxPreview();
+		shell()?.playSfx?.("relic");
 		setText("boxFeedback", "Tap the larger size total first, then the smaller size total.");
 		byId("boxFeedback").className = "feedback good-text";
 	}
@@ -1024,8 +1063,10 @@
 		byId("signFixStep")?.classList.remove("hidden");
 		byId("sortStep")?.classList.add("hidden");
 		byId("totalStep")?.classList.add("hidden");
+		byId("totalStep")?.classList.remove("relic-safe-step");
 		byId("boxStep")?.classList.add("hidden");
 		byId("boxStep")?.classList.remove("is-locked");
+		byId("boxStep")?.classList.remove("relic-safe-step");
 		setFinalStepLocked(false);
 		byId("finalStep")?.classList.add("hidden");
 
@@ -1044,6 +1085,7 @@
 		setText("finalInsideOperation", displaySign("-"));
 		setText("finalSecondSize", "__");
 		finalAnswerSign = null;
+		sortConfirmed = false;
 		manualOutsideSign = null;
 		manualOperation = null;
 		boxData = {};
@@ -1075,6 +1117,13 @@
 			button.removeAttribute("aria-disabled");
 		});
 		document.querySelectorAll("#signCompassAssist, #termStoneAssist").forEach(card => card.classList.remove("is-active", "relic-safe-step"));
+		const confirmSortButton = byId("confirmSortButton");
+		if (confirmSortButton) {
+			confirmSortButton.disabled = false;
+			confirmSortButton.removeAttribute("aria-disabled");
+			confirmSortButton.classList.remove("is-play-armed");
+			confirmSortButton.removeAttribute("data-trial-armed");
+		}
 
 		renderChoices();
 	}
@@ -1085,6 +1134,7 @@
 		runCorrectCount = 0;
 		mistakesThisRound = 0;
 		roundScoreAwarded = false;
+		sortConfirmed = false;
 		boxPickStep = 0;
 		pickedBigger = false;
 		pickedSmaller = false;
@@ -1511,6 +1561,7 @@
 
 	window.startClimbFromGate = startClimbFromGate;
 	window.checkSignChoice = checkSignChoice;
+	window.confirmSortTeams = confirmSortTeams;
 	window.useSignCompassRelic = useSignCompassRelic;
 	window.confirmTeamTotals = confirmTeamTotals;
 	window.useTermStoneRelic = useTermStoneRelic;

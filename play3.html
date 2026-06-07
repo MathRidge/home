@@ -116,7 +116,7 @@
 
 			<div class="step-card hidden" id="sortStep">
 				<h2>Step 2: Sort the Signed Terms</h2>
-				<p class="step-note">Tap a term, then tap the correct team.</p>
+				<p class="step-note">Arrange the signed terms into teams. You can move them again before confirming.</p>
 
 				<div class="terms" id="termBank"></div>
 
@@ -132,6 +132,7 @@
 					</div>
 				</div>
 
+				<button id="confirmSortButton" class="primary-action sort-confirm-button" type="button" onclick="confirmSortTeams()">Confirm Sort</button>
 				<div class="feedback" id="sortFeedback"></div>
 			</div>
 
@@ -170,7 +171,9 @@
 					</div>
 				</div>
 
-				<button id="confirmTotalsButton" class="primary-action" type="button" onclick="confirmTeamTotals()">Confirm Totals</button>
+				<div class="center-action-row">
+					<button id="confirmTotalsButton" class="primary-action" type="button" onclick="confirmTeamTotals()">Confirm Totals</button>
+				</div>
 				<div class="feedback" id="totalFeedback"></div>
 			</div>
 
@@ -204,10 +207,12 @@
 						<button type="button" class="manual-op-btn" onclick="selectBoxOperation('-', this)">&minus;</button>
 					</div>
 					<div class="manual-size-row">
-						<label for="boxFirstSizeInput">First size</label>
-						<input id="boxFirstSizeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="larger">
-						<label for="boxSecondSizeInput">Second size</label>
-						<input id="boxSecondSizeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="smaller">
+						<label class="size-field" for="boxFirstSizeInput">Bigger size
+							<input id="boxFirstSizeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="bigger">
+						</label>
+						<label class="size-field" for="boxSecondSizeInput">Smaller size
+							<input id="boxSecondSizeInput" class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="smaller">
+						</label>
 					</div>
 				</div>
 
