@@ -93,6 +93,14 @@
 	transform: translateY(-2px);
 }
 
+.choice-card.selected {
+	border-color: rgba(53, 95, 137, 0.86);
+	background: linear-gradient(180deg, #eef8ff, #cfe9ff);
+	box-shadow:
+		0 0 0 4px rgba(242,184,75,0.32),
+		0 12px 22px rgba(18, 24, 38, 0.16);
+}
+
 .choice-card.correct {
 	border-color: #6cc070;
 	background: #f3fff2;
@@ -241,6 +249,7 @@
 }
 
 .relic-assist-card {
+	position: relative;
 	width: min(100%, 580px);
 	margin: 0 auto 14px;
 	display: grid;
@@ -252,12 +261,27 @@
 	border: 2px solid rgba(242, 184, 75, 0.36);
 	background: linear-gradient(180deg, rgba(255, 251, 232, 0.96), rgba(255, 239, 190, 0.92));
 	box-shadow: 0 12px 24px rgba(42, 24, 8, 0.14), inset 0 1px 0 rgba(255,255,255,0.72);
+	overflow: hidden;
+	isolation: isolate;
 }
 
 .relic-assist-card.is-active,
 .relic-assist-card.relic-safe-step {
 	border-color: rgba(83, 174, 111, 0.56);
 	background: linear-gradient(180deg, rgba(231, 255, 238, 0.96), rgba(207, 244, 220, 0.92));
+}
+
+.relic-assist-card.is-active::after,
+.relic-assist-card.relic-safe-step::after {
+	content: "";
+	position: absolute;
+	inset: -70% auto -70% -34%;
+	width: 28%;
+	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.46), rgba(255,231,168,0.34), transparent);
+	transform: rotate(18deg);
+	animation: relicAssistSweep 1.55s ease-out 1;
+	pointer-events: none;
+	z-index: 0;
 }
 
 .step-card.relic-safe-step {
@@ -267,6 +291,7 @@
 		0 18px 46px rgba(18, 73, 42, 0.18),
 		0 0 24px rgba(96, 196, 132, 0.16),
 		inset 0 1px 0 rgba(255,255,255,0.72);
+	animation: relicSafeAwaken 1.2s ease-out 1;
 }
 
 .step-card.relic-safe-step h2 {
@@ -276,6 +301,11 @@
 .relic-assist-card strong,
 .relic-assist-card span {
 	display: block;
+}
+
+.relic-assist-card > * {
+	position: relative;
+	z-index: 1;
 }
 
 .relic-assist-card strong {
@@ -413,16 +443,27 @@
 	border: 2px solid #b9dcff;
 }
 
+.step-action-row,
 .center-action-row {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-top: 14px;
+	margin: 16px auto 0;
+	width: 100%;
 }
 
-.sort-confirm-button {
-	display: block;
-	margin: 14px auto 0;
+.step-check-button {
+	width: min(100%, 300px);
+	min-height: 50px;
+	justify-content: center;
+	border-radius: 18px;
+	box-shadow:
+		0 12px 24px rgba(42, 24, 8, 0.16),
+		inset 0 1px 0 rgba(255,255,255,0.36);
+}
+
+.final-check-row {
+	margin-top: 20px;
 }
 
 .manual-control-group > span,
@@ -593,6 +634,18 @@
 	margin-right: 2px;
 }
 
+@keyframes relicAssistSweep {
+	0% { transform: translateX(0) rotate(18deg); opacity: 0; }
+	18% { opacity: 1; }
+	100% { transform: translateX(560%) rotate(18deg); opacity: 0; }
+}
+
+@keyframes relicSafeAwaken {
+	0% { box-shadow: 0 18px 50px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.70); }
+	42% { box-shadow: 0 18px 46px rgba(18, 73, 42, 0.18), 0 0 38px rgba(96, 196, 132, 0.30), inset 0 1px 0 rgba(255,255,255,0.80); }
+	100% { box-shadow: 0 18px 46px rgba(18, 73, 42, 0.18), 0 0 24px rgba(96, 196, 132, 0.16), inset 0 1px 0 rgba(255,255,255,0.72); }
+}
+
 @keyframes localShake {
 	0% { transform: translateX(0); }
 	25% { transform: translateX(-6px); }
@@ -621,6 +674,12 @@
 	.sign-choice-card,
 	.final-answer-panel button {
 		width: 100%;
+	}
+
+	.step-action-row .step-check-button,
+	.center-action-row .step-check-button,
+	.final-answer-panel .step-check-button {
+		width: min(100%, 320px);
 	}
 
 	.final-sign-choice {

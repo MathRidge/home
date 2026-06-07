@@ -69,13 +69,15 @@ function handleStageImageFallback(img) {
   if (img) img.remove();
 }
 
+const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_test-result.png?v=20260607-test-result-certificate";
+
 const chapterTests = [
   {
     id: "chapter_1",
     chapter: "Chapter 1 Test",
     range: "Covers 1-1 to 1-4",
     title: "Term Vision Checkpoint",
-    image: "assets/images/test-results/chapter-1-test-result.svg",
+    image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_1", "mathRidge_testResult_chapter1"],
     dataKey: "mathRidge_testResult_chapter_1_data",
     attemptsKey: "mathRidge_testAttempts_chapter_1",
@@ -87,7 +89,7 @@ const chapterTests = [
     chapter: "Chapter 2 Test",
     range: "Covers 2-1 to 2-4",
     title: "Prime Element Vision Checkpoint",
-    image: "assets/images/test-results/chapter-2-test-result.svg",
+    image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_2", "mathRidge_testResult_chapter2"],
     dataKey: "mathRidge_testResult_chapter_2_data",
     attemptsKey: "mathRidge_testAttempts_chapter_2",
@@ -360,6 +362,7 @@ function stageRelicName(id) {
     "1_2": "The Sign Compass",
     "1_3": "The Parity Prism",
     "1_4": "The Factor Forge",
+    "2_1a": "The Shelf Scale",
     "2_1": "The Shelf Scale",
     "2_2": "The Primewood Seed",
     "2_3": "The Fraction Loom",
@@ -374,6 +377,7 @@ function stageRelicImage(id) {
     "1_2": "assets/images/relic/sign_compass_relic_alpha.png",
     "1_3": "assets/images/relic/parity_prism_true_alpha.png",
     "1_4": "assets/images/relic/factor_forge_alpha.png",
+    "2_1a": "assets/images/relic/shelf_scale_inactive.png",
     "2_1": "assets/images/relic/Shelf_Scale_Relic_True_Alpha.png",
     "2_2": "assets/images/relic/Primewood_Seed_Relic_True_Alpha.png",
     "2_3": "assets/images/relic/Fraction_Loom_Relic_True_Alpha.png",
@@ -386,8 +390,25 @@ function stageRelicKind(id) {
   return id.startsWith("2_") ? "Vision Relic" : "Relic";
 }
 
+function stageRelicProofState(id, relicKind) {
+  if (id === "2_1a") {
+    return {
+      className: "dormant-relic",
+      label: `${relicKind} Found`,
+      status: "Dormant"
+    };
+  }
+
+  return {
+    className: "",
+    label: `${relicKind} Obtained`,
+    status: "Completed"
+  };
+}
+
 function earnedStageProof(lesson) {
   const relicName = stageRelicName(lesson.id);
+  if (lesson.id === "2_1a" && relicName) return `${relicName} dormant`;
   return relicName ? `${relicName} obtained` : "Stage achieved";
 }
 
@@ -406,8 +427,9 @@ function renderTrailCard(lesson) {
   const relicName = stageRelicName(lesson.id);
   const relicImage = stageRelicImage(lesson.id);
   const relicKind = stageRelicKind(lesson.id);
+  const relicState = stageRelicProofState(lesson.id, relicKind);
   const relicProof = earned && relicName
-    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""}" aria-label="${escapeHTML(relicName)} obtained">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>${escapeHTML(relicKind)} Obtained</span><strong>${escapeHTML(relicName)}</strong><em>Completed</em></div>`
+    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""} ${relicState.className}" aria-label="${escapeHTML(relicName)} ${escapeHTML(relicState.status.toLowerCase())}">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>${escapeHTML(relicState.label)}</span><strong>${escapeHTML(relicName)}</strong><em>${escapeHTML(relicState.status)}</em></div>`
     : "";
 
   return `
@@ -594,10 +616,15 @@ function renderCertificateWall() {
   writeTrailStateSnapshot();
 }
 
+function isLegacyTestResultImage(value) {
+  const src = String(value || "").trim();
+  return !src || src.startsWith("data:image/svg");
+}
+
 function readTestResultImage(test) {
   for (const key of test.storageKeys || []) {
     const saved = localStorage.getItem(key);
-    if (saved) return saved;
+    if (saved && !isLegacyTestResultImage(saved)) return saved;
   }
   return test.image;
 }
@@ -699,12 +726,31 @@ function renderTestResultStats(test) {
   `;
 }
 
+function renderTestCertificateOverlay(test) {
+  const data = readTestResultData(test);
+  const statusText = data ? (data.passed ? "Passed" : "Retry") : "Pending";
+  const scoreText = data ? `${Number(data.correct || 0)}/${Number(data.totalQuestions || 40)}` : "--/40";
+  const percentText = data ? formatTestPercent(data.percent) : "--";
+  const dateText = formatTestDate(data?.completedAt);
+
+  return `
+    <div class="result-certificate-overlay ${data ? (data.passed ? "passed" : "retry") : "pending"}">
+      <span class="result-cert-kicker">${escapeHTML(test.chapter)}</span>
+      <strong>${escapeHTML(test.title)}</strong>
+      <span class="result-cert-score">${escapeHTML(scoreText)}</span>
+      <span class="result-cert-status">${escapeHTML(statusText)} ${escapeHTML(percentText)}</span>
+      <em>${dateText ? escapeHTML(dateText) : "Official result awaits"}</em>
+    </div>
+  `;
+}
+
 function renderTestResults() {
   const grid = document.getElementById("testResultsGrid");
   if (!grid) return;
 
   grid.innerHTML = chapterTests.map(test => {
     const image = readTestResultImage(test);
+    const data = readTestResultData(test);
     const isChapterOne = test.id === "chapter_1";
     const chapterOneAction = isChapterOne
       ? `<a class="pill-btn" href="${rootGateHref()}" onclick="return handleRootGateClick(event)">${isRootGatePassed() ? "Review Root Gate Exam" : hasWatchedRootGateIntro() ? "Begin Root Gate Exam" : "Begin Root Gate Finale"}</a>${rootGateWatchSceneLink("pill-btn root-gate-replay-pill")}`
@@ -713,8 +759,9 @@ function renderTestResults() {
       <article class="test-result-card">
         <h4>${escapeHTML(test.chapter)}</h4>
         <p><strong>${escapeHTML(test.title)}</strong><br>${escapeHTML(test.range)}</p>
-        <div class="result-image-frame">
+        <div class="result-image-frame test-certificate-frame ${data ? (data.passed ? "passed" : "retry") : "pending"}">
           <img src="${escapeHTML(image)}" alt="${escapeHTML(test.chapter)} result preview" />
+          ${renderTestCertificateOverlay(test)}
         </div>
         ${renderTestResultStats(test)}
         <div class="result-note">${escapeHTML(test.note)}</div>

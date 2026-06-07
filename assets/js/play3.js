@@ -25,6 +25,8 @@
 	let latestRaceRank = null;
 	let latestSavedRaceSeconds = null;
 	let progressThemeTimer = null;
+	let selectedSignChoice = null;
+	let signChoiceConfirmed = false;
 	let sortConfirmed = false;
 	let boxPickStep = 0;
 	let pickedBigger = false;
@@ -488,21 +490,50 @@
 		const grid = byId("choiceGrid");
 		if (!grid) return;
 		grid.innerHTML = "";
+		selectedSignChoice = null;
+		signChoiceConfirmed = false;
+		const checkButton = byId("checkSignButton");
+		if (checkButton) {
+			checkButton.disabled = false;
+			checkButton.removeAttribute("aria-disabled");
+			checkButton.classList.remove("is-play-armed");
+			checkButton.removeAttribute("data-trial-armed");
+			checkButton.removeAttribute("data-trial-pointer-first-arm");
+		}
 
 		makeWrongChoices(currentProblem).forEach(choice => {
 			const button = document.createElement("button");
 			button.type = "button";
 			button.className = "choice-card";
 			button.textContent = choice;
-			button.onclick = () => checkSignChoice(button, choice);
+			button.dataset.choice = choice;
+			button.onclick = () => selectSignChoice(button, choice);
 			grid.appendChild(button);
 		});
 	}
 
-	function checkSignChoice(button, choice) {
+	function selectSignChoice(button, choice) {
 		startClimbTimer();
-		if (button.classList.contains("correct") || button.classList.contains("wrong")) return;
+		if (signChoiceConfirmed) return;
+		document.querySelectorAll(".choice-card").forEach(card => card.classList.remove("selected", "wrong"));
+		selectedSignChoice = { button, choice };
+		button.classList.add("selected");
+		shell()?.playSfx?.("firstTap");
+		setText("signFeedback", "Choice selected. Double tap Check Sign Fix to confirm.");
+		byId("signFeedback").className = "feedback good-text";
+	}
 
+	function confirmSignChoice() {
+		startClimbTimer();
+		if (signChoiceConfirmed) return;
+
+		if (!selectedSignChoice) {
+			setText("signFeedback", "Select the corrected expression first.");
+			byId("signFeedback").className = "feedback warning-text";
+			return;
+		}
+
+		const { button, choice } = selectedSignChoice;
 		if (choice !== currentProblem.fixedExpression) {
 			button.classList.add("wrong");
 			setText("signFeedback", markMistake("Not yet. Fix only the stacked signs."));
@@ -510,8 +541,17 @@
 			return;
 		}
 
+		signChoiceConfirmed = true;
 		button.classList.add("correct");
-		document.querySelectorAll(".choice-card").forEach(card => { card.disabled = true; });
+		document.querySelectorAll(".choice-card").forEach(card => {
+			card.disabled = true;
+			card.setAttribute("aria-disabled", "true");
+		});
+		const checkButton = byId("checkSignButton");
+		if (checkButton) {
+			checkButton.disabled = true;
+			checkButton.setAttribute("aria-disabled", "true");
+		}
 		setText("signFeedback", "✅ Correct. Now sort the fixed signed terms.");
 		byId("signFeedback").className = "feedback good-text";
 		renderTerms();
@@ -553,6 +593,7 @@
 		document.querySelectorAll(".term").forEach(item => item.classList.remove("selected"));
 		selectedTerm = term;
 		term.classList.add("selected");
+		shell()?.playSfx?.("firstTap");
 	}
 
 	function placeSelectedTerm(zone) {
@@ -568,6 +609,7 @@
 		selectedTerm.classList.add("placed");
 		zone.querySelector(".zone-drop")?.appendChild(selectedTerm);
 		selectedTerm = null;
+		shell()?.playSfx?.("firstTap");
 
 		setText("sortFeedback", "Placed. You may move it again, then double tap Confirm Sort.");
 		byId("sortFeedback").className = "feedback good-text";
@@ -813,6 +855,7 @@
 		manualOutsideSign = sign === "-" ? "-" : "+";
 		document.querySelectorAll(".manual-sign-btn").forEach(item => item.classList.remove("selected"));
 		button?.classList.add("selected");
+		shell()?.playSfx?.("firstTap");
 		updateManualBoxPreview();
 		setText("boxFeedback", "Outside sign selected. Choose the operation and fill the sizes.");
 		byId("boxFeedback").className = "feedback";
@@ -823,6 +866,7 @@
 		manualOperation = operation === "+" ? "+" : "-";
 		document.querySelectorAll(".manual-op-btn").forEach(item => item.classList.remove("selected"));
 		button?.classList.add("selected");
+		shell()?.playSfx?.("firstTap");
 		updateManualBoxPreview();
 		setText("boxFeedback", "Operation selected. Fill the box sizes, then check the box.");
 		byId("boxFeedback").className = "feedback";
@@ -985,6 +1029,7 @@
 		finalAnswerSign = sign === "-" ? "-" : "+";
 		byId("chooseFinalPositive")?.classList.toggle("selected", finalAnswerSign === "+");
 		byId("chooseFinalNegative")?.classList.toggle("selected", finalAnswerSign === "-");
+		shell()?.playSfx?.("firstTap");
 		setText("answerPreviewSign", displaySign(finalAnswerSign));
 		setText("finalFeedback", "Now type the answer size.");
 		byId("finalFeedback").className = "feedback";
@@ -1085,6 +1130,8 @@
 		setText("finalInsideOperation", displaySign("-"));
 		setText("finalSecondSize", "__");
 		finalAnswerSign = null;
+		selectedSignChoice = null;
+		signChoiceConfirmed = false;
 		sortConfirmed = false;
 		manualOutsideSign = null;
 		manualOperation = null;
@@ -1124,6 +1171,14 @@
 			confirmSortButton.classList.remove("is-play-armed");
 			confirmSortButton.removeAttribute("data-trial-armed");
 		}
+		const checkSignButton = byId("checkSignButton");
+		if (checkSignButton) {
+			checkSignButton.disabled = false;
+			checkSignButton.removeAttribute("aria-disabled");
+			checkSignButton.classList.remove("is-play-armed");
+			checkSignButton.removeAttribute("data-trial-armed");
+			checkSignButton.removeAttribute("data-trial-pointer-first-arm");
+		}
 
 		renderChoices();
 	}
@@ -1134,6 +1189,8 @@
 		runCorrectCount = 0;
 		mistakesThisRound = 0;
 		roundScoreAwarded = false;
+		selectedSignChoice = null;
+		signChoiceConfirmed = false;
 		sortConfirmed = false;
 		boxPickStep = 0;
 		pickedBigger = false;
@@ -1560,7 +1617,8 @@
 	};
 
 	window.startClimbFromGate = startClimbFromGate;
-	window.checkSignChoice = checkSignChoice;
+	window.selectSignChoice = selectSignChoice;
+	window.confirmSignChoice = confirmSignChoice;
 	window.confirmSortTeams = confirmSortTeams;
 	window.useSignCompassRelic = useSignCompassRelic;
 	window.confirmTeamTotals = confirmTeamTotals;

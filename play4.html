@@ -7,8 +7,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260606-finish-lock-image-note" />
-	<link rel="stylesheet" href="assets/css/play4.css?v=20260531-fit-repeated-line" />
+	<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260607-premium-certificate" />
+	<link rel="stylesheet" href="assets/css/play4.css?v=20260607-check-choice-flow" />
 </head>
 
 <body class="play-page play-4" data-play-id="1_4">
@@ -110,6 +110,8 @@
 			<div class="step-card" id="countStep">
 				<h2>Step 1: Count the repeated values.</h2>
 				<div class="choice-grid" id="countChoices"></div>
+				<div class="input-row"><button id="checkCountButton" class="primary-action" type="button" onclick="checkCountChoice()">Check Count</button></div>
+				<div class="feedback" id="countFeedback"></div>
 				<div class="hint-box" id="countHint"></div>
 			</div>
 
@@ -129,6 +131,8 @@
 			<div class="step-card hidden" id="splitStep">
 				<h2>Step 3: Split into a 5-chunk and a leftover chunk.</h2>
 				<div class="choice-grid" id="splitChoices"></div>
+				<div class="input-row"><button id="checkSplitButton" class="primary-action" type="button" onclick="checkSplitChoice()">Check Split</button></div>
+				<div class="feedback" id="splitFeedback"></div>
 				<div class="hint-box" id="splitHint"></div>
 			</div>
 
@@ -188,7 +192,12 @@
 		<div class="game-footer">Math Ridge | Trail 1-4 Chunking Repeated Values</div>
 	</div>
 
-	<script src="assets/js/mathridge-play.js?v=20260606-finish-lock-image-note" defer></script>
-	<script src="assets/js/play4.js?v=20260606-wrong-sound" defer></script>
+	<script>
+		window.MathRidgePlayConfig = Object.assign({}, window.MathRidgePlayConfig || {}, {
+			nextClimbAfterComplete: false
+		});
+	</script>
+	<script src="assets/js/mathridge-play.js?v=20260607-premium-certificate" defer></script>
+	<script src="assets/js/play4.js?v=20260607-complete-result-scroll" defer></script>
 </body>
 </html>

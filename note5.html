@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
 <link rel="stylesheet" href="assets/css/mathridge-note.css">
-<link rel="stylesheet" href="assets/css/note5.css">
+<link rel="stylesheet" href="assets/css/note5.css?v=20260607-mini-skit">
 </head>
 <body class="note-page note-5" data-note-id="2_1">
 <nav class="topbar" aria-label="Math Ridge main navigation">
@@ -136,8 +136,15 @@
     <div class="memory-line"><span>same amount</span><strong>cleaner name</strong><span>no shared group left</span></div>
   </section>
 
+  <section class="section note5-section mini-skit-section" aria-label="Fraction Shelves mini-skit">
+    <p class="eyebrow">Mini-Skit | Fraction Shelves</p>
+    <h2>Before the Practice Gate</h2>
+    <p>Mira and Elder Shellwick have a quick reminder before practice: a fraction keeps its value only when the top shelf and bottom shelf change together.</p>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('fractionShelvesSkitDialog').showModal()">View Mini-Skit</button>
+  </section>
+
   <section class="section practice note5-practice" id="practice">
-    <h2><span class="section-kicker">07</span> Unlock Practice</h2>
+    <h2><span class="section-kicker">08</span> Unlock Practice</h2>
     <p>Write the simplest fraction in the notepad boxes. Tap the top box, type the top shelf number, then tap the bottom box and type the bottom shelf number.</p>
     <div class="phone-note">Phone tip: both boxes open the number pad. You do not need to type a slash.</div>
     <div class="practice-progress" aria-label="Practice progress">
@@ -157,6 +164,17 @@
   <section class="footer-rule" aria-label="Math Ridge quote">"A fraction keeps its value when both shelves change together." - Math Ridge</section>
   <p class="footer-note">Math Ridge Note 2-1b | Fraction Shelves & Reduction</p>
 </main>
+
+<dialog class="mini-skit-dialog" id="fractionShelvesSkitDialog" aria-label="Fraction Shelves mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>Fraction Shelves</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage-2-1b.png" alt="Mira learns that reducing fractions keeps the same amount when both shelves change together." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
 
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">

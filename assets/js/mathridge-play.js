@@ -25,6 +25,13 @@
 	const SOUND_BASE = "voice/sound/";
 	const MUSIC_BASE = "bg-music/";
 	const MUSIC_ENABLED_KEY = "mathRidge_trialMusicEnabled_v1";
+	const OFFICIAL_CERTIFICATE_TEMPLATE = {
+		src: "assets/images/test-results/math_ridge_certificate_true_alpha.png?v=20260607-premium-certificate",
+		width: 1122,
+		height: 1402
+	};
+	const CERT_SERIF = '"Playfair Display", "Palatino Linotype", Georgia, serif';
+	const CERT_BODY_SERIF = '"Inter", "Trebuchet MS", Arial, sans-serif';
 	const CONFIRM_NAV_DELAY_MS = 780;
 	const POINTER_SFX_SUPPRESS_MS = 1400;
 	const sfxPresets = {
@@ -66,6 +73,8 @@
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
 	const sfxLastPlayedAt = new Map();
+	let officialCertificateTemplateImage = null;
+	let officialCertificateTemplatePromise = null;
 	const trialMusicCue = { path: `${MUSIC_BASE}trial-music.MOV?v=20260606-current-mov`, start: 0, volume: 1, restartOnEnd: true, crossfade: 0, fadeIn: 0, useElementAudio: true };
 	const playAmbienceByPage = new Map([
 		[1, trialMusicCue],
@@ -1332,6 +1341,34 @@
 		playSfx("secondTap");
 	}
 
+	function isReadyNextClimbButton(target) {
+		return Boolean(target
+			&& target.id === "nextClimbButton"
+			&& !target.disabled
+			&& target.getAttribute("aria-disabled") !== "true"
+			&& !target.hidden
+			&& !target.classList.contains("hidden"));
+	}
+
+	function handleNextClimbPointerDown(event) {
+		const target = event.target?.closest?.("#nextClimbButton");
+		if (!isReadyNextClimbButton(target)) return;
+		unlockPlayAudioContext();
+		playSfx("secondTap");
+		target.dataset.nextClimbPointerReleasePlayed = "true";
+		window.setTimeout(() => target.removeAttribute("data-next-climb-pointer-release-played"), POINTER_SFX_SUPPRESS_MS);
+	}
+
+	function handleNextClimbClick(event) {
+		const target = event.target?.closest?.("#nextClimbButton");
+		if (!isReadyNextClimbButton(target)) return;
+		if (target.dataset.nextClimbPointerReleasePlayed === "true") {
+			target.removeAttribute("data-next-climb-pointer-release-played");
+			return;
+		}
+		playSfx("secondTap");
+	}
+
 	function setupBottomDrawer() {
 		const controls = byId("bottomControls");
 		if (!controls || controls.dataset.drawerReady === "true") return;
@@ -1719,6 +1756,54 @@
 		return y + Math.max(0, lines.length - 1) * lineHeight;
 	}
 
+	function setCanvasFont(ctx, { style = "", weight = "", size = 32, family = CERT_SERIF } = {}) {
+		ctx.font = [style, weight, `${Math.round(size)}px`, family].filter(Boolean).join(" ");
+	}
+
+	function fitCanvasFont(ctx, text, { style = "", weight = "", maxSize = 64, minSize = 28, family = CERT_SERIF, maxWidth = 900 } = {}) {
+		let size = maxSize;
+		do {
+			setCanvasFont(ctx, { style, weight, size, family });
+			if (ctx.measureText(String(text || "")).width <= maxWidth || size <= minSize) break;
+			size -= 2;
+		} while (size >= minSize);
+		return size;
+	}
+
+	function drawFittedCenteredText(ctx, text, x, y, maxWidth, options = {}) {
+		const size = fitCanvasFont(ctx, text, { ...options, maxWidth });
+		ctx.fillText(String(text || ""), x, y);
+		return { size, y };
+	}
+
+	function loadOfficialCertificateTemplate() {
+		if (officialCertificateTemplateImage?.complete && officialCertificateTemplateImage.naturalWidth) {
+			return Promise.resolve(officialCertificateTemplateImage);
+		}
+
+		if (officialCertificateTemplatePromise) return officialCertificateTemplatePromise;
+
+		officialCertificateTemplatePromise = new Promise((resolve, reject) => {
+			const image = new Image();
+			image.decoding = "async";
+			image.onload = () => {
+				officialCertificateTemplateImage = image;
+				resolve(image);
+			};
+			image.onerror = reject;
+			image.src = OFFICIAL_CERTIFICATE_TEMPLATE.src;
+		});
+
+		return officialCertificateTemplatePromise;
+	}
+
+	function waitForCertificateFonts() {
+		try {
+			if (document.fonts?.ready) return document.fonts.ready.catch(() => {});
+		} catch (error) {}
+		return Promise.resolve();
+	}
+
 	function drawCertificateCorner(ctx, x, y, flipX = 1, flipY = 1) {
 		ctx.save();
 		ctx.translate(x, y);
@@ -1845,8 +1930,9 @@
 
 	function createOfficialCertificateCanvas(options = {}) {
 		const canvas = document.createElement("canvas");
-		canvas.width = Number(options.width || 1600);
-		canvas.height = Number(options.height || 1150);
+		const templateImage = options.templateImage || officialCertificateTemplateImage;
+		canvas.width = Number(options.width || templateImage?.naturalWidth || OFFICIAL_CERTIFICATE_TEMPLATE.width);
+		canvas.height = Number(options.height || templateImage?.naturalHeight || OFFICIAL_CERTIFICATE_TEMPLATE.height);
 		const ctx = canvas.getContext("2d");
 		const width = canvas.width;
 		const height = canvas.height;
@@ -1858,80 +1944,87 @@
 			? options.bodyLines.join(" ")
 			: String(options.bodyText || options.bodyLines || "for demonstrating understanding, persistence, and careful mathematical reasoning.");
 
-		drawOfficialCertificateBackground(ctx, width, height);
-		drawOfficialCertificateFrame(ctx, width, height);
-		drawOfficialCertificateSeal(ctx, width / 2, 192, 50);
+		if (templateImage?.complete && templateImage.naturalWidth) {
+			ctx.drawImage(templateImage, 0, 0, width, height);
+		} else {
+			drawOfficialCertificateBackground(ctx, width, height);
+			drawOfficialCertificateFrame(ctx, width, height);
+			drawOfficialCertificateSeal(ctx, width / 2, Math.round(height * 0.137), 50);
+		}
 
 		ctx.textAlign = "center";
 		ctx.textBaseline = "alphabetic";
-		ctx.fillStyle = "#684019";
-		ctx.font = "bold 27px Georgia, serif";
-		ctx.fillText("OFFICIAL MATH RIDGE CERTIFICATE", width / 2, 150);
+		ctx.shadowColor = "rgba(255,255,255,0.58)";
+		ctx.shadowBlur = 7;
+		ctx.fillStyle = "#775018";
+		setCanvasFont(ctx, { weight: "800", size: Math.round(width * 0.029), family: CERT_BODY_SERIF });
+		ctx.fillText("OFFICIAL MATH RIDGE CERTIFICATE", width / 2, height * 0.185);
 
-		ctx.fillStyle = "#7a4b00";
-		ctx.font = "bold 70px Georgia, serif";
-		ctx.fillText("Math Ridge", width / 2, 294);
+		ctx.shadowColor = "rgba(93,58,14,0.18)";
+		ctx.shadowBlur = 9;
+		ctx.fillStyle = "#8a5c12";
+		setCanvasFont(ctx, { weight: "800", size: Math.round(width * 0.066), family: CERT_SERIF });
+		ctx.fillText("Math Ridge", width / 2, height * 0.248);
+
+		ctx.shadowBlur = 0;
+		ctx.fillStyle = "#253653";
+		setCanvasFont(ctx, { weight: "700", size: Math.round(width * 0.048), family: CERT_SERIF });
+		ctx.fillText("Certificate of Achievement", width / 2, height * 0.314);
+
+		ctx.fillStyle = "#a87416";
+		setCanvasFont(ctx, { weight: "700", size: certificateTitle.length > 36 ? width * 0.034 : width * 0.039, family: CERT_SERIF });
+		const titleEnd = drawCenteredCanvasText(ctx, certificateTitle, width / 2, height * 0.372, width * 0.72, height * 0.04, 2);
 
 		ctx.fillStyle = "#24304f";
-		ctx.font = "bold 54px Georgia, serif";
-		ctx.fillText("Certificate of Achievement", width / 2, 374);
+		setCanvasFont(ctx, { weight: "500", size: width * 0.029, family: CERT_BODY_SERIF });
+		ctx.fillText("This certifies that", width / 2, titleEnd + height * 0.057);
 
-		ctx.fillStyle = "#b87900";
-		ctx.font = certificateTitle.length > 36 ? "bold 40px Georgia, serif" : "bold 46px Georgia, serif";
-		const titleEnd = drawCenteredCanvasText(ctx, certificateTitle, width / 2, 436, 1080, 50, 2);
+		ctx.fillStyle = "#174d78";
+		ctx.shadowColor = "rgba(255,255,255,0.76)";
+		ctx.shadowBlur = 8;
+		const nameY = titleEnd + height * 0.129;
+		const nameFont = drawFittedCenteredText(ctx, studentName, width / 2, nameY, width * 0.72, {
+			style: "italic",
+			weight: "800",
+			maxSize: width * 0.068,
+			minSize: width * 0.041,
+			family: CERT_SERIF
+		});
+		const nameEnd = nameFont.y;
+		ctx.shadowBlur = 0;
 
-		ctx.fillStyle = "#24304f";
-		ctx.font = "30px Georgia, serif";
-		ctx.fillText("This certifies that", width / 2, titleEnd + 60);
-
-		ctx.fillStyle = "#0f5a9a";
-		const nameFontSize = studentName.length > 28 ? 56 : 68;
-		ctx.font = `bold ${nameFontSize}px Georgia, serif`;
-		const nameEnd = drawCenteredCanvasText(ctx, studentName, width / 2, titleEnd + 136, 1120, nameFontSize + 10, 2);
-
-		ctx.strokeStyle = "rgba(126, 77, 26, 0.54)";
-		ctx.lineWidth = 3;
+		ctx.strokeStyle = "rgba(143, 98, 30, 0.52)";
+		ctx.lineWidth = Math.max(2, width * 0.002);
 		ctx.beginPath();
-		ctx.moveTo(width / 2 - 430, nameEnd + 24);
-		ctx.lineTo(width / 2 + 430, nameEnd + 24);
+		ctx.moveTo(width * 0.24, nameEnd + height * 0.025);
+		ctx.lineTo(width * 0.76, nameEnd + height * 0.025);
 		ctx.stroke();
 
 		ctx.fillStyle = "#24304f";
-		ctx.font = "30px Georgia, serif";
-		const bodyEnd = drawCenteredCanvasText(ctx, bodyText, width / 2, nameEnd + 74, 1080, 42, 3);
+		setCanvasFont(ctx, { weight: "500", size: width * 0.028, family: CERT_BODY_SERIF });
+		const bodyEnd = drawCenteredCanvasText(ctx, bodyText, width / 2, nameEnd + height * 0.072, width * 0.70, height * 0.034, 3);
 
-		ctx.fillStyle = "#5f381c";
-		ctx.font = "bold 25px Georgia, serif";
-		const dateY = bodyEnd + 64;
+		const dateY = bodyEnd + height * 0.058;
 
 		ctx.fillStyle = "#24304f";
-		ctx.font = "bold 25px Georgia, serif";
+		setCanvasFont(ctx, { weight: "800", size: width * 0.026, family: CERT_BODY_SERIF });
 		if (dateText) ctx.fillText(dateText, width / 2, dateY);
 
-		ctx.strokeStyle = "rgba(126, 77, 26, 0.48)";
+		ctx.strokeStyle = "rgba(126, 77, 26, 0.36)";
 		ctx.lineWidth = 2;
 		ctx.beginPath();
-		ctx.moveTo(width / 2 - 360, height - 198);
-		ctx.lineTo(width / 2 + 360, height - 198);
+		ctx.moveTo(width * 0.30, height * 0.766);
+		ctx.lineTo(width * 0.70, height * 0.766);
 		ctx.stroke();
 
 		ctx.fillStyle = "#5f381c";
-		ctx.font = "italic 30px Georgia, serif";
-		drawCenteredCanvasText(ctx, signature, width / 2, height - 156, 900, 34, 2);
-
-		ctx.fillStyle = "rgba(63, 42, 22, 0.76)";
-		ctx.font = "bold 18px Georgia, serif";
-		ctx.fillText("Issued by Math Ridge", width / 2, height - 82);
+		setCanvasFont(ctx, { style: "italic", weight: "600", size: width * 0.026, family: CERT_SERIF });
+		drawCenteredCanvasText(ctx, signature, width / 2, height * 0.798, width * 0.62, height * 0.030, 2);
 
 		return canvas;
 	}
 
-	function downloadOfficialCertificate(options = {}) {
-		const filename = options.filename || "math-ridge-official-certificate.png";
-		const canvas = createOfficialCertificateCanvas(options);
-		const mimeType = options.mimeType || "image/png";
-		if (options.sound !== false) playCertificateSfx();
-
+	function saveCanvasImage(canvas, filename, mimeType) {
 		try {
 			const link = document.createElement("a");
 			link.download = filename;
@@ -1948,12 +2041,36 @@
 				alert("Certificate image was created, but the browser blocked the download. Please allow pop-ups or try again.");
 			}
 		}
+	}
 
-		return canvas;
+	function downloadOfficialCertificate(options = {}) {
+		const filename = options.filename || "math-ridge-official-certificate.png";
+		const mimeType = options.mimeType || "image/png";
+		if (options.sound !== false) playCertificateSfx();
+
+		if (officialCertificateTemplateImage?.complete && officialCertificateTemplateImage.naturalWidth) {
+			const canvas = createOfficialCertificateCanvas(options);
+			saveCanvasImage(canvas, filename, mimeType);
+			return canvas;
+		}
+
+		return Promise.all([loadOfficialCertificateTemplate(), waitForCertificateFonts()])
+			.then(([templateImage]) => {
+				const canvas = createOfficialCertificateCanvas({ ...options, templateImage });
+				saveCanvasImage(canvas, filename, mimeType);
+				return canvas;
+			})
+			.catch(() => {
+				const canvas = createOfficialCertificateCanvas(options);
+				saveCanvasImage(canvas, filename, mimeType);
+				return canvas;
+			});
 	}
 
 	document.addEventListener("DOMContentLoaded", () => {
 		["firstTap", "secondTap", "correct", "wrong", "relic", "certificatePaper", "certificateStamp", "certificateFanfare"].forEach(prepareSfx);
+		loadOfficialCertificateTemplate().catch(() => {});
+		waitForCertificateFonts();
 		preparePlayAmbience();
 		ensureTrialMusicToggle();
 		setupDoubleTapZoomGuard();
@@ -1973,6 +2090,8 @@
 
 	document.addEventListener("pointerdown", handleTrialControlPointerDown, { capture: true });
 	document.addEventListener("click", handleTrialControlClick, { capture: true });
+	document.addEventListener("pointerdown", handleNextClimbPointerDown, { capture: true, passive: true });
+	document.addEventListener("click", handleNextClimbClick, { capture: true });
 
 	window.addEventListener("pagehide", stopPlayAmbience);
 

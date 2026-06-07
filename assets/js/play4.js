@@ -26,6 +26,8 @@
 	let latestRaceRank = null;
 	let latestSavedRaceSeconds = null;
 	let completedSteps = new Set();
+	let selectedCountChoice = null;
+	let selectedSplitChoice = null;
 
 	const numberWords = {
 		2: "two", 3: "three", 4: "four", 5: "five", 6: "six",
@@ -389,28 +391,58 @@
 		feedback.className = className;
 	}
 
-	function makeChoice(text, isCorrect, stepKey, onCorrect, wrongMessage) {
+	function setChoiceFeedback(id, text, className = "feedback") {
+		const feedback = byId(id);
+		if (!feedback) return;
+		feedback.textContent = text;
+		feedback.className = className;
+	}
+
+	function clearArmedButton(id) {
+		const button = byId(id);
+		if (!button) return;
+		button.disabled = false;
+		button.removeAttribute("aria-disabled");
+		button.classList.remove("is-play-armed");
+		button.removeAttribute("data-trial-armed");
+		button.removeAttribute("data-trial-pointer-first-arm");
+	}
+
+	function disableChoiceStep(stepId, buttonId) {
+		const step = byId(stepId);
+		step?.querySelectorAll(".choice").forEach(item => {
+			item.style.pointerEvents = "none";
+			item.setAttribute("aria-disabled", "true");
+		});
+		const button = byId(buttonId);
+		if (button) {
+			button.disabled = true;
+			button.setAttribute("aria-disabled", "true");
+		}
+	}
+
+	function makeChoice(text, isCorrect, stepKey) {
 		const choice = document.createElement("div");
 		choice.className = "choice";
 		choice.textContent = text;
+		choice.dataset.correct = isCorrect ? "true" : "false";
+		choice.dataset.stepKey = stepKey;
 		choice.onclick = () => {
 			touchClimbTimer();
-			if (choice.classList.contains("correct-flash") || completedSteps.has(stepKey)) return;
+			if (completedSteps.has(stepKey)) return;
 
-			if (isCorrect) {
-				choice.classList.add("correct-flash");
-				choice.parentElement?.querySelectorAll(".choice").forEach(item => {
-					item.style.pointerEvents = "none";
-				});
-				setFeedback("✅ Correct. Keep going.", "feedback good-text");
-				markCorrectStep(stepKey);
-				onCorrect();
-			} else {
-				choice.classList.add("wrong-flash");
-				setFeedback(wrongMessage, "feedback bad-text");
-				markMistake();
-				window.setTimeout(() => choice.classList.remove("wrong-flash"), 550);
+			choice.parentElement?.querySelectorAll(".choice").forEach(item => item.classList.remove("selected"));
+			choice.classList.add("selected");
+
+			if (stepKey === "count") {
+				selectedCountChoice = choice;
+				setChoiceFeedback("countFeedback", "Choice selected. Double tap Check Count to confirm.", "feedback good-text");
+			} else if (stepKey === "split") {
+				selectedSplitChoice = choice;
+				setChoiceFeedback("splitFeedback", "Choice selected. Double tap Check Split to confirm.", "feedback good-text");
 			}
+
+			shell()?.playSfx?.("firstTap");
 		};
 		return choice;
 	}
@@ -430,20 +462,41 @@
 	function renderCountChoices() {
 		const box = byId("countChoices");
 		box.innerHTML = "";
+		selectedCountChoice = null;
+		clearArmedButton("checkCountButton");
+		setChoiceFeedback("countFeedback", "");
 		const options = getCountChoiceOptions().map(num => ({
 			text: `${numberWords[num]} ${current.value}s`,
 			correct: num === current.multiplicity
 		})).sort(() => Math.random() - 0.5);
 
 		options.forEach(item => {
-			box.appendChild(makeChoice(
-				item.text,
-				item.correct,
-				"count",
-				() => showStep("notationStep", "outerInput"),
-				`Not yet. Count how many ${current.value}s appear in the addition line.`
-			));
+			box.appendChild(makeChoice(item.text, item.correct, "count"));
 		});
+	}
+
+	function checkCountChoice() {
+		touchClimbTimer();
+		if (completedSteps.has("count")) return;
+
+		if (!selectedCountChoice) {
+			setChoiceFeedback("countFeedback", "Select one count option first.", "feedback warning-text");
+			return;
+		}
+
+		if (selectedCountChoice.dataset.correct === "true") {
+			selectedCountChoice.classList.add("correct-flash");
+			setChoiceFeedback("countFeedback", `✅ Correct. There are ${current.multiplicity} copies.`, "feedback good-text");
+			disableChoiceStep("countStep", "checkCountButton");
+			markCorrectStep("count");
+			showStep("notationStep", "outerInput");
+			return;
+		}
+
+		selectedCountChoice.classList.add("wrong-flash");
+		setChoiceFeedback("countFeedback", `Not yet. Count how many ${current.value}s appear in the addition line.`, "feedback bad-text");
+		markMistake();
+		window.setTimeout(() => selectedCountChoice?.classList.remove("wrong-flash"), 550);
 	}
 
 	function checkNotation() {
@@ -477,6 +530,9 @@
 	function renderSplitChoices() {
 		const box = byId("splitChoices");
 		box.innerHTML = "";
+		selectedSplitChoice = null;
+		clearArmedButton("checkSplitButton");
+		setChoiceFeedback("splitFeedback", "");
 		const correct = splitText();
 		const choices = [
 			{ text: correct, correct: true },
@@ -485,19 +541,35 @@
 		].sort(() => Math.random() - 0.5);
 
 		choices.forEach(item => {
-			box.appendChild(makeChoice(
-				item.text,
-				item.correct,
-				"split",
-				() => {
-					byId("chunkVisual").innerHTML = chunkVisualHTML();
-					setText("chunkALabel", `5(${current.value})`);
-					setText("chunkBLabel", `${current.secondChunk}(${current.value})`);
-					showStep("chunkVisualStep", "chunkAInput");
-				},
-				`Not yet. Keep the repeated value ${current.value} in both chunks.`
-			));
+			box.appendChild(makeChoice(item.text, item.correct, "split"));
 		});
+	}
+
+	function checkSplitChoice() {
+		touchClimbTimer();
+		if (completedSteps.has("split")) return;
+
+		if (!selectedSplitChoice) {
+			setChoiceFeedback("splitFeedback", "Select one split option first.", "feedback warning-text");
+			return;
+		}
+
+		if (selectedSplitChoice.dataset.correct === "true") {
+			selectedSplitChoice.classList.add("correct-flash");
+			setChoiceFeedback("splitFeedback", "✅ Correct split. Now solve each chunk.", "feedback good-text");
+			disableChoiceStep("splitStep", "checkSplitButton");
+			markCorrectStep("split");
+			byId("chunkVisual").innerHTML = chunkVisualHTML();
+			setText("chunkALabel", `5(${current.value})`);
+			setText("chunkBLabel", `${current.secondChunk}(${current.value})`);
+			showStep("chunkVisualStep", "chunkAInput");
+			return;
+		}
+
+		selectedSplitChoice.classList.add("wrong-flash");
+		setChoiceFeedback("splitFeedback", `Not yet. Keep the repeated value ${current.value} in both chunks.`, "feedback bad-text");
+		markMistake();
+		window.setTimeout(() => selectedSplitChoice?.classList.remove("wrong-flash"), 550);
 	}
 
 	function checkChunkA() {
@@ -556,7 +628,7 @@
 			markCorrectStep("final");
 			showCompleteStep();
 			completeRoundAfterFinalAnswer();
-			scrollToCenter("completeStep");
+			scrollToCompleteResult();
 			return;
 		}
 
@@ -601,6 +673,20 @@
 		window.setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }), 160);
 	}
 
+	function scrollToCompleteResult() {
+		if (shell()?.scrollToPremiumElement) {
+			shell().scrollToPremiumElement("completeStep", 14, {
+				delay: 220,
+				duration: 900,
+				slow: true
+			});
+			return;
+		}
+		const element = byId("completeStep");
+		if (!element) return;
+		window.setTimeout(() => element.scrollIntoView({ behavior: "smooth", block: "center" }), 220);
+	}
+
 	function scrollToStepOneStart() {
 		scrollToCenter("problemCard");
 	}
@@ -612,11 +698,13 @@
 			gameScoreAwarded = false;
 			finalAnswered = false;
 			completedSteps = new Set();
+			selectedCountChoice = null;
+			selectedSplitChoice = null;
 			updateTurtleBoard();
 		}
 
 		setFeedback("", "feedback");
-		["notationFeedback", "chunkAFeedback", "chunkBFeedback", "finalFeedback"].forEach(id => {
+		["countFeedback", "notationFeedback", "splitFeedback", "chunkAFeedback", "chunkBFeedback", "finalFeedback"].forEach(id => {
 			const element = byId(id);
 			if (!element) return;
 			element.textContent = "";
@@ -635,6 +723,8 @@
 		});
 
 		byId("countStep").classList.remove("hidden");
+		clearArmedButton("checkCountButton");
+		clearArmedButton("checkSplitButton");
 		byId("splitChoices").innerHTML = "";
 		byId("chunkVisual").innerHTML = "";
 		byId("finalPreview").innerHTML = "";
@@ -650,6 +740,8 @@
 			gameScoreAwarded = false;
 			finalAnswered = false;
 			completedSteps = new Set();
+			selectedCountChoice = null;
+			selectedSplitChoice = null;
 		}
 		resetProblemOnly({ resetClimbProgress: false });
 		prepareSmartNotationInputs();
@@ -778,7 +870,7 @@
 			return;
 		}
 
-		shell()?.finishCorrectClimb?.({ message, scroll: true });
+		shell()?.finishCorrectClimb?.({ message, scroll: false });
 	}
 
 	function showClimbGate() {
@@ -1203,7 +1295,9 @@
 
 	window.startClimbFromGate = startClimbFromGate;
 	window.toggleNotationExample = toggleNotationExample;
+	window.checkCountChoice = checkCountChoice;
 	window.checkNotation = checkNotation;
+	window.checkSplitChoice = checkSplitChoice;
 	window.checkChunkA = checkChunkA;
 	window.checkChunkB = checkChunkB;
 	window.checkFinalAnswer = checkFinalAnswer;

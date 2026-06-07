@@ -11,6 +11,7 @@
   const CHAPTER_RESULT_DATA_KEY = "mathRidge_testResult_chapter_1_data";
   const CHAPTER_ATTEMPTS_KEY = "mathRidge_testAttempts_chapter_1";
   const CHAPTER_ATTEMPT_HISTORY_KEY = "mathRidge_testAttemptHistory_chapter_1";
+  const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_test-result.png?v=20260607-test-result-certificate";
   const CHAPTER_TWO_NOTE_KEY = "mathRidge_noteUnlocked_2_1";
   const CHAPTER_TWO_STAGE_KEY = "mathRidge_stageUnlocked_2_1";
 
@@ -589,26 +590,8 @@
     evaluateCorrectionCard(target);
   }
 
-  function resultImageDataUrl(result) {
-    const status = result.passed ? "Root Gate Opened" : "Root Gate Sealed";
-    const color = result.passed ? "#79d09b" : "#ef7777";
-    const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-    const attemptNumber = positiveInteger(result.attemptNumber);
-    const attemptLine = attemptNumber ? `Attempt ${attemptNumber}` : "Chapter 1: Term Vision Checkpoint";
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
-        <rect width="900" height="560" rx="26" fill="#081526"/>
-        <rect x="28" y="28" width="844" height="504" rx="18" fill="#102238" stroke="#f2b84b" stroke-width="4"/>
-        <text x="450" y="96" text-anchor="middle" fill="#ffe7a8" font-family="Georgia, serif" font-size="46" font-weight="700">Math Ridge</text>
-        <text x="450" y="152" text-anchor="middle" fill="${color}" font-family="Arial, sans-serif" font-size="38" font-weight="800">${status}</text>
-        <text x="450" y="226" text-anchor="middle" fill="#fff7e8" font-family="Arial, sans-serif" font-size="78" font-weight="900">${result.percent}%</text>
-        <text x="450" y="286" text-anchor="middle" fill="#fff7e8" font-family="Arial, sans-serif" font-size="30">${result.correct}/40 correct</text>
-        <text x="450" y="340" text-anchor="middle" fill="#d9c8aa" font-family="Arial, sans-serif" font-size="25">Errors: ${result.errors} | Time: ${formatTime(result.usedSeconds)}</text>
-        <text x="450" y="410" text-anchor="middle" fill="#ffe7a8" font-family="Arial, sans-serif" font-size="25">${attemptLine}</text>
-        <text x="450" y="462" text-anchor="middle" fill="#d9c8aa" font-family="Arial, sans-serif" font-size="22">${date}</text>
-      </svg>
-    `.trim();
-    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  function resultImageDataUrl() {
+    return TEST_RESULT_CERTIFICATE_IMAGE;
   }
 
   function readAttemptHistory() {

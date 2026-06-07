@@ -9,8 +9,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260606-finish-lock-image-note" />
-	<link rel="stylesheet" href="assets/css/play3.css?v=20260607-relic-step-flow" />
+<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260607-premium-certificate" />
+	<link rel="stylesheet" href="assets/css/play3.css?v=20260607-sign-confirm-flow" />
 </head>
 
 <body class="play-page play-3" data-play-id="1_3">
@@ -111,6 +111,9 @@
 				<h2>Step 1: Choose the Correct Sign Fix</h2>
 				<p class="step-note">Only fix stacked signs like −(−2). Keep normal leading signs, like −5, the same.</p>
 				<div class="choice-grid" id="choiceGrid"></div>
+				<div class="step-action-row">
+					<button id="checkSignButton" class="primary-action step-check-button" type="button" onclick="confirmSignChoice()">Check Sign Fix</button>
+				</div>
 				<div class="feedback" id="signFeedback"></div>
 			</div>
 
@@ -132,7 +135,9 @@
 					</div>
 				</div>
 
-				<button id="confirmSortButton" class="primary-action sort-confirm-button" type="button" onclick="confirmSortTeams()">Confirm Sort</button>
+				<div class="step-action-row">
+					<button id="confirmSortButton" class="primary-action step-check-button sort-confirm-button" type="button" onclick="confirmSortTeams()">Confirm Sort</button>
+				</div>
 				<div class="feedback" id="sortFeedback"></div>
 			</div>
 
@@ -172,7 +177,7 @@
 				</div>
 
 				<div class="center-action-row">
-					<button id="confirmTotalsButton" class="primary-action" type="button" onclick="confirmTeamTotals()">Confirm Totals</button>
+					<button id="confirmTotalsButton" class="primary-action step-check-button" type="button" onclick="confirmTeamTotals()">Confirm Totals</button>
 				</div>
 				<div class="feedback" id="totalFeedback"></div>
 			</div>
@@ -225,7 +230,9 @@
 					</span>
 				</div>
 
-				<button id="checkBoxButton" class="primary-action" type="button" onclick="checkBoxSetup()">Check Box</button>
+				<div class="step-action-row">
+					<button id="checkBoxButton" class="primary-action step-check-button" type="button" onclick="checkBoxSetup()">Check Box</button>
+				</div>
 				<div class="feedback" id="boxFeedback"></div>
 			</div>
 
@@ -258,7 +265,9 @@
 						</div>
 					</div>
 
-					<button class="primary-action" type="button" onclick="checkFinalAnswer()">Check Final Answer</button>
+					<div class="step-action-row final-check-row">
+						<button class="primary-action step-check-button" type="button" onclick="checkFinalAnswer()">Check Final Answer</button>
+					</div>
 				</div>
 
 				<div class="feedback" id="finalFeedback"></div>
@@ -287,7 +296,7 @@
 			recordWorkerBase: "https://mathridge-play1-records.primelearning-math-kevin.workers.dev/"
 		};
 	</script>
-<script src="assets/js/mathridge-play.js?v=20260606-finish-lock-image-note"></script>
-	<script src="assets/js/play3.js?v=20260607-relic-step-flow"></script>
+<script src="assets/js/mathridge-play.js?v=20260607-premium-certificate"></script>
+	<script src="assets/js/play3.js?v=20260607-sign-confirm-flow"></script>
 </body>
 </html>

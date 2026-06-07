@@ -1646,6 +1646,31 @@ body.index-page .stage-relic-proof.vision-relic .stage-relic-img {
   height: 104px;
 }
 
+body.index-page .stage-relic-proof.dormant-relic {
+  border-color: rgba(140,201,255,0.42);
+  background:
+    linear-gradient(135deg, rgba(140,201,255,0.16), rgba(255,247,232,0.08)),
+    rgba(9,20,34,0.74);
+}
+
+body.index-page .stage-relic-proof.dormant-relic::before {
+  opacity: 0.55;
+}
+
+body.index-page .stage-relic-proof.dormant-relic .stage-relic-img {
+  filter:
+    drop-shadow(0 8px 14px rgba(0,0,0,0.34))
+    drop-shadow(0 0 12px rgba(140,201,255,0.18));
+}
+
+body.index-page .stage-relic-proof.dormant-relic strong {
+  color: #cfe7ff;
+}
+
+body.index-page .stage-relic-proof.dormant-relic em {
+  color: rgba(207,231,255,0.82);
+}
+
 body.index-page .stage-relic-proof::before {
   content: "";
   position: absolute;
@@ -4986,4 +5011,87 @@ body.index-page .certificate-frame.not-earned .mini-cert-seal {
   body.index-page .certificate-frame {
     min-height: 132px !important;
   }
+}
+
+/* Test result certificates use the portrait true-alpha certificate face. */
+body.index-page .result-image-frame.test-certificate-frame {
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 993 / 1378;
+  margin: 14px auto 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.28);
+}
+
+body.index-page .result-image-frame.test-certificate-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.24));
+}
+
+body.index-page .result-certificate-overlay {
+  position: absolute;
+  inset: 17% 12% 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(3px, 0.9vw, 8px);
+  text-align: center;
+  color: #24304f;
+  pointer-events: none;
+}
+
+body.index-page .result-cert-kicker,
+body.index-page .result-cert-status,
+body.index-page .result-certificate-overlay em {
+  font-family: "Inter", "Trebuchet MS", Arial, sans-serif;
+  font-size: clamp(.58rem, 1.3vw, .76rem);
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+body.index-page .result-certificate-overlay strong {
+  max-width: 100%;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(.95rem, 2.15vw, 1.38rem);
+  line-height: 1.05;
+  color: #8a5c12;
+  text-wrap: balance;
+}
+
+body.index-page .result-cert-score {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.9rem, 5.4vw, 3rem);
+  font-weight: 900;
+  line-height: .95;
+  color: #174d78;
+  text-shadow: 0 1px 0 rgba(255,255,255,.72);
+}
+
+body.index-page .result-certificate-overlay.passed .result-cert-status {
+  color: #2d7d4b;
+}
+
+body.index-page .result-certificate-overlay.retry .result-cert-status {
+  color: #9b4a32;
+}
+
+body.index-page .result-certificate-overlay.pending {
+  opacity: .74;
+}
+
+body.index-page .result-certificate-overlay em {
+  max-width: 84%;
+  margin-top: clamp(4px, 1.2vw, 10px);
+  letter-spacing: 0;
+  text-transform: none;
+  font-style: italic;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(.64rem, 1.4vw, .82rem);
+  color: rgba(95,56,28,.86);
 }
