@@ -850,6 +850,8 @@ function renderTestResults() {
       </article>
     `;
   }).join("");
+
+  prepareTestCertificateDownloadAssets();
 }
 
 function setTestCanvasFont(ctx, { style = "", weight = "", size = 32, family = TEST_CERT_SERIF } = {}) {
@@ -918,6 +920,21 @@ function loadTestCertificateTemplate() {
   return testCertificateTemplatePromise;
 }
 
+function prepareTestCertificateDownloadAssets() {
+  loadTestCertificateTemplate().catch(() => {});
+  waitForTestCertificateFonts();
+}
+
+function findLoadedTestCertificateTemplate() {
+  const templatePath = TEST_RESULT_CERTIFICATE_TEMPLATE.src.split("?")[0];
+  const previewImage = document.querySelector(`.test-certificate-frame img[src*="${templatePath}"]`);
+  if (previewImage?.complete && previewImage.naturalWidth) return previewImage;
+  if (testCertificateTemplateImage?.complete && testCertificateTemplateImage.naturalWidth) {
+    return testCertificateTemplateImage;
+  }
+  return null;
+}
+
 function createTestCertificateCanvas(test, templateImage = null) {
   const details = testCertificateDetails(test);
   const canvas = document.createElement("canvas");
@@ -974,13 +991,13 @@ function createTestCertificateCanvas(test, templateImage = null) {
 
   ctx.fillStyle = "#51341c";
   setTestCanvasFont(ctx, { weight: "500", size: width * 0.019, family: TEST_CERT_SERIF });
-  drawTestCenteredText(ctx, details.bodyText, width / 2, height * 0.480, width * 0.60, height * 0.024, 3);
+  drawTestCenteredText(ctx, details.bodyText, width / 2, height * 0.490, width * 0.60, height * 0.024, 3);
 
   ctx.fillStyle = "#4f351c";
   setTestCanvasFont(ctx, { weight: "700", size: width * 0.023, family: TEST_CERT_SERIF });
-  ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.584);
+  ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.592);
   setTestCanvasFont(ctx, { weight: "500", size: width * 0.020, family: TEST_CERT_SERIF });
-  ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.609);
+  ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.617);
 
   ctx.fillStyle = "#51341c";
   setTestCanvasFont(ctx, { weight: "700", size: width * 0.019, family: TEST_CERT_SERIF });
@@ -989,15 +1006,81 @@ function createTestCertificateCanvas(test, templateImage = null) {
   ctx.fillText(`Status: ${details.statusText}`, width / 2, height * 0.696);
 
   setTestCanvasFont(ctx, { weight: "500", size: width * 0.019, family: TEST_CERT_SERIF });
-  ctx.fillText(details.dateText, width / 2, height * 0.746);
+  ctx.fillText(details.dateText, width / 2, height * 0.738);
 
   return canvas;
 }
 
-function saveCanvasImage(canvas, filename) {
+function isIOSLikeBrowser() {
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function writeCanvasSaveWindow(win, content) {
+  if (!win) return false;
+  try {
+    win.document.open();
+    win.document.write(content);
+    win.document.close();
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function openPendingCanvasSaveWindow(filename) {
+  const win = window.open("", "_blank");
+  const safeFilename = escapeHTML(filename);
+  if (!win) return null;
+  writeCanvasSaveWindow(win, `<!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>${safeFilename}</title>
+        <style>
+          body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #101820; color: #f8e7ba; font: 600 18px system-ui, sans-serif; }
+        </style>
+      </head>
+      <body>Preparing certificate...</body>
+    </html>`);
+  return win;
+}
+
+function openCanvasImageForSaving(dataUrl, filename, existingWindow = null) {
+  const win = existingWindow || window.open("", "_blank");
+  if (!win) return false;
+
+  const safeFilename = escapeHTML(filename);
+  return writeCanvasSaveWindow(win, `<!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>${safeFilename}</title>
+        <style>
+          body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #101820; }
+          img { width: min(100vw, 1122px); height: auto; display: block; }
+        </style>
+      </head>
+      <body>
+        <img src="${dataUrl}" alt="${safeFilename}">
+      </body>
+    </html>`);
+}
+
+function saveCanvasImage(canvas, filename, options = {}) {
+  const dataUrl = canvas.toDataURL("image/png");
+  const linkSupportsDownload = "download" in document.createElement("a");
+
+  if ((isIOSLikeBrowser() || !linkSupportsDownload) && openCanvasImageForSaving(dataUrl, filename, options.saveWindow)) {
+    return;
+  }
+
   const link = document.createElement("a");
   link.download = filename;
-  link.href = canvas.toDataURL("image/png");
+  link.href = dataUrl;
+  link.rel = "noopener";
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -1015,16 +1098,26 @@ function downloadTestCertificate(testId) {
     return;
   }
 
+  const slug = test.id.replace(/_/g, "-");
+  const loadedTemplate = findLoadedTestCertificateTemplate();
+  const filename = `math-ridge-${slug}-mastery-certificate.png`;
+
+  if (loadedTemplate) {
+    const canvas = createTestCertificateCanvas(test, loadedTemplate);
+    saveCanvasImage(canvas, filename);
+    return;
+  }
+
+  const pendingSaveWindow = isIOSLikeBrowser() ? openPendingCanvasSaveWindow(filename) : null;
+
   Promise.all([loadTestCertificateTemplate(), waitForTestCertificateFonts()])
     .then(([templateImage]) => {
       const canvas = createTestCertificateCanvas(test, templateImage);
-      const slug = test.id.replace(/_/g, "-");
-      saveCanvasImage(canvas, `math-ridge-${slug}-mastery-certificate.png`);
+      saveCanvasImage(canvas, filename, { saveWindow: pendingSaveWindow });
     })
     .catch(() => {
       const canvas = createTestCertificateCanvas(test);
-      const slug = test.id.replace(/_/g, "-");
-      saveCanvasImage(canvas, `math-ridge-${slug}-mastery-certificate.png`);
+      saveCanvasImage(canvas, filename, { saveWindow: pendingSaveWindow });
     });
 }
 
@@ -1592,6 +1685,7 @@ function activateConfirmedIndexTarget(target) {
   const inlineAction = target.getAttribute("onclick") || "";
   const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
   const showCabinPanelMatch = inlineAction.match(/showCabinPanel\('([^']+)'\)/);
+  const downloadTestCertificateMatch = inlineAction.match(/downloadTestCertificate\('([^']+)'\)/);
 
   mobileConfirm()?.play?.("secondTap");
   disarmIndexConfirmTarget(target);
@@ -1608,6 +1702,11 @@ function activateConfirmedIndexTarget(target) {
 
   if (showCabinPanelMatch) {
     showCabinPanel(showCabinPanelMatch[1], { scroll: true });
+    return true;
+  }
+
+  if (downloadTestCertificateMatch) {
+    downloadTestCertificate(downloadTestCertificateMatch[1]);
     return true;
   }
 
@@ -1782,6 +1881,7 @@ window.handleNoteClick = handleNoteClick;
 window.handlePlayClick = handlePlayClick;
 window.handleRootGateClick = handleRootGateClick;
 window.openCertificateFrame = openCertificateFrame;
+window.downloadTestCertificate = downloadTestCertificate;
 window.confirmResetProgress = confirmResetProgress;
 window.resetAllProgress = resetAllProgress;
 window.readTrailStateSnapshot = readTrailStateSnapshot;
