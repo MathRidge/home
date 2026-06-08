@@ -1753,10 +1753,10 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 }
 
 .cert-border.prefilled-certificate-template h3 {
-	top: 36.2%;
+	top: 35.0%;
 	width: 70%;
 	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
-	font-size: 1.1rem;
+	font-size: 1.02rem;
 	line-height: 1.13;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -1766,7 +1766,7 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 }
 
 .cert-border.prefilled-certificate-template .cert-name {
-	top: 43.5%;
+	top: 44.6%;
 	width: 72%;
 	font-family: "Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive;
 	font-size: 3rem;
@@ -1778,21 +1778,21 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 }
 
 .cert-border.prefilled-certificate-template p:not(:first-of-type) {
-	top: 56.1%;
-	width: 68%;
+	top: 57.1%;
+	width: 64%;
 	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
-	font-size: 1.02rem;
-	line-height: 1.22;
+	font-size: 0.72rem;
+	line-height: 1.18;
 	font-style: italic;
 	font-weight: 500;
 	color: #51341c;
 }
 
 .cert-border.prefilled-certificate-template .cert-stage {
-	top: 64.5%;
+	top: 65.2%;
 	width: 72%;
 	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
-	font-size: 0.82rem;
+	font-size: 0.60rem;
 	line-height: 1.18;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -1805,7 +1805,7 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 	top: 68.6%;
 	width: 58%;
 	font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
-	font-size: 0.93rem;
+	font-size: 0.60rem;
 	line-height: 1.18;
 	font-weight: 650;
 	color: #51341c;
@@ -1817,7 +1817,7 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 	}
 
 	.cert-border.prefilled-certificate-template h3 {
-		font-size: 0.92rem;
+		font-size: 0.78rem;
 	}
 
 	.cert-border.prefilled-certificate-template .cert-name {
@@ -1825,15 +1825,15 @@ body[data-final-correct-ready="true"] #nextClimbButton {
 	}
 
 	.cert-border.prefilled-certificate-template p:not(:first-of-type) {
-		font-size: 0.86rem;
+		font-size: 0.54rem;
 	}
 
 	.cert-border.prefilled-certificate-template .cert-stage {
-		font-size: 0.68rem;
+		font-size: 0.46rem;
 	}
 
 	.cert-border.prefilled-certificate-template .cert-date,
 	.cert-border.prefilled-certificate-template .cert-rank {
-		font-size: 0.76rem;
+		font-size: 0.46rem;
 	}
 }
