@@ -459,22 +459,12 @@ function relicVaultStatus(lesson) {
     return lesson.id === "2_1a" ? "Dormant Found" : "Gathered";
   }
   if (isPlayUnlocked(index)) return "Ready To Earn";
-  if (isNoteUnlocked(index)) return "Manual Open";
-  return "Locked";
-}
-
-function renderRelicVaultAction(label, href, unlocked, className = "") {
-  const lockedClass = unlocked ? "" : "locked";
-  const safeHref = unlocked ? href : "#";
-  const aria = unlocked ? label : `${label} locked`;
-  return `<a class="jump-link relic-jump ${className} ${lockedClass}" href="${safeHref}" aria-label="${escapeHTML(aria)}" ${unlocked ? "" : "onclick=\"return false\""}><span>${escapeHTML(label)}</span><strong>${unlocked ? "Open" : "Locked"}</strong></a>`;
+  if (isNoteUnlocked(index)) return "Concept Preview";
+  return "Hidden";
 }
 
 function renderRelicVaultCard(lesson) {
-  const index = lessonIndex(lesson.id);
   const gathered = isRelicGathered(lesson);
-  const noteUnlocked = isNoteUnlocked(index);
-  const playUnlocked = isPlayUnlocked(index) || gathered;
   const relicName = stageRelicName(lesson.id) || lesson.title;
   const relicImage = stageRelicImage(lesson.id);
   const status = relicVaultStatus(lesson);
@@ -484,7 +474,8 @@ function renderRelicVaultCard(lesson) {
   return `
     <article class="relic-card ${gathered ? "gathered" : "locked"} ${dormantClass}">
       <div class="relic-card-art" aria-hidden="true">
-        ${relicImage ? `<img src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : `<span>?</span>`}
+        <span class="relic-display-light"></span>
+        ${relicImage ? `<img class="relic-floating-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : `<span class="relic-missing-mark">?</span>`}
       </div>
       <div class="relic-card-body">
         <span class="relic-stage">${escapeHTML(lesson.section)} ${escapeHTML(lesson.tag)}</span>
@@ -492,10 +483,6 @@ function renderRelicVaultCard(lesson) {
         <strong class="relic-status">${escapeHTML(status)}</strong>
         <p>${escapeHTML(stageRelicConcept(lesson.id) || lesson.description)}</p>
         <em>${escapeHTML(certificateTitle)}</em>
-      </div>
-      <div class="relic-card-actions">
-        ${renderRelicVaultAction("Manual", lesson.noteFile, noteUnlocked, "note-jump")}
-        ${renderRelicVaultAction("Trail", lesson.playFile, playUnlocked, "play-jump")}
       </div>
     </article>
   `;

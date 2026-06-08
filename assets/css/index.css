@@ -5544,25 +5544,6 @@ body.index-page .relic-card em {
   text-transform: uppercase;
 }
 
-body.index-page .relic-card-actions {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 9px;
-}
-
-body.index-page .relic-card-actions .relic-jump {
-  min-height: 42px;
-  padding: 9px 10px !important;
-  border-radius: 13px !important;
-}
-
-body.index-page .relic-card-actions .relic-jump span,
-body.index-page .relic-card-actions .relic-jump strong {
-  font-size: 0.78rem;
-}
-
 @keyframes relicVaultSweep {
   0%, 38% { opacity: 0; transform: translateX(0) rotate(12deg); }
   52% { opacity: .75; }
@@ -5606,10 +5587,6 @@ body.index-page .relic-card-actions .relic-jump strong {
     max-height: 108px;
   }
 
-  body.index-page .relic-card-actions {
-    grid-column: 2;
-  }
-
   body.index-page .relic-card p {
     font-size: 0.86rem;
   }
@@ -5620,7 +5597,136 @@ body.index-page .relic-card-actions .relic-jump strong {
     grid-template-columns: 84px minmax(0, 1fr);
   }
 
-  body.index-page .relic-card-actions {
-    grid-template-columns: 1fr;
+}
+
+/* Relic Vault display upgrade: no navigation buttons, just the earned concept trophy. */
+body.index-page .relic-card {
+  grid-template-rows: auto 1fr !important;
+  min-height: 482px;
+}
+
+body.index-page .relic-card-art {
+  isolation: isolate;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255,224,154,0.28), transparent 26%),
+    linear-gradient(180deg, rgba(7,16,29,0.06), rgba(7,16,29,0.18)),
+    url("../images/index-ui/relic_display_vault.png") center / cover no-repeat !important;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,231,168,0.18);
+}
+
+body.index-page .relic-display-light {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  z-index: 1;
+  width: 54%;
+  height: 45%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255,245,193,0.42), rgba(246,201,108,0.18) 38%, transparent 70%);
+  filter: blur(4px);
+  opacity: .74;
+  animation: relicDisplayPulse 2.9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+body.index-page .relic-floating-img {
+  position: absolute;
+  left: 50%;
+  top: 26%;
+  z-index: 2;
+  width: min(43%, 180px);
+  max-height: 44%;
+  object-fit: contain;
+  transform: translate(-50%, 0);
+  filter:
+    drop-shadow(0 18px 20px rgba(0,0,0,0.45))
+    drop-shadow(0 0 22px rgba(246,201,108,0.28));
+  animation: relicFloatOnDisplay 3.8s ease-in-out infinite;
+}
+
+body.index-page .relic-card.gathered .relic-floating-img {
+  filter:
+    drop-shadow(0 20px 22px rgba(0,0,0,0.42))
+    drop-shadow(0 0 24px rgba(246,201,108,0.34))
+    drop-shadow(0 0 14px rgba(68,158,255,0.22));
+}
+
+body.index-page .relic-card.locked .relic-display-light {
+  opacity: .16;
+  animation: none;
+}
+
+body.index-page .relic-card.locked .relic-floating-img,
+body.index-page .relic-card.locked .relic-card-art img {
+  opacity: .36;
+  filter: grayscale(.74) brightness(.68) drop-shadow(0 12px 16px rgba(0,0,0,0.38));
+  animation: none;
+}
+
+body.index-page .relic-card.dormant.gathered .relic-display-light {
+  background:
+    radial-gradient(circle, rgba(190,207,255,0.32), rgba(105,136,211,0.14) 42%, transparent 72%);
+}
+
+body.index-page .relic-missing-mark {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: rgba(255,247,232,0.62);
+  font-size: 3rem;
+  font-weight: 900;
+}
+
+body.index-page .relic-card-body {
+  align-content: start;
+  padding: 0 2px;
+}
+
+@keyframes relicDisplayPulse {
+  0%, 100% { opacity: .56; transform: translateX(-50%) scale(.96); }
+  50% { opacity: .86; transform: translateX(-50%) scale(1.06); }
+}
+
+@keyframes relicFloatOnDisplay {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -7px); }
+}
+
+@media (max-width: 700px) {
+  body.index-page .relic-card {
+    grid-template-columns: minmax(118px, 36%) minmax(0, 1fr) !important;
+    grid-template-rows: auto !important;
+    min-height: 0;
+  }
+
+  body.index-page .relic-card-art {
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  body.index-page .relic-floating-img {
+    width: 46%;
+    max-height: 43%;
+  }
+}
+
+@media (max-width: 430px) {
+  body.index-page .relic-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.index-page .relic-card-art {
+    width: min(100%, 260px);
+    justify-self: center;
   }
 }
