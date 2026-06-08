@@ -43,7 +43,6 @@
 	let gameScoreAwarded = false;
 	let finalAnswered = false;
 	let achievementShown = false;
-	let confettiTimer = null;
 	let progressThemeTimer = null;
 	let reductionCycle = 0;
 	let completedSteps = new Set();
@@ -836,301 +835,28 @@
 		focusQuestionView();
 	}
 
-	function startConfetti() {
-		const layer = byId("confettiLayer");
-		if (!layer) return;
-		const colors = ["#ffd36e", "#86c7ff", "#ff8fab", "#95d5b2", "#cdb4db"];
-		stopConfetti();
-		confettiTimer = window.setInterval(() => {
-			for (let i = 0; i < 8; i++) {
-				const piece = document.createElement("div");
-				piece.className = "confetti-piece";
-				piece.style.left = `${Math.random() * 100}%`;
-				piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-				piece.style.animationDuration = `${2.5 + Math.random() * 2.5}s`;
-				layer.appendChild(piece);
-				window.setTimeout(() => piece.remove(), 5200);
-			}
-		}, 180);
-		window.setTimeout(stopConfetti, 6500);
+function startConfetti() {
+		return shell()?.startConfetti?.();
 	}
-
-	function stopConfetti() {
-		if (confettiTimer) {
-			window.clearInterval(confettiTimer);
-			confettiTimer = null;
-		}
-		const layer = byId("confettiLayer");
-		if (layer) layer.innerHTML = "";
+function stopConfetti() {
+		return shell()?.stopConfetti?.();
 	}
-
-	function showAchievementPopup() {
-		if (achievementShown) return;
+function showAchievementPopup() {
 		achievementShown = true;
-		stopClimbTimer(true);
-		completePlayProgress();
-		shell()?.showNextClimbButton?.({ scroll: false });
-		startConfetti();
-
-		const nameInput = byId("playerNameInput");
-		if (nameInput) nameInput.value = "";
-
-		const popup = byId("namePopup");
-		if (popup) popup.style.display = "flex";
-		document.body.classList.add("modal-open");
-		window.setTimeout(() => nameInput?.focus(), 200);
+		return shell()?.showAchievementPopup?.();
 	}
-
-	function savePlayCertificateProgress({ studentName, formattedDate, formattedTime, raceTimeText, rankMessage }) {
-		if (typeof shell()?.saveTrailProgress === "function") {
-			return shell().saveTrailProgress({
-				id: PLAY_ID,
-				studentName,
-				displayDate: formattedDate,
-				displayTime: formattedTime,
-				timeDisplay: raceTimeText,
-				rank: latestRaceRank,
-				rankText: rankMessage,
-				score: turtleScore,
-				stage
-			});
-		}
-
-		const certData = {
-			completed: true,
-			id: PLAY_ID,
-			section: PLAY_SECTION,
-			title: PLAY_TITLE,
-			studentName: studentName || "Math Ridge Champion",
-			completedAt: new Date().toISOString(),
-			displayDate: formattedDate,
-			displayTime: formattedTime,
-			raceTime: raceTimeText || formatRaceTime(getRaceMs()),
-			rankText: rankMessage || ""
-		};
-
-		try {
-			localStorage.setItem(PLAY_COMPLETE_KEY, "true");
-			localStorage.setItem(NEXT_NOTE_UNLOCK_KEY, "true");
-			localStorage.setItem(NEXT_STAGE_UNLOCK_KEY, "true");
-			localStorage.setItem(PLAY_CERT_KEY, JSON.stringify(certData));
-		} catch (error) {}
+async function createCertificateFromName() {
+		return shell()?.createCertificateFromName?.();
 	}
-
-	async function createCertificateFromName() {
-		const nameInput = byId("playerNameInput");
-		const finalName = safeText(nameInput?.value || "") || "Math Ridge Champion";
-		const now = new Date();
-		const button = document.querySelector("#namePopup button");
-
-		if (button) {
-			button.disabled = true;
-			button.textContent = "Saving world record...";
-		}
-
-		const formattedDate = now.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric"
-		});
-
-		const formattedTime = now.toLocaleTimeString("en-US", {
-			hour: "numeric",
-			minute: "2-digit",
-			hour12: true
-		});
-
-		let rankMessage = "";
-		let raceTimeText = formatRaceTime(getRaceMs());
-
-		try {
-			const result = await shell()?.submitWorldRecord?.(finalName, getRaceMs());
-			if (result) {
-				latestRaceRank = result.rank || null;
-				latestSavedRaceSeconds = result.record?.timeSeconds || null;
-				rankMessage = result.topThree ? rankText(result.rank) : "";
-				raceTimeText = result.record?.timeDisplay
-					|| (result.record?.timeSeconds ? formatRaceTime(result.record.timeSeconds * 1000) : raceTimeText);
-			}
-		} catch (error) {
-			rankMessage = "World record could not save. Certificate still created.";
-		}
-
-		setText("certName", finalName);
-		setText("certRaceTime", "");
-		setText("certRank", "");
-		setText("certDate", `Completed on ${formattedDate}`);
-
-		savePlayCertificateProgress({
-			studentName: finalName,
-			formattedDate,
-			formattedTime,
-			raceTimeText,
-			rankMessage
-		});
-
-		if (button) {
-			button.disabled = false;
-			button.textContent = "Create My Certificate";
-		}
-
-		const namePopup = byId("namePopup");
-		const certificatePopup = byId("certificatePopup");
-		if (namePopup) namePopup.style.display = "none";
-		if (certificatePopup) certificatePopup.style.display = "flex";
-		document.body.classList.add("modal-open");
+function closeCertificatePopup() {
+		return shell()?.closeCertificatePopup?.();
 	}
-
-	function closeCertificatePopup() {
-		const popup = byId("certificatePopup");
-		if (popup) popup.style.display = "none";
-		document.body.classList.remove("modal-open");
-		stopConfetti();
-
-		const params = new URLSearchParams(window.location.search);
-		if (params.get("from") === "cabin" && params.get("mode") === "redownload") {
-			try {
-				sessionStorage.setItem("mathRidge_open_section", "cabin");
-			} catch (error) {}
-			window.location.href = "index.html";
-		}
+function saveCertificateImage() {
+		return shell()?.saveCertificateImage?.();
 	}
-
-	function drawParchmentTexture(ctx, width, height) {
-		ctx.save();
-		ctx.globalAlpha = 0.08;
-		for (let i = 0; i < 1400; i++) {
-			const x = Math.random() * width;
-			const y = Math.random() * height;
-			const radius = Math.random() * 2.2 + 0.4;
-			ctx.fillStyle = Math.random() > 0.5 ? "#9b6b2f" : "#fff7d8";
-			ctx.beginPath();
-			ctx.arc(x, y, radius, 0, Math.PI * 2);
-			ctx.fill();
-		}
-		ctx.globalAlpha = 0.12;
-		for (let y = 120; y < height - 120; y += 34) {
-			ctx.strokeStyle = "#c89d54";
-			ctx.lineWidth = 1;
-			ctx.beginPath();
-			ctx.moveTo(120, y + Math.sin(y) * 3);
-			ctx.bezierCurveTo(width * 0.33, y - 5, width * 0.66, y + 5, width - 120, y - 2);
-			ctx.stroke();
-		}
-		ctx.restore();
+function openSavedCertificateFromCabin() {
+		return shell()?.openSavedCertificateFromCabin?.();
 	}
-
-	function saveCertificateImage() {
-		let certData = {};
-		try {
-			certData = JSON.parse(localStorage.getItem(PLAY_CERT_KEY) || "{}");
-		} catch (error) {}
-
-		const name = byId("certName")?.textContent || certData.studentName || "Math Ridge Champion";
-		const completedDate = byId("certDate")?.textContent || `Completed on ${certData.displayDate || ""}`;
-
-		if (shell()?.downloadOfficialCertificate) {
-			shell().downloadOfficialCertificate({
-				studentName: name,
-				certificateTitle: PLAY_TITLE,
-				bodyText: "for demonstrating understanding of equivalent fractions and careful fraction reduction.",
-				dateText: completedDate,
-				signature: CERT_SIGNATURE,
-				filename: "math-ridge-fraction-equivalence-reduction-certificate.png"
-			});
-			return;
-		}
-
-		const canvas = document.createElement("canvas");
-		canvas.width = 1400;
-		canvas.height = 1050;
-		const ctx = canvas.getContext("2d");
-
-		const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-		gradient.addColorStop(0, "#fffaf0");
-		gradient.addColorStop(0.5, "#fff0c8");
-		gradient.addColorStop(1, "#f7df9e");
-		ctx.fillStyle = gradient;
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		drawParchmentTexture(ctx, canvas.width, canvas.height);
-
-		ctx.strokeStyle = "#7a4b00";
-		ctx.lineWidth = 16;
-		ctx.strokeRect(42, 42, canvas.width - 84, canvas.height - 84);
-		ctx.strokeStyle = "#d4a73c";
-		ctx.lineWidth = 8;
-		ctx.strokeRect(70, 70, canvas.width - 140, canvas.height - 140);
-		ctx.strokeStyle = "rgba(122, 75, 0, 0.55)";
-		ctx.lineWidth = 3;
-		ctx.strokeRect(96, 96, canvas.width - 192, canvas.height - 192);
-
-		ctx.textAlign = "center";
-		ctx.fillStyle = "#7a4b00";
-		ctx.font = "bold 72px Georgia";
-		ctx.fillText("Math Ridge", 700, 170);
-
-		ctx.fillStyle = "#24304f";
-		ctx.font = "bold 56px Georgia";
-		ctx.fillText("Certificate of Achievement", 700, 275);
-
-		ctx.fillStyle = "#b87900";
-		ctx.font = "bold 46px Georgia";
-		ctx.fillText("Fraction Equivalence and Reduction", 700, 350);
-
-		ctx.fillStyle = "#24304f";
-		ctx.font = "30px Georgia";
-		ctx.fillText("Presented to", 700, 430);
-
-		ctx.fillStyle = "#0f5a9a";
-		ctx.font = "bold 62px Georgia";
-		ctx.fillText(name, 700, 510);
-
-		ctx.strokeStyle = "#d4a73c";
-		ctx.lineWidth = 4;
-		ctx.beginPath();
-		ctx.moveTo(390, 535);
-		ctx.lineTo(1010, 535);
-		ctx.stroke();
-
-		ctx.fillStyle = "#24304f";
-		ctx.font = "30px Georgia";
-		ctx.fillText("for demonstrating understanding of equivalent fractions", 700, 610);
-		ctx.fillText("and careful fraction reduction.", 700, 650);
-
-		ctx.fillStyle = "#24304f";
-		ctx.font = "28px Georgia";
-		ctx.fillText(completedDate, 700, 735);
-
-		ctx.fillStyle = "#7a4b00";
-		ctx.font = "italic 30px Georgia";
-		ctx.fillText(CERT_SIGNATURE, 700, 890);
-
-		const link = document.createElement("a");
-		link.download = "math-ridge-play-1-5-certificate.webp";
-		link.href = canvas.toDataURL("image/webp", 0.92);
-		link.click();
-	}
-
-	function openSavedCertificateFromCabin() {
-		const params = new URLSearchParams(window.location.search);
-		if (params.get("certificate") !== PLAY_ID || params.get("mode") !== "redownload") return;
-
-		let certData = {};
-		try {
-			certData = JSON.parse(localStorage.getItem(PLAY_CERT_KEY) || "{}");
-		} catch (error) {}
-
-		if (!certData.completed) return;
-
-		setText("certName", certData.studentName || "Math Ridge Champion");
-		setText("certRaceTime", "");
-		setText("certRank", "");
-		setText("certDate", `Completed on ${certData.displayDate || ""}`);
-		const popup = byId("certificatePopup");
-		if (popup) popup.style.display = "flex";
-		document.body.classList.add("modal-open");
-	}
-
 	function attachEvents() {
 		document.addEventListener("keydown", event => {
 			if (event.key === "Enter") {
@@ -1173,9 +899,5 @@
 	window.checkBottomRewrite = checkBottomRewrite;
 	window.checkShrink = checkShrink;
 	window.nextClimb = nextClimb;
-	window.createCertificateFromName = createCertificateFromName;
-	window.closeCertificatePopup = closeCertificatePopup;
-	window.saveCertificateImage = saveCertificateImage;
-
 	initPlay5();
 })();

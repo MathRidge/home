@@ -312,77 +312,8 @@
     } catch (error) {}
     shell().stopClimbTimer?.(true);
     shell().hideNextClimbButton?.({ force: true });
-    showAchievementPopup();
+    shell().showAchievementPopup?.();
   }
-
-  window.showAchievementPopup = function showAchievementPopup() {
-    const popup = byId("namePopup");
-    if (popup) popup.style.display = "flex";
-  };
-
-  window.createCertificateFromName = function createCertificateFromName() {
-    const name = byId("playerNameInput")?.value.trim() || "Math Ridge Champion";
-    const date = new Date();
-    const raceTime = shell().formatRaceTime?.(shell().getTotalRaceMs?.() || 0) || "";
-    try {
-      localStorage.setItem("mathRidge_cert_2_1a", JSON.stringify({
-        completed: true,
-        completedAt: date.toISOString(),
-        displayDate: date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
-        studentName: name,
-        certificateTitle: "Split Shelf Division",
-        stage: "2-1a",
-        score,
-        raceTime,
-        timeDisplay: raceTime
-      }));
-      localStorage.setItem("mathRidge_playComplete_2_1a", "true");
-      localStorage.setItem(NEXT_NOTE_UNLOCK_KEY, "true");
-      localStorage.setItem(NEXT_STAGE_UNLOCK_KEY, "true");
-    } catch (error) {}
-
-    text("certName", name);
-    text("certDate", date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }));
-    const race = byId("certRaceTime");
-    if (race && raceTime) {
-      race.hidden = false;
-      race.textContent = `Completed time: ${raceTime}`;
-    }
-    byId("namePopup").style.display = "none";
-    byId("certificatePopup").style.display = "flex";
-    shell().playCertificateSfx?.();
-  };
-
-  window.closeCertificatePopup = function closeCertificatePopup() {
-    const popup = byId("certificatePopup");
-    if (popup) popup.style.display = "none";
-  };
-
-  window.saveCertificateImage = function saveCertificateImage() {
-    const name = byId("certName")?.textContent || "Math Ridge Champion";
-    shell().downloadOfficialCertificate?.({
-      studentName: name,
-      certificateTitle: "Split Shelf Division",
-      bodyText: "for demonstrating division through friendly chunks, leftover shelves, and distributed group counts.",
-      dateText: byId("certDate")?.textContent || "",
-      fileName: "math-ridge-split-shelf-division-certificate.png"
-    });
-  };
-
-  window.showLadderPopup = function showLadderPopup() {
-    const popup = byId("ladderPopup");
-    if (popup) popup.style.display = "flex";
-    window.loadLadderRecords?.(false);
-  };
-
-  window.closeLadderPopup = function closeLadderPopup() {
-    const popup = byId("ladderPopup");
-    if (popup) popup.style.display = "none";
-  };
-
-  window.loadLadderRecords = function loadLadderRecords() {
-    shell().loadLadderRecords?.(false);
-  };
 
   document.addEventListener("DOMContentLoaded", () => {
     try {

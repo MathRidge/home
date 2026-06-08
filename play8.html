@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-stage-cert-popup" />
+  <link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-global-play-shell" />
   <link rel="stylesheet" href="assets/css/play8.css" />
   <script>
     window.MathRidgePlayConfig = {
@@ -21,64 +21,7 @@
 </head>
 
 <body class="play-page play-8" data-play-id="2_4">
-  <div class="confetti-layer" id="confettiLayer"></div>
-
-  <div class="achievement-popup" id="namePopup">
-    <div class="name-card">
-      <h2>🎉 Lesson Complete!</h2>
-      <p>You reached Score 10 in Exponent Shelf Packing.</p>
-      <p class="proof-note">Save your certificate as proof of completing this lesson.</p>
-      <label for="playerNameInput">Name on Certificate</label>
-      <input id="playerNameInput" type="text" placeholder="Math Ridge Champion">
-      <button class="primary-action" onclick="createCertificateFromName()">Create My Certificate</button>
-    </div>
-  </div>
-
-  <div class="achievement-popup" id="certificatePopup">
-    <div class="certificate-card" id="certificateCard">
-      <div class="cert-school">Math Ridge</div>
-      <div class="cert-border">
-        <div class="cert-watermark">MATH RIDGE</div>
-        <div class="cert-leaves">❦ ❦ ❦</div>
-        <h2>Certificate of Achievement</h2>
-        <h3>Exponential Pattern Recognition</h3>
-        <p>Presented to</p>
-        <div class="cert-name" id="certName">Math Ridge Champion</div>
-        <p>for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.</p>
-        <div class="cert-stage" id="certStage"></div>
-        <div class="cert-date cert-game-stat" id="certRaceTime" hidden></div>
-        <div class="cert-rank cert-game-stat" id="certRank" hidden></div>
-        <div class="cert-date" id="certDate"></div>
-        <div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
-      </div>
-
-      <div class="unlock-note">Chapter 2 relic set complete.
-        <span class="relic-clarity-note">Test 2 difference: the Shelf Scale, Primewood Seed, Fraction Loom, and Power Tally go quiet. The trial asks you to prove you can see shelves, prime pieces, reductions, and exponents on your own.</span>
-      </div>
-      <div class="trail-complete-actions">
-        <button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
-        <a class="trail-button primary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
-        <button class="secondary-action" onclick="closeCertificatePopup()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="achievement-popup" id="ladderPopup">
-    <div class="ladder-card">
-      <h2>🐢 Trail Ladder</h2>
-      <p class="proof-note">Your current climb record and the Trail 2-4 world time ladder.</p>
-      <div class="ladder-run-box" id="ladderRunBox"></div>
-      <h3>🌎 World Time Ladder</h3>
-      <div id="ladderRecordList" class="record-list empty">Loading world records...</div>
-      <div class="ladder-actions">
-        <button class="secondary-action" onclick="loadLadderRecords(false)">Refresh Top 3</button>
-        <button class="secondary-action" onclick="loadLadderRecords(true)">View All Records</button>
-        <button class="secondary-action" onclick="closeLadderPopup()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="game">
+	<div class="game">
     <div class="challenge-board" id="challengeBoard">
       <h2>🐢 Turtle Climb</h2>
       <div class="stage-badge" id="stageText">Stage: 1</div>
@@ -195,20 +138,11 @@
       <div class="feedback" id="feedback"></div>
     </div>
 
-    <div class="bottom-controls controls" id="bottomControls">
-      <a class="trail-button note-return secondary-action" href="note8.html">← Back to 2-4 Note</a>
-      <div class="center-controls">
-        <button id="nextClimbButton" class="primary-action locked-button hidden" onclick="nextClimb()" disabled>Next Climb</button>
-        <button class="secondary-action" onclick="showLadderPopup()">View Current Ladder</button>
-      </div>
-      <a class="trail-button trail-return secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
-    </div>
-
-    <div id="recordList" class="record-list empty hidden">Loading world records...</div>
+		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
     <div class="game-footer">Math Ridge | Trail 2-4 Exponent Shelf Packing</div>
   </div>
 
-  <script src="assets/js/mathridge-play.js?v=20260608-stage-cert-popup" defer></script>
+  <script src="assets/js/mathridge-play.js?v=20260608-global-play-shell" defer></script>
   <script src="assets/js/play8.js?v=20260608-stage-cert-cabin" defer></script>
 </body>
 </html>

@@ -4,72 +4,11 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Math Ridge | Trail 1-1 Term Stone Trial</title>
-<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-stage-cert-popup" />
+<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-global-play-shell" />
 	<link rel="stylesheet" href="assets/css/play1.css?v=20260605-size-compare" />
 </head>
 
 <body class="play-page play-1">
-	<div class="confetti-layer" id="confettiLayer"></div>
-
-	<div class="achievement-popup" id="namePopup">
-		<div class="name-card">
-			<h2>🎉 Term Stone Trial Complete!</h2>
-			<p>You reached Score 10 and proved the Bigger Sign and Operation Rule.</p>
-			<p class="proof-note">Type the student's full name once. This name will be saved on this device for future certificates.</p>
-
-			<label for="playerNameInput">Full Name for Certificate</label>
-			<input id="playerNameInput" type="text" autocomplete="name" placeholder="Student Full Name" />
-
-			<button id="createCertificateButton" class="primary-action" onclick="createCertificateFromName()">Create My Certificate</button>
-			<p class="proof-note save-status" id="worldRecordSaveStatus" aria-live="polite"></p>
-		</div>
-	</div>
-
-	<div class="achievement-popup" id="certificatePopup">
-		<div class="certificate-card" id="certificateCard">
-			<div class="cert-school">Math Ridge</div>
-			<div class="cert-border prefilled-certificate-template">
-				<div class="cert-watermark" aria-hidden="true">Math Ridge</div>
-				<div class="cert-leaves">❦ ❦ ❦</div>
-				<h2>Certificate of Achievement</h2>
-				<h3>Signed Term Structure</h3>
-				<p>Presented to</p>
-				<div class="cert-name" id="certName">Math Ridge Champion</div>
-				<p>for demonstrating understanding of signed terms, sign direction, and combining positive and negative values.</p>
-				<div class="cert-date" id="certStage"></div>
-				<div class="cert-date cert-game-stat" id="certRaceTime" hidden></div>
-				<div class="cert-rank cert-game-stat" id="certRank" hidden></div>
-				<div class="cert-date" id="certDate"></div>
-				<div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
-			</div>
-
-			<div class="unlock-note">The Term Stone is obtained. 1-2 is unlocked!
-				<span class="relic-clarity-note">Next stage difference: the Term Stone will handle the familiar bigger-first box structure, so your new job is sorting positive and negative teams and comparing their totals.</span>
-			</div>
-			<div class="trail-complete-actions">
-				<button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
-				<a class="trail-button primary-action continue-next-note" href="note2.html">Continue to 1-2 Manual</a>
-				<a class="trail-button secondary-action cert-return-trail" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
-				<button class="secondary-action cert-close-button" onclick="closeCertificatePopup()">Close</button>
-			</div>
-		</div>
-	</div>
-
-	<div class="achievement-popup" id="ladderPopup">
-		<div class="ladder-card">
-			<h2>🐢 Trail Ladder</h2>
-			<p class="proof-note">Your current climb record and the Trail 1-1 world time ladder.</p>
-			<div class="ladder-run-box" id="ladderRunBox"></div>
-			<h3>🌎 World Time Ladder</h3>
-			<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
-			<div class="ladder-actions">
-				<button class="secondary-action" onclick="loadLadderRecords(false)">Refresh Top 3</button>
-				<button class="secondary-action" onclick="loadLadderRecords(true)">View All Records</button>
-				<button class="secondary-action" onclick="closeLadderPopup()">Close</button>
-			</div>
-		</div>
-	</div>
-
 	<div class="game">
 		<div class="challenge-board">
 			<h2>🐢 Progress Bar</h2>
@@ -194,20 +133,11 @@
 			</div>
 		</div>
 
-		<div class="bottom-controls controls" id="bottomControls">
-			<a class="trail-button note-return secondary-action" href="note1.html">← Back to Term Manual</a>
-			<div class="center-controls">
-				<button id="nextClimbButton" class="primary-action locked-button hidden" onclick="nextClimb()">Next Climb</button>
-				<button class="secondary-action" onclick="showLadderPopup()">View Current Ladder</button>
-			</div>
-			<a class="trail-button trail-return secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
-		</div>
-
 		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
 		<div class="game-footer">Math Ridge | Trail 1-1 Term Stone Trial</div>
 	</div>
 
-<script src="assets/js/mathridge-play.js?v=20260608-stage-cert-popup"></script>
+<script src="assets/js/mathridge-play.js?v=20260608-global-play-shell"></script>
 	<script src="assets/js/play1.js?v=20260606-wrong-sound"></script>
 </body>
 </html>

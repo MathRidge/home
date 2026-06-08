@@ -1,6 +1,6 @@
 /* Math Ridge Global Play Shell
    Shared systems only: timer, top shelf, progress theme, next-climb gate,
-   world ladder, scrolling, and trail return memory.
+   certificate shell, world ladder, scrolling, and trail return memory.
    Local play files own question generation, scoring rules, and game-specific UI. */
 (function () {
 	"use strict";
@@ -58,6 +58,122 @@
 		"2_4": { section: "2-4", title: "Exponential Count", certificateTitle: "Exponential Pattern Recognition", playFile: "play8.html", nextId: "" }
 	};
 
+	const manualMap = {
+		"1_1": { href: "note1.html", label: "Back to Term Manual" },
+		"1_2": { href: "note2.html", label: "Back to 1-2 Note" },
+		"1_3": { href: "note3.html", label: "Back to 1-3 Note" },
+		"1_4": { href: "note4.html", label: "Back to 1-4 Note" },
+		"2_1a": { href: "note2-1a.html", label: "Back to 2-1a Manual" },
+		"2_1": { href: "note5.html", label: "Back to 2-1b Note" },
+		"2_2": { href: "note6.html", label: "Back to 2-2 Note" },
+		"2_3": { href: "note7.html", label: "Back to 2-3 Note" },
+		"2_4": { href: "note8.html", label: "Back to 2-4 Note" }
+	};
+
+	const certificateMap = {
+		"1_1": {
+			completeTitle: "Term Stone Trial Complete!",
+			completeText: "You reached Score 10 and proved the Bigger Sign and Operation Rule.",
+			certificateTitle: "Signed Term Structure",
+			bodyText: "for demonstrating understanding of signed terms, sign direction, and combining positive and negative values.",
+			unlockTitle: "The Term Stone is obtained. 1-2 is unlocked!",
+			nextDifference: "Next stage difference: the Term Stone will handle the familiar bigger-first box structure, so your new job is sorting positive and negative teams and comparing their totals.",
+			continueHref: "note2.html",
+			continueLabel: "Continue to 1-2 Manual",
+			filename: "math-ridge-signed-term-structure-certificate.png"
+		},
+		"1_2": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Positive Negative Showdown.",
+			certificateTitle: "Positive and Negative Term Balance",
+			bodyText: "for demonstrating understanding of grouping positive and negative terms by sign.",
+			unlockTitle: "1-3 is unlocked!",
+			nextDifference: "Next stage difference: the Sign Compass helps carry the larger team's direction, while the Term Stone keeps the ring structure familiar. Your new job is fixing stacked signs before combining teams.",
+			continueHref: "note3.html",
+			continueLabel: "Continue to 1-3 Note",
+			filename: "math-ridge-positive-negative-term-balance-certificate.png"
+		},
+		"1_3": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Sign Fixer Challenge.",
+			certificateTitle: "Sign Simplification Fluency",
+			bodyText: "for demonstrating fluency with stacked signs and parity-based sign simplification.",
+			unlockTitle: "1-4 is unlocked!",
+			nextDifference: "Next stage difference: the Parity Prism has trained stacked-sign vision. In 1-4, the old sign work stays familiar while you focus on repeated groups and chunking.",
+			continueHref: "note4.html",
+			continueLabel: "Continue to 1-4 Note",
+			filename: "math-ridge-sign-simplification-fluency-certificate.png"
+		},
+		"1_4": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Chunking Repeated Values.",
+			certificateTitle: "Distribution and Grouping Foundations",
+			bodyText: "for demonstrating understanding of repeated addition, grouping, and early distributive reasoning.",
+			unlockTitle: "The Factor Forge is obtained. The Root Gate Exam is unlocked!",
+			nextDifference: "Test 1 difference: inside the Root Gate, the relics go quiet. No automatic box, compass, prism, or forge. You prove the pattern is now in your own thinking.",
+			continueHref: "story-root-gate.html",
+			continueLabel: "Begin Root Gate Finale",
+			filename: "math-ridge-distribution-grouping-foundations-certificate.png"
+		},
+		"2_1a": {
+			completeTitle: "Split Shelf Complete!",
+			completeText: "You reached Score 10 in Split Shelf Division.",
+			proofNote: "Save this certificate as proof that big division can be handled with friendly chunks.",
+			certificateTitle: "Split Shelf Division",
+			bodyText: "for demonstrating division through friendly chunks, leftover shelves, and distributed group counts.",
+			unlockTitle: "2-1b is unlocked!",
+			nextDifference: "Next stage difference: use Split Shelf thinking to reduce fractions by the same group on top and bottom.",
+			continueHref: "note5.html",
+			continueLabel: "Continue to 2-1b Note",
+			filename: "math-ridge-split-shelf-division-certificate.png"
+		},
+		"2_1": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Fraction Reduction.",
+			certificateTitle: "Fraction Equivalence and Reduction",
+			bodyText: "for demonstrating understanding of equivalent fractions and careful fraction reduction.",
+			unlockTitle: "2-2 is unlocked!",
+			nextDifference: "Next stage difference: the Shelf Scale keeps top and bottom shelves organized. Your new job is seeing each number as prime pieces.",
+			continueHref: "note6.html",
+			continueLabel: "Continue to 2-2 Note",
+			filename: "math-ridge-fraction-equivalence-reduction-certificate.png"
+		},
+		"2_2": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Prime Factor Trees.",
+			certificateTitle: "Prime Factorization Fluency",
+			bodyText: "for demonstrating prime factorization fluency and fraction reduction through matching factors.",
+			unlockTitle: "2-3 is unlocked!",
+			nextDifference: "Next stage difference: the Primewood Seed helps reveal prime pieces. Your new job is using those pieces across multiplied or flipped fractions.",
+			continueHref: "note7.html",
+			continueLabel: "Continue to 2-3 Note",
+			filename: "math-ridge-prime-factorization-fluency-certificate.png"
+		},
+		"2_3": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Fraction Multiplication and Division with Factor Trees.",
+			certificateTitle: "Fraction Product Structure",
+			bodyText: "for demonstrating fraction product structure, reciprocal division, and careful reduction.",
+			unlockTitle: "2-4 is unlocked!",
+			nextDifference: "Next stage difference: the Fraction Loom has trained matching across shelves. Your new job is counting repeated prime pieces and packing them into exponents.",
+			continueHref: "note8.html",
+			continueLabel: "Continue to Next Note",
+			filename: "math-ridge-fraction-product-structure-certificate.png"
+		},
+		"2_4": {
+			completeTitle: "Lesson Complete!",
+			completeText: "You reached Score 10 in Exponent Shelf Packing.",
+			proofNote: "Save your certificate as proof of completing this lesson.",
+			certificateTitle: "Exponential Pattern Recognition",
+			bodyText: "for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.",
+			unlockTitle: "Chapter 2 relic set complete.",
+			nextDifference: "Test 2 difference: the Shelf Scale, Primewood Seed, Fraction Loom, and Power Tally go quiet. The trial asks you to prove you can see shelves, prime pieces, reductions, and exponents on your own.",
+			continueHref: "",
+			continueLabel: "",
+			filename: "math-ridge-exponential-pattern-recognition-certificate.png"
+		}
+	};
+
 	let totalRaceMs = 0;
 	let climbStartMs = null;
 	let timerInterval = null;
@@ -70,6 +186,7 @@
 	let armedTrialControl = null;
 	let armedTrialControlTimer = null;
 	let pendingExitTarget = null;
+	let confettiTimer = null;
 	const sfxAudioCache = new Map();
 	const decodedSfxCache = new Map();
 	const sfxBuffers = new Map();
@@ -104,6 +221,16 @@
 	function ambienceUrl(cue) {
 		if (cue?.path) return cue.path;
 		return soundUrl(cue?.file || "");
+	}
+
+	function escapeHTML(value) {
+		return String(value ?? "").replace(/[&<>"']/g, char => ({
+			"&": "&amp;",
+			"<": "&lt;",
+			">": "&gt;",
+			'"': "&quot;",
+			"'": "&#39;"
+		})[char]);
 	}
 
 	function readTrialMusicEnabled() {
@@ -663,6 +790,514 @@
 		playSfx("certificatePaper");
 		playSfx("certificateStamp", { delay: 620 });
 		playSfx("certificateFanfare", { delay: 1120 });
+	}
+
+	function slugifyCertificateName(value) {
+		return String(value || "math-ridge-certificate")
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-+|-+$/g, "")
+			|| "math-ridge-certificate";
+	}
+
+	function formatCertificateDate(date = new Date()) {
+		try {
+			return date.toLocaleDateString("en-US", {
+				year: "numeric",
+				month: "long",
+				day: "numeric"
+			});
+		} catch (error) {
+			return date.toDateString();
+		}
+	}
+
+	function normalizeCompletedDateText(value) {
+		const text = String(value || "").trim();
+		if (!text) return "";
+		return /^completed/i.test(text) ? text : `Completed on ${text}`;
+	}
+
+	function getCertificateMeta(id = config.playId) {
+		const progress = getProgressMeta(id);
+		const mapped = certificateMap[id] || {};
+		const override = id === config.playId && config.certificate && typeof config.certificate === "object"
+			? config.certificate
+			: {};
+		const title = override.certificateTitle || mapped.certificateTitle || progress.certificateTitle || progress.title || "Math Ridge Achievement";
+
+		return Object.assign({
+			id,
+			completeTitle: "Lesson Complete!",
+			completeText: `You reached Score 10 in ${progress.title || progress.section || "this trail"}.`,
+			proofNote: "Type the student's full name once. This name will be saved on this device for future certificates.",
+			certificateTitle: title,
+			bodyText: "for demonstrating understanding, persistence, and careful mathematical reasoning.",
+			focusText: `Academic Focus: ${title}`,
+			unlockTitle: progress.nextId ? `${getProgressMeta(progress.nextId).section || "Next stage"} is unlocked!` : "Trail complete.",
+			nextDifference: "",
+			continueHref: progress.nextId ? `${getProgressMeta(progress.nextId).playFile || ""}` : "",
+			continueLabel: progress.nextId ? "Continue" : "",
+			filename: `math-ridge-${slugifyCertificateName(title)}-certificate.png`
+		}, mapped, override, {
+			id,
+			certificateTitle: title,
+			focusText: override.focusText || mapped.focusText || `Academic Focus: ${title}`,
+			filename: override.filename || override.fileName || mapped.filename || `math-ridge-${slugifyCertificateName(title)}-certificate.png`
+		});
+	}
+
+	function ensurePopupElement(id) {
+		let popup = byId(id);
+		if (!popup) {
+			popup = document.createElement("div");
+			popup.id = id;
+			popup.className = "achievement-popup";
+			document.body.appendChild(popup);
+		}
+		popup.classList.add("achievement-popup");
+		return popup;
+	}
+
+	function ensureConfettiLayerDom() {
+		let layer = byId("confettiLayer");
+		if (!layer) {
+			layer = document.createElement("div");
+			layer.id = "confettiLayer";
+			layer.className = "confetti-layer";
+			document.body.prepend(layer);
+		}
+		layer.classList.add("confetti-layer");
+		return layer;
+	}
+
+	function startConfetti(durationMs = 6500) {
+		const layer = ensureConfettiLayerDom();
+		const colors = ["#ffd36e", "#86c7ff", "#ff8fab", "#95d5b2", "#cdb4db"];
+		stopConfetti();
+
+		confettiTimer = window.setInterval(() => {
+			for (let i = 0; i < 8; i++) {
+				const piece = document.createElement("div");
+				piece.className = "confetti-piece";
+				piece.style.left = `${Math.random() * 100}%`;
+				piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+				piece.style.animationDuration = `${2.4 + Math.random() * 1.8}s`;
+				piece.style.transform = `rotate(${Math.random() * 180}deg)`;
+				layer.appendChild(piece);
+				window.setTimeout(() => piece.remove(), 4500);
+			}
+		}, 180);
+
+		if (durationMs > 0) window.setTimeout(stopConfetti, durationMs);
+		return true;
+	}
+
+	function stopConfetti() {
+		if (confettiTimer) {
+			window.clearInterval(confettiTimer);
+			confettiTimer = null;
+		}
+		const layer = byId("confettiLayer");
+		if (layer) layer.innerHTML = "";
+		return true;
+	}
+
+	function ensureLadderShellDom() {
+		const popup = ensurePopupElement("ladderPopup");
+		const stageText = config.stageLabel || getProgressMeta(config.playId).section || "this trail";
+
+		if (popup.dataset.globalLadderShell !== "true") {
+			popup.dataset.globalLadderShell = "true";
+			popup.innerHTML = `
+				<div class="ladder-card">
+					<h2>Trail Ladder</h2>
+					<p class="proof-note">Your current climb record and the Trail ${escapeHTML(stageText)} world time ladder.</p>
+					<div class="ladder-run-box" id="ladderRunBox"></div>
+					<h3>World Time Ladder</h3>
+					<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
+					<div class="ladder-actions">
+						<button class="secondary-action" type="button" onclick="loadLadderRecords(false)">Refresh Top 3</button>
+						<button class="secondary-action" type="button" onclick="loadLadderRecords(true)">View All Records</button>
+						<button class="secondary-action" type="button" onclick="closeLadderPopup()">Close</button>
+					</div>
+				</div>
+			`;
+		}
+
+		return popup;
+	}
+
+	function getManualMeta(id = config.playId) {
+		const mapped = manualMap[id] || {};
+		const progress = getProgressMeta(id);
+		return {
+			href: mapped.href || `note${config.playNumber || ""}.html`,
+			label: mapped.label || `Back to ${progress.section || "Manual"} Manual`
+		};
+	}
+
+	function renderBottomControls() {
+		const manual = getManualMeta(config.playId);
+		return `
+			<a class="trail-button note-return secondary-action" href="${escapeHTML(manual.href)}">${escapeHTML(manual.label)}</a>
+			<div class="center-controls">
+				<button id="nextClimbButton" class="primary-action locked-button hidden" type="button" onclick="nextClimb()" disabled>Next Climb</button>
+				<button class="secondary-action" type="button" onclick="showLadderPopup()">View Current Ladder</button>
+			</div>
+			<a class="trail-button trail-return secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
+		`;
+	}
+
+	function ensureBottomControlsDom() {
+		let controls = byId("bottomControls");
+		if (!controls) {
+			controls = document.createElement("div");
+			controls.id = "bottomControls";
+			controls.className = "bottom-controls controls";
+			const game = document.querySelector(".game") || document.body;
+			const anchor = byId("recordList") || game.querySelector(".game-footer");
+			if (anchor?.parentNode === game) game.insertBefore(controls, anchor);
+			else game.appendChild(controls);
+		}
+
+		if (controls.dataset.globalBottomControls !== "true") {
+			controls.dataset.globalBottomControls = "true";
+			controls.className = "bottom-controls controls";
+			controls.innerHTML = renderBottomControls();
+		}
+
+		return controls;
+	}
+
+	function ensureSharedPlayShellDom() {
+		ensureConfettiLayerDom();
+		ensureCertificateShellDom();
+		ensureLadderShellDom();
+		ensureBottomControlsDom();
+	}
+
+	function renderCertificateActions(meta) {
+		const continueAction = meta.continueHref
+			? `<a class="trail-button primary-action" href="${escapeHTML(meta.continueHref)}">${escapeHTML(meta.continueLabel || "Continue")}</a>`
+			: "";
+		const returnClass = continueAction ? "secondary-action" : "primary-action";
+
+		return `
+			<button class="primary-action" type="button" onclick="saveCertificateImage()">Save Certificate</button>
+			${continueAction}
+			<a class="trail-button ${returnClass}" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
+			<button class="secondary-action cert-close-button" type="button" onclick="closeCertificatePopup()">Close</button>
+		`;
+	}
+
+	function syncCertificateShellText() {
+		const meta = getCertificateMeta(config.playId);
+		const title = byId("namePopupTitle");
+		const completeText = byId("namePopupCompleteText");
+		const proofNote = byId("namePopupProofNote");
+		const certTitle = byId("certTitle");
+		const certDescription = byId("certDescription");
+		const certStage = byId("certStage");
+		const unlockTitle = byId("certUnlockTitle");
+		const nextDifference = byId("certNextDifference");
+		const actions = byId("certificateActions");
+
+		if (title) title.textContent = meta.completeTitle;
+		if (completeText) completeText.textContent = meta.completeText;
+		if (proofNote) proofNote.textContent = meta.proofNote;
+		if (certTitle) certTitle.textContent = meta.certificateTitle;
+		if (certDescription) certDescription.textContent = meta.bodyText;
+		if (certStage && !certStage.textContent.trim()) certStage.textContent = meta.focusText;
+		if (unlockTitle) unlockTitle.textContent = meta.unlockTitle;
+		if (nextDifference) nextDifference.textContent = meta.nextDifference;
+		if (actions) actions.innerHTML = renderCertificateActions(meta);
+	}
+
+	function ensureCertificateShellDom() {
+		const meta = getCertificateMeta(config.playId);
+		const namePopup = ensurePopupElement("namePopup");
+		const certificatePopup = ensurePopupElement("certificatePopup");
+
+		if (namePopup.dataset.globalCertificateShell !== "true") {
+			namePopup.dataset.globalCertificateShell = "true";
+			namePopup.innerHTML = `
+				<div class="name-card">
+					<h2 id="namePopupTitle">${escapeHTML(meta.completeTitle)}</h2>
+					<p id="namePopupCompleteText">${escapeHTML(meta.completeText)}</p>
+					<p class="proof-note" id="namePopupProofNote">${escapeHTML(meta.proofNote)}</p>
+					<label for="playerNameInput">Name on Certificate</label>
+					<input id="playerNameInput" type="text" autocomplete="name" placeholder="Math Ridge Champion" />
+					<button id="createCertificateButton" class="primary-action" type="button" onclick="createCertificateFromName()">Create My Certificate</button>
+					<p class="proof-note save-status" id="worldRecordSaveStatus" aria-live="polite"></p>
+				</div>
+			`;
+		}
+
+		if (certificatePopup.dataset.globalCertificateShell !== "true") {
+			certificatePopup.dataset.globalCertificateShell = "true";
+			certificatePopup.innerHTML = `
+				<div class="certificate-card" id="certificateCard">
+					<div class="cert-school">Math Ridge</div>
+					<div class="cert-border prefilled-certificate-template">
+						<div class="cert-watermark" aria-hidden="true">MATH RIDGE</div>
+						<div class="cert-leaves" aria-hidden="true">&#10086; &#10086; &#10086;</div>
+						<h2>Certificate of Achievement</h2>
+						<h3 id="certTitle">${escapeHTML(meta.certificateTitle)}</h3>
+						<p>Presented to</p>
+						<div class="cert-name" id="certName">Math Ridge Champion</div>
+						<p id="certDescription">${escapeHTML(meta.bodyText)}</p>
+						<div class="cert-stage" id="certStage">${escapeHTML(meta.focusText)}</div>
+						<div class="cert-date cert-game-stat" id="certRaceTime" hidden></div>
+						<div class="cert-rank cert-game-stat" id="certRank" hidden></div>
+						<div class="cert-date" id="certDate"></div>
+						<div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
+					</div>
+					<div class="unlock-note">
+						<span id="certUnlockTitle">${escapeHTML(meta.unlockTitle)}</span>
+						<span class="relic-clarity-note" id="certNextDifference">${escapeHTML(meta.nextDifference)}</span>
+					</div>
+					<div class="trail-complete-actions" id="certificateActions">
+						${renderCertificateActions(meta)}
+					</div>
+				</div>
+			`;
+		}
+
+		syncCertificateShellText();
+		prepareOfficialCertificatePopup();
+		return { namePopup, certificatePopup };
+	}
+
+	function setCertificateStatus(message) {
+		const status = byId("worldRecordSaveStatus");
+		if (status) status.textContent = message || "";
+	}
+
+	function hideCertificateNamePopup() {
+		const popup = byId("namePopup");
+		if (popup) popup.style.display = "none";
+	}
+
+	function clearConfettiLayer(durationMs = 0) {
+		const clear = () => {
+			const layer = byId("confettiLayer");
+			if (layer) layer.innerHTML = "";
+		};
+		if (confettiTimer) {
+			window.clearInterval(confettiTimer);
+			confettiTimer = null;
+		}
+		clear();
+		if (durationMs > 0) {
+			const startedAt = Date.now();
+			const timer = window.setInterval(() => {
+				clear();
+				if (Date.now() - startedAt >= durationMs) window.clearInterval(timer);
+			}, 240);
+		}
+	}
+
+	function fillCertificateDisplay(certData = {}) {
+		ensureCertificateShellDom();
+		const meta = getCertificateMeta(certData.id || config.playId);
+		const studentName = certData.studentName || getPreferredCertificateName();
+		const displayDate = certData.displayDate || formatCertificateDate(certData.completedAt ? new Date(certData.completedAt) : new Date());
+		const completedText = normalizeCompletedDateText(certData.dateText || certData.completedText || displayDate);
+		const focusText = certData.focusText || meta.focusText;
+		const bodyText = certData.bodyText || meta.bodyText;
+		const title = certData.certificateTitle || meta.certificateTitle;
+
+		const certTitle = byId("certTitle");
+		const certDescription = byId("certDescription");
+		const certName = byId("certName");
+		const certStage = byId("certStage");
+		const certRaceTime = byId("certRaceTime");
+		const certRank = byId("certRank");
+		const certDate = byId("certDate");
+
+		if (certTitle) certTitle.textContent = title;
+		if (certDescription) certDescription.textContent = bodyText;
+		if (certName) certName.textContent = studentName;
+		if (certStage) certStage.textContent = focusText;
+		if (certDate) certDate.textContent = completedText;
+		if (certRaceTime) {
+			certRaceTime.hidden = true;
+			certRaceTime.textContent = "";
+		}
+		if (certRank) {
+			certRank.hidden = true;
+			certRank.textContent = "";
+		}
+	}
+
+	function certificateDownloadOptions(certData = {}) {
+		const meta = getCertificateMeta(certData.id || config.playId);
+		return {
+			studentName: certData.studentName || byId("certName")?.textContent || getPreferredCertificateName(),
+			certificateTitle: certData.certificateTitle || byId("certTitle")?.textContent || meta.certificateTitle,
+			bodyText: certData.bodyText || byId("certDescription")?.textContent || meta.bodyText,
+			focusText: certData.focusText || byId("certStage")?.textContent || meta.focusText,
+			dateText: certData.dateText || certData.completedText || byId("certDate")?.textContent || normalizeCompletedDateText(certData.displayDate || ""),
+			filename: certData.filename || certData.fileName || meta.filename
+		};
+	}
+
+	function readCurrentCertificateData() {
+		const saved = readTrailCertificate(config.playId);
+		if (saved && typeof saved === "object") return saved;
+		const meta = getCertificateMeta(config.playId);
+		return {
+			id: config.playId,
+			studentName: byId("certName")?.textContent || getPreferredCertificateName(),
+			certificateTitle: byId("certTitle")?.textContent || meta.certificateTitle,
+			bodyText: byId("certDescription")?.textContent || meta.bodyText,
+			focusText: byId("certStage")?.textContent || meta.focusText,
+			displayDate: byId("certDate")?.textContent?.replace(/^Completed on\s+/i, "") || formatCertificateDate(),
+			filename: meta.filename
+		};
+	}
+
+	function showAchievementPopup() {
+		const { namePopup, certificatePopup } = ensureCertificateShellDom();
+		if (certificatePopup) certificatePopup.style.display = "none";
+		document.body.classList.add("modal-open");
+		applyPlayerProfileToCertificateInput();
+		setCertificateStatus("");
+		stopClimbTimer(true);
+		hideNextClimbButton({ force: true });
+		startConfetti();
+		namePopup.style.display = "flex";
+		const input = byId("playerNameInput");
+		if (input && !input.readOnly) window.setTimeout(() => input.focus(), 80);
+		return true;
+	}
+
+	async function createCertificateFromName() {
+		ensureCertificateShellDom();
+		const meta = getCertificateMeta(config.playId);
+		const input = byId("playerNameInput");
+		const typedName = cleanCertificateName(input?.value || "");
+		const existingName = readOfficialCertificateName();
+		if (!typedName && !existingName) {
+			setCertificateStatus("Please type the student's full name for the official certificate.");
+			input?.focus();
+			return false;
+		}
+
+		const button = byId("createCertificateButton") || document.querySelector("#namePopup button");
+		if (button) {
+			button.disabled = true;
+			button.textContent = "Creating Certificate...";
+		}
+
+		const finalName = resolveCertificateName(typedName || existingName);
+		const now = new Date();
+		const displayDate = formatCertificateDate(now);
+		const timeMs = getTotalRaceMs();
+		const timeDisplay = formatRaceTime(timeMs);
+		const local = window.MathRidgeLocal || {};
+		const score = typeof local.getScore === "function" ? local.getScore() : undefined;
+		const stage = typeof local.getStage === "function" ? local.getStage() : undefined;
+
+		setCertificateStatus("Saving your official certificate...");
+		await submitWorldRecord(finalName, timeMs).catch(() => null);
+
+		const certData = saveTrailProgress({
+			id: config.playId,
+			studentName: finalName,
+			certificateTitle: meta.certificateTitle,
+			title: meta.certificateTitle,
+			bodyText: meta.bodyText,
+			focusText: meta.focusText,
+			filename: meta.filename,
+			completedAt: now.toISOString(),
+			displayDate,
+			displayTime: timeDisplay,
+			timeDisplay,
+			score,
+			stage
+		});
+
+		fillCertificateDisplay(certData);
+		hideCertificateNamePopup();
+		const certificatePopup = byId("certificatePopup");
+		if (certificatePopup) {
+			certificatePopup.dataset.source = "";
+			certificatePopup.style.display = "flex";
+		}
+		document.body.classList.add("modal-open");
+		playCertificateSfx();
+		setCertificateStatus("");
+
+		if (button) {
+			button.disabled = false;
+			button.textContent = "Create My Certificate";
+		}
+
+		return certData;
+	}
+
+	function closeCertificatePopup() {
+		const popup = byId("certificatePopup");
+		if (!popup) return false;
+
+		if (popup.dataset.source === "cabin") {
+			try {
+				sessionStorage.setItem("mathRidge_open_section", "cabin");
+			} catch (error) {}
+			clearConfettiLayer(1600);
+			popup.classList.add("certificate-returning-to-cabin");
+			const closeButton = popup.querySelector(".cert-close-button");
+			if (closeButton) {
+				closeButton.disabled = true;
+				closeButton.textContent = "Returning to Cabin...";
+			}
+			window.location.replace("index.html?view=cabin#cabin");
+			return true;
+		}
+
+		popup.style.display = "none";
+		popup.classList.remove("cabin-redownload", "certificate-returning-to-cabin");
+		popup.dataset.source = "";
+		document.body.classList.remove("modal-open");
+		stopConfetti();
+		return true;
+	}
+
+	function saveCertificateImage() {
+		ensureCertificateShellDom();
+		return downloadOfficialCertificate(certificateDownloadOptions(readCurrentCertificateData()));
+	}
+
+	function openSavedCertificateFromCabin() {
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("mode") !== "redownload") return false;
+
+		const requestedId = params.get("certificate") || config.playId;
+		if (requestedId !== config.playId) return false;
+
+		const certData = readTrailCertificate(config.playId);
+		if (!certData || !certData.completed) return false;
+
+		fillCertificateDisplay(certData);
+		const popup = byId("certificatePopup");
+		if (!popup) return false;
+		popup.classList.add("cabin-redownload");
+		popup.dataset.source = "cabin";
+		document.body.classList.add("modal-open");
+		popup.style.display = "flex";
+		return true;
+	}
+
+	function publishCertificateGlobals() {
+		window.showAchievementPopup = showAchievementPopup;
+		window.createCertificateFromName = createCertificateFromName;
+		window.closeCertificatePopup = closeCertificatePopup;
+		window.saveCertificateImage = saveCertificateImage;
+		window.openSavedCertificateFromCabin = openSavedCertificateFromCabin;
+		window.startMathRidgeConfetti = startConfetti;
+		window.stopMathRidgeConfetti = stopConfetti;
 	}
 
 	function ensureTopNextClimbButton() {
@@ -1619,7 +2254,10 @@
 			timeDisplay: timeText,
 			raceTime: timeText,
 			rank: data.rank || null,
-			rankText: data.rankText || data.rankMessage || ""
+			rankText: data.rankText || data.rankMessage || "",
+			bodyText: data.bodyText || "",
+			focusText: data.focusText || "",
+			filename: data.filename || data.fileName || ""
 		};
 
 		try {
@@ -2088,6 +2726,8 @@
 		["firstTap", "secondTap", "correct", "wrong", "relic", "certificatePaper", "certificateStamp", "certificateFanfare"].forEach(prepareSfx);
 		loadOfficialCertificateTemplate().catch(() => {});
 		waitForCertificateFonts();
+		ensureSharedPlayShellDom();
+		publishCertificateGlobals();
 		prepareOfficialCertificatePopup();
 		preparePlayAmbience();
 		ensureTrialMusicToggle();
@@ -2098,6 +2738,7 @@
 		setupBottomDrawer();
 		watchStepLocks();
 		watchPlayerProfileNameInput();
+		window.setTimeout(openSavedCertificateFromCabin, 360);
 	});
 
 	document.addEventListener("pointerdown", event => {
@@ -2110,6 +2751,11 @@
 	document.addEventListener("click", handleTrialControlClick, { capture: true });
 	document.addEventListener("pointerdown", handleNextClimbPointerDown, { capture: true, passive: true });
 	document.addEventListener("click", handleNextClimbClick, { capture: true });
+	document.addEventListener("keydown", event => {
+		if (event.key !== "Escape") return;
+		const popup = byId("certificatePopup");
+		if (popup && popup.style.display === "flex") closeCertificatePopup();
+	});
 
 	window.addEventListener("pagehide", stopPlayAmbience);
 
@@ -2157,11 +2803,26 @@
 		setTrialMusicEnabled,
 		toggleTrialMusic,
 		playCertificateSfx,
+		startConfetti,
+		stopConfetti,
+		getCertificateMeta,
+		ensureSharedPlayShellDom,
+		ensureCertificateShellDom,
+		ensureLadderShellDom,
+		ensureBottomControlsDom,
+		fillCertificateDisplay,
+		showAchievementPopup,
+		createCertificateFromName,
+		closeCertificatePopup,
+		saveCertificateImage,
+		openSavedCertificateFromCabin,
 		createOfficialCertificateCanvas,
 		downloadOfficialCertificate
 	};
 
 	window.MathRidgePlay = api;
+	ensureSharedPlayShellDom();
+	publishCertificateGlobals();
 	window.showLadderPopup = showLadderPopup;
 	window.closeLadderPopup = closeLadderPopup;
 	window.loadLadderRecords = loadLadderRecords;

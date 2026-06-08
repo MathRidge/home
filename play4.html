@@ -7,70 +7,11 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-stage-cert-popup" />
+	<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-global-play-shell" />
 	<link rel="stylesheet" href="assets/css/play4.css?v=20260607-check-choice-flow" />
 </head>
 
 <body class="play-page play-4" data-play-id="1_4">
-	<div class="confetti-layer" id="confettiLayer"></div>
-
-	<div class="achievement-popup" id="namePopup">
-		<div class="name-card">
-			<h2>🎉 Lesson Complete!</h2>
-			<p>You reached Score 10 in Chunking Repeated Values.</p>
-			<p class="proof-note">Be sure to save your certificate as proof of completing this lesson.</p>
-
-			<label for="playerNameInput">Name on Certificate</label>
-			<input id="playerNameInput" type="text" placeholder="Math Ridge Champion">
-
-			<button class="primary-action" onclick="createCertificateFromName()">Create My Certificate</button>
-		</div>
-	</div>
-
-	<div class="achievement-popup" id="certificatePopup">
-		<div class="certificate-card" id="certificateCard">
-			<div class="cert-school">Math Ridge</div>
-			<div class="cert-border">
-				<div class="cert-watermark">MATH RIDGE</div>
-				<div class="cert-leaves">❦ ❦ ❦</div>
-				<h2>Certificate of Achievement</h2>
-				<h3>Distribution and Grouping Foundations</h3>
-				<p>Presented to</p>
-				<div class="cert-name" id="certName">Math Ridge Champion</div>
-				<p>for demonstrating understanding of repeated addition, grouping, and early distributive reasoning.</p>
-				<div class="cert-date cert-game-stat" id="certRaceTime" hidden></div>
-				<div class="cert-rank cert-game-stat" id="certRank" hidden></div>
-				<div class="cert-date" id="certDate"></div>
-				<div class="cert-signature">Presented by Math Ridge Creator: Kuan-Yuan Huang</div>
-			</div>
-
-			<div class="unlock-note">The Factor Forge is obtained. The Root Gate Exam is unlocked!
-				<span class="relic-clarity-note">Test 1 difference: inside the Root Gate, the relics go quiet. No automatic box, compass, prism, or forge. You prove the pattern is now in your own thinking.</span>
-			</div>
-			<div class="trail-complete-actions">
-				<button class="primary-action" onclick="saveCertificateImage()">Save Certificate</button>
-				<a class="trail-button primary-action" href="story-root-gate.html">Begin Root Gate Finale</a>
-				<a class="trail-button secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
-				<button class="secondary-action" onclick="closeCertificatePopup()">Close</button>
-			</div>
-		</div>
-	</div>
-
-	<div class="achievement-popup" id="ladderPopup">
-		<div class="ladder-card">
-			<h2>🐢 Trail Ladder</h2>
-			<p class="proof-note">Your current climb record and the Trail 1-4 world time ladder.</p>
-			<div class="ladder-run-box" id="ladderRunBox"></div>
-			<h3>🌎 World Time Ladder</h3>
-			<div id="ladderRecordList" class="record-list empty">Loading world records...</div>
-			<div class="ladder-actions">
-				<button class="secondary-action" onclick="loadLadderRecords(false)">Refresh Top 3</button>
-				<button class="secondary-action" onclick="loadLadderRecords(true)">View All Records</button>
-				<button class="secondary-action" onclick="closeLadderPopup()">Close</button>
-			</div>
-		</div>
-	</div>
-
 	<div class="game">
 		<div class="challenge-board" id="challengeBoard">
 			<h2>🐢 Progress Bar</h2>
@@ -179,15 +120,6 @@
 			<div class="feedback" id="feedback"></div>
 		</div>
 
-		<div class="bottom-controls controls" id="bottomControls">
-			<a class="trail-button note-return secondary-action" href="note4.html">← Back to 1-4 Note</a>
-			<div class="center-controls">
-				<button id="nextClimbButton" class="primary-action locked-button hidden" onclick="nextClimb()" disabled>Next Climb</button>
-				<button class="secondary-action" onclick="showLadderPopup()">View Current Ladder</button>
-			</div>
-			<a class="trail-button trail-return secondary-action" href="index.html?view=quest#quest" onclick="rememberMountainTrailReturn()">Return to Mountain Trail</a>
-		</div>
-
 		<div id="recordList" class="record-list empty hidden">Loading world records...</div>
 		<div class="game-footer">Math Ridge | Trail 1-4 Chunking Repeated Values</div>
 	</div>
@@ -197,7 +129,7 @@
 			nextClimbAfterComplete: false
 		});
 	</script>
-	<script src="assets/js/mathridge-play.js?v=20260608-stage-cert-popup" defer></script>
+	<script src="assets/js/mathridge-play.js?v=20260608-global-play-shell" defer></script>
 	<script src="assets/js/play4.js?v=20260607-complete-result-scroll" defer></script>
 </body>
 </html>

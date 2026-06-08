@@ -13,7 +13,6 @@ let stageEligible = true;
 let stageComplete = false;
 let stageStarted = false;
 let achievementShown = false;
-let confettiTimer = null;
 let latestRaceRank = null;
 let latestSavedRaceSeconds = null;
 let completedSteps = new Set();
@@ -1325,38 +1324,12 @@ async function loadWorldRecords(showAll = false){
   return [];
 }
 
-async function submitWorldRecord(name){
-  const raceMs = getRaceMs();
-  const fallbackSeconds = Math.max(1, Math.round(raceMs / 1000));
-  try{
-    const data = await shell()?.submitWorldRecord?.(name, raceMs);
-    latestRaceRank = data?.rank || null;
-    latestSavedRaceSeconds = data?.record?.timeSeconds || fallbackSeconds;
-    if(data?.records) renderWorldRecords(data.records);
-    return data;
-  }catch(error){
-    latestRaceRank = null;
-    latestSavedRaceSeconds = fallbackSeconds;
-    return null;
-  }
-}
-
 function openLadder(){
-  return showLadderPopup();
+  return shell()?.showLadderPopup?.();
 }
 
 function closeLadder(){
-  return closeLadderPopup();
-}
-
-function showLadderPopup(){
-  if(shell()?.showLadderPopup) return shell().showLadderPopup();
-  document.getElementById("ladderPopup").style.display = "flex";
-}
-
-function closeLadderPopup(){
-  if(shell()?.closeLadderPopup) return shell().closeLadderPopup();
-  document.getElementById("ladderPopup").style.display = "none";
+  return shell()?.closeLadderPopup?.();
 }
 
 function updateBoard(message = ""){
@@ -1430,283 +1403,25 @@ function centerQuestionTopShelf(){
   setTimeout(() => target.scrollIntoView({ behavior:"smooth", block:"center", inline:"nearest" }), 80);
 }
 
-function showAchievementPopup(){
-  if(achievementShown) return;
-  achievementShown = true;
-  completePlayProgress();
-  stopStageTimer(true);
-  startConfetti();
-  const nameInput = document.getElementById("playerNameInput");
-  if(nameInput) nameInput.value = "";
-  document.getElementById("namePopup").style.display = "flex";
-  document.body.classList.add("modal-open");
-  setTimeout(() => nameInput?.focus(), 200);
-}
-
-async function createCertificateFromName(){
-  const button = document.querySelector("#namePopup button");
-  const raw = document.getElementById("playerNameInput").value.trim();
-  const name = safeText(raw) || "Math Ridge Champion";
-  const now = new Date();
-  const formattedDate = now.toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
-  const formattedTime = now.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit", hour12:true });
-
-  if(button){
-    button.disabled = true;
-    button.textContent = "Saving world record...";
-  }
-
-  document.getElementById("certName").textContent = name;
-  document.getElementById("certStage").textContent = "Academic Focus: Exponential Pattern Recognition";
-  document.getElementById("certRaceTime").textContent = "";
-  document.getElementById("certRank").textContent = "";
-
-  let rankMessage = "";
-  let raceTimeText = formatRaceTime(getRaceMs());
-  const result = await submitWorldRecord(name);
-  if(result){
-    rankMessage = result.topThree ? rankText(result.rank) : "";
-    raceTimeText = result.record?.timeDisplay
-      || (result.record?.timeSeconds ? formatRaceTime(result.record.timeSeconds * 1000) : raceTimeText);
-  } else {
-    rankMessage = "World record could not save. Certificate still created.";
-  }
-
-  document.getElementById("certRaceTime").textContent = "";
-  document.getElementById("certRank").textContent = "";
-  document.getElementById("certDate").textContent = `Completed on ${formattedDate}`;
-
-  if(typeof shell()?.saveTrailProgress === "function"){
-    shell().saveTrailProgress({
-      id: PLAY_ID,
-      studentName: name,
-      displayDate: formattedDate,
-      displayTime: formattedTime,
-      timeDisplay: raceTimeText,
-      rank: latestRaceRank,
-      rankText: rankMessage,
-      score: turtleScore,
-      stage
-    });
-  }else{
-    try{
-      localStorage.setItem(PLAY_CERT_KEY, JSON.stringify({
-        completed:true,
-        id:PLAY_ID,
-        section:PLAY_SECTION,
-        title:PLAY_TITLE,
-        studentName:name,
-        completedAt:new Date().toISOString(),
-        displayDate:formattedDate,
-        displayTime:formattedTime,
-        raceTime:raceTimeText,
-        rankText:rankMessage,
-        stage
-      }));
-    }catch(error){}
-  }
-
-  if(button){
-    button.disabled = false;
-    button.textContent = "Create My Certificate";
-  }
-
-  document.getElementById("namePopup").style.display = "none";
-  document.getElementById("certificatePopup").style.display = "flex";
-  document.body.classList.add("modal-open");
-}
-
-function closeCertificatePopup(){
-  const popup = document.getElementById("certificatePopup");
-  if(popup) popup.style.display = "none";
-  document.body.classList.remove("modal-open");
-  stopConfetti();
-
-  if(popup?.dataset.source === "cabin"){
-    try{
-      sessionStorage.setItem("mathRidge_open_section", "cabin");
-    }catch(error){}
-    window.location.href = "index.html?view=cabin#cabin";
-  }
-}
-
-function readSavedCertificateFromCabin(){
-  if(typeof shell()?.readTrailCertificate === "function"){
-    const cert = shell().readTrailCertificate(PLAY_ID);
-    if(cert?.completed) return cert;
-  }
-
-  try{
-    return JSON.parse(localStorage.getItem(PLAY_CERT_KEY) || "{}");
-  }catch(error){
-    return {};
-  }
-}
-
-function openSavedCertificateFromCabin(){
-  const params = new URLSearchParams(window.location.search);
-  if(params.get("certificate") !== PLAY_ID || params.get("mode") !== "redownload") return;
-
-  const certData = readSavedCertificateFromCabin();
-  if(!certData.completed) return;
-
-  byId("certName").textContent = certData.studentName || "Math Ridge Champion";
-  byId("certStage").textContent = "Academic Focus: Exponential Pattern Recognition";
-  byId("certRaceTime").textContent = "";
-  byId("certRank").textContent = "";
-  byId("certDate").textContent = `Completed on ${certData.displayDate || ""}`;
-
-  const popup = byId("certificatePopup");
-  if(popup){
-    popup.dataset.source = "cabin";
-    popup.style.display = "flex";
-  }
-  document.body.classList.add("modal-open");
-}
-
-function startConfetti(){
-  const layer = document.getElementById("confettiLayer");
-  const colors = ["#ffd36e","#86c7ff","#6cc070","#ff9f9f","#c9a8ff"];
-
-  if(confettiTimer) clearInterval(confettiTimer);
-
-  confettiTimer = setInterval(() => {
-    const piece = document.createElement("div");
-    piece.className = "confetti-piece";
-    piece.style.left = Math.random() * 100 + "vw";
-    piece.style.background = colors[randInt(0, colors.length - 1)];
-    piece.style.animationDuration = (2.5 + Math.random() * 2.5) + "s";
-    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
-    layer.appendChild(piece);
-    setTimeout(() => piece.remove(), 5200);
-  }, 80);
-
-  setTimeout(() => {
-    clearInterval(confettiTimer);
-    confettiTimer = null;
-  }, 4500);
-}
-
-function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
-  const words = String(text).split(" ");
-  let line = "";
-  const lines = [];
-
-  for(const word of words){
-    const testLine = line ? line + " " + word : word;
-    if(ctx.measureText(testLine).width > maxWidth && line){
-      lines.push(line);
-      line = word;
-    } else {
-      line = testLine;
-    }
-  }
-  if(line) lines.push(line);
-  lines.forEach((lineText,index)=>ctx.fillText(lineText,x,y + index * lineHeight));
-  return y + lines.length * lineHeight;
-}
-
-function downloadCanvas(canvas, filename){
-  const link = document.createElement("a");
-  link.download = filename;
-  link.href = canvas.toDataURL("image/webp", 0.92);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
-function saveCertificateImage(){
-  const name = document.getElementById("certName").textContent || "Math Ridge Champion";
-  const stageText = document.getElementById("certStage").textContent || "";
-  const dateText = document.getElementById("certDate").textContent || "";
-
-  if(shell()?.downloadOfficialCertificate){
-    shell().downloadOfficialCertificate({
-      studentName: name,
-      certificateTitle: PLAY_TITLE,
-      bodyText: "for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.",
-      dateText,
-      signature: CERT_SIGNATURE,
-      filename: "math-ridge-exponential-pattern-recognition-certificate.png"
-    });
-    return;
-  }
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 1400;
-  canvas.height = 1060;
-  const ctx = canvas.getContext("2d");
-
-  const bg = ctx.createLinearGradient(0,0,0,canvas.height);
-  bg.addColorStop(0,"#fffaf0");
-  bg.addColorStop(1,"#fff3cf");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.strokeStyle = "#d4a73c";
-  ctx.lineWidth = 18;
-  ctx.strokeRect(45,45,canvas.width - 90, canvas.height - 90);
-  ctx.lineWidth = 6;
-  ctx.strokeRect(85,85,canvas.width - 170, canvas.height - 170);
-
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#7a4b00";
-  ctx.font = "bold 58px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("Math Ridge", canvas.width/2, 165);
-
-  ctx.fillStyle = "#7a9a3a";
-  ctx.font = "42px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("❦ ❦ ❦", canvas.width/2, 220);
-
-  ctx.fillStyle = "#24304f";
-  ctx.font = "bold 54px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("Certificate of Achievement", canvas.width/2, 300);
-
-  ctx.fillStyle = "#b87900";
-  ctx.font = "bold 42px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("Exponential Pattern Recognition", canvas.width/2, 360);
-
-  ctx.fillStyle = "#24304f";
-  ctx.font = "30px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText("Presented to", canvas.width/2, 430);
-
-  ctx.fillStyle = "#1f6fb8";
-  ctx.font = "bold 64px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  wrapCanvasText(ctx, name, canvas.width/2, 510, 1050, 72);
-
-  ctx.strokeStyle = "#d4a73c";
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(280,595);
-  ctx.lineTo(1120,595);
-  ctx.stroke();
-
-  ctx.fillStyle = "#24304f";
-  ctx.font = "30px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  wrapCanvasText(ctx, "for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.", canvas.width/2, 675, 1050, 42);
-
-  ctx.fillStyle = "#24304f";
-  ctx.font = "bold 26px 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif";
-  ctx.fillText(stageText, canvas.width/2, 780);
-  ctx.fillText(dateText, canvas.width/2, 840);
-
-  ctx.fillStyle = "#7a4b00";
-  ctx.font = "italic 32px Georgia";
-  ctx.fillText(CERT_SIGNATURE, canvas.width/2, 955);
-
-  try {
-    downloadCanvas(canvas, "math-ridge-play8-certificate.webp");
-  } catch(err) {
-    const imageUrl = canvas.toDataURL("image/webp", 0.92);
-    const win = window.open("");
-    if(win){
-      win.document.write(`<title>Math Ridge Certificate</title><img src="${imageUrl}" style="max-width:100%;">`);
-    } else {
-      alert("Certificate image was created, but the browser blocked the download. Please allow pop-ups or try again.");
-    }
-  }
-}
-
+function showAchievementPopup() {
+		achievementShown = true;
+		return shell()?.showAchievementPopup?.();
+	}
+async function createCertificateFromName() {
+		return shell()?.createCertificateFromName?.();
+	}
+function closeCertificatePopup() {
+		return shell()?.closeCertificatePopup?.();
+	}
+function openSavedCertificateFromCabin() {
+		return shell()?.openSavedCertificateFromCabin?.();
+	}
+function startConfetti() {
+		return shell()?.startConfetti?.();
+	}
+function saveCertificateImage() {
+		return shell()?.saveCertificateImage?.();
+	}
 window.MathRidgeLocal = {
   getScore: () => score,
   getStage: () => stage,
@@ -1730,10 +1445,6 @@ window.resetChallenge = resetChallenge;
 window.openLadder = openLadder;
 window.closeLadder = closeLadder;
 window.loadWorldRecords = loadWorldRecords;
-window.createCertificateFromName = createCertificateFromName;
-window.closeCertificatePopup = closeCertificatePopup;
-window.saveCertificateImage = saveCertificateImage;
-
 window.addEventListener("load", () => {
   resetRaceTimer();
   newRound();
