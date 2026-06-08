@@ -270,7 +270,7 @@ function rootGateReplayLinks(className = "root-gate-watch-link") {
   ];
 
   if (isRootGatePassed()) {
-    links.unshift(`<a class="${className}" href="story-root-gate-result.html?outcome=pass&watch=1">Watch Gate Opening</a>`);
+    links.push(`<a class="${className}" href="story-root-gate-result.html?outcome=pass&watch=1">Watch Gate Opening</a>`);
     links.push(`<a class="${className}" href="story-chapter-2.html?watch=1">Chapter 2 Opening</a>`);
   }
 
@@ -395,7 +395,6 @@ function renderRootGateCard() {
       <div class="root-gate-actions">
         <strong>${escapeHTML(status)}</strong>
         <a class="small-link root-gate-link ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">${rootGateActionText()}</a>
-        ${rootGateWatchSceneLink("root-gate-replay-link")}
       </div>
     </article>
   `;
@@ -838,10 +837,6 @@ function renderTestResults() {
   grid.innerHTML = chapterTests.map(test => {
     const data = readTestResultData(test);
     const image = data ? readTestResultImage(test) : test.image;
-    const isChapterOne = test.id === "chapter_1";
-    const chapterOneAction = isChapterOne
-      ? `<a class="pill-btn" href="${rootGateHref()}" onclick="return handleRootGateClick(event)">${isRootGatePassed() ? "Review Root Gate Exam" : hasWatchedRootGateIntro() ? "Begin Root Gate Exam" : "Begin Root Gate Finale"}</a>${rootGateWatchSceneLink("pill-btn root-gate-replay-pill")}`
-      : `<button class="pill-btn" type="button" onclick="showModal('Chapter Test Coming Soon', '${escapeHTML(test.chapter)} will connect here when the chapter test page is ready.', [{ text: 'OK', className: 'gold-btn', action: closeModal }])">Open Test Plan</button>`;
     return `
       <article class="test-result-card">
         <h4>${escapeHTML(test.chapter)}</h4>
@@ -852,10 +847,11 @@ function renderTestResults() {
         </div>
         ${renderTestResultStats(test)}
         <div class="result-note">${escapeHTML(test.note)}</div>
-        <div class="result-card-actions">
-          ${chapterOneAction}
-          ${data ? `<button class="pill-btn result-save-btn" type="button" onclick="downloadTestCertificate('${test.id}')">Save Mastery Certificate</button>` : ""}
-        </div>
+        ${data ? `
+          <div class="result-card-actions test-result-save-actions">
+            <button class="pill-btn result-save-btn" type="button" onclick="downloadTestCertificate('${test.id}')">Save Mastery Certificate</button>
+          </div>
+        ` : ""}
       </article>
     `;
   }).join("");
@@ -1553,9 +1549,7 @@ const CONFIRMABLE_INDEX_SELECTOR = [
   ".reset-progress-btn",
   ".jump-link:not(.locked)",
   ".root-gate-link:not(.locked)",
-  ".root-gate-replay-link",
   ".root-gate-replay-jump",
-  ".root-gate-replay-pill",
   "#modalActions [data-mobile-confirm='modal-reset']"
 ].join(", ");
 

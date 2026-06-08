@@ -782,6 +782,8 @@ body.index-page .drawer-backdrop { z-index: 120; }
 }
 .result-image-frame img { width:100%; height:100%; object-fit:cover; display:block; }
 .result-card-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; }
+body.index-page .test-result-save-actions { justify-content:center; }
+body.index-page .test-result-save-actions .result-save-btn { margin-inline:auto; }
 .result-note { color:rgba(255,247,232,0.58); font-size:.82rem; margin-top:10px; }
 .test-result-stats {
   display: grid;
@@ -2088,26 +2090,10 @@ body.index-page .root-gate-jump {
     linear-gradient(135deg, rgba(122,77,43,0.90), rgba(58,34,18,0.90)) !important;
 }
 
-body.index-page .root-gate-replay-link,
-body.index-page .root-gate-replay-jump,
-body.index-page .root-gate-replay-pill {
+body.index-page .root-gate-replay-jump {
   border-color: rgba(255,247,232,0.26) !important;
   background: rgba(255,247,232,0.08) !important;
   color: rgba(255,247,232,0.86) !important;
-}
-
-body.index-page .root-gate-replay-link {
-  min-height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255,247,232,0.26);
-  border-radius: 8px;
-  padding: 0 12px;
-  color: rgba(255,247,232,0.86);
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-decoration: none;
 }
 
 @media (max-width: 760px) {
