@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Math Ridge | Note 2-1a | Split Shelf Division</title>
+<title>Math Ridge | Note 2-1a | Split Shelf Reduction</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
 <link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260605-split-shelf">
-<link rel="stylesheet" href="assets/css/note2-1a.css?v=20260605-split-shelf">
+<link rel="stylesheet" href="assets/css/note2-1a.css?v=20260608-reduction-route">
 </head>
 <body class="note-page note-2-1a" data-note-id="2_1a">
 <nav class="topbar" aria-label="Math Ridge main navigation">
@@ -32,61 +32,118 @@
 
 <main class="page split-shelf-page">
   <section class="hero split-shelf-hero">
-    <p class="eyebrow">Math Ridge Manual 2-1a | Split Shelf</p>
-    <h1>Split Shelf Division</h1>
-    <p class="subtitle">Large shelf numbers are easier when you split them into friendly chunks. This is division by distribution: divide each friendly piece, then add the group counts.</p>
+    <p class="eyebrow">Math Ridge Manual 2-1a | Split Shelf Reduction</p>
+    <h1>Split Shelf Reduction</h1>
+    <p class="subtitle">Large shelf expressions are easier when the top shelf splits into friendly chunks. Reduce each chunk, then add the counts to get a cleaner answer.</p>
     <div class="hero-note focus-route" aria-label="lesson focus route">
-      <div class="mini-card">1. Friendly chunk<span>Choose a close value the group can divide.</span></div>
-      <div class="mini-card">2. Leftover shelf<span>Subtract to see what remains.</span></div>
-      <div class="mini-card">3. Add group counts<span>Each chunk gives part of the answer.</span></div>
+      <div class="mini-card">1. Split top shelf<span>Choose a big friendly chunk.</span></div>
+      <div class="mini-card">2. Reduce chunks<span>Each piece works with the same bottom shelf.</span></div>
+      <div class="mini-card">3. Add counts<span>Join the chunk counts into one clean answer.</span></div>
     </div>
   </section>
 
   <section class="section split-section">
-    <h2><span class="section-kicker">01</span> Why Split the Shelf?</h2>
-    <p>Some students know small division facts but freeze when the shelf number is large. Split Shelf turns a big value into friendlier pieces.</p>
-    <div class="split-board" aria-label="one hundred thirty two split by group three">
+    <h2><span class="section-kicker">01</span> Read the Shelf First</h2>
+    <p>Before reducing, name what each shelf is doing. The top shelf is the amount being split. The bottom shelf is the group size.</p>
+    <div class="shelf-reader" aria-label="one hundred forty one over three shelf labels">
+      <div class="shelf-display">
+        <span class="fraction split-fraction"><span class="top">141</span><span class="bottom">3</span></span>
+      </div>
+      <div class="shelf-label-grid">
+        <div><strong>Top shelf</strong><span>amount we are splitting</span></div>
+        <div><strong>Bottom shelf</strong><span>group size</span></div>
+        <div><strong>Final count</strong><span>how much each group receives</span></div>
+      </div>
+    </div>
+    <div class="memory-line shelf-memory"><span>top shelf can split</span><strong>bottom shelf stays</strong></div>
+  </section>
+
+  <section class="section split-section">
+    <h2><span class="section-kicker">02</span> When the Shelf Feels Too Large</h2>
+    <p>Some shelf expressions are too large to reduce in one glance. Instead of fighting the whole top shelf, split it into friendlier chunks.</p>
+    <div class="split-board reduction-board" aria-label="one hundred thirty two over three reduction route">
       <div class="split-card start"><strong><span class="fraction split-fraction"><span class="top">132</span><span class="bottom">3</span></span></strong><span>too large to see at once</span></div>
       <div class="split-arrow">&rarr;</div>
-      <div class="split-card"><strong>120 + 12</strong><span>friendly chunk plus leftover</span></div>
+      <div class="split-card"><strong><span class="fraction"><span class="top">120 + 12</span><span class="bottom">3</span></span></strong><span>split the top shelf</span></div>
       <div class="split-arrow">&rarr;</div>
-      <div class="split-card final"><strong>40 + 4 &rarr; 44</strong><span>group counts add together</span></div>
+      <div class="split-card final"><strong>40 + 4 &rarr; 44</strong><span>cleaner count</span></div>
     </div>
   </section>
 
   <section class="section split-section">
-    <h2><span class="section-kicker">02</span> Pick a Friendly Chunk</h2>
-    <p>A friendly chunk is not random. It is close, below the shelf number, and easy for the group to divide.</p>
+    <h2><span class="section-kicker">03</span> Pick a Friendly Chunk</h2>
+    <p>A friendly chunk is chosen, not guessed. It should be big, below the top shelf, and easy for the bottom shelf.</p>
+    <div class="friendly-rule-grid" aria-label="friendly chunk rules">
+      <div><strong>1. Big</strong><span>use a chunk that clears a lot of shelf</span></div>
+      <div><strong>2. Below</strong><span>do not take more shelf than you have</span></div>
+      <div><strong>3. Easy</strong><span>the bottom shelf should work cleanly</span></div>
+    </div>
     <div class="friendly-grid" aria-label="friendly chunk check">
       <article><strong><span class="fraction split-fraction"><span class="top">141</span><span class="bottom">3</span></span></strong><span>140 is not friendly for 3.</span></article>
       <article><strong>130</strong><span>130 is not friendly for 3.</span></article>
-      <article class="friendly"><strong>120</strong><span><span class="fraction"><span class="top">12</span><span class="bottom">3</span></span> &rarr; 4, so <span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> &rarr; 40.</span></article>
+      <article class="friendly"><strong>120</strong><span>120 is friendly because 12 works easily with 3, so 120 cleans down to 40.</span></article>
     </div>
-    <div class="focus-callout"><strong>Search rule:</strong> move down to a chunk that belongs to the group.</div>
+    <div class="focus-callout why-chunk-callout"><strong>Why choose 120?</strong><span>141 is large. 120 is below 141. 120 works cleanly with 3. After removing 120, the leftover is 21, and 21 also works cleanly with 3.</span><em>141 &rarr; 120 + 21</em></div>
   </section>
 
   <section class="section split-section">
-    <h2><span class="section-kicker">03</span> The 141 Example</h2>
-    <p>Once the friendly chunk is chosen, the rest of the problem becomes smaller.</p>
-    <div class="route-stack split-route" aria-label="one hundred forty one split by group three route">
+    <h2><span class="section-kicker">04</span> The 141 Route</h2>
+    <p>Once the friendly chunk is chosen, the shelf becomes a route instead of a giant number.</p>
+    <div class="route-demo" aria-label="one hundred forty one over three reduction route">
       <div class="route-step"><span>Start</span><strong><span class="fraction split-fraction"><span class="top">141</span><span class="bottom">3</span></span></strong></div>
-      <div class="route-step"><span>Split</span><strong>141 &rarr; 120 + 21</strong></div>
-      <div class="route-step"><span>Chunk</span><strong><span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> &rarr; 40</strong></div>
-      <div class="route-step"><span>Leftover</span><strong><span class="fraction"><span class="top">21</span><span class="bottom">3</span></span> &rarr; 7</strong></div>
-      <div class="route-step final-route"><span>Add</span><strong>40 + 7 &rarr; 47</strong></div>
+      <div class="route-arrow">&rarr; split top shelf</div>
+      <div class="route-step"><span>Split</span><strong><span class="fraction"><span class="top">120 + 21</span><span class="bottom">3</span></span></strong></div>
+      <div class="route-arrow">&rarr; reduce chunks</div>
+      <div class="route-step chunk-shelves"><span>Chunk shelves</span><strong><span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> + <span class="fraction"><span class="top">21</span><span class="bottom">3</span></span></strong></div>
+      <div class="route-arrow">&rarr; chunk counts</div>
+      <div class="route-step"><span>Counts</span><strong>40 + 7</strong></div>
+      <div class="route-arrow">&rarr; clean answer</div>
+      <div class="route-step final-route"><span>Answer</span><strong>47</strong></div>
     </div>
   </section>
 
   <section class="section split-section">
-    <h2><span class="section-kicker">04</span> The Hidden Rule</h2>
-    <p>This is the same kind of thinking as chunking multiplication. The shelf splits, then the group works on each piece.</p>
-    <div class="distribution-line"><span class="fraction"><span class="top">120 + 21</span><span class="bottom">3</span></span> &rarr; <span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> + <span class="fraction"><span class="top">21</span><span class="bottom">3</span></span></div>
-    <div class="memory-line"><span>split shelf</span><strong>divide chunks</strong><span>add group counts</span></div>
+    <h2><span class="section-kicker">05</span> The Hidden Pattern</h2>
+    <p>The top shelf split. Then the split top shelf became two smaller shelves.</p>
+    <div class="distribution-line hidden-pattern-line"><span class="fraction"><span class="top">120 + 21</span><span class="bottom">3</span></span> &rarr; <span class="fraction"><span class="top">120</span><span class="bottom">3</span></span> + <span class="fraction"><span class="top">21</span><span class="bottom">3</span></span></div>
+    <div class="pattern-list" aria-label="split shelf pattern">
+      <div>The bottom shelf stays the same.</div>
+      <div>Each top piece reduces with the same group.</div>
+      <div>Then the counts join.</div>
+    </div>
+    <div class="careful-card">
+      <strong>Careful!</strong>
+      <p>Top shelf splits. Bottom shelf stays.</p>
+      <div><span class="fraction split-fraction"><span class="top">141</span><span class="bottom">3</span></span> <span aria-hidden="true">&rarr;</span> <span class="fraction"><span class="top">120 + 21</span><span class="bottom">3</span></span></div>
+      <p class="dialogue-line"><strong>Mira:</strong> So the top shelf gets split, but the bottom shelf stays calm?</p>
+      <p class="dialogue-line"><strong>Shellwick:</strong> Precisely.</p>
+    </div>
+  </section>
+
+  <section class="section split-section">
+    <h2><span class="section-kicker">06</span> Common Mistakes</h2>
+    <p>These mistakes are normal. Catching them is part of learning the route.</p>
+    <div class="mistake-grid" aria-label="common split shelf mistakes">
+      <article><strong>Too high</strong><span>150 is friendly, but it is above 141. Too much shelf.</span></article>
+      <article><strong>Not friendly</strong><span>140 is below 141, but 140 does not clean nicely with 3.</span></article>
+      <article><strong>Forgot leftover</strong><span>141 &rarr; 120 still leaves 21 waiting.</span></article>
+      <article><strong>Forgot to add</strong><span>120 gives 40. 21 gives 7. Do not stop at 40: 40 + 7 &rarr; 47.</span></article>
+    </div>
+  </section>
+
+  <section class="section split-section mini-skit-section" aria-label="Split Shelf mini-skit">
+    <p class="eyebrow">Mini-Skit | Split Shelf</p>
+    <h2><span class="section-kicker">07</span> Mira's Memory Line</h2>
+    <div class="comic-memory-box">
+      <p>"I didn't fight the giant number. I split it first!"</p>
+      <div class="memory-line"><span>split the shelf</span><strong>reduce the chunks</strong><span>add the counts</span></div>
+    </div>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('splitShelfSkitDialog').showModal()">View Mini-Skit</button>
   </section>
 
   <section class="section practice split-practice" id="practice">
-    <h2><span class="section-kicker">05</span> Unlock Practice</h2>
-    <p>Find each final group count. Use the split route from the manual.</p>
+    <h2><span class="section-kicker">08</span> Unlock Practice</h2>
+    <p>For each shelf, choose a friendly chunk, find the leftover, then add the counts.</p>
     <div class="practice-progress" aria-label="Practice progress">
       <div class="progress-bar" id="bar0"><span></span></div>
       <div class="progress-bar" id="bar1"><span></span></div>
@@ -97,27 +154,38 @@
   </section>
 
   <section class="unlock-dock" aria-label="Next climb unlock">
-    <div><strong>Ready for the next climb: 2-1a Play</strong><span id="unlockText">Locked until all four split-shelf checks are correct.</span></div>
+    <div><strong>Ready for the next climb: 2-1a Play</strong><span id="unlockText">Locked until all four split-route checks are correct.</span></div>
     <button id="dockClimbBtn" class="gold-btn" type="button" disabled onclick="goToPlay()">Start Climb 2-1a</button>
   </section>
 
   <section class="footer-rule note-quote-card" aria-label="Math Ridge quote">
     <img class="note-quote-logo" src="assets/images/logo/logold.svg" alt="Math Ridge logo" />
-    <blockquote>"Big division becomes smaller when the shelf splits into friendly chunks."</blockquote>
+    <blockquote>"Split the shelf. Reduce the chunks. Add the counts."</blockquote>
   </section>
-  <p class="footer-note">Math Ridge Manual 2-1a | Split Shelf Division</p>
+  <p class="footer-note">Math Ridge Manual 2-1a | Split Shelf Reduction</p>
 </main>
+
+<dialog class="mini-skit-dialog" id="splitShelfSkitDialog" aria-label="Split Shelf mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>Split Shelf</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage-2-1a.png" alt="Mira learns that big division can split into friendly chunks before adding the group counts." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
 
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
     <h2 id="modalTitle">2-1a Play Unlocked!</h2>
-    <p>You have unlocked Split Shelf Division. Would you like to begin the climb now?</p>
+    <p>You have unlocked Split Shelf Reduction. Would you like to begin the climb now?</p>
     <div class="modal-actions"><button class="gold-btn ready" type="button" onclick="goToPlay()">Yes</button><button class="pill-btn" type="button" onclick="closeModal()">No</button></div>
   </div>
 </div>
 
-<script src="assets/js/mathridge-note-data.js?v=20260605-split-shelf" defer></script>
+<script src="assets/js/mathridge-note-data.js?v=20260608-split-route" defer></script>
 <script src="assets/js/math-ridge-shell.js?v=20260604-confirm-nav-delay" defer></script>
-<script src="assets/js/mathridge-note.js?v=20260605-split-shelf" defer></script>
+<script src="assets/js/mathridge-note.js?v=20260608-split-route" defer></script>
 </body>
 </html>

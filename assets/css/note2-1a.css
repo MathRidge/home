@@ -1,4 +1,4 @@
-/* Split Shelf Division note styling. */
+/* Split Shelf Reduction note styling. */
 .split-shelf-hero {
   background:
     linear-gradient(180deg, rgba(12, 30, 46, 0.58), rgba(12, 30, 46, 0.80)),
@@ -99,10 +99,386 @@
   min-width: 1.9em;
 }
 
+.shelf-reader,
+.friendly-rule-grid,
+.route-demo,
+.mistake-grid,
+.comic-memory-box,
+.split-route-notepad {
+  margin-top: 16px;
+}
+
+.shelf-reader {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.shelf-display,
+.shelf-label-grid > div,
+.friendly-rule-grid > div,
+.why-chunk-callout,
+.route-step,
+.pattern-list > div,
+.careful-card,
+.mistake-grid article,
+.comic-memory-box,
+.split-route-notepad {
+  border: 1px solid rgba(255, 231, 168, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 247, 232, 0.13), rgba(255, 247, 232, 0.055));
+  box-shadow:
+    0 14px 34px rgba(0,0,0,0.20),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+.shelf-display {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  color: #fff7e8;
+  font-size: clamp(2.4rem, 8vw, 4.2rem);
+}
+
+.shelf-label-grid,
+.friendly-rule-grid,
+.pattern-list,
+.mistake-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.shelf-label-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.shelf-label-grid > div,
+.friendly-rule-grid > div,
+.pattern-list > div,
+.mistake-grid article {
+  min-width: 0;
+  padding: 16px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+}
+
+.shelf-label-grid strong,
+.friendly-rule-grid strong,
+.mistake-grid strong {
+  color: #ffe3a8;
+  font-weight: 950;
+}
+
+.shelf-label-grid span,
+.friendly-rule-grid span,
+.mistake-grid span {
+  color: rgba(255,247,232,0.78);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.memory-line {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(255,247,232,0.82);
+  font-weight: 900;
+  text-align: center;
+}
+
+.memory-line span,
+.memory-line strong {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,231,168,0.20);
+  background: rgba(255,247,232,0.08);
+}
+
+.memory-line strong {
+  color: #ffe3a8;
+  background: rgba(242,184,75,0.14);
+}
+
+.friendly-rule-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.why-chunk-callout {
+  margin-top: 14px;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+  border-color: rgba(107,209,138,0.35);
+  background:
+    linear-gradient(135deg, rgba(107,209,138,0.18), rgba(255,247,232,0.055));
+  color: rgba(255,247,232,0.86);
+  font-weight: 800;
+}
+
+.why-chunk-callout strong {
+  color: #c8ffd8;
+  font-size: 1.05rem;
+}
+
+.why-chunk-callout em {
+  color: #ffe3a8;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  font-weight: 800;
+  font-style: normal;
+  text-align: center;
+}
+
+.route-demo {
+  display: grid;
+  gap: 10px;
+}
+
+.route-step {
+  padding: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.route-step > span {
+  color: rgba(255,247,232,0.64);
+  font-size: .78rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.route-step strong {
+  color: #fff7e8;
+  font-size: clamp(1.4rem, 4vw, 2.2rem);
+  font-weight: 950;
+}
+
+.route-step.final-route {
+  border-color: rgba(242,184,75,0.50);
+  background:
+    linear-gradient(135deg, rgba(242,184,75,0.18), rgba(255,247,232,0.07));
+}
+
+.route-arrow {
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  color: #ffe3a8;
+  font-weight: 950;
+  text-align: center;
+}
+
+.chunk-shelves strong {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.hidden-pattern-line {
+  color: #173454;
+}
+
+.pattern-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.pattern-list > div {
+  color: rgba(255,247,232,0.84);
+  font-weight: 900;
+  text-align: center;
+}
+
+.careful-card {
+  margin-top: 14px;
+  padding: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  border-color: rgba(248,113,113,0.34);
+  background:
+    linear-gradient(135deg, rgba(248,113,113,0.16), rgba(255,247,232,0.055));
+  text-align: center;
+}
+
+.careful-card strong {
+  color: #ffd3d3;
+  font-weight: 950;
+}
+
+.careful-card p {
+  margin: 0;
+  color: rgba(255,247,232,0.82);
+  font-weight: 850;
+}
+
+.dialogue-line {
+  max-width: 720px;
+}
+
+.mistake-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.comic-memory-box {
+  width: min(760px, 100%);
+  margin-inline: auto;
+  padding: 18px;
+  text-align: center;
+}
+
+.comic-memory-box p {
+  margin: 0;
+  color: #fff7e8;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.problem-row-split-route {
+  align-items: stretch;
+}
+
+.split-route-answer-label {
+  align-self: center;
+  color: #ffe3a8;
+  font-weight: 950;
+}
+
+.split-route-notepad {
+  flex: 1 1 520px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(116px, 1fr)) auto minmax(116px, 1fr);
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+}
+
+.split-route-cell {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.split-route-label {
+  color: rgba(255,247,232,0.70);
+  font-size: .76rem;
+  font-weight: 950;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.split-route-input {
+  width: 100%;
+}
+
+.route-equals {
+  align-self: center;
+  color: #ffe3a8;
+  font-weight: 950;
+  font-size: 1.2rem;
+}
+
+.split-route-caption {
+  grid-column: 1 / -1;
+  color: rgba(255,247,232,0.62);
+  font-size: .82rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.split-practice-fraction {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 .distribution-line .fraction,
 .friendly-grid .fraction,
 .split-route .fraction {
   margin: 0 .08em;
+}
+
+.mini-skit-section {
+  text-align: center;
+  border-color: rgba(242,184,75,0.34);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(242,184,75,0.16), transparent 36%),
+    rgba(255,247,232,0.08);
+}
+
+.mini-skit-section p:not(.eyebrow) {
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.mini-skit-open {
+  margin-top: 12px;
+}
+
+.mini-skit-dialog {
+  width: min(1180px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  padding: 0;
+  border: 1px solid rgba(242,184,75,0.56);
+  border-radius: 22px;
+  background: rgba(10,20,34,0.96);
+  color: #fff7e8;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.58);
+}
+
+.mini-skit-dialog::backdrop {
+  background: rgba(4,10,18,0.78);
+  backdrop-filter: blur(8px);
+}
+
+.mini-skit-dialog-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.mini-skit-dialog-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 2px 0;
+}
+
+.mini-skit-dialog-top strong {
+  color: #ffe3a8;
+  font-size: 1.05rem;
+  font-weight: 950;
+}
+
+.mini-skit-close {
+  min-height: 38px;
+}
+
+.mini-skit-dialog img {
+  display: block;
+  width: 100%;
+  max-height: min(72vh, 820px);
+  object-fit: contain;
+  border-radius: 14px;
+  background: #fff7e8;
+}
+
+.mini-skit-done {
+  justify-self: center;
+  min-width: min(100%, 220px);
 }
 
 .note-quote-card {
@@ -148,6 +524,28 @@
     grid-template-columns: 1fr;
   }
 
+  .shelf-reader,
+  .shelf-label-grid,
+  .friendly-rule-grid,
+  .pattern-list,
+  .mistake-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shelf-display {
+    min-height: 112px;
+  }
+
+  .split-route-notepad {
+    flex-basis: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .route-equals {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+
   .split-arrow {
     width: 100%;
     min-width: 0;
@@ -171,5 +569,24 @@
   .note-quote-card blockquote {
     font-size: clamp(.72rem, 2.7vw, .9rem);
     letter-spacing: .06em;
+  }
+
+  .mini-skit-dialog {
+    width: min(100vw - 14px, 760px);
+    max-height: calc(100vh - 14px);
+    border-radius: 18px;
+  }
+
+  .mini-skit-dialog-card {
+    padding: 10px;
+  }
+
+  .mini-skit-dialog-top {
+    align-items: flex-start;
+  }
+
+  .mini-skit-dialog img {
+    max-height: 70vh;
+    border-radius: 12px;
   }
 }

@@ -202,42 +202,42 @@ window.MathRidgeNotes["2_1a"] = {
   playLink: "play2-1a.html",
   startLabel: "Start Climb 2-1a",
   readyTitle: "Ready for the next climb: 2-1a Play",
-  lockedText: "Locked until all four split-shelf checks are correct.",
+  lockedText: "Locked until all four split-route checks are correct.",
   unlockedText: "Unlocked! You may begin 2-1a Play.",
   modalTitle: "2-1a Play Unlocked!",
-  modalText: "You have unlocked Split Shelf Division. Would you like to begin the next climb now?",
+  modalText: "You have unlocked Split Shelf Reduction. Would you like to begin the next climb now?",
   problems: [
     {
-      prompt: '1) Split and divide: <strong>132 &divide; 3</strong>. Final group count?',
-      answer: 44,
-      inputMode: "numeric",
-      inputLabel: "Final group count",
-      placeholder: "answer",
-      hint: "132 = 120 + 12. Then 120 ÷ 3 = 40 and 12 ÷ 3 = 4. Add 40 + 4."
+      prompt: '1) Reduce the shelf: <span class="fraction split-practice-fraction"><span class="top">132</span><span class="bottom">3</span></span>',
+      answer: { chunk: 120, leftover: 12, final: 44 },
+      answerType: "splitRoute",
+      inputLayout: "splitRoute",
+      inputLabel: "Build the route",
+      hint: "132 -> 120 + 12. 120 over 3 -> 40. 12 over 3 -> 4. Add 40 + 4 -> 44."
     },
     {
-      prompt: '2) Split and divide: <strong>141 &divide; 3</strong>. Final group count?',
-      answer: 47,
-      inputMode: "numeric",
-      inputLabel: "Final group count",
-      placeholder: "answer",
-      hint: "Use 120 because 12 ÷ 3 = 4, so 120 ÷ 3 = 40. The leftover is 21, and 21 ÷ 3 = 7."
+      prompt: '2) Reduce the shelf: <span class="fraction split-practice-fraction"><span class="top">141</span><span class="bottom">3</span></span>',
+      answer: { chunk: 120, leftover: 21, final: 47 },
+      answerType: "splitRoute",
+      inputLayout: "splitRoute",
+      inputLabel: "Build the route",
+      hint: "Use 120 because 12 works cleanly with 3. The leftover is 21. 120 over 3 -> 40 and 21 over 3 -> 7, so 40 + 7 -> 47."
     },
     {
-      prompt: '3) Split and divide: <strong>56 &divide; 2</strong>. Final group count?',
-      answer: 28,
-      inputMode: "numeric",
-      inputLabel: "Final group count",
-      placeholder: "answer",
-      hint: "56 = 40 + 16. Then 40 ÷ 2 = 20 and 16 ÷ 2 = 8. Add 20 + 8."
+      prompt: '3) Reduce the shelf: <span class="fraction split-practice-fraction"><span class="top">168</span><span class="bottom">4</span></span>',
+      answer: { chunk: 160, leftover: 8, final: 42 },
+      answerType: "splitRoute",
+      inputLayout: "splitRoute",
+      inputLabel: "Build the route",
+      hint: "168 -> 160 + 8. 160 over 4 -> 40. 8 over 4 -> 2. Add 40 + 2 -> 42."
     },
     {
-      prompt: '4) Split and divide: <strong>165 &divide; 5</strong>. Final group count?',
-      answer: 33,
-      inputMode: "numeric",
-      inputLabel: "Final group count",
-      placeholder: "answer",
-      hint: "165 = 150 + 15. Then 150 ÷ 5 = 30 and 15 ÷ 5 = 3. Add 30 + 3."
+      prompt: '4) Reduce the shelf: <span class="fraction split-practice-fraction"><span class="top">155</span><span class="bottom">5</span></span>',
+      answer: { chunk: 150, leftover: 5, final: 31 },
+      answerType: "splitRoute",
+      inputLayout: "splitRoute",
+      inputLabel: "Build the route",
+      hint: "155 -> 150 + 5. 150 over 5 -> 30. 5 over 5 -> 1. Add 30 + 1 -> 31."
     }
   ]
 };

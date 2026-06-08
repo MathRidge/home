@@ -38,6 +38,7 @@
     solved: new Set()
   };
   const CONFIRM_NAV_DELAY_MS = 780;
+  const SPLIT_ROUTE_PARTS = ["Chunk", "Leftover", "Final"];
 
   const storageKey = "mathRidge_noteComplete_" + note.noteId;
   const oldVisitedKey = "mathRidge_noteVisited_" + note.noteId;
@@ -129,6 +130,10 @@
     return student.length === sortedExpected.length && student.every((value, index) => value === sortedExpected[index]);
   }
 
+  function normalizeDigits(value) {
+    return String(value ?? "").replace(/[^0-9]/g, "");
+  }
+
   function gcd(a, b) {
     a = Math.abs(a);
     b = Math.abs(b);
@@ -201,6 +206,14 @@
       return checkFractionStatus(userValue, problem.answer) === "correct";
     }
 
+    if (problem.answerType === "splitRoute") {
+      const student = splitRouteParts(userValue);
+      const expected = splitRouteParts(problem.answer);
+      return student.chunk === expected.chunk &&
+        student.leftover === expected.leftover &&
+        student.final === expected.final;
+    }
+
     return normalizeAnswer(userValue) === normalizeAnswer(problem.answer);
   }
 
@@ -236,6 +249,15 @@
     );
   }
 
+  function isSplitRouteLayout(problem) {
+    return problem && (
+      problem.inputLayout === "splitRoute" ||
+      problem.answerLayout === "splitRoute" ||
+      problem.inputMode === "splitRoute" ||
+      problem.answerType === "splitRoute"
+    );
+  }
+
   function fractionParts(answer) {
     const frac = parseFraction(answer);
     if (!frac) return { n: "", d: "" };
@@ -253,6 +275,27 @@
     const sign = raw.startsWith("-") ? "-" : "+";
     const size = raw.replace(/^[+-]/, "").replace(/[^0-9]/g, "");
     return { sign, size };
+  }
+
+  function splitRouteParts(answer) {
+    if (answer && typeof answer === "object" && !Array.isArray(answer)) {
+      return {
+        chunk: normalizeDigits(answer.chunk),
+        leftover: normalizeDigits(answer.leftover),
+        final: normalizeDigits(answer.final)
+      };
+    }
+
+    const parts = String(answer ?? "")
+      .split(/[|,;/\s]+/)
+      .filter(Boolean)
+      .map(normalizeDigits);
+
+    return {
+      chunk: parts[0] || "",
+      leftover: parts[1] || "",
+      final: parts[2] || ""
+    };
   }
 
   function safeId(index, part) {
@@ -312,10 +355,28 @@
     return value;
   }
 
+  function syncSplitRouteHidden(index) {
+    const hidden = getEl("answer" + index);
+    if (!hidden) return "";
+
+    const chunk = getEl(safeId(index, "Chunk"));
+    const leftover = getEl(safeId(index, "Leftover"));
+    const final = getEl(safeId(index, "Final"));
+
+    [chunk, leftover, final].forEach(input => {
+      if (input) input.value = normalizeDigits(input.value);
+    });
+
+    const value = [chunk?.value || "", leftover?.value || "", final?.value || ""].join("|");
+    hidden.value = value;
+    return value;
+  }
+
   function getStudentAnswer(index, problem) {
     if (isFractionLayout(problem)) return syncFractionHidden(index);
     if (isSignedNumberLayout(problem)) return syncSignedHidden(index);
     if (isPrimePiecesLayout(problem)) return syncPrimePiecesHidden(index, problem);
+    if (isSplitRouteLayout(problem)) return syncSplitRouteHidden(index);
     const input = getEl("answer" + index);
     return input ? input.value : "";
   }
@@ -363,6 +424,19 @@
       return;
     }
 
+    if (isSplitRouteLayout(problem)) {
+      const parts = splitRouteParts(value);
+      const chunk = getEl(safeId(index, "Chunk"));
+      const leftover = getEl(safeId(index, "Leftover"));
+      const final = getEl(safeId(index, "Final"));
+      const hidden = getEl("answer" + index);
+      if (chunk) chunk.value = parts.chunk;
+      if (leftover) leftover.value = parts.leftover;
+      if (final) final.value = parts.final;
+      if (hidden) hidden.value = [parts.chunk, parts.leftover, parts.final].join("|");
+      return;
+    }
+
     const input = getEl("answer" + index);
     if (input) input.value = formatAnswer(value);
   }
@@ -392,6 +466,14 @@
         const input = getEl(safeId(index, "Piece" + pieceIndex));
         if (input) input.setAttribute("readonly", "readonly");
       }
+      return;
+    }
+
+    if (isSplitRouteLayout(problem)) {
+      ["Chunk", "Leftover", "Final"].forEach(part => {
+        const input = getEl(safeId(index, part));
+        if (input) input.setAttribute("readonly", "readonly");
+      });
       return;
     }
 
@@ -431,6 +513,18 @@
         }
         if (!target && input) target = input;
       }
+      if (target) {
+        target.focus();
+        target.select();
+      }
+      return;
+    }
+
+    if (isSplitRouteLayout(problem)) {
+      const inputs = ["Chunk", "Leftover", "Final"]
+        .map(part => getEl(safeId(index, part)))
+        .filter(Boolean);
+      const target = inputs.find(input => !input.value.trim()) || inputs[0];
       if (target) {
         target.focus();
         target.select();
@@ -609,18 +703,85 @@
     `;
   }
 
+  function renderSplitRouteAnswer(problem, index) {
+    const label = problem.inputLabel || "Split route";
+    const chunkLabel = problem.chunkLabel || "Friendly chunk";
+    const leftoverLabel = problem.leftoverLabel || "Leftover";
+    const finalLabel = problem.finalLabel || "Final count";
+
+    return `
+      <div class="problem-row problem-row-split-route">
+        <span class="split-route-answer-label" id="answerLabel${index}">${label}</span>
+        <span class="split-route-notepad" role="group" aria-labelledby="answerLabel${index}">
+          <label class="split-route-cell" for="answer${index}Chunk">
+            <span class="split-route-label">${chunkLabel}</span>
+            <input
+              id="answer${index}Chunk"
+              class="answer-input split-route-input"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="off"
+              placeholder="${problem.chunkPlaceholder || "chunk"}"
+              aria-label="${chunkLabel} for practice ${index + 1}"
+              oninput="handleSplitRouteInput(event, ${index}, 'Chunk')"
+              onkeydown="handleSplitRouteKey(event, ${index}, 'Chunk')"
+            />
+          </label>
+          <label class="split-route-cell" for="answer${index}Leftover">
+            <span class="split-route-label">${leftoverLabel}</span>
+            <input
+              id="answer${index}Leftover"
+              class="answer-input split-route-input"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="off"
+              placeholder="${problem.leftoverPlaceholder || "leftover"}"
+              aria-label="${leftoverLabel} for practice ${index + 1}"
+              oninput="handleSplitRouteInput(event, ${index}, 'Leftover')"
+              onkeydown="handleSplitRouteKey(event, ${index}, 'Leftover')"
+            />
+          </label>
+          <span class="route-equals" aria-hidden="true">-&gt;</span>
+          <label class="split-route-cell" for="answer${index}Final">
+            <span class="split-route-label">${finalLabel}</span>
+            <input
+              id="answer${index}Final"
+              class="answer-input split-route-input"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="off"
+              placeholder="${problem.finalPlaceholder || "count"}"
+              aria-label="${finalLabel} for practice ${index + 1}"
+              oninput="handleSplitRouteInput(event, ${index}, 'Final')"
+              onkeydown="handleSplitRouteKey(event, ${index}, 'Final')"
+            />
+          </label>
+          <span class="split-route-caption">friendly chunk + leftover -&gt; final count</span>
+        </span>
+        <input id="answer${index}" class="answer-hidden-value" type="text" tabindex="-1" aria-hidden="true" />
+        <button class="check-one" type="button" onclick="checkAnswer(${index})">Check</button>
+        <span class="feedback" id="feedback${index}" aria-live="polite"></span>
+      </div>
+    `;
+  }
+
   function renderPractice() {
     const list = getEl("practiceList");
     if (!list || !Array.isArray(note.problems)) return;
 
     list.innerHTML = note.problems.map((problem, index) => {
-      const answerRow = isPrimePiecesLayout(problem)
-        ? renderPrimePiecesAnswer(problem, index)
-        : (isFractionLayout(problem)
-          ? renderFractionAnswer(problem, index)
-          : (isSignedNumberLayout(problem)
-            ? renderSignedNumberAnswer(problem, index)
-            : renderStandardAnswer(problem, index)));
+      const answerRow = isSplitRouteLayout(problem)
+        ? renderSplitRouteAnswer(problem, index)
+        : (isPrimePiecesLayout(problem)
+          ? renderPrimePiecesAnswer(problem, index)
+          : (isFractionLayout(problem)
+            ? renderFractionAnswer(problem, index)
+            : (isSignedNumberLayout(problem)
+              ? renderSignedNumberAnswer(problem, index)
+              : renderStandardAnswer(problem, index))));
 
       return `
         <article class="problem-card" id="problem${index}">
@@ -881,6 +1042,81 @@
     }
   };
 
+  function splitRouteKey(part) {
+    return String(part || "").toLowerCase();
+  }
+
+  function splitRouteExpectedDigits(index, part) {
+    const expected = splitRouteParts(note.problems[index]?.answer);
+    return expected[splitRouteKey(part)]?.length || 0;
+  }
+
+  function moveSplitRouteFocus(index, part, direction, onlyIfEmpty) {
+    const currentIndex = SPLIT_ROUTE_PARTS.indexOf(part);
+    const nextPart = SPLIT_ROUTE_PARTS[currentIndex + direction];
+    if (!nextPart) return false;
+
+    const target = getEl(safeId(index, nextPart));
+    if (!target || target.readOnly) return false;
+    if (onlyIfEmpty && target.value.trim()) return false;
+
+    target.focus();
+    target.select();
+    return true;
+  }
+
+  window.handleSplitRouteInput = function handleSplitRouteInput(event, index, part) {
+    const input = event.target;
+    const raw = String(input.value || "");
+    const startIndex = SPLIT_ROUTE_PARTS.indexOf(part);
+    const pastedParts = raw.split(/[^0-9]+/).filter(Boolean);
+
+    if (pastedParts.length > 1 && startIndex >= 0) {
+      pastedParts.forEach((value, offset) => {
+        const targetPart = SPLIT_ROUTE_PARTS[startIndex + offset];
+        const target = targetPart ? getEl(safeId(index, targetPart)) : null;
+        if (target) target.value = normalizeDigits(value);
+      });
+      syncSplitRouteHidden(index);
+
+      const focusPart = SPLIT_ROUTE_PARTS[Math.min(SPLIT_ROUTE_PARTS.length - 1, startIndex + pastedParts.length)];
+      const focusTarget = focusPart ? getEl(safeId(index, focusPart)) : null;
+      if (focusTarget) {
+        focusTarget.focus();
+        focusTarget.select();
+      }
+      return;
+    }
+
+    input.value = normalizeDigits(raw);
+    syncSplitRouteHidden(index);
+
+    const expectedLength = splitRouteExpectedDigits(index, part);
+    if (expectedLength && input.value.length >= expectedLength) {
+      moveSplitRouteFocus(index, part, 1, true);
+    }
+  };
+
+  window.handleSplitRouteKey = function handleSplitRouteKey(event, index, part) {
+    if ([" ", ",", "/", "+", "ArrowRight"].includes(event.key)) {
+      event.preventDefault();
+      moveSplitRouteFocus(index, part, 1, false);
+      return;
+    }
+
+    if ((event.key === "Backspace" || event.key === "ArrowLeft") && !event.target.value) {
+      event.preventDefault();
+      moveSplitRouteFocus(index, part, -1, false);
+      return;
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (moveSplitRouteFocus(index, part, 1, true)) return;
+      window.checkAnswer(index);
+    }
+  };
+
   window.checkAnswer = function checkAnswer(index) {
     const problem = note.problems[index];
     const card = getEl("problem" + index);
@@ -920,6 +1156,8 @@
         feedback.textContent = "Check both shelves";
       } else if (isSignedNumberLayout(problem)) {
         feedback.textContent = userValue ? "Check the outside sign and size" : "Choose a sign and type the size";
+      } else if (isSplitRouteLayout(problem)) {
+        feedback.textContent = userValue.replace(/\|/g, "") ? "Check the friendly chunk, leftover, and final count" : "Fill the split route";
       } else {
         feedback.textContent = "Try again";
       }
