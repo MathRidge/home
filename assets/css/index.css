@@ -2771,7 +2771,8 @@ body.index-page .interactive-room-map {
 }
 
 body.index-page .interactive-room-map::after {
-  content: "Tap an object in the study room";
+  content: none;
+  display: none;
   position: absolute;
   left: 50%;
   bottom: 14px;
@@ -2889,7 +2890,7 @@ body.index-page .interactive-room-map .hotspot.message {
 
 @media (max-width: 560px) {
   body.index-page .interactive-room-map::after {
-    content: "Tap an object, or use the links below";
+    content: none;
     bottom: 10px;
     max-width: calc(100% - 24px);
     white-space: nowrap;
@@ -4617,90 +4618,63 @@ body.index-page .cabin-hotspot.room-spot {
   min-height: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  border: 1px solid transparent !important;
-  border-radius: 18px !important;
+  border: 0 !important;
+  border-radius: 50% !important;
   background: transparent !important;
   box-shadow: none !important;
   color: transparent !important;
   cursor: pointer;
   isolation: isolate;
   overflow: visible !important;
+  transform: none !important;
+  filter: none !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body.index-page .cabin-hotspot.room-spot::before {
   content: "" !important;
   position: absolute !important;
-  inset: 0 !important;
+  left: var(--cabin-glow-left, -8%) !important;
+  top: var(--cabin-glow-top, -8%) !important;
+  width: var(--cabin-glow-width, 116%) !important;
+  height: var(--cabin-glow-height, 116%) !important;
   z-index: 1 !important;
   border-radius: inherit !important;
-  border: 2px solid rgba(255,224,154,0.0) !important;
+  border: 0 !important;
   background:
-    radial-gradient(circle at 50% 50%, rgba(255,224,154,0.13), transparent 68%),
-    linear-gradient(135deg, rgba(255,224,154,0.10), rgba(25,105,165,0.08)) !important;
+    radial-gradient(ellipse at 50% 50%, rgba(255,244,191,0.36) 0%, rgba(246,201,108,0.20) 34%, rgba(60,147,224,0.14) 56%, transparent 74%) !important;
+  filter: blur(8px);
   box-shadow:
-    0 0 0 rgba(255,224,154,0),
-    inset 0 0 0 1px rgba(255,255,255,0.0) !important;
+    0 0 24px rgba(246,201,108,0.22),
+    0 0 42px rgba(75,158,234,0.12) !important;
   opacity: 0;
   pointer-events: none !important;
-  transition: opacity .18s ease, border-color .18s ease, box-shadow .18s ease;
+  transition: opacity .18s ease, transform .18s ease, filter .18s ease;
+  transform: scale(0.94);
 }
 
 body.index-page .cabin-hotspot.room-spot::after {
-  content: attr(aria-label) !important;
-  position: absolute !important;
-  left: 50%;
-  top: 50%;
-  z-index: 2 !important;
-  transform: translate(-50%, -50%) scale(0.98);
-  width: max-content;
-  max-width: min(220px, 82vw);
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,231,168,0.32);
-  background: rgba(7,16,29,0.82) !important;
-  color: rgba(255,247,232,0.88);
-  font-size: 0.76rem;
-  font-weight: 900;
-  line-height: 1.2;
-  opacity: 0;
-  pointer-events: none;
-  white-space: nowrap;
-  box-shadow: 0 10px 26px rgba(0,0,0,0.28);
-  transition: opacity .18s ease, transform .18s ease;
-}
-
-body.index-page .cabin-hotspot.room-spot > * {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  margin: -1px !important;
-  padding: 0 !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  white-space: nowrap !important;
+  content: none !important;
 }
 
 body.index-page .cabin-hotspot.room-spot:hover::before,
 body.index-page .cabin-hotspot.room-spot:focus-visible::before,
 body.index-page .cabin-hotspot.room-spot.is-touch-preview::before,
 body.index-page .cabin-hotspot.room-spot.is-mobile-confirm-ready::before {
-  border-color: rgba(255,224,154,0.78) !important;
-  box-shadow:
-    0 0 24px rgba(246,201,108,0.26),
-    inset 0 0 0 1px rgba(255,255,255,0.12) !important;
   opacity: 1;
+  transform: scale(1);
 }
 
-body.index-page .cabin-hotspot.room-spot:hover::after,
-body.index-page .cabin-hotspot.room-spot:focus-visible::after,
-body.index-page .cabin-hotspot.room-spot.is-touch-preview::after,
-body.index-page .cabin-hotspot.room-spot.is-mobile-confirm-ready::after {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-body.index-page .cabin-hotspot.room-spot:focus-visible {
+body.index-page .cabin-hotspot.room-spot:hover,
+body.index-page .cabin-hotspot.room-spot:focus-visible,
+body.index-page .cabin-hotspot.room-spot.is-touch-preview,
+body.index-page .cabin-hotspot.room-spot.is-mobile-confirm-ready {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
   outline: none;
+  transform: none !important;
 }
 
 body.index-page .cabin-hotspot-menu {
@@ -4708,6 +4682,10 @@ body.index-page .cabin-hotspot-menu {
   top: 4.6%;
   width: 19.7%;
   height: 22.4%;
+  --cabin-glow-left: 12%;
+  --cabin-glow-top: 8%;
+  --cabin-glow-width: 74%;
+  --cabin-glow-height: 78%;
 }
 
 body.index-page .cabin-hotspot-trail {
@@ -4715,6 +4693,10 @@ body.index-page .cabin-hotspot-trail {
   top: 6.2%;
   width: 36.2%;
   height: 67.5%;
+  --cabin-glow-left: 4%;
+  --cabin-glow-top: 8%;
+  --cabin-glow-width: 82%;
+  --cabin-glow-height: 76%;
 }
 
 body.index-page .cabin-hotspot-certificates {
@@ -4722,6 +4704,10 @@ body.index-page .cabin-hotspot-certificates {
   top: 12.0%;
   width: 27.0%;
   height: 40.5%;
+  --cabin-glow-left: 6%;
+  --cabin-glow-top: 8%;
+  --cabin-glow-width: 88%;
+  --cabin-glow-height: 68%;
 }
 
 body.index-page .cabin-hotspot-relics {
@@ -4729,6 +4715,10 @@ body.index-page .cabin-hotspot-relics {
   top: 31.3%;
   width: 10.4%;
   height: 31.8%;
+  --cabin-glow-left: -6%;
+  --cabin-glow-top: 5%;
+  --cabin-glow-width: 112%;
+  --cabin-glow-height: 76%;
 }
 
 body.index-page .cabin-hotspot-message {
@@ -4736,6 +4726,10 @@ body.index-page .cabin-hotspot-message {
   top: 57.8%;
   width: 22.7%;
   height: 25.1%;
+  --cabin-glow-left: 6%;
+  --cabin-glow-top: 10%;
+  --cabin-glow-width: 86%;
+  --cabin-glow-height: 72%;
 }
 
 @media (orientation: portrait) {
