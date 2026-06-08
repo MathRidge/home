@@ -991,22 +991,22 @@ function createTestCertificateCanvas(test, templateImage = null) {
 
   ctx.fillStyle = "#51341c";
   setTestCanvasFont(ctx, { weight: "500", size: width * 0.019, family: TEST_CERT_SERIF });
-  drawTestCenteredText(ctx, details.bodyText, width / 2, height * 0.490, width * 0.60, height * 0.024, 3);
+  drawTestCenteredText(ctx, details.bodyText, width / 2, height * 0.500, width * 0.60, height * 0.024, 3);
 
   ctx.fillStyle = "#4f351c";
   setTestCanvasFont(ctx, { weight: "700", size: width * 0.023, family: TEST_CERT_SERIF });
-  ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.592);
+  ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.603);
   setTestCanvasFont(ctx, { weight: "500", size: width * 0.020, family: TEST_CERT_SERIF });
-  ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.617);
+  ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.628);
 
   ctx.fillStyle = "#51341c";
   setTestCanvasFont(ctx, { weight: "700", size: width * 0.019, family: TEST_CERT_SERIF });
-  ctx.fillText(`Final Score: ${details.scoreText}`, width / 2, height * 0.650);
-  ctx.fillText(`Performance: ${details.performanceText}`, width / 2, height * 0.673);
-  ctx.fillText(`Status: ${details.statusText}`, width / 2, height * 0.696);
+  ctx.fillText(`Final Score: ${details.scoreText}`, width / 2, height * 0.658);
+  ctx.fillText(`Performance: ${details.performanceText}`, width / 2, height * 0.681);
+  ctx.fillText(`Status: ${details.statusText}`, width / 2, height * 0.704);
 
   setTestCanvasFont(ctx, { weight: "500", size: width * 0.019, family: TEST_CERT_SERIF });
-  ctx.fillText(details.dateText, width / 2, height * 0.738);
+  ctx.fillText(details.dateText, width / 2, height * 0.750);
 
   return canvas;
 }
