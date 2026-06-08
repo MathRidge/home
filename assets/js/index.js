@@ -738,6 +738,79 @@ function renderCertificateWall() {
   writeTrailStateSnapshot();
 }
 
+function certificateVaultChapterTitle(chapter) {
+  const chapterNumber = String(chapter || "").match(/Chapter\s+(\d+)/i)?.[1] || "";
+  return chapterNumber ? `Chapter ${chapterNumber} Certificate Shelf` : "Certificate Shelf";
+}
+
+function certificateVaultStatusText(earned) {
+  return earned ? "Earned" : "Awaiting Trail Clear";
+}
+
+function certificateVaultActionText(earned) {
+  return earned ? "Tap to view official certificate" : "Tap to see the trail message";
+}
+
+function renderCertificateVaultCard(item) {
+  const lesson = lessons.find(entry => entry.id === item.id);
+  const cert = readCertificate(item.id);
+  const earned = Boolean(cert && cert.completed);
+  const name = earned ? (cert.studentName || cert.name || "Student") : "Math Ridge Scholar";
+  const date = earned ? certificateDateText(cert) : "Not earned yet";
+  const certificateTitle = cert?.certificateTitle || item.certificateTitle || item.title;
+  const ariaLabel = earned
+    ? `View ${item.section} ${certificateTitle} certificate`
+    : `${item.section} ${certificateTitle} certificate is not earned yet. Tap for message.`;
+
+  return `
+    <button class="certificate-vault-card ${earned ? "earned" : "not-earned"}" type="button" onclick="openCertificateFrame('${item.id}')" aria-label="${escapeHTML(ariaLabel)}">
+      <span class="certificate-vault-stage">${escapeHTML(item.section)}</span>
+      <span class="certificate-vault-state">${escapeHTML(certificateVaultStatusText(earned))}</span>
+      <span class="certificate-vault-title">${escapeHTML(certificateTitle)}</span>
+      <span class="certificate-vault-name">${escapeHTML(name)}</span>
+      <span class="certificate-vault-date">${escapeHTML(date)}</span>
+      <span class="certificate-vault-action">${escapeHTML(certificateVaultActionText(earned))}</span>
+      <span class="certificate-vault-lesson">${escapeHTML(lesson?.tag || item.title)}</span>
+    </button>
+  `;
+}
+
+function renderCertificateVaultShelf(chapter) {
+  const chapterItems = certificateList.filter(item => {
+    const lesson = lessons.find(entry => entry.id === item.id);
+    return lesson?.chapter === chapter;
+  });
+  const earnedCount = chapterItems.filter(item => hasCertificate(item.id)).length;
+
+  return `
+    <section class="certificate-shelf" aria-label="${escapeHTML(certificateVaultChapterTitle(chapter))}">
+      <div class="certificate-shelf-heading">
+        <div>
+          <h3>${escapeHTML(certificateVaultChapterTitle(chapter))}</h3>
+          <p>${escapeHTML(chapter || "")}</p>
+        </div>
+        <strong>${earnedCount} / ${chapterItems.length}</strong>
+      </div>
+      <div class="certificate-carousel" role="list">
+        ${chapterItems.map(item => `<div class="certificate-carousel-item" role="listitem">${renderCertificateVaultCard(item)}</div>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderCertificateVault() {
+  const shelves = document.getElementById("certificateVaultShelves");
+  if (!shelves) return;
+
+  const earnedCount = certificateList.filter(item => hasCertificate(item.id)).length;
+  const progress = document.getElementById("certificateVaultProgress");
+  if (progress) progress.textContent = `Certificates earned: ${earnedCount} / ${certificateList.length}`;
+
+  const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
+  shelves.innerHTML = chapters.map(renderCertificateVaultShelf).join("");
+  writeTrailStateSnapshot();
+}
+
 function isLegacyTestResultImage(value) {
   const src = String(value || "").trim();
   return !src ||
@@ -1211,13 +1284,14 @@ function openCertificateFrame(id) {
   const cert = readCertificate(id);
 
   if (cert && cert.completed) {
+    const returnView = document.getElementById("certificates")?.classList.contains("active") ? "certificates" : "cabin";
     try {
-      sessionStorage.setItem("mathRidge_certificate_return", "cabin");
-      sessionStorage.setItem("mathRidge_open_section", "cabin");
-      sessionStorage.setItem("mathRidgeReturnView", "cabin");
+      sessionStorage.setItem("mathRidge_certificate_return", returnView);
+      sessionStorage.setItem("mathRidge_open_section", returnView);
+      sessionStorage.setItem("mathRidgeReturnView", returnView);
     } catch (error) {}
 
-    window.location.href = `${item.playFile}?certificate=${encodeURIComponent(id)}&mode=redownload&from=cabin`;
+    window.location.href = `${item.playFile}?certificate=${encodeURIComponent(id)}&mode=redownload&from=${encodeURIComponent(returnView)}`;
     return;
   }
 
@@ -1294,6 +1368,7 @@ function resetAllProgress() {
   renderTrail({ force: true });
   renderMenuLinks({ force: true });
   renderCertificateWall();
+  renderCertificateVault();
   renderTestResults();
   renderRelicVault();
   syncStoryGateState();
@@ -1353,7 +1428,7 @@ const shell = document.getElementById("appShell");
 const bgClasses = ["quest-bg", "menu-bg", "cabin-bg", "message-bg", "prologue-bg"];
 
 function updateActiveNav(id) {
-  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", relics: "Cabin", message: "Message", prologue: "" };
+  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", certificates: "Cabin", relics: "Cabin", message: "Message", prologue: "" };
 
   document.querySelectorAll(".top-actions button").forEach(button => {
     const isCurrent = button.textContent.trim() === labels[id];
@@ -1393,7 +1468,7 @@ function showSection(id, options = {}) {
     shell.classList.remove(...bgClasses);
     if (nextId === "quest") shell.classList.add("quest-bg");
     if (nextId === "quick") shell.classList.add("menu-bg");
-    if (nextId === "cabin" || nextId === "relics") shell.classList.add("cabin-bg");
+    if (nextId === "cabin" || nextId === "certificates" || nextId === "relics") shell.classList.add("cabin-bg");
     if (nextId === "message") shell.classList.add("message-bg");
     if (nextId === "prologue") shell.classList.add("prologue-bg");
   }
@@ -1405,6 +1480,7 @@ function showSection(id, options = {}) {
     renderTestResults();
     syncCabinPanelVisibility({ scroll: false });
   }
+  if (nextId === "certificates") renderCertificateVault();
   if (nextId === "relics") renderRelicVault();
 
   updateActiveNav(nextId);
@@ -1423,6 +1499,7 @@ function normalizeSectionName(value) {
   if (!value) return "";
   if (value === "trail" || value === "mountain-trail") return "quest";
   if (value === "menu") return "quick";
+  if (value === "certificate" || value === "certificate-wall" || value === "certificate-vault") return "certificates";
   if (value === "relic" || value === "relic-vault") return "relics";
   if (value === "story") return "prologue";
   return value;
@@ -1452,7 +1529,7 @@ function openInitialSectionFromURL() {
     return;
   }
 
-  if (["quest", "quick", "cabin", "relics", "message"].includes(target)) {
+  if (["quest", "quick", "cabin", "certificates", "relics", "message"].includes(target)) {
     showSection(target, { scroll: false, keepURL: true, silentGate: true });
   } else {
     showSection("home", { scroll: false, keepURL: true });
