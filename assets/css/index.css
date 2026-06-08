@@ -1833,6 +1833,13 @@ body.index-page .jump-link {
   justify-content: space-between !important;
   padding: 10px 12px !important;
 }
+
+body.index-page .quick-box-note {
+  margin: 0 0 12px;
+  color: rgba(255,247,232,0.72);
+  font-weight: 760;
+  line-height: 1.42;
+}
 body.index-page .jump-link span,
 body.index-page .jump-link strong {
   position: relative;
@@ -1847,6 +1854,19 @@ body.index-page .jump-link.play-jump {
   background:
     linear-gradient(180deg, rgba(255,225,162,0.18), rgba(99,67,33,0.16)),
     linear-gradient(135deg, rgba(122,77,43,0.90), rgba(58,34,18,0.90)) !important;
+}
+
+body.index-page .story-archive-box {
+  border-color: rgba(242,184,75,0.34) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(242,184,75,0.18), transparent 38%),
+    linear-gradient(135deg, rgba(255,247,232,0.12), rgba(255,247,232,0.055)) !important;
+}
+
+body.index-page .jump-link.story-jump {
+  background:
+    linear-gradient(180deg, rgba(255,247,232,0.18), rgba(84,55,111,0.16)),
+    linear-gradient(135deg, rgba(42,34,72,0.92), rgba(18,28,48,0.92)) !important;
 }
 
 /* Cabin certificate wall: fit all eight without horizontal overflow. */
@@ -4484,7 +4504,6 @@ body.index-page.story-gated .home-hero .hero-card {
 body.index-page.story-gated .home-hero .hero-lead,
 body.index-page.story-gated .chapter-preview,
 body.index-page.story-gated .home-quote,
-body.index-page.story-gated .hero-actions .pill-btn:not(.hero-story-link),
 body.index-page.story-gated .mobile-double-tap-note {
   display: none !important;
 }
@@ -4540,7 +4559,6 @@ body.index-page.story-gated .hero-actions {
   align-items: center;
 }
 
-body.index-page .hero-actions .hero-story-link,
 body.index-page .hero-actions .hero-start-trail {
   display: inline-flex;
   align-items: center;
@@ -4548,8 +4566,7 @@ body.index-page .hero-actions .hero-start-trail {
   text-align: center;
 }
 
-body.index-page.story-gated .hero-actions .hero-story-link,
-body.index-page:not(.story-gated) .hero-actions .hero-start-trail {
+body.index-page .hero-actions .hero-start-trail {
   min-width: 168px;
   border-color: rgba(255,231,168,.70) !important;
   background:
@@ -4563,9 +4580,203 @@ body.index-page:not(.story-gated) .hero-actions .hero-start-trail {
     inset 0 -2px 0 rgba(88,52,20,.30) !important;
 }
 
-body.index-page.story-gated .hero-actions .hero-story-link {
-  justify-self: center;
-  margin-inline: auto;
+body.index-page .hero-actions .hero-view-cabin {
+  min-width: 148px;
+}
+
+body.index-page .cabin-interactive-map {
+  position: relative !important;
+  display: block !important;
+  width: min(100%, 1080px);
+  margin: 0 auto 18px;
+  padding: 0 !important;
+  gap: 0 !important;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255,231,168,0.28);
+  background: #07111f;
+  box-shadow:
+    0 22px 58px rgba(0,0,0,0.32),
+    inset 0 1px 0 rgba(255,247,232,0.10);
+}
+
+body.index-page .cabin-interactive-map picture,
+body.index-page .cabin-interactive-map img {
+  display: block;
+  width: 100%;
+}
+
+body.index-page .cabin-interactive-map img {
+  height: auto;
+  aspect-ratio: 1448 / 1086;
+  object-fit: cover;
+}
+
+body.index-page .cabin-hotspot.room-spot {
+  position: absolute !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 18px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  cursor: pointer;
+  isolation: isolate;
+  overflow: visible !important;
+}
+
+body.index-page .cabin-hotspot.room-spot::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+  border-radius: inherit !important;
+  border: 2px solid rgba(255,224,154,0.0) !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,224,154,0.13), transparent 68%),
+    linear-gradient(135deg, rgba(255,224,154,0.10), rgba(25,105,165,0.08)) !important;
+  box-shadow:
+    0 0 0 rgba(255,224,154,0),
+    inset 0 0 0 1px rgba(255,255,255,0.0) !important;
+  opacity: 0;
+  pointer-events: none !important;
+  transition: opacity .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+body.index-page .cabin-hotspot.room-spot::after {
+  content: attr(aria-label) !important;
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  z-index: 2 !important;
+  transform: translate(-50%, -50%) scale(0.98);
+  width: max-content;
+  max-width: min(220px, 82vw);
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,231,168,0.32);
+  background: rgba(7,16,29,0.82) !important;
+  color: rgba(255,247,232,0.88);
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1.2;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.28);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+body.index-page .cabin-hotspot.room-spot > * {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+body.index-page .cabin-hotspot.room-spot:hover::before,
+body.index-page .cabin-hotspot.room-spot:focus-visible::before,
+body.index-page .cabin-hotspot.room-spot.is-touch-preview::before,
+body.index-page .cabin-hotspot.room-spot.is-mobile-confirm-ready::before {
+  border-color: rgba(255,224,154,0.78) !important;
+  box-shadow:
+    0 0 24px rgba(246,201,108,0.26),
+    inset 0 0 0 1px rgba(255,255,255,0.12) !important;
+  opacity: 1;
+}
+
+body.index-page .cabin-hotspot.room-spot:hover::after,
+body.index-page .cabin-hotspot.room-spot:focus-visible::after,
+body.index-page .cabin-hotspot.room-spot.is-touch-preview::after,
+body.index-page .cabin-hotspot.room-spot.is-mobile-confirm-ready::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+body.index-page .cabin-hotspot.room-spot:focus-visible {
+  outline: none;
+}
+
+body.index-page .cabin-hotspot-menu {
+  left: 1.4%;
+  top: 4.6%;
+  width: 19.7%;
+  height: 22.4%;
+}
+
+body.index-page .cabin-hotspot-trail {
+  left: 23.3%;
+  top: 6.2%;
+  width: 36.2%;
+  height: 67.5%;
+}
+
+body.index-page .cabin-hotspot-certificates {
+  left: 68.8%;
+  top: 12.0%;
+  width: 27.0%;
+  height: 40.5%;
+}
+
+body.index-page .cabin-hotspot-relics {
+  left: 60.2%;
+  top: 31.3%;
+  width: 10.4%;
+  height: 31.8%;
+}
+
+body.index-page .cabin-hotspot-message {
+  left: 72.0%;
+  top: 57.8%;
+  width: 22.7%;
+  height: 25.1%;
+}
+
+@media (orientation: portrait) {
+  body.index-page .cabin-interactive-map img {
+    aspect-ratio: 941 / 1672;
+  }
+
+  body.index-page .cabin-hotspot-menu {
+    left: 1.8%;
+    top: 5.0%;
+    width: 52.2%;
+    height: 20.2%;
+  }
+
+  body.index-page .cabin-hotspot-trail {
+    left: 5.4%;
+    top: 29.4%;
+    width: 53.4%;
+    height: 49.8%;
+  }
+
+  body.index-page .cabin-hotspot-certificates {
+    left: 62.8%;
+    top: 29.2%;
+    width: 35.2%;
+    height: 28.0%;
+  }
+
+  body.index-page .cabin-hotspot-relics {
+    left: 50.8%;
+    top: 45.0%;
+    width: 19.3%;
+    height: 24.0%;
+  }
+
+  body.index-page .cabin-hotspot-message {
+    left: 64.4%;
+    top: 66.2%;
+    width: 32.6%;
+    height: 23.0%;
+  }
 }
 
 body.index-page .top-actions .story-locked,

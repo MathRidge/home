@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260608-menu-scene-flow" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260608-cabin-interactive-art" />
 </head>
 
 <body class="index-page is-index-loading" data-index-page="true">
@@ -88,10 +88,8 @@
             <span>Step 3: Choose <em>Add to Home Screen</em> to place Math Ridge with your apps.</span>
           </div>
           <div class="hero-actions">
-            <a class="pill-btn hero-story-link" href="prologue.html">Begin Story</a>
             <button class="pill-btn hero-start-trail" type="button" onclick="showSection('quest')">Start Trail</button>
-            <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
-            <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+            <button class="pill-btn hero-view-cabin" type="button" onclick="showSection('cabin')">View Cabin</button>
             <p class="mobile-double-tap-note">Ridge controls use two taps: first to arm, second to enter.</p>
           </div>
         </div>
@@ -161,11 +159,26 @@
           <button class="pill-btn" type="button" onclick="showSection('quest')">Trail</button>
         </header>
 
-        <div class="escape-spots">
-          <button class="room-spot" type="button" onclick="showSection('quick')"><strong>Menu</strong><span>Open direct links to every Manual and Trail.</span></button>
-          <button class="room-spot" type="button" onclick="showSection('quest')"><strong>Trail</strong><span>Look outside and continue the guided mountain path.</span></button>
-          <button class="room-spot" type="button" onclick="toggleCertificateWall()"><strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span></button>
-          <button class="room-spot" type="button" onclick="showSection('message')"><strong>Message</strong><span>Leave a question, suggestion, thank-you note, or testimonial.</span></button>
+        <div class="escape-spots cabin-interactive-map" aria-label="Cabin navigation">
+          <picture>
+            <source media="(orientation: portrait)" srcset="assets/images/index-ui/cabin_interactive_mobile_vertical.png" />
+            <img src="assets/images/index-ui/cabin_interactive_mobile_horizontal.png" alt="The Cabin navigation room" />
+          </picture>
+          <button class="room-spot cabin-hotspot cabin-hotspot-menu" type="button" onclick="showSection('quick')" aria-label="Open Menu">
+            <strong>Menu</strong><span>Open direct links to every Manual and Trail.</span>
+          </button>
+          <button class="room-spot cabin-hotspot cabin-hotspot-trail" type="button" onclick="showSection('quest')" aria-label="Open Mountain Trail">
+            <strong>Trail</strong><span>Return to the trail and lesson stages.</span>
+          </button>
+          <button class="room-spot cabin-hotspot cabin-hotspot-certificates" type="button" onclick="toggleCertificateWall()" aria-label="Open Certificate Wall">
+            <strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span>
+          </button>
+          <button class="room-spot cabin-hotspot cabin-hotspot-relics" type="button" onclick="toggleCertificateWall()" aria-label="Open Relics and Certificates">
+            <strong>Relics</strong><span>View earned progress and certificates.</span>
+          </button>
+          <button class="room-spot cabin-hotspot cabin-hotspot-message" type="button" onclick="showSection('message')" aria-label="Open Message Desk">
+            <strong>Message</strong><span>Leave a question, suggestion, thank-you note, or testimonial.</span>
+          </button>
         </div>
 
         <div class="cabin-slider" id="cabinSlider" data-panel="certificates">
@@ -242,6 +255,6 @@
   </main>
 
   <script src="assets/js/math-ridge-shell.js?v=20260604-confirm-nav-delay"></script>
-  <script src="assets/js/index.js?v=20260608-menu-scene-flow"></script>
+  <script src="assets/js/index.js?v=20260608-cabin-interactive-art"></script>
 </body>
 </html>

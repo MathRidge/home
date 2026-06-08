@@ -525,7 +525,7 @@ function renderMenuLinks(options = {}) {
 
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
 
-  wrap.innerHTML = chapters.map(chapter => {
+  wrap.innerHTML = renderMenuStoryArchive() + chapters.map(chapter => {
     const items = lessons.filter(lesson => lesson.chapter === chapter);
     return `
       <div class="quick-box">
@@ -545,6 +545,19 @@ function renderMenuLinks(options = {}) {
 
   wrap.dataset.rendered = "true";
   writeTrailStateSnapshot();
+}
+
+function renderMenuStoryArchive() {
+  return `
+    <div class="quick-box story-archive-box">
+      <h3>Story Archive</h3>
+      <p class="quick-box-note">Replay the story scenes and opening pages collected so far.</p>
+      <div class="link-list story-link-list">
+        <a class="jump-link story-jump" href="prologue.html"><span><i aria-hidden="true">P</i> Begin Prologue Story</span><strong>Opening</strong></a>
+        <a class="jump-link story-jump" href="story-stage-1-1.html?watch=1"><span><i aria-hidden="true">1</i> 1-1 Story Scene</span><strong>Replay</strong></a>
+      </div>
+    </div>
+  `;
 }
 
 function renderMenuRootGateLink() {
@@ -1262,8 +1275,8 @@ function closeModal() {
 }
 
 function showStoryGateModal() {
-  showModal("Story First", "The full Mountain Trail opens after you finish Story 1-1 and receive the Term Manual.", [
-    { text: "Begin Story", className: "gold-btn", action: () => { window.location.href = "prologue.html"; } },
+  showModal("Story First", "The full Mountain Trail opens after you finish Story 1-1 and receive the Term Stone Manual.", [
+    { text: "Begin Prologue Story", className: "gold-btn", action: () => { window.location.href = "prologue.html"; } },
     { text: "Message", className: "pill-btn", action: () => showSection("message") },
     { text: "OK", className: "pill-btn", action: closeModal }
   ]);
