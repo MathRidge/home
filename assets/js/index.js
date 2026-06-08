@@ -69,7 +69,16 @@ function handleStageImageFallback(img) {
   if (img) img.remove();
 }
 
-const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_test-result.png?v=20260607-test-result-certificate";
+const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_mastery_template_true_alpha.png?v=20260608-mastery-certificate";
+const TEST_RESULT_CERTIFICATE_TEMPLATE = {
+  src: TEST_RESULT_CERTIFICATE_IMAGE,
+  width: 1122,
+  height: 1402
+};
+const TEST_CERT_SERIF = '"Playfair Display", "Palatino Linotype", Georgia, serif';
+const TEST_CERT_SCRIPT = '"Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive';
+let testCertificateTemplateImage = null;
+let testCertificateTemplatePromise = null;
 
 const chapterTests = [
   {
@@ -77,6 +86,9 @@ const chapterTests = [
     chapter: "Chapter 1 Test",
     range: "Covers 1-1 to 1-4",
     title: "Term Vision Checkpoint",
+    masteryTitle: "Signed Term Structure",
+    assessmentTitle: "Chapter 1 Mastery Assessment",
+    bodyText: "Awarded for demonstrating mastery in recognizing terms, interpreting sign behavior, and evaluating signed expressions through structural reasoning.",
     image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_1", "mathRidge_testResult_chapter1"],
     dataKey: "mathRidge_testResult_chapter_1_data",
@@ -89,6 +101,9 @@ const chapterTests = [
     chapter: "Chapter 2 Test",
     range: "Covers 2-1 to 2-4",
     title: "Prime Element Vision Checkpoint",
+    masteryTitle: "Prime Element Structure",
+    assessmentTitle: "Chapter 2 Mastery Assessment",
+    bodyText: "Awarded for demonstrating mastery in seeing values as prime pieces, simplifying fraction structures, and tracking repeated factors.",
     image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_2", "mathRidge_testResult_chapter2"],
     dataKey: "mathRidge_testResult_chapter_2_data",
@@ -303,6 +318,36 @@ function escapeHTML(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function cleanCertificateName(value, fallback = "Math Ridge Scholar") {
+  const clean = String(value || "").replace(/\s+/g, " ").trim();
+  return clean ? clean.slice(0, 48) : fallback;
+}
+
+function readPlayerProfile() {
+  return readJSONStorage(PLAYER_PROFILE_KEY) || {};
+}
+
+function preferredCertificateName(data = null) {
+  const profile = readPlayerProfile();
+  const savedFullName = (() => {
+    try { return localStorage.getItem(CERTIFICATE_FULL_NAME_KEY); } catch (error) { return ""; }
+  })();
+  const earnedCert = lessons
+    .map(lesson => readCertificate(lesson.id))
+    .find(cert => cert?.studentName || cert?.certificateName);
+
+  return cleanCertificateName(
+    data?.studentName ||
+    data?.certificateName ||
+    savedFullName ||
+    profile.certificateName ||
+    profile.playerName ||
+    profile.nickname ||
+    earnedCert?.studentName ||
+    earnedCert?.certificateName
+  );
 }
 
 function renderTrail(options = {}) {
@@ -618,7 +663,11 @@ function renderCertificateWall() {
 
 function isLegacyTestResultImage(value) {
   const src = String(value || "").trim();
-  return !src || src.startsWith("data:image/svg");
+  return !src ||
+    src.startsWith("data:image/svg") ||
+    src.includes("math_ridge_certificate_test-result.png") ||
+    src.includes("chapter-1-test-result.svg") ||
+    src.includes("chapter-2-test-result.svg");
 }
 
 function readTestResultImage(test) {
@@ -689,6 +738,34 @@ function bestTestAttempt(data, history) {
   }, null);
 }
 
+function testMasteryStatus(data) {
+  if (!data) return "Awaiting Attempt";
+  const percent = Number(data.percent);
+  if (!data.passed) return "Retry Recommended";
+  if (Number.isFinite(percent) && percent >= 95) return "Passed with Distinction";
+  return "Passed";
+}
+
+function testCertificateDetails(test) {
+  const data = readTestResultData(test);
+  const total = Number(data?.totalQuestions || 40);
+  const correct = Number(data?.correct || 0);
+  const percent = data ? formatTestPercent(data.percent) : "--";
+  const date = formatTestDate(data?.completedAt);
+  return {
+    data,
+    studentName: preferredCertificateName(data),
+    masteryTitle: test.masteryTitle || test.title,
+    bodyText: test.bodyText || "Awarded for demonstrating mastery through careful mathematical reasoning.",
+    assessmentTitle: test.assessmentTitle || test.chapter.replace(" Test", " Mastery Assessment"),
+    checkpointTitle: test.title,
+    scoreText: data ? `${correct} / ${total}` : "-- / 40",
+    performanceText: percent,
+    statusText: testMasteryStatus(data),
+    dateText: date ? `Completed on ${date}` : "Official result awaits"
+  };
+}
+
 function renderTestResultStats(test) {
   const data = readTestResultData(test);
   const history = readTestAttemptHistory(test);
@@ -727,19 +804,20 @@ function renderTestResultStats(test) {
 }
 
 function renderTestCertificateOverlay(test) {
-  const data = readTestResultData(test);
-  const statusText = data ? (data.passed ? "Passed" : "Retry") : "Pending";
-  const scoreText = data ? `${Number(data.correct || 0)}/${Number(data.totalQuestions || 40)}` : "--/40";
-  const percentText = data ? formatTestPercent(data.percent) : "--";
-  const dateText = formatTestDate(data?.completedAt);
+  const details = testCertificateDetails(test);
 
   return `
-    <div class="result-certificate-overlay ${data ? (data.passed ? "passed" : "retry") : "pending"}">
-      <span class="result-cert-kicker">${escapeHTML(test.chapter)}</span>
-      <strong>${escapeHTML(test.title)}</strong>
-      <span class="result-cert-score">${escapeHTML(scoreText)}</span>
-      <span class="result-cert-status">${escapeHTML(statusText)} ${escapeHTML(percentText)}</span>
-      <em>${dateText ? escapeHTML(dateText) : "Official result awaits"}</em>
+    <div class="result-certificate-overlay mastery ${details.data ? (details.data.passed ? "passed" : "retry") : "pending"}">
+      <strong class="result-cert-title">${escapeHTML(details.masteryTitle)}</strong>
+      <span class="result-cert-name">${escapeHTML(details.studentName)}</span>
+      <span class="result-cert-body">${escapeHTML(details.bodyText)}</span>
+      <span class="result-cert-assessment">${escapeHTML(details.assessmentTitle)}<br>${escapeHTML(details.checkpointTitle)}</span>
+      <span class="result-cert-score">
+        Final Score: ${escapeHTML(details.scoreText)}<br>
+        Performance: ${escapeHTML(details.performanceText)}<br>
+        Status: ${escapeHTML(details.statusText)}
+      </span>
+      <em class="result-cert-date">${escapeHTML(details.dateText)}</em>
     </div>
   `;
 }
@@ -767,10 +845,187 @@ function renderTestResults() {
         <div class="result-note">${escapeHTML(test.note)}</div>
         <div class="result-card-actions">
           ${chapterOneAction}
+          ${data ? `<button class="pill-btn result-save-btn" type="button" onclick="downloadTestCertificate('${test.id}')">Save Mastery Certificate</button>` : ""}
         </div>
       </article>
     `;
   }).join("");
+}
+
+function setTestCanvasFont(ctx, { style = "", weight = "", size = 32, family = TEST_CERT_SERIF } = {}) {
+  ctx.font = [style, weight, `${Math.round(size)}px`, family].filter(Boolean).join(" ");
+}
+
+function fitTestCanvasFont(ctx, text, { style = "", weight = "", maxSize = 64, minSize = 20, family = TEST_CERT_SERIF, maxWidth = 800 } = {}) {
+  let size = maxSize;
+  do {
+    setTestCanvasFont(ctx, { style, weight, size, family });
+    if (ctx.measureText(String(text || "")).width <= maxWidth || size <= minSize) break;
+    size -= 2;
+  } while (size >= minSize);
+  return size;
+}
+
+function wrapTestCanvasLines(ctx, text, maxWidth) {
+  const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+
+  words.forEach(word => {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+
+  if (line) lines.push(line);
+  return lines.length ? lines : [""];
+}
+
+function drawTestCenteredText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 4) {
+  const lines = wrapTestCanvasLines(ctx, text, maxWidth).slice(0, maxLines);
+  lines.forEach((line, index) => ctx.fillText(line, x, y + index * lineHeight));
+  return y + Math.max(0, lines.length - 1) * lineHeight;
+}
+
+function waitForTestCertificateFonts() {
+  try {
+    if (document.fonts?.ready) return document.fonts.ready.catch(() => {});
+  } catch (error) {}
+  return Promise.resolve();
+}
+
+function loadTestCertificateTemplate() {
+  if (testCertificateTemplateImage?.complete && testCertificateTemplateImage.naturalWidth) {
+    return Promise.resolve(testCertificateTemplateImage);
+  }
+  if (testCertificateTemplatePromise) return testCertificateTemplatePromise;
+
+  testCertificateTemplatePromise = new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = () => {
+      testCertificateTemplateImage = image;
+      resolve(image);
+    };
+    image.onerror = reject;
+    image.src = TEST_RESULT_CERTIFICATE_TEMPLATE.src;
+  });
+
+  return testCertificateTemplatePromise;
+}
+
+function createTestCertificateCanvas(test, templateImage = null) {
+  const details = testCertificateDetails(test);
+  const canvas = document.createElement("canvas");
+  canvas.width = Number(templateImage?.naturalWidth || TEST_RESULT_CERTIFICATE_TEMPLATE.width);
+  canvas.height = Number(templateImage?.naturalHeight || TEST_RESULT_CERTIFICATE_TEMPLATE.height);
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+
+  if (templateImage?.complete && templateImage.naturalWidth) {
+    ctx.drawImage(templateImage, 0, 0, width, height);
+  }
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = "#4f351c";
+  ctx.shadowColor = "rgba(255,255,255,0.72)";
+  ctx.shadowBlur = 5;
+
+  const rawTitleSize = fitTestCanvasFont(ctx, details.masteryTitle, {
+    weight: "700",
+    maxSize: width * 0.039,
+    minSize: width * 0.024,
+    family: TEST_CERT_SERIF,
+    maxWidth: width * 0.64
+  });
+  const rawTitleLineCount = wrapTestCanvasLines(ctx, details.masteryTitle, width * 0.64).slice(0, 2).length;
+  const titleSize = rawTitleLineCount > 1 ? Math.min(rawTitleSize, width * 0.033) : rawTitleSize;
+  setTestCanvasFont(ctx, { weight: "700", size: titleSize, family: TEST_CERT_SERIF });
+  const titleLineCount = wrapTestCanvasLines(ctx, details.masteryTitle, width * 0.64).slice(0, 2).length;
+  drawTestCenteredText(
+    ctx,
+    details.masteryTitle,
+    width / 2,
+    height * (titleLineCount > 1 ? 0.270 : 0.282),
+    width * 0.64,
+    height * (titleLineCount > 1 ? 0.023 : 0.030),
+    2
+  );
+
+  ctx.fillStyle = "#4d2d12";
+  ctx.shadowBlur = 8;
+  const nameSize = fitTestCanvasFont(ctx, details.studentName, {
+    style: "italic",
+    weight: "400",
+    maxSize: width * 0.082,
+    minSize: width * 0.046,
+    family: TEST_CERT_SCRIPT,
+    maxWidth: width * 0.70
+  });
+  setTestCanvasFont(ctx, { style: "italic", weight: "400", size: nameSize, family: TEST_CERT_SCRIPT });
+  ctx.fillText(details.studentName, width / 2, height * 0.418);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = "#51341c";
+  setTestCanvasFont(ctx, { weight: "500", size: width * 0.019, family: TEST_CERT_SERIF });
+  drawTestCenteredText(ctx, details.bodyText, width / 2, height * 0.480, width * 0.60, height * 0.024, 3);
+
+  ctx.fillStyle = "#4f351c";
+  setTestCanvasFont(ctx, { weight: "700", size: width * 0.023, family: TEST_CERT_SERIF });
+  ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.584);
+  setTestCanvasFont(ctx, { weight: "500", size: width * 0.020, family: TEST_CERT_SERIF });
+  ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.609);
+
+  ctx.fillStyle = "#51341c";
+  setTestCanvasFont(ctx, { weight: "700", size: width * 0.019, family: TEST_CERT_SERIF });
+  ctx.fillText(`Final Score: ${details.scoreText}`, width / 2, height * 0.650);
+  ctx.fillText(`Performance: ${details.performanceText}`, width / 2, height * 0.673);
+  ctx.fillText(`Status: ${details.statusText}`, width / 2, height * 0.696);
+
+  setTestCanvasFont(ctx, { weight: "500", size: width * 0.019, family: TEST_CERT_SERIF });
+  ctx.fillText(details.dateText, width / 2, height * 0.746);
+
+  return canvas;
+}
+
+function saveCanvasImage(canvas, filename) {
+  const link = document.createElement("a");
+  link.download = filename;
+  link.href = canvas.toDataURL("image/png");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+function downloadTestCertificate(testId) {
+  const test = chapterTests.find(item => item.id === testId);
+  if (!test) return;
+
+  const details = testCertificateDetails(test);
+  if (!details.data) {
+    showModal("No Test Result Yet", "Complete the chapter test first, then the mastery certificate can be saved to this device.", [
+      { text: "OK", className: "gold-btn", action: closeModal }
+    ]);
+    return;
+  }
+
+  Promise.all([loadTestCertificateTemplate(), waitForTestCertificateFonts()])
+    .then(([templateImage]) => {
+      const canvas = createTestCertificateCanvas(test, templateImage);
+      const slug = test.id.replace(/_/g, "-");
+      saveCanvasImage(canvas, `math-ridge-${slug}-mastery-certificate.png`);
+    })
+    .catch(() => {
+      const canvas = createTestCertificateCanvas(test);
+      const slug = test.id.replace(/_/g, "-");
+      saveCanvasImage(canvas, `math-ridge-${slug}-mastery-certificate.png`);
+    });
 }
 
 function openCertificateFrame(id) {

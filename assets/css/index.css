@@ -5013,11 +5013,11 @@ body.index-page .certificate-frame.not-earned .mini-cert-seal {
   }
 }
 
-/* Test result certificates use the portrait true-alpha certificate face. */
+/* Chapter test mastery certificates use the portrait true-alpha mastery template. */
 body.index-page .result-image-frame.test-certificate-frame {
   position: relative;
-  width: min(100%, 300px);
-  aspect-ratio: 993 / 1378;
+  width: min(100%, 318px);
+  aspect-ratio: 1122 / 1402;
   margin: 14px auto 12px;
   border: 0;
   border-radius: 0;
@@ -5034,64 +5034,104 @@ body.index-page .result-image-frame.test-certificate-frame img {
 
 body.index-page .result-certificate-overlay {
   position: absolute;
-  inset: 17% 12% 20%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(3px, 0.9vw, 8px);
+  inset: 0;
+  display: block;
   text-align: center;
-  color: #24304f;
+  color: #4f351c;
   pointer-events: none;
 }
 
-body.index-page .result-cert-kicker,
-body.index-page .result-cert-status,
-body.index-page .result-certificate-overlay em {
-  font-family: "Inter", "Trebuchet MS", Arial, sans-serif;
-  font-size: clamp(.58rem, 1.3vw, .76rem);
-  font-weight: 900;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-body.index-page .result-certificate-overlay strong {
-  max-width: 100%;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: clamp(.95rem, 2.15vw, 1.38rem);
-  line-height: 1.05;
-  color: #8a5c12;
+body.index-page .result-certificate-overlay.mastery > * {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  width: 68%;
+  text-align: center;
   text-wrap: balance;
 }
 
+body.index-page .result-cert-title {
+  top: 25.1%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.78rem;
+  line-height: 1.04;
+  font-weight: 700;
+  color: #4f351c;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.72);
+}
+
+body.index-page .result-cert-name {
+  top: 35.8%;
+  width: 72%;
+  font-family: "Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive;
+  font-size: 2.35rem;
+  line-height: 1;
+  font-style: italic;
+  font-weight: 400;
+  color: #4d2d12;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.74), 0 5px 14px rgba(77,45,18,0.12);
+}
+
+body.index-page .result-cert-body {
+  top: 46.8%;
+  width: 62%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.56rem;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #51341c;
+}
+
+body.index-page .result-cert-assessment {
+  top: 56.9%;
+  width: 62%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.57rem;
+  line-height: 1.16;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4f351c;
+}
+
 body.index-page .result-cert-score {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: clamp(1.9rem, 5.4vw, 3rem);
-  font-weight: 900;
-  line-height: .95;
-  color: #174d78;
-  text-shadow: 0 1px 0 rgba(255,255,255,.72);
+  top: 63.7%;
+  width: 58%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.52rem;
+  line-height: 1.18;
+  font-weight: 700;
+  color: #51341c;
 }
 
-body.index-page .result-certificate-overlay.passed .result-cert-status {
-  color: #2d7d4b;
+body.index-page .result-cert-date {
+  top: 73.7%;
+  width: 58%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.52rem;
+  line-height: 1.18;
+  font-style: normal;
+  font-weight: 500;
+  color: #51341c;
 }
 
-body.index-page .result-certificate-overlay.retry .result-cert-status {
-  color: #9b4a32;
+body.index-page .result-certificate-overlay.retry {
+  opacity: .82;
 }
 
 body.index-page .result-certificate-overlay.pending {
-  opacity: .74;
+  opacity: .70;
 }
 
-body.index-page .result-certificate-overlay em {
-  max-width: 84%;
-  margin-top: clamp(4px, 1.2vw, 10px);
-  letter-spacing: 0;
-  text-transform: none;
-  font-style: italic;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: clamp(.64rem, 1.4vw, .82rem);
-  color: rgba(95,56,28,.86);
+@media (max-width: 700px) {
+  body.index-page .result-image-frame.test-certificate-frame {
+    width: min(100%, 292px);
+  }
+
+  body.index-page .result-cert-title { font-size: 0.64rem; }
+  body.index-page .result-cert-name { font-size: 1.92rem; }
+  body.index-page .result-cert-body { font-size: 0.46rem; }
+  body.index-page .result-cert-assessment { font-size: 0.46rem; }
+  body.index-page .result-cert-score,
+  body.index-page .result-cert-date { font-size: 0.43rem; }
 }

@@ -11,7 +11,9 @@
   const CHAPTER_RESULT_DATA_KEY = "mathRidge_testResult_chapter_1_data";
   const CHAPTER_ATTEMPTS_KEY = "mathRidge_testAttempts_chapter_1";
   const CHAPTER_ATTEMPT_HISTORY_KEY = "mathRidge_testAttemptHistory_chapter_1";
-  const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_test-result.png?v=20260607-test-result-certificate";
+  const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_mastery_template_true_alpha.png?v=20260608-mastery-certificate";
+  const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
+  const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
   const CHAPTER_TWO_NOTE_KEY = "mathRidge_noteUnlocked_2_1";
   const CHAPTER_TWO_STAGE_KEY = "mathRidge_stageUnlocked_2_1";
 
@@ -58,6 +60,31 @@
   function readJSON(key) {
     try { return JSON.parse(localStorage.getItem(key)); }
     catch (error) { return null; }
+  }
+
+  function cleanCertificateName(value, fallback = "Math Ridge Scholar") {
+    const clean = String(value || "").replace(/\s+/g, " ").trim();
+    return clean ? clean.slice(0, 48) : fallback;
+  }
+
+  function preferredCertificateName() {
+    const profile = readJSON(PLAYER_PROFILE_KEY) || {};
+    const savedFullName = (() => {
+      try { return localStorage.getItem(CERTIFICATE_FULL_NAME_KEY); }
+      catch (error) { return ""; }
+    })();
+    const earnedCert = ["1_1", "1_2", "1_3", "1_4"]
+      .map(id => readJSON(`mathRidge_cert_${id}`))
+      .find(cert => cert?.studentName || cert?.certificateName);
+
+    return cleanCertificateName(
+      savedFullName ||
+      profile.certificateName ||
+      profile.playerName ||
+      profile.nickname ||
+      earnedCert?.studentName ||
+      earnedCert?.certificateName
+    );
   }
 
   function positiveInteger(value, fallback = 0) {
@@ -636,6 +663,7 @@
     const payload = {
       version: 1,
       checkpoint: "chapter_1_root_gate",
+      studentName: preferredCertificateName(),
       completedAt,
       requiredCorrect: PASSING_CORRECT,
       totalQuestions: TOTAL_QUESTIONS,
