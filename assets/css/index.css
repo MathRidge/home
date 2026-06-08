@@ -5356,3 +5356,271 @@ body.index-page .result-certificate-overlay.pending {
   body.index-page .result-cert-date,
   body.index-page .result-cert-pending-date { font-size: 0.43rem; }
 }
+
+/* Relic Vault: collected math concepts from the Cabin shelf. */
+body.index-page .relics-panel {
+  overflow: visible;
+}
+
+body.index-page .relics-title-card {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(73,142,207,0.22), transparent 42%),
+    linear-gradient(135deg, rgba(255,231,168,0.16), rgba(16,32,51,0.58)) !important;
+}
+
+body.index-page .relic-vault-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 18px 22px 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,231,168,0.22);
+  background:
+    linear-gradient(135deg, rgba(255,247,232,0.11), rgba(35,72,108,0.16)),
+    rgba(7,16,29,0.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+body.index-page .relic-vault-intro strong {
+  color: #ffe3a8;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1rem, 1.7vw, 1.28rem);
+}
+
+body.index-page .relic-vault-intro span {
+  color: rgba(255,247,232,0.76);
+  font-weight: 760;
+  line-height: 1.35;
+}
+
+body.index-page .relic-vault-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 22px;
+}
+
+body.index-page .relic-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 13px;
+  min-height: 390px;
+  padding: 16px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255,231,168,0.25);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(73,142,207,0.20), transparent 44%),
+    linear-gradient(145deg, rgba(255,247,232,0.14), rgba(255,247,232,0.045)),
+    linear-gradient(180deg, rgba(10,25,43,0.92), rgba(5,13,24,0.88));
+  box-shadow:
+    0 18px 42px rgba(0,0,0,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+body.index-page .relic-card::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,231,168,0.12);
+  pointer-events: none;
+}
+
+body.index-page .relic-card::after {
+  content: "";
+  position: absolute;
+  inset: -42% auto -42% -26%;
+  width: 46%;
+  transform: rotate(12deg);
+  background: linear-gradient(90deg, transparent, rgba(255,247,232,0.18), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.index-page .relic-card.gathered::after {
+  animation: relicVaultSweep 4.6s ease-in-out infinite;
+}
+
+body.index-page .relic-card.locked {
+  filter: saturate(0.72);
+}
+
+body.index-page .relic-card.locked .relic-card-art img {
+  opacity: .30;
+  filter: grayscale(.72) brightness(.68);
+}
+
+body.index-page .relic-card.dormant.gathered .relic-card-art {
+  background:
+    radial-gradient(circle, rgba(140,154,190,0.22), transparent 68%),
+    rgba(255,255,255,0.035);
+}
+
+body.index-page .relic-card-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 138px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle, rgba(255,224,154,0.24), transparent 66%),
+    rgba(255,255,255,0.04);
+}
+
+body.index-page .relic-card-art img {
+  width: min(72%, 150px);
+  max-height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(0,0,0,0.34));
+}
+
+body.index-page .relic-card.gathered .relic-card-art img {
+  filter:
+    drop-shadow(0 14px 20px rgba(0,0,0,0.32))
+    drop-shadow(0 0 18px rgba(246,201,108,0.26));
+}
+
+body.index-page .relic-card-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+body.index-page .relic-stage,
+body.index-page .relic-status {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,231,168,0.22);
+  background: rgba(255,247,232,0.08);
+  color: rgba(255,247,232,0.76);
+  font-size: 0.74rem;
+  font-weight: 920;
+  letter-spacing: 0.02em;
+  padding: 5px 9px;
+}
+
+body.index-page .relic-status {
+  color: #ffe3a8;
+  background: rgba(242,184,75,0.13);
+}
+
+body.index-page .relic-card.locked .relic-status {
+  color: rgba(255,247,232,0.64);
+  background: rgba(255,255,255,0.055);
+}
+
+body.index-page .relic-card h3 {
+  margin: 0;
+  color: #ffe3a8;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.15rem, 1.9vw, 1.48rem);
+  line-height: 1.08;
+}
+
+body.index-page .relic-card p {
+  margin: 0;
+  color: rgba(255,247,232,0.78);
+  font-size: 0.93rem;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+body.index-page .relic-card em {
+  color: rgba(255,231,168,0.70);
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+body.index-page .relic-card-actions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+body.index-page .relic-card-actions .relic-jump {
+  min-height: 42px;
+  padding: 9px 10px !important;
+  border-radius: 13px !important;
+}
+
+body.index-page .relic-card-actions .relic-jump span,
+body.index-page .relic-card-actions .relic-jump strong {
+  font-size: 0.78rem;
+}
+
+@keyframes relicVaultSweep {
+  0%, 38% { opacity: 0; transform: translateX(0) rotate(12deg); }
+  52% { opacity: .75; }
+  76%, 100% { opacity: 0; transform: translateX(360%) rotate(12deg); }
+}
+
+@media (max-width: 980px) {
+  body.index-page .relic-vault-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  body.index-page .relic-vault-intro {
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 14px 14px 0;
+  }
+
+  body.index-page .relic-vault-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    padding: 14px;
+  }
+
+  body.index-page .relic-card {
+    min-height: 0;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 12px;
+    padding: 13px;
+  }
+
+  body.index-page .relic-card-art {
+    grid-row: 1 / 3;
+    min-height: 118px;
+  }
+
+  body.index-page .relic-card-art img {
+    width: 82%;
+    max-height: 108px;
+  }
+
+  body.index-page .relic-card-actions {
+    grid-column: 2;
+  }
+
+  body.index-page .relic-card p {
+    font-size: 0.86rem;
+  }
+}
+
+@media (max-width: 430px) {
+  body.index-page .relic-card {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+
+  body.index-page .relic-card-actions {
+    grid-template-columns: 1fr;
+  }
+}

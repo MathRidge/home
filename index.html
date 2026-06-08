@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260608-cabin-interactive-art" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260608-relic-vault" />
 </head>
 
 <body class="index-page is-index-loading" data-index-page="true">
@@ -173,8 +173,8 @@
           <button class="room-spot cabin-hotspot cabin-hotspot-certificates" type="button" onclick="toggleCertificateWall()" aria-label="Open Certificate Wall">
             <strong>Certificate Wall</strong><span>Earned certificates light up as the student grows.</span>
           </button>
-          <button class="room-spot cabin-hotspot cabin-hotspot-relics" type="button" onclick="toggleCertificateWall()" aria-label="Open Relics and Certificates">
-            <strong>Relics</strong><span>View earned progress and certificates.</span>
+          <button class="room-spot cabin-hotspot cabin-hotspot-relics" type="button" onclick="showSection('relics')" aria-label="Open Relic Vault">
+            <strong>Relics</strong><span>View gathered relics and lesson concepts.</span>
           </button>
           <button class="room-spot cabin-hotspot cabin-hotspot-message" type="button" onclick="showSection('message')" aria-label="Open Message Desk">
             <strong>Message</strong><span>Leave a question, suggestion, thank-you note, or testimonial.</span>
@@ -206,6 +206,25 @@
             </section>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="relics" class="hub-section view-section relics-section" aria-labelledby="relicsTitle">
+      <div class="panel relics-panel">
+        <header class="panel-header relics-title-card">
+          <div class="panel-title">
+            <h2 id="relicsTitle">Relic Vault</h2>
+            <p>Each relic is a quick memory of the math idea earned on the trail.</p>
+          </div>
+          <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+        </header>
+
+        <div class="relic-vault-intro">
+          <strong id="relicVaultProgress">Relics gathered: 0 / 9</strong>
+          <span>Open this shelf when you want a short reminder of what each lesson was really teaching.</span>
+        </div>
+
+        <div class="relic-vault-grid" id="relicVault" aria-live="polite"></div>
       </div>
     </section>
 
@@ -255,6 +274,6 @@
   </main>
 
   <script src="assets/js/math-ridge-shell.js?v=20260604-confirm-nav-delay"></script>
-  <script src="assets/js/index.js?v=20260608-cabin-interactive-art"></script>
+  <script src="assets/js/index.js?v=20260608-relic-vault"></script>
 </body>
 </html>

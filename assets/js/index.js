@@ -434,6 +434,84 @@ function stageRelicKind(id) {
   return id.startsWith("2_") ? "Vision Relic" : "Relic";
 }
 
+function stageRelicConcept(id) {
+  const concepts = {
+    "1_1": "A term has a sign direction and a size. Compare the sizes first, then let the sign tell the final direction.",
+    "1_2": "Sort positive and negative terms into teams before combining. The larger team size decides which sign remains.",
+    "1_3": "Add each signed team first, then compare the positive total and negative total as one clean structure.",
+    "1_4": "Repeated addition can become a chunk plan. Break a big count into friendly pieces, then combine the results.",
+    "2_1a": "Large division can be split into friendly chunks. Divide each chunk, then add the chunk answers back together.",
+    "2_1": "Fractions are top and bottom shelves. Matching pieces can be removed together while the value stays equivalent.",
+    "2_2": "Numbers are built from prime pieces. Break values into 2, 3, 5, 7, and what remains.",
+    "2_3": "Fraction products are easier when top and bottom shelves are written as prime pieces before simplifying.",
+    "2_4": "Repeated prime pieces can be counted with exponents instead of being written again and again."
+  };
+  return concepts[id] || "";
+}
+
+function isRelicGathered(lesson) {
+  return Boolean(lesson && (hasCertificate(lesson.id) || hasCompletedPlay(lesson.id)));
+}
+
+function relicVaultStatus(lesson) {
+  const index = lessonIndex(lesson.id);
+  if (isRelicGathered(lesson)) {
+    return lesson.id === "2_1a" ? "Dormant Found" : "Gathered";
+  }
+  if (isPlayUnlocked(index)) return "Ready To Earn";
+  if (isNoteUnlocked(index)) return "Manual Open";
+  return "Locked";
+}
+
+function renderRelicVaultAction(label, href, unlocked, className = "") {
+  const lockedClass = unlocked ? "" : "locked";
+  const safeHref = unlocked ? href : "#";
+  const aria = unlocked ? label : `${label} locked`;
+  return `<a class="jump-link relic-jump ${className} ${lockedClass}" href="${safeHref}" aria-label="${escapeHTML(aria)}" ${unlocked ? "" : "onclick=\"return false\""}><span>${escapeHTML(label)}</span><strong>${unlocked ? "Open" : "Locked"}</strong></a>`;
+}
+
+function renderRelicVaultCard(lesson) {
+  const index = lessonIndex(lesson.id);
+  const gathered = isRelicGathered(lesson);
+  const noteUnlocked = isNoteUnlocked(index);
+  const playUnlocked = isPlayUnlocked(index) || gathered;
+  const relicName = stageRelicName(lesson.id) || lesson.title;
+  const relicImage = stageRelicImage(lesson.id);
+  const status = relicVaultStatus(lesson);
+  const certificateTitle = certificateTitles[lesson.id] || lesson.title;
+  const dormantClass = lesson.id === "2_1a" ? "dormant" : "";
+
+  return `
+    <article class="relic-card ${gathered ? "gathered" : "locked"} ${dormantClass}">
+      <div class="relic-card-art" aria-hidden="true">
+        ${relicImage ? `<img src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : `<span>?</span>`}
+      </div>
+      <div class="relic-card-body">
+        <span class="relic-stage">${escapeHTML(lesson.section)} ${escapeHTML(lesson.tag)}</span>
+        <h3>${escapeHTML(relicName)}</h3>
+        <strong class="relic-status">${escapeHTML(status)}</strong>
+        <p>${escapeHTML(stageRelicConcept(lesson.id) || lesson.description)}</p>
+        <em>${escapeHTML(certificateTitle)}</em>
+      </div>
+      <div class="relic-card-actions">
+        ${renderRelicVaultAction("Manual", lesson.noteFile, noteUnlocked, "note-jump")}
+        ${renderRelicVaultAction("Trail", lesson.playFile, playUnlocked, "play-jump")}
+      </div>
+    </article>
+  `;
+}
+
+function renderRelicVault() {
+  const vault = document.getElementById("relicVault");
+  if (!vault) return;
+
+  const gatheredCount = lessons.filter(isRelicGathered).length;
+  const progress = document.getElementById("relicVaultProgress");
+  if (progress) progress.textContent = `Relics gathered: ${gatheredCount} / ${lessons.length}`;
+
+  vault.innerHTML = lessons.map(renderRelicVaultCard).join("");
+}
+
 function stageRelicProofState(id, relicKind) {
   if (id === "2_1a") {
     return {
@@ -1230,6 +1308,7 @@ function resetAllProgress() {
   renderMenuLinks({ force: true });
   renderCertificateWall();
   renderTestResults();
+  renderRelicVault();
   syncStoryGateState();
   showSection("home");
 }
@@ -1287,7 +1366,7 @@ const shell = document.getElementById("appShell");
 const bgClasses = ["quest-bg", "menu-bg", "cabin-bg", "message-bg", "prologue-bg"];
 
 function updateActiveNav(id) {
-  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", message: "Message", prologue: "" };
+  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", relics: "Cabin", message: "Message", prologue: "" };
 
   document.querySelectorAll(".top-actions button").forEach(button => {
     const isCurrent = button.textContent.trim() === labels[id];
@@ -1327,7 +1406,7 @@ function showSection(id, options = {}) {
     shell.classList.remove(...bgClasses);
     if (nextId === "quest") shell.classList.add("quest-bg");
     if (nextId === "quick") shell.classList.add("menu-bg");
-    if (nextId === "cabin") shell.classList.add("cabin-bg");
+    if (nextId === "cabin" || nextId === "relics") shell.classList.add("cabin-bg");
     if (nextId === "message") shell.classList.add("message-bg");
     if (nextId === "prologue") shell.classList.add("prologue-bg");
   }
@@ -1339,6 +1418,7 @@ function showSection(id, options = {}) {
     renderTestResults();
     syncCabinPanelVisibility({ scroll: false });
   }
+  if (nextId === "relics") renderRelicVault();
 
   updateActiveNav(nextId);
   syncStoryGateState();
@@ -1356,6 +1436,7 @@ function normalizeSectionName(value) {
   if (!value) return "";
   if (value === "trail" || value === "mountain-trail") return "quest";
   if (value === "menu") return "quick";
+  if (value === "relic" || value === "relic-vault") return "relics";
   if (value === "story") return "prologue";
   return value;
 }
@@ -1384,7 +1465,7 @@ function openInitialSectionFromURL() {
     return;
   }
 
-  if (["quest", "quick", "cabin", "message"].includes(target)) {
+  if (["quest", "quick", "cabin", "relics", "message"].includes(target)) {
     showSection(target, { scroll: false, keepURL: true, silentGate: true });
   } else {
     showSection("home", { scroll: false, keepURL: true });
