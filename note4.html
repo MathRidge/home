@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
-<link rel="stylesheet" href="assets/css/mathridge-note.css">
-<link rel="stylesheet" href="assets/css/note4.css">
+<link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260608-relic-manual-footer">
+<link rel="stylesheet" href="assets/css/note4.css?v=20260608-factor-forge-routes">
 </head>
 <body data-note-id="1_4">
 <nav class="topbar" aria-label="Math Ridge main navigation">
@@ -97,9 +97,9 @@
     <h2><span class="section-kicker">04</span> Why the 5-Chunk Helps</h2>
     <p>Five copies are quick to build. Then the leftover copies are small enough to handle without losing the pattern.</p>
     <div class="chunk-pattern-grid" aria-label="chunk patterns for 7, 8, and 9 copies">
-      <article class="pattern-card"><span class="pattern-number">7</span><strong>5 + 2</strong><p>five copies plus two leftover copies</p></article>
-      <article class="pattern-card"><span class="pattern-number">8</span><strong>5 + 3</strong><p>five copies plus three leftover copies</p></article>
-      <article class="pattern-card"><span class="pattern-number">9</span><strong>5 + 4</strong><p>five copies plus four leftover copies</p></article>
+      <article class="pattern-card"><strong class="chunk-split-formula"><span>7</span><span>&rarr;</span><span>(5 + 2)</span></strong><p>five copies plus two leftover copies</p></article>
+      <article class="pattern-card"><strong class="chunk-split-formula"><span>8</span><span>&rarr;</span><span>(5 + 3)</span></strong><p>five copies plus three leftover copies</p></article>
+      <article class="pattern-card"><strong class="chunk-split-formula"><span>9</span><span>&rarr;</span><span>(5 + 4)</span></strong><p>five copies plus four leftover copies</p></article>
     </div>
     <div class="read-box">This is not about making the arithmetic harder. It is about making the structure easier to see.</div>
   </section>
@@ -110,21 +110,45 @@
     <div class="worked-grid">
       <article class="worked-card">
         <h3>8 copies of 3</h3>
-        <div class="mini-expression">8(3)</div>
-        <div class="route-line"><span>8</span><span>&rarr;</span><span>5 + 3</span></div>
-        <div class="answer-line">5(3) + 3(3) = 15 + 9 = <strong>24</strong></div>
+        <div class="worked-route-stack" aria-label="8 times 3 chunking route">
+          <div class="worked-route-row"><span>Start</span><strong>8(3)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Split copies</span><strong>(5 + 3)(3)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Open chunks</span><strong>5(3) + 3(3)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Solve chunks</span><strong>15 + 9</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row final-worked-row"><span>Total</span><strong>24</strong></div>
+        </div>
       </article>
       <article class="worked-card">
         <h3>9 copies of 4</h3>
-        <div class="mini-expression">9(4)</div>
-        <div class="route-line"><span>9</span><span>&rarr;</span><span>5 + 4</span></div>
-        <div class="answer-line">5(4) + 4(4) = 20 + 16 = <strong>36</strong></div>
+        <div class="worked-route-stack" aria-label="9 times 4 chunking route">
+          <div class="worked-route-row"><span>Start</span><strong>9(4)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Split copies</span><strong>(5 + 4)(4)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Open chunks</span><strong>5(4) + 4(4)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Solve chunks</span><strong>20 + 16</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row final-worked-row"><span>Total</span><strong>36</strong></div>
+        </div>
       </article>
       <article class="worked-card">
         <h3>7 copies of 3</h3>
-        <div class="mini-expression">7(3)</div>
-        <div class="route-line"><span>7</span><span>&rarr;</span><span>5 + 2</span></div>
-        <div class="answer-line">5(3) + 2(3) = 15 + 6 = <strong>21</strong></div>
+        <div class="worked-route-stack" aria-label="7 times 3 chunking route">
+          <div class="worked-route-row"><span>Start</span><strong>7(3)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Split copies</span><strong>(5 + 2)(3)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Open chunks</span><strong>5(3) + 2(3)</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row"><span>Solve chunks</span><strong>15 + 6</strong></div>
+          <div class="worked-route-arrow">&darr;</div>
+          <div class="worked-route-row final-worked-row"><span>Total</span><strong>21</strong></div>
+        </div>
       </article>
     </div>
   </section>

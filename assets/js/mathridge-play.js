@@ -1115,6 +1115,9 @@
 		const certRaceTime = byId("certRaceTime");
 		const certRank = byId("certRank");
 		const certDate = byId("certDate");
+		const certBorder = document.querySelector("#certificateCard .cert-border");
+
+		if (certBorder) certBorder.dataset.certificateId = meta.id;
 
 		if (certTitle) certTitle.textContent = title;
 		if (certDescription) certDescription.textContent = bodyText;

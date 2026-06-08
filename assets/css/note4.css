@@ -31,6 +31,8 @@ body[data-note-id="1_4"] .focus-route .mini-card::before {
 .chunk-flow,
 .chunk-solve-board,
 .open-close-grid,
+.chunk-pattern-grid,
+.worked-grid,
 .rhythm-strip {
   margin-top: 18px;
 }
@@ -38,6 +40,8 @@ body[data-note-id="1_4"] .focus-route .mini-card::before {
 .repeat-focus-card,
 .compress-side,
 .split-card,
+.pattern-card,
+.worked-card,
 .flow-card,
 .solve-card,
 .open-close-card,
@@ -225,10 +229,108 @@ body[data-note-id="1_4"] .focus-route .mini-card::before {
 }
 
 .split-card p,
+.pattern-card p,
 .open-close-card p {
   margin: 0;
   color: rgba(255,247,232,0.78);
   font-weight: 750;
+}
+
+.chunk-pattern-grid,
+.worked-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pattern-card {
+  min-height: 136px;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.chunk-split-formula {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #fff7e8;
+  font-size: clamp(1.28rem, 4vw, 2rem);
+  font-weight: 950;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.chunk-split-formula span:nth-child(2) {
+  color: #ffe3a8;
+  font-size: 1.08em;
+}
+
+.worked-card {
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.worked-card h3 {
+  margin: 0;
+  color: #ffe3a8;
+  font-size: clamp(1.02rem, 3vw, 1.25rem);
+  font-weight: 950;
+  text-align: center;
+}
+
+.worked-route-stack {
+  display: grid;
+  gap: 6px;
+}
+
+.worked-route-row {
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,247,232,0.16);
+  background: rgba(255,247,232,0.08);
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.worked-route-row span {
+  color: rgba(255,247,232,0.62);
+  font-size: .68rem;
+  font-weight: 950;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.worked-route-row strong {
+  color: #fff7e8;
+  font-size: clamp(1.02rem, 3.2vw, 1.42rem);
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.worked-route-arrow {
+  color: #ffe3a8;
+  font-size: 1.1rem;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+}
+
+.final-worked-row {
+  border-color: rgba(107,209,138,0.44);
+  background: rgba(107,209,138,0.13);
+}
+
+.final-worked-row strong {
+  color: #d8ffd6;
+  font-size: clamp(1.22rem, 3.8vw, 1.68rem);
 }
 
 .chunk-flow {
@@ -424,6 +526,8 @@ body[data-note-id="1_4"] .note4-practice .answer-input {
   .split-grid,
   .chunk-solve-board,
   .open-close-grid,
+  .chunk-pattern-grid,
+  .worked-grid,
   .rhythm-strip {
     grid-template-columns: 1fr;
   }
