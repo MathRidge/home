@@ -743,35 +743,37 @@ function certificateVaultChapterTitle(chapter) {
   return chapterNumber ? `Chapter ${chapterNumber} Certificate Shelf` : "Certificate Shelf";
 }
 
-function certificateVaultStatusText(earned) {
-  return earned ? "Earned" : "Awaiting Trail Clear";
-}
-
-function certificateVaultActionText(earned) {
-  return earned ? "Tap to view official certificate" : "Tap to see the trail message";
+function certificateVaultLengthClass(text) {
+  const length = String(text || "").length;
+  if (length >= 36) return " is-extra-long";
+  if (length >= 28) return " is-long";
+  return "";
 }
 
 function renderCertificateVaultCard(item) {
   const lesson = lessons.find(entry => entry.id === item.id);
   const cert = readCertificate(item.id);
   const earned = Boolean(cert && cert.completed);
-  const name = earned ? (cert.studentName || cert.name || "Student") : "Math Ridge Scholar";
+  const name = earned ? (cert.studentName || cert.name || "Student") : "";
   const date = earned ? certificateDateText(cert) : "Not earned yet";
   const certificateTitle = cert?.certificateTitle || item.certificateTitle || item.title;
+  const lessonTag = lesson?.tag || item.title;
+  const titleClass = certificateVaultLengthClass(certificateTitle);
+  const nameClass = certificateVaultLengthClass(name);
+  const tagClass = certificateVaultLengthClass(lessonTag);
   const ariaLabel = earned
     ? `View ${item.section} ${certificateTitle} certificate`
-    : `${item.section} ${certificateTitle} certificate is not earned yet. Tap for message.`;
+    : `${item.section} ${certificateTitle} certificate is not earned yet.`;
 
   return `
-    <button class="certificate-vault-card ${earned ? "earned" : "not-earned"}" type="button" onclick="openCertificateFrame('${item.id}')" aria-label="${escapeHTML(ariaLabel)}">
+    <article class="certificate-vault-card ${earned ? "earned" : "not-earned"}" role="group" aria-label="${escapeHTML(ariaLabel)}">
       <span class="certificate-vault-stage">${escapeHTML(item.section)}</span>
-      <span class="certificate-vault-state">${escapeHTML(certificateVaultStatusText(earned))}</span>
-      <span class="certificate-vault-title">${escapeHTML(certificateTitle)}</span>
-      <span class="certificate-vault-name">${escapeHTML(name)}</span>
+      <span class="certificate-vault-title${titleClass}">${escapeHTML(certificateTitle)}</span>
+      ${earned ? `<span class="certificate-vault-name${nameClass}">${escapeHTML(name)}</span>` : ""}
       <span class="certificate-vault-date">${escapeHTML(date)}</span>
-      <span class="certificate-vault-action">${escapeHTML(certificateVaultActionText(earned))}</span>
-      <span class="certificate-vault-lesson">${escapeHTML(lesson?.tag || item.title)}</span>
-    </button>
+      <span class="certificate-vault-lesson${tagClass}">${escapeHTML(lessonTag)}</span>
+      <button class="certificate-vault-view-button" type="button" data-certificate-id="${escapeHTML(item.id)}" onclick="openCertificateFrame('${item.id}')" aria-label="${escapeHTML(earned ? `Click to view ${item.section} official certificate` : `Click to view ${item.section} certificate message`)}"></button>
+    </article>
   `;
 }
 
@@ -1708,6 +1710,7 @@ const CONFIRMABLE_INDEX_SELECTOR = [
   ".jump-link:not(.locked)",
   ".root-gate-link:not(.locked)",
   ".root-gate-replay-jump",
+  ".certificate-vault-view-button",
   "#modalActions [data-mobile-confirm='modal-reset']"
 ].join(", ");
 
@@ -1847,6 +1850,7 @@ function activateConfirmedIndexTarget(target) {
   const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
   const showCabinPanelMatch = inlineAction.match(/showCabinPanel\('([^']+)'\)/);
   const downloadTestCertificateMatch = inlineAction.match(/downloadTestCertificate\('([^']+)'\)/);
+  const certificateId = target.dataset?.certificateId;
 
   mobileConfirm()?.play?.("secondTap");
   disarmIndexConfirmTarget(target);
@@ -1868,6 +1872,11 @@ function activateConfirmedIndexTarget(target) {
 
   if (downloadTestCertificateMatch) {
     downloadTestCertificate(downloadTestCertificateMatch[1]);
+    return true;
+  }
+
+  if (certificateId) {
+    openCertificateFrame(certificateId);
     return true;
   }
 
