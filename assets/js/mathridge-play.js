@@ -1996,7 +1996,7 @@
 			size: titleSize,
 			family: CERT_SERIF
 		});
-		drawCenteredCanvasText(ctx, certificateTitle.toUpperCase(), width / 2, height * 0.365, width * 0.70, height * 0.034, 2);
+		drawCenteredCanvasText(ctx, certificateTitle.toUpperCase(), width / 2, height * 0.377, width * 0.70, height * 0.034, 2);
 
 		ctx.fillStyle = "#4d2d12";
 		ctx.shadowColor = "rgba(255,255,255,0.70)";
@@ -2020,7 +2020,7 @@
 
 		ctx.fillStyle = "#51341c";
 		setCanvasFont(ctx, { style: "italic", weight: "500", size: width * 0.0235, family: CERT_SERIF });
-		drawCenteredCanvasText(ctx, bodyText, width / 2, height * 0.620, width * 0.68, height * 0.030, 3);
+		drawCenteredCanvasText(ctx, bodyText, width / 2, height * 0.578, width * 0.68, height * 0.030, 3);
 
 		ctx.fillStyle = "#4f351c";
 		const focusLine = focusText.toUpperCase();
@@ -2032,11 +2032,11 @@
 			maxWidth: width * 0.72
 		});
 		setCanvasFont(ctx, { weight: "700", size: focusSize, family: CERT_SERIF });
-		ctx.fillText(focusLine, width / 2, height * 0.704);
+		ctx.fillText(focusLine, width / 2, height * 0.662);
 
 		ctx.fillStyle = "#51341c";
 		setCanvasFont(ctx, { weight: "650", size: width * 0.022, family: CERT_SERIF });
-		if (completedText) ctx.fillText(completedText, width / 2, height * 0.742);
+		if (completedText) ctx.fillText(completedText, width / 2, height * 0.700);
 
 		return canvas;
 	}
