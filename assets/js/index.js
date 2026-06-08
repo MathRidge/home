@@ -810,7 +810,26 @@ function renderCertificateVault() {
 
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
   shelves.innerHTML = chapters.map(renderCertificateVaultShelf).join("");
+  const display = document.getElementById("certificateVaultDisplay");
+  if (display?.dataset?.mode === "tests") renderTestResults("certificateVaultTestResults");
   writeTrailStateSnapshot();
+}
+
+function showCertificateVaultMode(mode = "shelves") {
+  const nextMode = mode === "tests" ? "tests" : "shelves";
+  const panel = document.querySelector(".certificate-vault-panel");
+  const display = document.getElementById("certificateVaultDisplay");
+  const testsPanel = document.getElementById("certificateVaultTestsPanel");
+  const shelfButton = document.getElementById("certificateVaultShelfButton");
+  const testButton = document.getElementById("certificateVaultTestButton");
+
+  if (display) display.dataset.mode = nextMode;
+  panel?.classList.toggle("showing-tests", nextMode === "tests");
+  shelfButton?.classList.toggle("active", nextMode === "shelves");
+  testButton?.classList.toggle("active", nextMode === "tests");
+
+  if (testsPanel) testsPanel.hidden = nextMode !== "tests";
+  if (nextMode === "tests") renderTestResults("certificateVaultTestResults");
 }
 
 function isLegacyTestResultImage(value) {
@@ -983,11 +1002,13 @@ function renderTestCertificateOverlay(test) {
   `;
 }
 
-function renderTestResults() {
-  const grid = document.getElementById("testResultsGrid");
-  if (!grid) return;
+function renderTestResults(targetId = "") {
+  const grids = targetId
+    ? [document.getElementById(targetId)].filter(Boolean)
+    : Array.from(document.querySelectorAll("[data-test-results-grid]"));
+  if (!grids.length) return;
 
-  grid.innerHTML = chapterTests.map(test => {
+  const html = chapterTests.map(test => {
     const data = readTestResultData(test);
     const image = data ? readTestResultImage(test) : test.image;
     return `
@@ -1009,6 +1030,9 @@ function renderTestResults() {
     `;
   }).join("");
 
+  grids.forEach(grid => {
+    grid.innerHTML = html;
+  });
   prepareTestCertificateDownloadAssets();
 }
 
@@ -1849,6 +1873,7 @@ function activateConfirmedIndexTarget(target) {
   const inlineAction = target.getAttribute("onclick") || "";
   const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
   const showCabinPanelMatch = inlineAction.match(/showCabinPanel\('([^']+)'\)/);
+  const showCertificateVaultModeMatch = inlineAction.match(/showCertificateVaultMode\('([^']+)'\)/);
   const downloadTestCertificateMatch = inlineAction.match(/downloadTestCertificate\('([^']+)'\)/);
   const certificateId = target.dataset?.certificateId;
 
@@ -1867,6 +1892,11 @@ function activateConfirmedIndexTarget(target) {
 
   if (showCabinPanelMatch) {
     showCabinPanel(showCabinPanelMatch[1], { scroll: true });
+    return true;
+  }
+
+  if (showCertificateVaultModeMatch) {
+    showCertificateVaultMode(showCertificateVaultModeMatch[1]);
     return true;
   }
 
@@ -2043,6 +2073,7 @@ document.addEventListener("DOMContentLoaded", () => {
 window.handleStageImageFallback = handleStageImageFallback;
 window.showSection = showSection;
 window.showCabinPanel = showCabinPanel;
+window.showCertificateVaultMode = showCertificateVaultMode;
 window.toggleCertificateWall = toggleCertificateWall;
 window.closeModal = closeModal;
 window.showModal = showModal;

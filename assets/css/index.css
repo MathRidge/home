@@ -5780,6 +5780,12 @@ body.index-page .certificate-vault-intro {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
+body.index-page .certificate-vault-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
 body.index-page .certificate-vault-intro strong {
   color: #ffe3a8;
   font-family: "Playfair Display", Georgia, serif;
@@ -5792,10 +5798,102 @@ body.index-page .certificate-vault-intro span {
   line-height: 1.35;
 }
 
+body.index-page .certificate-vault-mode-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+body.index-page .certificate-vault-mode-btn {
+  min-width: 146px;
+}
+
+body.index-page .certificate-vault-mode-btn.active {
+  border-color: rgba(255,224,154,0.72) !important;
+  filter: brightness(1.06) saturate(1.05);
+  box-shadow:
+    0 12px 28px rgba(0,0,0,0.22),
+    0 0 18px rgba(246,201,108,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.18) !important;
+}
+
+body.index-page .certificate-vault-display {
+  position: relative;
+}
+
 body.index-page .certificate-vault-shelves {
   display: grid;
   gap: 22px;
   padding: 22px;
+}
+
+body.index-page .certificate-vault-tests[hidden] {
+  display: none !important;
+}
+
+body.index-page .certificate-vault-tests {
+  margin: 0 22px 22px;
+  min-width: 0;
+}
+
+body.index-page .certificate-vault-tests .test-results-grid {
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-vault-display {
+  display: grid;
+  grid-template-columns: minmax(250px, .78fr) minmax(320px, 1fr);
+  gap: 18px;
+  padding: 0 22px 22px;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-vault-shelves {
+  align-self: start;
+  min-width: 0;
+  gap: 16px;
+  padding: 0;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-vault-tests {
+  margin: 0;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-shelf {
+  border-radius: 18px;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-shelf-heading {
+  padding: 14px 14px 6px;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-shelf-heading h3 {
+  font-size: clamp(1rem, 1.6vw, 1.28rem);
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-shelf-heading p {
+  font-size: .78rem;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-shelf-heading strong {
+  min-width: 52px;
+  padding: 5px 8px;
+  font-size: .82rem;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-carousel {
+  gap: 12px;
+  scroll-padding: 12px;
+  padding: 8px 12px 22px;
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-carousel-item {
+  flex-basis: clamp(185px, 20vw, 236px);
+}
+
+body.index-page .certificate-vault-panel.showing-tests .certificate-vault-card {
+  border-radius: 14px;
 }
 
 body.index-page .certificate-shelf {
@@ -5940,24 +6038,29 @@ body.index-page .certificate-vault-card > span {
 }
 
 body.index-page .certificate-vault-stage {
-  top: 7.5%;
+  top: 9.6%;
+  right: 10.8%;
+  left: auto !important;
+  transform: none !important;
   width: auto !important;
   min-width: 48px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,231,168,0.42);
-  background: rgba(7,16,29,0.62);
-  color: #ffe3a8;
-  font-size: 0.88rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(81,52,28,0.84);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.66rem;
   font-weight: 950;
   letter-spacing: 0.04em;
+  text-align: right;
+  text-shadow: 0 1px 0 rgba(255,247,232,0.70);
 }
 
 body.index-page .certificate-vault-title {
-  top: 42.6%;
+  top: 42.4%;
   color: #51341c;
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 0.78rem;
+  font-size: 0.66rem;
   font-weight: 800;
   line-height: 1;
   white-space: nowrap;
@@ -5965,19 +6068,19 @@ body.index-page .certificate-vault-title {
 }
 
 body.index-page .certificate-vault-title.is-long {
-  font-size: 0.68rem;
+  font-size: 0.55rem;
 }
 
 body.index-page .certificate-vault-title.is-extra-long {
-  font-size: 0.60rem;
+  font-size: 0.47rem;
   letter-spacing: 0.02em;
 }
 
 body.index-page .certificate-vault-name {
-  top: 50.4%;
+  top: 49.2%;
   color: #4b2e15;
   font-family: "Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive;
-  font-size: 1.18rem;
+  font-size: 1.10rem;
   font-style: italic;
   line-height: 1;
   white-space: nowrap;
@@ -5985,24 +6088,24 @@ body.index-page .certificate-vault-name {
 
 body.index-page .certificate-vault-name.is-long,
 body.index-page .certificate-vault-name.is-extra-long {
-  font-size: 1.02rem;
+  font-size: 0.96rem;
 }
 
 body.index-page .certificate-vault-date {
-  top: 59.1%;
+  top: 57.8%;
   color: #51341c;
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 700;
   line-height: 1.1;
   white-space: nowrap;
 }
 
 body.index-page .certificate-vault-lesson {
-  top: 67%;
+  top: 64.9%;
   color: rgba(81,52,28,0.82);
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 0.50rem;
+  font-size: 0.44rem;
   font-weight: 800;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -6012,7 +6115,7 @@ body.index-page .certificate-vault-lesson {
 
 body.index-page .certificate-vault-lesson.is-long,
 body.index-page .certificate-vault-lesson.is-extra-long {
-  font-size: 0.44rem;
+  font-size: 0.39rem;
 }
 
 body.index-page .certificate-vault-view-button {
@@ -6033,16 +6136,43 @@ body.index-page .certificate-vault-view-button {
   -webkit-tap-highlight-color: transparent;
 }
 
+body.index-page .certificate-vault-view-button::before {
+  content: "";
+  position: absolute;
+  left: 4%;
+  top: -18%;
+  width: 92%;
+  height: 136%;
+  z-index: -1;
+  border: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(255,244,191,0.34) 0%, rgba(246,201,108,0.22) 38%, rgba(60,147,224,0.10) 60%, transparent 76%);
+  filter: blur(8px);
+  box-shadow:
+    0 0 24px rgba(246,201,108,0.20),
+    0 0 42px rgba(75,158,234,0.10);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.94);
+  transition: opacity .18s ease, transform .18s ease, filter .18s ease;
+}
+
 body.index-page .certificate-vault-view-button:hover,
 body.index-page .certificate-vault-view-button:focus-visible,
 body.index-page .certificate-vault-view-button.is-touch-preview,
 body.index-page .certificate-vault-view-button.is-mobile-confirm-ready {
   outline: none;
-  background: rgba(255,231,168,0.08);
-  box-shadow:
-    0 0 0 2px rgba(255,231,168,0.45),
-    0 0 18px rgba(246,201,108,0.28),
-    inset 0 0 18px rgba(255,247,232,0.12);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.index-page .certificate-vault-view-button:hover::before,
+body.index-page .certificate-vault-view-button:focus-visible::before,
+body.index-page .certificate-vault-view-button.is-touch-preview::before,
+body.index-page .certificate-vault-view-button.is-mobile-confirm-ready::before {
+  opacity: 1;
+  transform: scale(1);
 }
 
 body.index-page .certificate-vault-view-button.is-touch-preview {
@@ -6050,16 +6180,7 @@ body.index-page .certificate-vault-view-button.is-touch-preview {
 }
 
 body.index-page .certificate-vault-view-button.is-mobile-confirm-ready::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  z-index: -1;
-  border-radius: inherit;
-  border: 1px solid rgba(255,224,154,0.36);
-  background:
-    linear-gradient(90deg, rgba(255,224,154,0.16), transparent 24%, transparent 76%, rgba(255,224,154,0.14)),
-    radial-gradient(circle at 50% 0%, rgba(255,224,154,0.20), transparent 62%);
-  pointer-events: none;
+  border: 0;
 }
 
 body.index-page .certificate-vault-card.not-earned .certificate-vault-title,
@@ -6074,6 +6195,29 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
     align-items: flex-start;
     flex-direction: column;
     margin: 14px 14px 0;
+  }
+
+  body.index-page .certificate-vault-mode-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  body.index-page .certificate-vault-mode-btn {
+    flex: 1 1 150px;
+    min-width: 0;
+  }
+
+  body.index-page .certificate-vault-panel.showing-tests .certificate-vault-display {
+    grid-template-columns: 1fr;
+    padding: 0 14px 14px;
+  }
+
+  body.index-page .certificate-vault-panel.showing-tests .certificate-vault-shelves {
+    gap: 14px;
+  }
+
+  body.index-page .certificate-vault-panel.showing-tests .certificate-carousel-item {
+    flex-basis: min(220px, 76vw);
   }
 
   body.index-page .certificate-vault-shelves {
@@ -6105,24 +6249,24 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 
 @media (max-width: 430px) {
   body.index-page .certificate-vault-title {
-    font-size: 0.72rem;
-  }
-
-  body.index-page .certificate-vault-title.is-long {
     font-size: 0.62rem;
   }
 
+  body.index-page .certificate-vault-title.is-long {
+    font-size: 0.50rem;
+  }
+
   body.index-page .certificate-vault-title.is-extra-long {
-    font-size: 0.54rem;
+    font-size: 0.42rem;
   }
 
   body.index-page .certificate-vault-name {
-    font-size: 1.06rem;
+    font-size: 1rem;
   }
 
   body.index-page .certificate-vault-name.is-long,
   body.index-page .certificate-vault-name.is-extra-long {
-    font-size: 0.94rem;
+    font-size: 0.88rem;
   }
 
   body.index-page .certificate-vault-view-button {
