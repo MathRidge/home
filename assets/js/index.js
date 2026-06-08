@@ -806,8 +806,17 @@ function renderTestResultStats(test) {
 function renderTestCertificateOverlay(test) {
   const details = testCertificateDetails(test);
 
+  if (!details.data) {
+    return `
+      <div class="result-certificate-overlay mastery pending">
+        <span class="result-cert-pending-assessment">${escapeHTML(details.assessmentTitle)}<br>${escapeHTML(details.checkpointTitle)}</span>
+        <em class="result-cert-pending-date">Official Result Awaits</em>
+      </div>
+    `;
+  }
+
   return `
-    <div class="result-certificate-overlay mastery ${details.data ? (details.data.passed ? "passed" : "retry") : "pending"}">
+    <div class="result-certificate-overlay mastery ${details.data.passed ? "passed" : "retry"}">
       <strong class="result-cert-title">${escapeHTML(details.masteryTitle)}</strong>
       <span class="result-cert-name">${escapeHTML(details.studentName)}</span>
       <span class="result-cert-body">${escapeHTML(details.bodyText)}</span>
@@ -827,8 +836,8 @@ function renderTestResults() {
   if (!grid) return;
 
   grid.innerHTML = chapterTests.map(test => {
-    const image = readTestResultImage(test);
     const data = readTestResultData(test);
+    const image = data ? readTestResultImage(test) : test.image;
     const isChapterOne = test.id === "chapter_1";
     const chapterOneAction = isChapterOne
       ? `<a class="pill-btn" href="${rootGateHref()}" onclick="return handleRootGateClick(event)">${isRootGatePassed() ? "Review Root Gate Exam" : hasWatchedRootGateIntro() ? "Begin Root Gate Exam" : "Begin Root Gate Finale"}</a>${rootGateWatchSceneLink("pill-btn root-gate-replay-pill")}`

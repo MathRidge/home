@@ -1517,9 +1517,51 @@ async function createCertificateFromName(){
 }
 
 function closeCertificatePopup(){
-  document.getElementById("certificatePopup").style.display = "none";
+  const popup = document.getElementById("certificatePopup");
+  if(popup) popup.style.display = "none";
   document.body.classList.remove("modal-open");
   stopConfetti();
+
+  if(popup?.dataset.source === "cabin"){
+    try{
+      sessionStorage.setItem("mathRidge_open_section", "cabin");
+    }catch(error){}
+    window.location.href = "index.html?view=cabin#cabin";
+  }
+}
+
+function readSavedCertificateFromCabin(){
+  if(typeof shell()?.readTrailCertificate === "function"){
+    const cert = shell().readTrailCertificate(PLAY_ID);
+    if(cert?.completed) return cert;
+  }
+
+  try{
+    return JSON.parse(localStorage.getItem(PLAY_CERT_KEY) || "{}");
+  }catch(error){
+    return {};
+  }
+}
+
+function openSavedCertificateFromCabin(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get("certificate") !== PLAY_ID || params.get("mode") !== "redownload") return;
+
+  const certData = readSavedCertificateFromCabin();
+  if(!certData.completed) return;
+
+  byId("certName").textContent = certData.studentName || "Math Ridge Champion";
+  byId("certStage").textContent = "Academic Focus: Exponential Pattern Recognition";
+  byId("certRaceTime").textContent = "";
+  byId("certRank").textContent = "";
+  byId("certDate").textContent = `Completed on ${certData.displayDate || ""}`;
+
+  const popup = byId("certificatePopup");
+  if(popup){
+    popup.dataset.source = "cabin";
+    popup.style.display = "flex";
+  }
+  document.body.classList.add("modal-open");
 }
 
 function startConfetti(){
@@ -1696,6 +1738,7 @@ window.addEventListener("load", () => {
   resetRaceTimer();
   newRound();
   showClimbGate();
+  setTimeout(openSavedCertificateFromCabin, 350);
   requestAnimationFrame(() => document.body.classList.add("loaded"));
 });
 })();

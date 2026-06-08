@@ -2001,7 +2001,7 @@
 		ctx.fillStyle = "#4d2d12";
 		ctx.shadowColor = "rgba(255,255,255,0.70)";
 		ctx.shadowBlur = 8;
-		const nameFont = drawFittedCenteredText(ctx, studentName, width / 2, height * 0.525, width * 0.70, {
+		const nameFont = drawFittedCenteredText(ctx, studentName, width / 2, height * 0.532, width * 0.70, {
 			style: "italic",
 			weight: "400",
 			maxSize: width * 0.082,

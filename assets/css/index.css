@@ -5084,7 +5084,7 @@ body.index-page .result-cert-body {
 }
 
 body.index-page .result-cert-assessment {
-  top: 58.3%;
+  top: 58.9%;
   width: 62%;
   font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
   font-size: 0.57rem;
@@ -5115,12 +5115,34 @@ body.index-page .result-cert-date {
   color: #51341c;
 }
 
+body.index-page .result-cert-pending-assessment {
+  top: 58.9%;
+  width: 62%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.57rem;
+  line-height: 1.18;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #4f351c;
+}
+
+body.index-page .result-cert-pending-date {
+  top: 66.9%;
+  width: 58%;
+  font-family: "Playfair Display", "Palatino Linotype", Georgia, serif;
+  font-size: 0.52rem;
+  line-height: 1.18;
+  font-style: normal;
+  font-weight: 600;
+  color: #51341c;
+}
+
 body.index-page .result-certificate-overlay.retry {
   opacity: .82;
 }
 
 body.index-page .result-certificate-overlay.pending {
-  opacity: .70;
+  opacity: .82;
 }
 
 @media (max-width: 700px) {
@@ -5131,7 +5153,9 @@ body.index-page .result-certificate-overlay.pending {
   body.index-page .result-cert-title { font-size: 0.64rem; }
   body.index-page .result-cert-name { font-size: 1.92rem; }
   body.index-page .result-cert-body { font-size: 0.46rem; }
-  body.index-page .result-cert-assessment { font-size: 0.46rem; }
+  body.index-page .result-cert-assessment,
+  body.index-page .result-cert-pending-assessment { font-size: 0.46rem; }
   body.index-page .result-cert-score,
-  body.index-page .result-cert-date { font-size: 0.43rem; }
+  body.index-page .result-cert-date,
+  body.index-page .result-cert-pending-date { font-size: 0.43rem; }
 }

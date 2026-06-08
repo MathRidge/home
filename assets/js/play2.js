@@ -1669,7 +1669,15 @@
 	function closeCertificatePopup() {
 		const certificatePopup = byId("certificatePopup");
 		if (certificatePopup) certificatePopup.style.display = "none";
+		document.body.classList.remove("modal-open");
 		stopConfetti();
+
+		if (certificatePopup?.dataset.source === "cabin") {
+			try {
+				sessionStorage.setItem("mathRidge_open_section", "cabin");
+			} catch (error) {}
+			window.location.href = "index.html?view=cabin#cabin";
+		}
 	}
 
 	function saveCertificateImage() {
@@ -1741,6 +1749,39 @@
 		link.click();
 	}
 
+	function readSavedCertificateFromCabin() {
+		if (shell && typeof shell.readTrailCertificate === "function") {
+			const cert = shell.readTrailCertificate("1_2");
+			if (cert?.completed) return cert;
+		}
+
+		try {
+			return JSON.parse(localStorage.getItem("mathRidge_cert_1_2") || "{}");
+		} catch (error) {
+			return {};
+		}
+	}
+
+	function openSavedCertificateFromCabin() {
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("certificate") !== "1_2" || params.get("mode") !== "redownload") return;
+
+		const certData = readSavedCertificateFromCabin();
+		if (!certData.completed) return;
+
+		byId("certName").textContent = certData.studentName || "Math Ridge Champion";
+		byId("certRaceTime").textContent = "";
+		byId("certRank").textContent = "";
+		byId("certDate").textContent = `Completed on ${certData.displayDate || ""}`;
+
+		const certificatePopup = byId("certificatePopup");
+		if (certificatePopup) {
+			certificatePopup.dataset.source = "cabin";
+			certificatePopup.style.display = "flex";
+		}
+		document.body.classList.add("modal-open");
+	}
+
 	function initPlay2() {
 		setupMathInputFiltering();
 		attachTermBankAndZoneEvents();
@@ -1752,6 +1793,7 @@
 		setChallengeMessage("Press START the Climb when you are ready.");
 		updateTurtleBoard();
 		showClimbGate();
+		window.setTimeout(openSavedCertificateFromCabin, 350);
 	}
 
 	window.MathRidgeLocal = {
