@@ -1734,6 +1734,7 @@ async function sendMessage(event) {
 const PREMIUM_TOUCH_QUERY = "(max-width: 760px), (hover: none) and (pointer: coarse)";
 const STAGE_SHELF_AUTO_CLOSE_MS = 4600;
 const CONFIRM_NAV_DELAY_MS = 780;
+const BANNER_RETURN_SELECTOR = ".certificate-banner-return-cabin, .relic-banner-return-cabin, .message-banner-return-cabin";
 const CONFIRMABLE_INDEX_SELECTOR = [
   "#noteTopActions .pill-btn",
   ".pill-btn",
@@ -1883,6 +1884,33 @@ function disarmIndexConfirmTarget(target) {
   target?.removeAttribute?.("data-touch-preview-active");
 }
 
+function clearBannerReturnTarget(target) {
+  mobileConfirm()?.clear?.();
+  target?.classList?.remove("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
+  target?.removeAttribute?.("data-mobile-confirm-ready");
+  target?.removeAttribute?.("data-touch-preview-active");
+  target?.removeAttribute?.("data-banner-return-armed-at");
+}
+
+function armBannerReturnTarget(target) {
+  const helper = mobileConfirm();
+  if (helper?.mark) {
+    helper.mark(target, { duration: 5600 });
+  } else {
+    target.classList.add("is-touch-preview", "is-mobile-confirm-ready", "is-pressed");
+    target.setAttribute("data-mobile-confirm-ready", "true");
+    target.setAttribute("data-touch-preview-active", "true");
+  }
+  target.setAttribute("data-banner-return-armed-at", String(Date.now()));
+  helper?.play?.("firstTap");
+}
+
+function activateBannerReturnTarget(target) {
+  mobileConfirm()?.play?.("secondTap");
+  clearBannerReturnTarget(target);
+  showSection("cabin");
+}
+
 function activateConfirmedIndexTarget(target) {
   if (!target || !isConfirmableIndexTarget(target)) return false;
 
@@ -2020,6 +2048,48 @@ function handlePremiumMobileConfirmClick(event) {
   requireIndexMobileConfirm(event, target, { duration: 5600 });
 }
 
+function handleBannerReturnPointerDown(event) {
+  if (!isPremiumTouchDevice()) return;
+
+  const target = event.target?.closest?.(BANNER_RETURN_SELECTOR);
+  if (!target || !document.body.contains(target) || !isConfirmableIndexTarget(target)) return;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  if (target.dataset.mobileConfirmReady === "true") {
+    activateBannerReturnTarget(target);
+    suppressNextConfirmedClickUntil = Date.now() + 520;
+    return;
+  }
+
+  armBannerReturnTarget(target);
+}
+
+function handleBannerReturnClick(event) {
+  if (!isPremiumTouchDevice()) return;
+
+  const target = event.target?.closest?.(BANNER_RETURN_SELECTOR);
+  if (!target || !document.body.contains(target) || !isConfirmableIndexTarget(target)) return;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  if (Date.now() < suppressNextConfirmedClickUntil) return;
+
+  const armedAt = Number(target.dataset.bannerReturnArmedAt || 0);
+  const readyLongEnough = armedAt && Date.now() - armedAt > 650;
+  if (target.dataset.mobileConfirmReady === "true" && readyLongEnough) {
+    activateBannerReturnTarget(target);
+    suppressNextConfirmedClickUntil = Date.now() + 520;
+    return;
+  }
+
+  if (target.dataset.mobileConfirmReady !== "true") {
+    armBannerReturnTarget(target);
+  }
+}
+
 function handlePremiumPointerDown(event) {
   if (!isPremiumTouchDevice()) return;
 
@@ -2054,6 +2124,8 @@ function handlePremiumPointerDown(event) {
 }
 
 function bindPremiumMobileSelection() {
+  document.addEventListener("pointerdown", handleBannerReturnPointerDown, { capture: true });
+  document.addEventListener("click", handleBannerReturnClick, true);
   document.addEventListener("pointerdown", handlePremiumPointerDown, { passive: true });
   document.addEventListener("click", handlePremiumMobileConfirmClick, true);
 
