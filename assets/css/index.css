@@ -191,6 +191,14 @@ body.index-page .view-section.active {
 body.index-page .topbar { z-index: 170; }
 body.index-page .drawer-backdrop { z-index: 120; }
 
+body.index-page .drawer-only-nav {
+  display: none !important;
+}
+
+body.index-page .banner-return-hit {
+  display: none !important;
+}
+
 .home-hero {
   min-height: 100svh;
   padding: 104px 22px 28px;
@@ -7027,9 +7035,22 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 }
 
 @media (max-width: 760px), (max-width: 980px) and (orientation: landscape) {
+  body.index-page .top-actions.open .drawer-only-nav {
+    display: inline-flex !important;
+  }
+
+  body.index-page .banner-return-hit {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    display: block !important;
+    opacity: 1 !important;
+  }
+
   body.index-page .panel-header .certificate-banner-return-cabin,
   body.index-page .panel-header .relic-banner-return-cabin,
   body.index-page .panel-header .message-banner-return-cabin {
+    position: absolute !important;
+    z-index: 35 !important;
     overflow: visible !important;
     pointer-events: auto !important;
     touch-action: manipulation;

@@ -1469,7 +1469,16 @@ const shell = document.getElementById("appShell");
 const bgClasses = ["quest-bg", "menu-bg", "cabin-bg", "message-bg", "prologue-bg"];
 
 function updateActiveNav(id) {
-  const labels = { home: "Home", quest: "Trail", quick: "Menu", cabin: "Cabin", certificates: "Cabin", relics: "Cabin", message: "Message", prologue: "" };
+  const labels = {
+    home: "Home",
+    quest: "Trail",
+    quick: "Menu",
+    cabin: "Cabin",
+    certificates: "Certificate Wall",
+    relics: "Relics",
+    message: "Message",
+    prologue: ""
+  };
 
   document.querySelectorAll(".top-actions button").forEach(button => {
     const isCurrent = button.textContent.trim() === labels[id];

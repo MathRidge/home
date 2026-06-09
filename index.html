@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260609-banner-return-fix" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260609-physical-banner-return" />
 </head>
 
 <body class="index-page is-index-loading" data-index-page="true">
@@ -63,6 +63,8 @@
         <button class="pill-btn" type="button" onclick="showSection('home')">Home</button>
         <button class="pill-btn" type="button" onclick="showSection('quest')">Trail</button>
         <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+        <button class="pill-btn drawer-only-nav" type="button" onclick="showSection('certificates')">Certificate Wall</button>
+        <button class="pill-btn drawer-only-nav" type="button" onclick="showSection('relics')">Relics</button>
         <button class="pill-btn" type="button" onclick="showSection('message')">Message</button>
         <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
       </div>
@@ -210,7 +212,7 @@
             <h2 id="certificatesTitle">Certificate Vault</h2>
             <p>Each shelf holds the official achievements earned from the trail.</p>
           </div>
-          <button class="pill-btn certificate-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
+          <button class="banner-return-hit certificate-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
         </header>
 
         <div class="certificate-vault-intro">
@@ -239,7 +241,7 @@
             <h2 id="relicsTitle">Relic Vault</h2>
             <p>Each relic is a quick memory of the math idea earned on the trail.</p>
           </div>
-          <button class="pill-btn relic-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
+          <button class="banner-return-hit relic-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
         </header>
 
         <div class="relic-vault-intro">
@@ -258,7 +260,7 @@
             <h2 id="messageTitle">Message Desk</h2>
             <p>Have a question, suggestion, thank-you note, or parent testimonial? Leave a note for Math Ridge.</p>
           </div>
-          <button class="pill-btn message-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
+          <button class="banner-return-hit message-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
         </header>
 
         <div class="message-body">
@@ -297,6 +299,6 @@
   </main>
 
   <script src="assets/js/math-ridge-shell.js?v=20260604-confirm-nav-delay"></script>
-<script src="assets/js/index.js?v=20260609-banner-return-fix"></script>
+<script src="assets/js/index.js?v=20260609-physical-banner-return"></script>
 </body>
 </html>
