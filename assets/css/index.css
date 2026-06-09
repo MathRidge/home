@@ -5838,16 +5838,41 @@ body.index-page .certificate-vault-tests {
   margin: 0;
   padding: 22px;
   min-width: 0;
-  max-height: min(78vh, 980px);
-  overflow-y: auto;
+  overflow: visible;
   -webkit-overflow-scrolling: touch;
 }
 
 body.index-page .certificate-vault-tests .test-results-grid {
-  grid-template-columns: 1fr;
-  gap: 16px;
-  max-width: 760px;
-  margin-inline: auto;
+  display: flex;
+  grid-template-columns: none;
+  gap: 18px;
+  max-width: none;
+  margin-inline: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 4px 4px 20px;
+  scroll-padding: 4px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.index-page .certificate-vault-tests .test-result-card {
+  flex: 0 0 min(100%, 560px);
+  scroll-snap-align: center;
+}
+
+body.index-page .certificate-vault-tests .test-results-grid::-webkit-scrollbar {
+  height: 9px;
+}
+
+body.index-page .certificate-vault-tests .test-results-grid::-webkit-scrollbar-track {
+  background: rgba(255,247,232,0.08);
+  border-radius: 999px;
+}
+
+body.index-page .certificate-vault-tests .test-results-grid::-webkit-scrollbar-thumb {
+  background: rgba(242,184,75,0.44);
+  border-radius: 999px;
 }
 
 body.index-page .certificate-vault-panel.showing-tests .certificate-vault-display {
@@ -6198,6 +6223,10 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 
   body.index-page .certificate-vault-tests {
     padding: 14px;
+  }
+
+  body.index-page .certificate-vault-tests .test-result-card {
+    flex-basis: calc(100vw - 58px);
   }
 
   body.index-page .certificate-vault-shelves {
