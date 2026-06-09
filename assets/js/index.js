@@ -1741,6 +1741,7 @@ const CONFIRMABLE_INDEX_SELECTOR = [
   ".hero-actions .pill-btn",
   ".hero-actions .gold-btn",
   ".panel-header .pill-btn",
+  ".cabin-banner-return-home",
   ".room-spot",
   ".hotspot",
   ".cabin-tab",
@@ -2059,7 +2060,7 @@ function bindPremiumMobileSelection() {
   document.addEventListener("pointerdown", event => {
     if (!isPremiumTouchDevice()) return;
     if (event.target.closest(".node-card.stage-tappable")) return;
-    if (!event.target.closest(".small-link, .jump-link, .hotspot, .room-spot, .cabin-tab, .reset-progress-btn, #sendNoteButton, #modalActions button")) {
+    if (!event.target.closest(".small-link, .jump-link, .hotspot, .room-spot, .cabin-banner-return-home, .cabin-tab, .reset-progress-btn, #sendNoteButton, #modalActions button")) {
       clearStageSelection();
       mobileConfirm()?.clear?.();
     }

@@ -4412,10 +4412,10 @@ body.index-page .quick-panel .study-title-card {
 }
 
 body.index-page .cabin-panel .cabin-title-card {
-  min-height: 125px !important;
+  min-height: 270px !important;
   background:
-    linear-gradient(90deg, rgba(8,16,28,0.76) 0%, rgba(10,24,38,0.50) 45%, rgba(10,24,38,0.18) 100%),
-    url("../images/index-ui/cabin_title_card_desktop_1079x125.webp") center/cover no-repeat !important;
+    linear-gradient(90deg, rgba(8,16,28,0.12) 0%, rgba(8,16,28,0.12) 42%, rgba(8,16,28,0.04) 100%),
+    url("../images/index-ui/The%20Cabin%20Banner%201080%20x%20270%20mobile.png") center/cover no-repeat !important;
 }
 
 body.index-page .message-panel .message-title-card {
@@ -4429,10 +4429,28 @@ body.index-page .quick-panel .study-title-card .panel-title,
 body.index-page .cabin-panel .cabin-title-card .panel-title,
 body.index-page .message-panel .message-title-card .panel-title,
 body.index-page .quick-panel .study-title-card .pill-btn,
-body.index-page .cabin-panel .cabin-title-card .pill-btn,
 body.index-page .message-panel .message-title-card .pill-btn {
   position: relative !important;
   z-index: 1 !important;
+}
+
+body.index-page .cabin-panel .cabin-title-card .panel-title {
+  position: absolute !important;
+  left: 7.2%;
+  top: 61%;
+  z-index: 2 !important;
+  width: min(430px, 39%);
+}
+
+body.index-page .cabin-panel .cabin-title-card .panel-title h2 {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
 }
 
 body.index-page .quick-panel .study-title-card .panel-title h2,
@@ -4448,6 +4466,74 @@ body.index-page .message-panel .message-title-card .panel-title p {
   max-width: 600px !important;
   color: rgba(255,247,232,0.88) !important;
   text-shadow: 0 2px 14px rgba(0,0,0,0.42) !important;
+}
+
+body.index-page .cabin-panel .cabin-title-card .panel-title p {
+  max-width: none !important;
+  margin: 0 !important;
+  color: rgba(255,247,232,0.84) !important;
+  font-size: 0.92rem;
+  font-weight: 760;
+  line-height: 1.32;
+}
+
+body.index-page .cabin-banner-return-home {
+  position: absolute !important;
+  left: 73.5%;
+  top: 58%;
+  z-index: 3 !important;
+  width: 24%;
+  height: 31%;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 999px;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  cursor: pointer;
+  isolation: isolate;
+  overflow: visible !important;
+  transform: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.index-page .cabin-banner-return-home::before {
+  content: "";
+  position: absolute;
+  left: 2%;
+  top: -8%;
+  z-index: -1;
+  width: 96%;
+  height: 116%;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(255,244,191,0.34) 0%, rgba(246,201,108,0.21) 38%, rgba(60,147,224,0.15) 60%, transparent 76%);
+  filter: blur(9px);
+  box-shadow:
+    0 0 24px rgba(246,201,108,0.20),
+    0 0 42px rgba(75,158,234,0.12);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.94);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+body.index-page .cabin-banner-return-home:hover,
+body.index-page .cabin-banner-return-home:focus-visible,
+body.index-page .cabin-banner-return-home.is-touch-preview,
+body.index-page .cabin-banner-return-home.is-mobile-confirm-ready {
+  outline: none;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.index-page .cabin-banner-return-home:hover::before,
+body.index-page .cabin-banner-return-home:focus-visible::before,
+body.index-page .cabin-banner-return-home.is-touch-preview::before,
+body.index-page .cabin-banner-return-home.is-mobile-confirm-ready::before {
+  opacity: 1;
+  transform: scale(1);
 }
 
 @media (max-width: 760px) {
@@ -4467,8 +4553,8 @@ body.index-page .message-panel .message-title-card .panel-title p {
 
   body.index-page .cabin-panel .cabin-title-card {
     background:
-      linear-gradient(180deg, rgba(8,16,28,0.12) 0%, rgba(8,16,28,0.28) 45%, rgba(8,16,28,0.82) 100%),
-      url("../images/index-ui/cabin_title_card_mobile_353x207.webp") center/cover no-repeat !important;
+      linear-gradient(180deg, rgba(8,16,28,0.04) 0%, rgba(8,16,28,0.10) 45%, rgba(8,16,28,0.20) 100%),
+      url("../images/index-ui/The%20Cabin%20Banner%20353x207%20mobile.png") center/cover no-repeat !important;
   }
 
   body.index-page .message-panel .message-title-card {
@@ -4483,11 +4569,56 @@ body.index-page .message-panel .message-title-card .panel-title p {
     width: 100% !important;
   }
 
+  body.index-page .cabin-panel .cabin-title-card .panel-title {
+    left: 5.8%;
+    top: 48%;
+    width: 43% !important;
+  }
+
   body.index-page .quick-panel .study-title-card .panel-title p,
   body.index-page .cabin-panel .cabin-title-card .panel-title p,
   body.index-page .message-panel .message-title-card .panel-title p {
     max-width: none !important;
     line-height: 1.38 !important;
+  }
+
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    font-size: 0.62rem;
+    line-height: 1.18 !important;
+  }
+
+  body.index-page .cabin-banner-return-home {
+    left: 70.6%;
+    top: 73.4%;
+    width: 27%;
+    height: 20%;
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  body.index-page .cabin-panel .cabin-title-card {
+    min-height: clamp(170px, 25vw, 270px) !important;
+    background:
+      linear-gradient(90deg, rgba(8,16,28,0.10) 0%, rgba(8,16,28,0.10) 42%, rgba(8,16,28,0.04) 100%),
+      url("../images/index-ui/The%20Cabin%20Banner%201080%20x%20270%20mobile.png") center/cover no-repeat !important;
+  }
+
+  body.index-page .cabin-panel .cabin-title-card .panel-title {
+    left: 7.2%;
+    top: 61%;
+    width: min(390px, 38%) !important;
+  }
+
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    font-size: 0.72rem;
+    line-height: 1.2 !important;
+  }
+
+  body.index-page .cabin-banner-return-home {
+    left: 73.5%;
+    top: 58%;
+    width: 24%;
+    height: 31%;
   }
 }
 
