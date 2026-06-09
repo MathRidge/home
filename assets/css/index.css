@@ -4437,7 +4437,7 @@ body.index-page .message-panel .message-title-card .pill-btn {
 body.index-page .cabin-panel .cabin-title-card .panel-title {
   position: absolute !important;
   left: 7.2%;
-  top: 61%;
+  top: 52%;
   z-index: 2 !important;
   width: min(430px, 39%);
 }
@@ -4571,7 +4571,7 @@ body.index-page .cabin-banner-return-home.is-mobile-confirm-ready::before {
 
   body.index-page .cabin-panel .cabin-title-card .panel-title {
     left: 5.8%;
-    top: 48%;
+    top: 41%;
     width: 43% !important;
   }
 
@@ -4605,7 +4605,7 @@ body.index-page .cabin-banner-return-home.is-mobile-confirm-ready::before {
 
   body.index-page .cabin-panel .cabin-title-card .panel-title {
     left: 7.2%;
-    top: 61%;
+    top: 52%;
     width: min(390px, 38%) !important;
   }
 
@@ -4719,16 +4719,16 @@ body.index-page .hero-actions .hero-view-cabin {
 body.index-page .cabin-interactive-map {
   position: relative !important;
   display: block !important;
-  width: min(100%, 1080px);
-  margin: 0 auto 18px;
+  width: 100%;
+  margin: 0 auto;
   padding: 0 !important;
   gap: 0 !important;
   overflow: hidden;
-  border-radius: 24px;
-  border: 1px solid rgba(255,231,168,0.28);
+  border-radius: 0 0 24px 24px;
+  border: 0;
+  border-top: 1px solid rgba(255,231,168,0.20);
   background: #07111f;
   box-shadow:
-    0 22px 58px rgba(0,0,0,0.32),
     inset 0 1px 0 rgba(255,247,232,0.10);
 }
 
@@ -4736,6 +4736,7 @@ body.index-page .cabin-interactive-map picture,
 body.index-page .cabin-interactive-map img {
   display: block;
   width: 100%;
+  border-radius: inherit;
 }
 
 body.index-page .cabin-interactive-map img {
