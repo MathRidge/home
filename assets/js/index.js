@@ -820,16 +820,23 @@ function showCertificateVaultMode(mode = "shelves") {
   const panel = document.querySelector(".certificate-vault-panel");
   const display = document.getElementById("certificateVaultDisplay");
   const testsPanel = document.getElementById("certificateVaultTestsPanel");
-  const shelfButton = document.getElementById("certificateVaultShelfButton");
-  const testButton = document.getElementById("certificateVaultTestButton");
+  const modeButton = document.getElementById("certificateVaultModeButton");
 
   if (display) display.dataset.mode = nextMode;
   panel?.classList.toggle("showing-tests", nextMode === "tests");
-  shelfButton?.classList.toggle("active", nextMode === "shelves");
-  testButton?.classList.toggle("active", nextMode === "tests");
+  if (modeButton) {
+    modeButton.textContent = nextMode === "tests" ? "Back to Certificate Shelf" : "Test Results";
+    modeButton.setAttribute("aria-label", nextMode === "tests" ? "Back to Certificate Shelf" : "Show Test Results");
+  }
 
   if (testsPanel) testsPanel.hidden = nextMode !== "tests";
   if (nextMode === "tests") renderTestResults("certificateVaultTestResults");
+}
+
+function toggleCertificateVaultMode() {
+  const display = document.getElementById("certificateVaultDisplay");
+  const currentMode = display?.dataset?.mode === "tests" ? "tests" : "shelves";
+  showCertificateVaultMode(currentMode === "tests" ? "shelves" : "tests");
 }
 
 function isLegacyTestResultImage(value) {
@@ -1874,6 +1881,7 @@ function activateConfirmedIndexTarget(target) {
   const showSectionMatch = inlineAction.match(/showSection\('([^']+)'\)/);
   const showCabinPanelMatch = inlineAction.match(/showCabinPanel\('([^']+)'\)/);
   const showCertificateVaultModeMatch = inlineAction.match(/showCertificateVaultMode\('([^']+)'\)/);
+  const toggleCertificateVaultModeMatch = /toggleCertificateVaultMode\(\)/.test(inlineAction);
   const downloadTestCertificateMatch = inlineAction.match(/downloadTestCertificate\('([^']+)'\)/);
   const certificateId = target.dataset?.certificateId;
 
@@ -1897,6 +1905,11 @@ function activateConfirmedIndexTarget(target) {
 
   if (showCertificateVaultModeMatch) {
     showCertificateVaultMode(showCertificateVaultModeMatch[1]);
+    return true;
+  }
+
+  if (toggleCertificateVaultModeMatch) {
+    toggleCertificateVaultMode();
     return true;
   }
 
@@ -2074,6 +2087,7 @@ window.handleStageImageFallback = handleStageImageFallback;
 window.showSection = showSection;
 window.showCabinPanel = showCabinPanel;
 window.showCertificateVaultMode = showCertificateVaultMode;
+window.toggleCertificateVaultMode = toggleCertificateVaultMode;
 window.toggleCertificateWall = toggleCertificateWall;
 window.closeModal = closeModal;
 window.showModal = showModal;
