@@ -750,6 +750,14 @@ function certificateVaultLengthClass(text) {
   return "";
 }
 
+function certificateVaultTitleLengthClass(text) {
+  const length = String(text || "").length;
+  if (length >= 36) return " is-ultra-long";
+  if (length >= 31) return " is-extra-long";
+  if (length >= 24) return " is-long";
+  return "";
+}
+
 function renderCertificateVaultCard(item) {
   const lesson = lessons.find(entry => entry.id === item.id);
   const cert = readCertificate(item.id);
@@ -758,7 +766,7 @@ function renderCertificateVaultCard(item) {
   const date = earned ? certificateDateText(cert) : "Not earned yet";
   const certificateTitle = cert?.certificateTitle || item.certificateTitle || item.title;
   const lessonTag = lesson?.tag || item.title;
-  const titleClass = certificateVaultLengthClass(certificateTitle);
+  const titleClass = certificateVaultTitleLengthClass(certificateTitle);
   const nameClass = certificateVaultLengthClass(name);
   const tagClass = certificateVaultLengthClass(lessonTag);
   const ariaLabel = earned
