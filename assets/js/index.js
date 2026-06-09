@@ -423,9 +423,9 @@ function stageRelicImage(id) {
     "1_4": "assets/images/relic/factor_forge_alpha.png",
     "2_1a": "assets/images/relic/shelf_scale_inactive.png",
     "2_1": "assets/images/relic/Shelf_Scale_Relic_True_Alpha.png",
-    "2_2": "assets/images/relic/Primewood_Seed_Relic_True_Alpha.png",
-    "2_3": "assets/images/relic/Fraction_Loom_Relic_True_Alpha.png",
-    "2_4": "assets/images/relic/Power_Tally_Relic_True_Alpha.png"
+    "2_2": "assets/images/relic/primewood_seed_relic_true_alpha.png",
+    "2_3": "assets/images/relic/fraction_loom_relic_true_alpha.png",
+    "2_4": "assets/images/relic/power_tally_relic_true_alpha.png"
   };
   return relicImages[id] || "";
 }

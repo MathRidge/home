@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
-<link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260608-relic-manual-footer">
+<link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260609-mini-skit">
 <link rel="stylesheet" href="assets/css/note6.css?v=20260531-factor-tree-align">
 </head>
 <body class="note-page note-6" data-note-id="2_2">
@@ -150,6 +150,13 @@
     <div class="note6-pause-card"><strong>Memory line:</strong> split &rarr; circle &rarr; list &rarr; match.</div>
   </section>
 
+  <section class="section note6-section mini-skit-section" aria-label="Primewood Seed mini-skit">
+    <p class="eyebrow">Mini-Skit | Primewood Seed</p>
+    <h2>Before the Practice Gate</h2>
+    <p>Mira and Elder Shellwick pause for a quick reminder: a factor tree can grow sideways, but every branch still stops at prime pieces.</p>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('primewoodSeedSkitDialog').showModal()">View Mini-Skit</button>
+  </section>
+
   <section class="section practice note6-practice" id="practice">
     <h2><span class="section-kicker">08</span> Unlock Practice</h2>
     <p>Break each number into prime pieces. Use the small boxes from left to right. The order does not matter, but every piece must be prime.</p>
@@ -169,6 +176,17 @@
   <section class="footer-rule" aria-label="Math Ridge quote">"Big numbers become honest when you can name their prime pieces." - Math Ridge</section>
   <p class="footer-note">Math Ridge Manual 2-2 | Primewood Seed Manual</p>
 </main>
+
+<dialog class="mini-skit-dialog" id="primewoodSeedSkitDialog" aria-label="Primewood Seed mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>Primewood Seed</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage-2-2.png" alt="Mira learns that factor trees split numbers into prime pieces before those pieces help reduce fractions." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
 
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">

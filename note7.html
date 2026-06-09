@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar">
-<link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260608-relic-manual-footer">
+<link rel="stylesheet" href="assets/css/mathridge-note.css?v=20260609-mini-skit">
 <link rel="stylesheet" href="assets/css/note7.css">
 </head>
 <body class="note-page note-7" data-note-id="2_3">
@@ -134,6 +134,13 @@
     <div class="read-box">Short version: notice &rarr; flip if needed &rarr; stack &rarr; factor &rarr; cross &rarr; finish.</div>
   </section>
 
+  <section class="section note7-section mini-skit-section" aria-label="Fraction Loom mini-skit">
+    <p class="eyebrow">Mini-Skit | Fraction Loom</p>
+    <h2>Before the Practice Gate</h2>
+    <p>Mira and Elder Shellwick pause for a quick reminder: only the second fraction flips, then the shelves can stack, factor, cross, and finish.</p>
+    <button class="gold-btn mini-skit-open" type="button" onclick="document.getElementById('fractionLoomSkitDialog').showModal()">View Mini-Skit</button>
+  </section>
+
   <section class="section practice note7-practice" id="practice">
     <h2><span class="section-kicker">08</span> Unlock Practice</h2>
     <p>Complete four division checks. Use the two-box fraction notepad. The answer must be the simplest fraction, so reduce before you press check.</p>
@@ -153,6 +160,17 @@
   <section class="footer-rule" aria-label="Math Ridge quote">"Factor first; the clean answer is already hiding in the matches." - Math Ridge</section>
   <p class="footer-note">Math Ridge Manual 2-3 | Fraction Loom Manual</p>
 </main>
+
+<dialog class="mini-skit-dialog" id="fractionLoomSkitDialog" aria-label="Fraction Loom mini-skit" onclick="if (event.target === this) this.close()">
+  <div class="mini-skit-dialog-card">
+    <div class="mini-skit-dialog-top">
+      <strong>Fraction Loom</strong>
+      <button class="pill-btn mini-skit-close" type="button" onclick="this.closest('dialog').close()">Close</button>
+    </div>
+    <img src="assets/images/mini-skit/mini-skit-stage-2-3.png" alt="Mira learns that fraction division flips only the second fraction before stacking, factoring, crossing matches, and finishing." loading="lazy" decoding="async" />
+    <button class="gold-btn mini-skit-done" type="button" onclick="this.closest('dialog').close()">Done Reading</button>
+  </div>
+</dialog>
 
 <div class="modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
