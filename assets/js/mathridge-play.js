@@ -168,8 +168,8 @@
 			bodyText: "for demonstrating exponential pattern recognition through prime-copy counting and fraction simplification.",
 			unlockTitle: "Chapter 2 relic set complete.",
 			nextDifference: "Test 2 difference: the Shelf Scale, Primewood Seed, Fraction Loom, and Power Tally go quiet. The trial asks you to prove you can see shelves, prime pieces, reductions, and exponents on your own.",
-			continueHref: "",
-			continueLabel: "",
+			continueHref: "chapter-2-test.html",
+			continueLabel: "Begin Chapter 2 Test",
 			filename: "math-ridge-exponential-pattern-recognition-certificate.png"
 		}
 	};

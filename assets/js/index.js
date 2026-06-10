@@ -100,7 +100,7 @@ const chapterTests = [
   {
     id: "chapter_2",
     chapter: "Chapter 2 Test",
-    range: "Covers 2-1 to 2-4",
+    range: "Covers 2-1a to 2-4",
     title: "Prime Element Vision Mastery Assessment",
     masteryTitle: "Prime Element Structure",
     assessmentTitle: "Prime Element Vision Mastery Assessment",
@@ -111,7 +111,7 @@ const chapterTests = [
     dataKey: "mathRidge_testResult_chapter_2_data",
     attemptsKey: "mathRidge_testAttempts_chapter_2",
     historyKey: "mathRidge_testAttemptHistory_chapter_2",
-    note: "Use this result card after the Chapter 2 test is built."
+    note: "Pass the Prime Element Vision Test to save this Chapter 2 mastery result."
   }
 ];
 
@@ -131,6 +131,7 @@ const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";
 const ROOT_GATE_PASS_KEY = "mathRidge_rootGatePassed_chapter_1";
 const ROOT_GATE_INTRO_KEY = "mathRidge_storyComplete_root_gate_intro";
 const CHAPTER_ONE_TEST_PASS_KEY = "mathRidge_testPassed_chapter_1";
+const CHAPTER_TWO_TEST_PASS_KEY = "mathRidge_testPassed_chapter_2";
 
 function isTermManualUnlocked() {
   try {
@@ -237,10 +238,26 @@ function isRootGatePassed() {
 function isChapterOneRelicsComplete() {
   return ["1_1", "1_2", "1_3", "1_4"].every(id => hasCertificate(id) || hasCompletedPlay(id));
 }
+function isChapterTwoRelicsComplete() {
+  return ["2_1a", "2_1", "2_2", "2_3", "2_4"].every(id => hasCertificate(id) || hasCompletedPlay(id));
+}
 function isRootGateUnlocked() {
   return isRootGatePassed() ||
     localStorage.getItem(ROOT_GATE_UNLOCK_KEY) === "true" ||
     isChapterOneRelicsComplete();
+}
+function isChapterTwoTestPassed() {
+  return localStorage.getItem(CHAPTER_TWO_TEST_PASS_KEY) === "true";
+}
+function isChapterTwoTestUnlocked() {
+  return isChapterTwoTestPassed() || isChapterTwoRelicsComplete() || hasCertificate("2_4") || hasCompletedPlay("2_4");
+}
+function chapterTwoTestHref() {
+  return isChapterTwoTestUnlocked() ? "chapter-2-test.html" : "#";
+}
+function chapterTwoTestActionText() {
+  if (!isChapterTwoTestUnlocked()) return "Locked";
+  return isChapterTwoTestPassed() ? "Review / Retake" : "Begin Test";
 }
 
 function hasWatchedRootGateIntro() {
@@ -370,6 +387,7 @@ function renderTrail(options = {}) {
           ${chapterLessons.map(renderTrailCard).join("")}
         </div>
         ${chapter.startsWith("Chapter 1") ? renderRootGateCard() : ""}
+        ${chapter.startsWith("Chapter 2") ? renderChapterTwoTestCard() : ""}
       </div>
     `;
   }).join("");
@@ -397,6 +415,28 @@ function renderRootGateCard() {
       <div class="root-gate-actions">
         <strong>${escapeHTML(status)}</strong>
         <a class="small-link root-gate-link ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleRootGateClick(event)">${rootGateActionText()}</a>
+      </div>
+    </article>
+  `;
+}
+
+function renderChapterTwoTestCard() {
+  const unlocked = isChapterTwoTestUnlocked();
+  const passed = isChapterTwoTestPassed();
+  const status = passed ? "Mastery proven" : unlocked ? "Test ready" : "Five relics required";
+  const href = chapterTwoTestHref();
+
+  return `
+    <article class="root-gate-card chapter-two-test-card ${unlocked ? "" : "locked"} ${passed ? "passed" : ""}" aria-label="Chapter 2 Prime Element Vision checkpoint">
+      <div class="root-gate-mark" aria-hidden="true">II</div>
+      <div class="root-gate-copy">
+        <span>Chapter 2 Checkpoint</span>
+        <h3>Prime Element Vision Test</h3>
+        <p>The five Chapter 2 climbs gather into one proof: split shelves, reduce fractions, factor values, handle fraction products, and pack repeated prime copies with exponents.</p>
+      </div>
+      <div class="root-gate-actions">
+        <strong>${escapeHTML(status)}</strong>
+        <a class="small-link root-gate-link chapter-two-test-link ${unlocked ? "" : "locked"}" href="${href}" onclick="return handleChapterTwoTestClick(event)">${chapterTwoTestActionText()}</a>
       </div>
     </article>
   `;
@@ -615,6 +655,7 @@ function renderMenuLinks(options = {}) {
           ${items.map(renderMenuNotePlay).join("")}
         </div>
         ${chapter.startsWith("Chapter 1") ? renderMenuRootGateLink() : ""}
+        ${chapter.startsWith("Chapter 2") ? renderMenuChapterTwoTestLink() : ""}
       </div>
     `;
   }).join("") + `
@@ -650,6 +691,16 @@ function renderMenuRootGateLink() {
       <span><i aria-hidden="true">I</i> Root Gate Finale</span><strong>${passed ? "Passed" : unlocked ? hasWatchedRootGateIntro() ? "Trial" : "Ready" : "Locked"}</strong>
     </a>
     ${rootGateWatchSceneLink("jump-link root-gate-replay-jump")}
+  `;
+}
+
+function renderMenuChapterTwoTestLink() {
+  const unlocked = isChapterTwoTestUnlocked();
+  const passed = isChapterTwoTestPassed();
+  return `
+    <a class="jump-link chapter-two-test-jump ${unlocked ? "" : "locked"}" href="${chapterTwoTestHref()}" onclick="return handleChapterTwoTestClick(event)">
+      <span><i aria-hidden="true">II</i> Prime Element Vision Test</span><strong>${passed ? "Passed" : unlocked ? "Ready" : "Locked"}</strong>
+    </a>
   `;
 }
 
@@ -709,6 +760,19 @@ function handleRootGateClick(event) {
   if (!isRootGateUnlocked()) {
     event.preventDefault();
     showModal("Root Gate Locked", "Collect all four Chapter 1 relics before attempting the Root Gate Exam.", [
+      { text: "Back to Mountain Trail", className: "gold-btn", action: () => showSection("quest") },
+      { text: "OK", className: "pill-btn", action: closeModal }
+    ]);
+    return false;
+  }
+
+  return true;
+}
+
+function handleChapterTwoTestClick(event) {
+  if (!isChapterTwoTestUnlocked()) {
+    event.preventDefault();
+    showModal("Chapter 2 Test Locked", "Complete the Chapter 2 trail through 2-4 before attempting the Prime Element Vision Test.", [
       { text: "Back to Mountain Trail", className: "gold-btn", action: () => showSection("quest") },
       { text: "OK", className: "pill-btn", action: closeModal }
     ]);
@@ -2212,6 +2276,7 @@ window.sendMessage = sendMessage;
 window.handleNoteClick = handleNoteClick;
 window.handlePlayClick = handlePlayClick;
 window.handleRootGateClick = handleRootGateClick;
+window.handleChapterTwoTestClick = handleChapterTwoTestClick;
 window.openCertificateFrame = openCertificateFrame;
 window.downloadTestCertificate = downloadTestCertificate;
 window.confirmResetProgress = confirmResetProgress;

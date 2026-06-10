@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Math Ridge | Chapter 2 Mastery Test</title>
+  <meta name="theme-color" content="#050914" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Math Ridge" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.webmanifest?v=20260602-ios-icon-clean" />
+  <link rel="icon" type="image/png" href="assets/images/logo/MathRidge_AppIcon_true_alpha.png?v=20260602-app-icon" sizes="any" />
+  <link rel="shortcut icon" type="image/png" href="assets/images/logo/MathRidge_AppIcon_true_alpha.png?v=20260602-app-icon" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
+  <link rel="apple-touch-icon" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
+  <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-minus-toggle" />
+  <link rel="stylesheet" href="assets/css/chapter-2-test.css?v=20260610-chapter-2-test" />
+</head>
+<body class="chapter-2-test-page">
+  <main class="exam-shell chapter-2-exam-shell">
+    <header class="exam-hero">
+      <a class="return-link" href="index.html?view=quest#quest">Mountain Trail</a>
+      <div>
+        <p class="exam-kicker">Chapter 2 Checkpoint</p>
+        <h1>Prime Element Vision Test</h1>
+        <p>Complete all 50 questions in under 20 minutes. A score of 92% or higher proves the Chapter 2 methods are yours.</p>
+      </div>
+      <div class="timer-card" aria-live="polite">
+        <span>Time Remaining</span>
+        <strong id="timerText">20:00</strong>
+      </div>
+    </header>
+
+    <section class="exam-status" aria-label="Exam rules">
+      <div><strong>50</strong><span>questions</span></div>
+      <div><strong>4</strong><span>errors allowed</span></div>
+      <div><strong>92%</strong><span>required</span></div>
+      <div><strong>No Relics</strong><span>methods only</span></div>
+    </section>
+
+    <section class="start-panel climb-gate" id="startPanel">
+      <div class="climb-cover-card">
+        <div class="gate-kicker">Prime Element Trial</div>
+        <h2>Seal of Chapter 2</h2>
+        <p>The Chapter 2 relics go quiet. Use Split Shelf, Fraction Shelves, Prime Pieces, Fraction Products, and Exponential Count on your own.</p>
+        <p class="cover-rule">Some questions ask for the method and the final answer. If any required part is wrong, that whole question is marked incorrect.</p>
+        <button class="primary-action" type="button" id="startExamButton">Start the Challenge</button>
+      </div>
+    </section>
+
+    <form class="exam-form hidden" id="examForm" autocomplete="off">
+      <div class="exam-toolbar">
+        <div>
+          <strong id="answeredCount">0 / 50 answered</strong>
+          <span id="examMessage">Answer every question before submitting.</span>
+        </div>
+        <button class="submit-button" type="submit">Submit Test</button>
+      </div>
+
+      <div class="question-grid chapter-2-question-grid" id="questionGrid"></div>
+
+      <section class="correction-complete-panel hidden" id="correctionCompletePanel" aria-live="polite">
+        <p class="exam-kicker">Corrections Complete</p>
+        <h2>Practice Review Finished</h2>
+        <p>The original score stays locked. You may retake the Chapter 2 Test or return to Mountain Trail.</p>
+        <div class="result-actions">
+          <button class="primary-action" type="button" id="correctionRetryButton">Retake Test</button>
+          <a class="secondary-action" href="index.html?view=quest#quest">Return to Mountain Trail</a>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <section class="result-layer hidden" id="resultLayer" aria-live="polite">
+    <div class="result-card" id="resultCard">
+      <p class="exam-kicker">Chapter 2 Result</p>
+      <h2 id="resultTitle">Test Complete</h2>
+      <div class="score-ring" id="scoreRing">0%</div>
+      <p id="resultSummary"></p>
+      <div class="result-stats" id="resultStats"></div>
+      <div class="result-actions">
+        <button class="secondary-action" type="button" id="reviewButton">Review Answers</button>
+        <button class="secondary-action" type="button" id="retryButton">Retake Test</button>
+        <a class="secondary-action" href="index.html?view=certificates#certificates">View Certificate Wall</a>
+        <a class="secondary-action" href="index.html?view=quest#quest">Return to Mountain Trail</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="assets/js/chapter-2-test.js?v=20260610-chapter-2-test"></script>
+</body>
+</html>

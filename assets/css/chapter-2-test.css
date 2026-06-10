@@ -1,0 +1,258 @@
+.chapter-2-test-page {
+  background:
+    linear-gradient(180deg, rgba(5, 9, 20, 0.72), rgba(5, 9, 20, 0.96)),
+    radial-gradient(circle at 18% 10%, rgba(140, 201, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 86% 0%, rgba(242, 184, 75, 0.16), transparent 36%),
+    #050914;
+}
+
+.chapter-2-exam-shell .exam-hero {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.chapter-2-question-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+
+.chapter-2-test-page .question-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.chapter-2-test-page .question-card p {
+  min-height: auto;
+}
+
+.chapter-2-test-page .question-expression {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 58px;
+  color: #fff7e8;
+}
+
+.fraction {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  place-items: center;
+  line-height: 1;
+  font-weight: 950;
+  vertical-align: middle;
+}
+
+.fraction .top {
+  width: 100%;
+  min-width: 1.55em;
+  border-bottom: 0.11em solid currentColor;
+  padding: 0 0.16em 0.13em;
+  text-align: center;
+}
+
+.fraction .bottom {
+  width: 100%;
+  min-width: 1.55em;
+  padding: 0.13em 0.16em 0;
+  text-align: center;
+}
+
+.fraction.large-fraction {
+  font-size: clamp(1.8rem, 5vw, 2.35rem);
+}
+
+.op-symbol {
+  color: var(--gold-light);
+  font-size: 1.55rem;
+  font-weight: 950;
+}
+
+.method-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255, 231, 168, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 247, 232, 0.05);
+}
+
+.method-panel > strong {
+  color: var(--gold-light);
+  font-size: 0.84rem;
+  text-transform: uppercase;
+}
+
+.method-row,
+.fraction-answer-row,
+.split-row,
+.prime-piece-row,
+.exp-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.method-label {
+  width: 100%;
+  color: rgba(255, 247, 232, 0.70);
+  font-size: 0.82rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.exam-input,
+.fraction-input,
+.exp-input-wide {
+  min-height: 42px;
+  border: 2px solid rgba(185, 220, 255, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #152033;
+  font: 950 1.05rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+  text-align: center;
+}
+
+.exam-input {
+  width: 72px;
+  padding: 7px;
+}
+
+.fraction-input {
+  width: 78px;
+  padding: 7px;
+}
+
+.exp-input-wide {
+  width: min(100%, 260px);
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.exam-input:focus,
+.fraction-input:focus,
+.exp-input-wide:focus {
+  outline: none;
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 4px rgba(255, 231, 168, 0.28);
+}
+
+.tiny-times,
+.chunk-plus,
+.arrow-mark {
+  color: var(--gold-light);
+  font-weight: 950;
+}
+
+.group-formula {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.group-formula .exam-input {
+  width: 62px;
+}
+
+.prime-piece-row .exam-input {
+  width: 64px;
+}
+
+.answer-fraction {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 231, 168, 0.16);
+  border-radius: 8px;
+  background: rgba(5, 9, 20, 0.28);
+}
+
+.answer-fraction .top {
+  padding-bottom: 7px;
+}
+
+.answer-fraction .bottom {
+  padding-top: 7px;
+}
+
+.answer-fraction .fraction-input {
+  height: 38px;
+  min-height: 38px;
+}
+
+.exp-toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.exp-toolbar button {
+  min-height: 34px;
+  border: 1px solid rgba(255, 231, 168, 0.42);
+  border-radius: 8px;
+  background: rgba(255, 247, 232, 0.08);
+  color: var(--gold-light);
+  font-weight: 950;
+}
+
+.exp-preview {
+  min-height: 28px;
+  color: rgba(255, 247, 232, 0.82);
+  font-size: 0.95rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.exp-preview .base {
+  color: #fff7e8;
+}
+
+.exp-preview sup {
+  color: var(--gold-light);
+}
+
+.question-card.is-wrong .method-panel,
+.question-card.needs-correction .method-panel {
+  border-color: rgba(239, 119, 119, 0.42);
+}
+
+.question-card.is-correct .method-panel {
+  border-color: rgba(121, 208, 155, 0.42);
+}
+
+.chapter-2-test-page .question-feedback {
+  min-height: 22px;
+}
+
+@media (max-width: 760px) {
+  .chapter-2-exam-shell .exam-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-2-exam-shell .return-link,
+  .chapter-2-exam-shell .timer-card {
+    width: 100%;
+  }
+
+  .chapter-2-test-page .question-card {
+    padding: 14px;
+  }
+
+  .chapter-2-question-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-input {
+    width: 64px;
+  }
+
+  .fraction-input {
+    width: 70px;
+  }
+
+  .exp-input-wide {
+    width: 100%;
+    text-align: center;
+  }
+}
