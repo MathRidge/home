@@ -478,6 +478,10 @@ function stageRelicImage(id) {
   return relicImages[id] ? `${relicImages[id]}?v=${version}` : "";
 }
 
+function unversionedAssetPath(src) {
+  return String(src || "").split("?")[0];
+}
+
 function stageRelicKind(id) {
   return id.startsWith("2_") ? "Vision Relic" : "Relic";
 }
@@ -524,7 +528,7 @@ function renderRelicVaultCard(lesson) {
     <article class="relic-card ${gathered ? "gathered" : "locked"} ${dormantClass}" data-relic-id="${relicId}">
       <div class="relic-card-art" aria-hidden="true">
         <span class="relic-display-light"></span>
-        ${relicImage ? `<img class="relic-floating-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async" onerror="handleRelicPreviewError(this)">` : `<span class="relic-missing-mark">?</span>`}
+        ${relicImage ? `<img class="relic-floating-img" src="${escapeHTML(relicImage)}" data-fallback-src="${escapeHTML(unversionedAssetPath(relicImage))}" alt="" loading="lazy" decoding="async" onerror="handleRelicPreviewError(this)">` : `<span class="relic-missing-mark">?</span>`}
       </div>
       <div class="relic-card-body">
         <span class="relic-stage">${escapeHTML(lesson.section)} ${escapeHTML(lesson.tag)}</span>
@@ -538,6 +542,13 @@ function renderRelicVaultCard(lesson) {
 }
 
 function handleRelicPreviewError(img) {
+  const fallbackSrc = img?.dataset?.fallbackSrc || "";
+  if (fallbackSrc && img.dataset.fallbackTried !== "true") {
+    img.dataset.fallbackTried = "true";
+    img.src = fallbackSrc;
+    return;
+  }
+
   const mark = document.createElement("span");
   mark.className = "relic-missing-mark";
   mark.textContent = "?";
@@ -594,7 +605,7 @@ function renderTrailCard(lesson) {
   const relicKind = stageRelicKind(lesson.id);
   const relicState = stageRelicProofState(lesson.id, relicKind);
   const relicProof = earned && relicName
-    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""} ${relicState.className}" data-relic-id="${escapeHTML(lesson.id)}" aria-label="${escapeHTML(relicName)} ${escapeHTML(relicState.status.toLowerCase())}">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>${escapeHTML(relicState.label)}</span><strong>${escapeHTML(relicName)}</strong><em>${escapeHTML(relicState.status)}</em></div>`
+    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""} ${relicState.className}" data-relic-id="${escapeHTML(lesson.id)}" aria-label="${escapeHTML(relicName)} ${escapeHTML(relicState.status.toLowerCase())}">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" data-fallback-src="${escapeHTML(unversionedAssetPath(relicImage))}" alt="" loading="lazy" decoding="async" onerror="handleRelicPreviewError(this)">` : ""}<span>${escapeHTML(relicState.label)}</span><strong>${escapeHTML(relicName)}</strong><em>${escapeHTML(relicState.status)}</em></div>`
     : "";
 
   return `
@@ -2265,6 +2276,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Expose local methods for inline handlers and note/play pages that return to Index sections.
 window.handleStageImageFallback = handleStageImageFallback;
+window.handleRelicPreviewError = handleRelicPreviewError;
 window.showSection = showSection;
 window.showCabinPanel = showCabinPanel;
 window.showCertificateVaultMode = showCertificateVaultMode;

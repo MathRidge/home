@@ -225,6 +225,16 @@
   min-height: 22px;
 }
 
+.chapter-2-test-page .honor-rule {
+  margin-top: 12px;
+  padding: 11px 12px;
+  border: 1px solid rgba(255, 231, 168, 0.26);
+  border-radius: 8px;
+  background: rgba(5, 9, 20, 0.34);
+  color: #ffe7a8;
+  font-weight: 850;
+}
+
 @media (max-width: 760px) {
   .chapter-2-exam-shell .exam-hero {
     grid-template-columns: 1fr;

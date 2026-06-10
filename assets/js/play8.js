@@ -803,7 +803,16 @@ function checkTopPack(){
   }
 }
 
-function checkBottomPack(){
+function isStillArmingTrialButton(event){
+  const target = event?.currentTarget || event?.target;
+  return Boolean(target
+    && (target.dataset?.trialArmed === "true"
+      || target.dataset?.trialPointerFirstArm === "true"
+      || target.classList?.contains("is-play-armed")));
+}
+
+function checkBottomPack(event){
+  if(isStillArmingTrialButton(event)) return;
   if(stageComplete) return;
   let ok = true;
   round.bases.forEach(base => {
