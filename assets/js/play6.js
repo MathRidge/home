@@ -11,7 +11,7 @@
 	const NEXT_NOTE_UNLOCK_KEY = "mathRidge_noteUnlocked_2_3";
 	const NEXT_STAGE_UNLOCK_KEY = "mathRidge_stageUnlocked_2_3";
 	const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
-	const TOTAL_STEPS = 3;
+	const TOTAL_STEPS = 4;
 	const PRIMES = [2, 3, 5, 7];
 
 	const usedProblemDecks = {};
@@ -27,6 +27,8 @@
 	let stageStarted = false;
 	let pageHasStartedClimb = false;
 	let finalAnswered = false;
+	let matchesChecked = false;
+	let shelfScaleRelicActive = false;
 	let achievementShown = false;
 	let progressThemeTimer = null;
 	let completedSteps = new Set();
@@ -317,7 +319,7 @@
 	}
 
 	function resetStepVisuals() {
-		["topStep", "bottomStep", "reduceStep", "completeStep"].forEach((id, index) => {
+		["topStep", "bottomStep", "reduceStep", "finalStep", "completeStep"].forEach((id, index) => {
 			const panel = byId(id);
 			if (!panel) return;
 			panel.classList.toggle("hidden", index !== 0);
@@ -332,6 +334,25 @@
 
 		const primeForm = byId("primeForm");
 		if (primeForm) primeForm.innerHTML = "";
+		const leftoverPreview = byId("leftoverPreview");
+		if (leftoverPreview) {
+			leftoverPreview.innerHTML = "";
+			leftoverPreview.classList.add("hidden");
+		}
+		const assist = byId("shelfScaleAssist");
+		if (assist) assist.classList.remove("is-active", "relic-safe-step");
+		byId("reduceStep")?.classList.remove("relic-safe-step");
+		const relicButton = assist?.querySelector("button");
+		if (relicButton) {
+			relicButton.disabled = false;
+			relicButton.removeAttribute("aria-disabled");
+		}
+		const checkMatchesBtn = byId("checkMatchesBtn");
+		if (checkMatchesBtn) {
+			checkMatchesBtn.disabled = false;
+			checkMatchesBtn.removeAttribute("aria-disabled");
+			checkMatchesBtn.classList.remove("is-play-armed");
+		}
 		const completeFlow = byId("completeFlow");
 		if (completeFlow) completeFlow.innerHTML = "";
 		setText("completeMessage", "");
@@ -358,6 +379,8 @@
 		stageEligible = true;
 		stageComplete = false;
 		finalAnswered = false;
+		matchesChecked = false;
+		shelfScaleRelicActive = false;
 		completedSteps = new Set();
 
 		setText("numDisplay", numerator);
@@ -412,11 +435,15 @@
 			chip.className = "factor-chip top-chip";
 			chip.dataset.side = "top";
 			chip.dataset.index = String(i);
-			chip.textContent = `(${n})`;
+			chip.dataset.value = String(n);
+			chip.textContent = String(n);
 			if (crossMap.topCross[i]) chip.classList.add("crossed");
+			updateFactorChipLabel(chip);
 			chip.onclick = () => {
 				touchClimbTimer();
+				if (matchesChecked) return;
 				chip.classList.toggle("crossed");
+				updateFactorChipLabel(chip);
 			};
 			wrap.appendChild(chip);
 		});
@@ -434,39 +461,109 @@
 			chip.className = "factor-chip bottom-chip";
 			chip.dataset.side = "bottom";
 			chip.dataset.index = String(i);
-			chip.textContent = `(${n})`;
+			chip.dataset.value = String(n);
+			chip.textContent = String(n);
 			if (crossMap.bottomCross[i]) chip.classList.add("crossed");
+			updateFactorChipLabel(chip);
 			chip.onclick = () => {
 				touchClimbTimer();
+				if (matchesChecked) return;
 				chip.classList.toggle("crossed");
+				updateFactorChipLabel(chip);
 			};
 			wrap.appendChild(chip);
 		});
 	}
 
-	function showMatchingPieces() {
+	function updateFactorChipLabel(chip) {
+		if (!chip) return;
+		const value = chip.dataset.value || chip.textContent.replace(/[()]/g, "");
+		chip.textContent = chip.classList.contains("crossed") ? `(${value})` : value;
+	}
+
+	function useShelfScaleRelic() {
 		touchClimbTimer();
-		if (score >= 3) {
-			setFeedback("Show Matching Pieces is only available during the first 3 scores. Now try crossing the matches yourself.", "bad");
-			return;
-		}
+		if (stageComplete || matchesChecked) return;
+		shelfScaleRelicActive = true;
 		buildPrimeForm(true);
-		setFeedback("Guided help used: matching pieces are crossed out for you.", "neutral");
+		byId("shelfScaleAssist")?.classList.add("is-active", "relic-safe-step");
+		const relicButton = byId("shelfScaleAssist")?.querySelector("button");
+		if (relicButton) {
+			relicButton.disabled = true;
+			relicButton.setAttribute("aria-disabled", "true");
+		}
+		byId("reduceStep")?.classList.add("relic-safe-step");
+		renderLeftoverPieces();
+		shell()?.playSfx?.("relic");
+		setFeedback("Shelf Scale used: matching pieces are crossed out and the leftover pieces are shown. Check the matching pieces to continue.", "neutral");
+	}
+
+	function showMatchingPieces() {
+		useShelfScaleRelic();
+	}
+
+	function selectedCrossedFactors() {
+		const top = [];
+		const bottom = [];
+		document.querySelectorAll("#primeForm .factor-chip.crossed").forEach(chip => {
+			const value = Number(chip.dataset.value || chip.textContent.replace(/[()]/g, ""));
+			if (!value) return;
+			if (chip.dataset.side === "top") top.push(value);
+			else if (chip.dataset.side === "bottom") bottom.push(value);
+		});
+		return { top, bottom };
+	}
+
+	function expectedCrossedFactors() {
+		const top = [];
+		const bottom = [];
+		PRIMES.forEach(prime => {
+			const topCount = round.topFactors.filter(value => value === prime).length;
+			const bottomCount = round.bottomFactors.filter(value => value === prime).length;
+			const matchCount = Math.min(topCount, bottomCount);
+			for (let i = 0; i < matchCount; i++) {
+				top.push(prime);
+				bottom.push(prime);
+			}
+		});
+		return { top, bottom };
+	}
+
+	function leftoverFactors() {
+		const expected = expectedCrossedFactors();
+		const topCounts = countMap(round.topFactors);
+		const bottomCounts = countMap(round.bottomFactors);
+		expected.top.forEach(value => topCounts[value] = Math.max(0, (topCounts[value] || 0) - 1));
+		expected.bottom.forEach(value => bottomCounts[value] = Math.max(0, (bottomCounts[value] || 0) - 1));
+		const top = [];
+		const bottom = [];
+		PRIMES.forEach(prime => {
+			for (let i = 0; i < (topCounts[prime] || 0); i++) top.push(prime);
+			for (let i = 0; i < (bottomCounts[prime] || 0); i++) bottom.push(prime);
+		});
+		return { top, bottom };
+	}
+
+	function piecesText(pieces) {
+		return pieces.length ? pieces.join(" x ") : "1";
+	}
+
+	function renderLeftoverPieces() {
+		const preview = byId("leftoverPreview");
+		if (!preview) return;
+		const leftovers = leftoverFactors();
+		preview.innerHTML = `
+			<strong>Leftover pieces</strong>
+			<span>Top: ${piecesText(leftovers.top)}</span>
+			<span>Bottom: ${piecesText(leftovers.bottom)}</span>
+		`;
+		preview.classList.remove("hidden");
 	}
 
 	function crossingIsCorrect() {
-		const correct = getCrossMap();
-		let ok = true;
-
-		document.querySelectorAll("#primeForm .factor-chip").forEach(chip => {
-			const side = chip.dataset.side;
-			const index = Number(chip.dataset.index);
-			const crossed = chip.classList.contains("crossed");
-			const shouldCross = side === "top" ? correct.topCross[index] : correct.bottomCross[index];
-			if (crossed !== shouldCross) ok = false;
-		});
-
-		return ok;
+		const selected = selectedCrossedFactors();
+		const expected = expectedCrossedFactors();
+		return sameMultiset(selected.top, expected.top) && sameMultiset(selected.bottom, expected.bottom);
 	}
 
 	function checkTop() {
@@ -494,7 +591,7 @@
 			markCorrectStep("bottom");
 			byId("reduceStep")?.classList.remove("hidden");
 			buildPrimeForm(false);
-			setFeedback("✅ Denominator pieces match. Now cross out matching pieces and reduce.", "good");
+			setFeedback("✅ Denominator pieces match. Now cross out matching pieces.", "good");
 			focusPanel("reduceStep");
 		} else {
 			markMistake();
@@ -502,9 +599,32 @@
 		}
 	}
 
+	function checkMatchingPieces() {
+		touchClimbTimer();
+		if (stageComplete || completedSteps.has("matches")) return;
+		if (!crossingIsCorrect()) {
+			markMistake();
+			setFeedback("Not yet. Only equal top-and-bottom prime pieces may be crossed out.", "bad");
+			return;
+		}
+
+		matchesChecked = true;
+		markCorrectStep("matches");
+		document.querySelectorAll("#primeForm .factor-chip").forEach(chip => chip.setAttribute("aria-disabled", "true"));
+		renderLeftoverPieces();
+		byId("finalStep")?.classList.remove("hidden");
+		setFeedback("✅ Matching pieces are correct. Now write the reduced fraction from the leftover pieces.", "good");
+		focusPanel("finalStep");
+		byId("ansTop")?.focus();
+	}
+
 	function checkAnswer() {
 		touchClimbTimer();
 		if (stageComplete || finalAnswered) return;
+		if (!matchesChecked) {
+			setFeedback("Check the matching pieces first.", "bad");
+			return;
+		}
 
 		const topInput = byId("ansTop");
 		const bottomInput = byId("ansBottom");
@@ -513,20 +633,20 @@
 
 		if (a === round.reducedTop && b === round.reducedBottom) {
 			stageComplete = true;
-			const crossNote = crossingIsCorrect()
-				? "Your cross-out marks match the reduction."
-				: "Your final answer is correct. Speed is okay when the reduction is accurate.";
+			const crossNote = shelfScaleRelicActive
+				? "The Shelf Scale showed the leftover pieces, and your reduced fraction matches them."
+				: "Your cross-out marks match the reduction.";
 			showComplete(crossNote);
 			completeRoundAfterFinalAnswer();
 			return;
 		}
 
 		markMistake();
-		setFeedback("Not yet. Cross out matching pieces. If a shelf has no pieces left, write 1.", "bad");
+		setFeedback("Not yet. Multiply the leftover pieces. If a shelf has no pieces left, write 1.", "bad");
 	}
 
 	function showComplete(crossNote) {
-		["topStep", "bottomStep", "reduceStep"].forEach(id => byId(id)?.classList.add("hidden"));
+		["topStep", "bottomStep", "reduceStep", "finalStep"].forEach(id => byId(id)?.classList.add("hidden"));
 		byId("completeStep")?.classList.remove("hidden");
 
 		const completeFlow = byId("completeFlow");
@@ -848,6 +968,8 @@ function openSavedCertificateFromCabin() {
 	window.startClimbFromGate = startClimbFromGate;
 	window.checkTop = checkTop;
 	window.checkBottom = checkBottom;
+	window.useShelfScaleRelic = useShelfScaleRelic;
+	window.checkMatchingPieces = checkMatchingPieces;
 	window.showMatchingPieces = showMatchingPieces;
 	window.checkAnswer = checkAnswer;
 	window.nextClimb = nextClimb;

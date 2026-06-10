@@ -418,7 +418,6 @@ function stageRelicName(id) {
 }
 
 function stageRelicImage(id) {
-  const version = "20260609-relic-preview";
   const relicImages = {
     "1_1": "assets/images/relic/term_stone.png",
     "1_2": "assets/images/relic/sign_compass_relic_alpha.png",
@@ -430,6 +429,12 @@ function stageRelicImage(id) {
     "2_3": "assets/images/relic/fraction_loom_relic_true_alpha.png",
     "2_4": "assets/images/relic/power_tally_relic_true_alpha.png"
   };
+  const relicVersions = {
+    "2_2": "20260610-primewood-refresh",
+    "2_3": "20260610-fraction-loom-refresh",
+    "2_4": "20260610-power-tally-refresh"
+  };
+  const version = relicVersions[id] || "20260609-relic-preview";
   return relicImages[id] ? `${relicImages[id]}?v=${version}` : "";
 }
 

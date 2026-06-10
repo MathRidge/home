@@ -514,9 +514,16 @@
 			chip.className = "factor-chip top-chip";
 			chip.dataset.side = "top";
 			chip.dataset.index = String(i);
-			chip.textContent = `(${n})`;
+			chip.dataset.value = String(n);
+			chip.textContent = String(n);
 			if (crossMap.topCross[i]) chip.classList.add("crossed");
-			chip.onclick = () => { touchClimbTimer(); if (!matchesChecked) chip.classList.toggle("crossed"); };
+			updateFactorChipLabel(chip);
+			chip.onclick = () => {
+				touchClimbTimer();
+				if (matchesChecked) return;
+				chip.classList.toggle("crossed");
+				updateFactorChipLabel(chip);
+			};
 			wrap.appendChild(chip);
 		});
 
@@ -532,11 +539,24 @@
 			chip.className = "factor-chip bottom-chip";
 			chip.dataset.side = "bottom";
 			chip.dataset.index = String(i);
-			chip.textContent = `(${n})`;
+			chip.dataset.value = String(n);
+			chip.textContent = String(n);
 			if (crossMap.bottomCross[i]) chip.classList.add("crossed");
-			chip.onclick = () => { touchClimbTimer(); if (!matchesChecked) chip.classList.toggle("crossed"); };
+			updateFactorChipLabel(chip);
+			chip.onclick = () => {
+				touchClimbTimer();
+				if (matchesChecked) return;
+				chip.classList.toggle("crossed");
+				updateFactorChipLabel(chip);
+			};
 			wrap.appendChild(chip);
 		});
+	}
+
+	function updateFactorChipLabel(chip) {
+		if (!chip) return;
+		const value = chip.dataset.value || chip.textContent.replace(/[()]/g, "");
+		chip.textContent = chip.classList.contains("crossed") ? `(${value})` : value;
 	}
 
 	function showMatchingPieces() {
@@ -550,16 +570,26 @@
 	}
 
 	function crossingIsCorrect() {
-		const correct = getCrossMap();
-		let ok = true;
-		document.querySelectorAll("#primeForm .factor-chip").forEach(chip => {
-			const side = chip.dataset.side;
-			const index = Number(chip.dataset.index);
-			const crossed = chip.classList.contains("crossed");
-			const shouldCross = side === "top" ? correct.topCross[index] : correct.bottomCross[index];
-			if (crossed !== shouldCross) ok = false;
+		const selectedTop = [];
+		const selectedBottom = [];
+		document.querySelectorAll("#primeForm .factor-chip.crossed").forEach(chip => {
+			const value = Number(chip.dataset.value || chip.textContent.replace(/[()]/g, ""));
+			if (!value) return;
+			if (chip.dataset.side === "top") selectedTop.push(value);
+			else if (chip.dataset.side === "bottom") selectedBottom.push(value);
 		});
-		return ok;
+		const expectedTop = [];
+		const expectedBottom = [];
+		PRIMES.forEach(prime => {
+			const topCount = round.topFactors.filter(value => value === prime).length;
+			const bottomCount = round.bottomFactors.filter(value => value === prime).length;
+			const matchCount = Math.min(topCount, bottomCount);
+			for (let i = 0; i < matchCount; i++) {
+				expectedTop.push(prime);
+				expectedBottom.push(prime);
+			}
+		});
+		return sameMultiset(selectedTop, expectedTop) && sameMultiset(selectedBottom, expectedBottom);
 	}
 
 	function checkTop() {

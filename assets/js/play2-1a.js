@@ -27,6 +27,8 @@
   let current = null;
   let used = [];
   let chosenChunk = null;
+  let selectedChunkValue = null;
+  let selectedChunkButton = null;
   let finishedRound = false;
   let achievementShown = false;
 
@@ -92,6 +94,8 @@
     current.leftoverAnswer = current.leftover / current.group;
     current.answer = current.chunkAnswer + current.leftoverAnswer;
     chosenChunk = null;
+    selectedChunkValue = null;
+    selectedChunkButton = null;
     finishedRound = false;
   }
 
@@ -133,6 +137,14 @@
     });
     ["chunkFeedback", "leftoverFeedback", "divideFeedback", "finalFeedback", "feedback"].forEach(id => text(id, ""));
     document.querySelectorAll(".choice-grid button").forEach(button => button.classList.remove("selected", "wrong"));
+    const checkChunkChoiceBtn = byId("checkChunkChoiceBtn");
+    if (checkChunkChoiceBtn) {
+      checkChunkChoiceBtn.disabled = false;
+      checkChunkChoiceBtn.removeAttribute("aria-disabled");
+      checkChunkChoiceBtn.classList.remove("is-play-armed");
+    }
+    selectedChunkValue = null;
+    selectedChunkButton = null;
   }
 
   function renderProblem() {
@@ -183,14 +195,33 @@
   window.chooseFriendlyChunk = function chooseFriendlyChunk(value, button) {
     shell().startClimbTimer?.();
     document.querySelectorAll("#chunkChoices button").forEach(btn => btn.classList.remove("selected", "wrong"));
-    if (value !== current.chunk) {
-      markWrong(button, `${value} is not the friendly chunk. Look for a chunk that belongs to ${current.group}s.`);
-      text("chunkFeedback", `Try again. ${current.chunk} works because ${current.chunk} ÷ ${current.group} = ${current.chunkAnswer}.`);
+    selectedChunkValue = value;
+    selectedChunkButton = button;
+    button?.classList.add("selected");
+    shell().playSfx?.("firstTap");
+    text("chunkFeedback", `${value} selected. Tap Check Friendly Chunk twice to confirm.`);
+    updateBoard("Friendly chunk selected. Confirm it when ready.");
+  };
+
+  window.checkFriendlyChunk = function checkFriendlyChunk() {
+    shell().startClimbTimer?.();
+    if (selectedChunkValue === null || !selectedChunkButton) {
+      text("chunkFeedback", "Choose a friendly chunk first, then confirm it.");
       return;
     }
 
-    chosenChunk = value;
-    button.classList.add("selected");
+    document.querySelectorAll("#chunkChoices button").forEach(btn => btn.classList.remove("wrong"));
+    if (selectedChunkValue !== current.chunk) {
+      selectedChunkButton.classList.remove("selected");
+      markWrong(selectedChunkButton, `${selectedChunkValue} is not the friendly chunk. Look for a chunk that belongs to ${current.group}s.`);
+      text("chunkFeedback", `Try again. ${current.chunk} works because ${current.chunk} ÷ ${current.group} = ${current.chunkAnswer}.`);
+      selectedChunkValue = null;
+      selectedChunkButton = null;
+      return;
+    }
+
+    chosenChunk = selectedChunkValue;
+    selectedChunkButton.classList.add("selected");
     text("chunkFeedback", `Correct. ${current.chunk} is friendly for groups of ${current.group}.`);
     text("splitPreview", `${current.value} = ${current.chunk} + ___`);
     lockStep("chunkStep");

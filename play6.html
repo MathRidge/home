@@ -8,7 +8,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-cert-preview-nowrap" />
-	<link rel="stylesheet" href="assets/css/play6.css" />
+	<link rel="stylesheet" href="assets/css/play6.css?v=20260610-relic-match-step" />
 
 	<script>
 		window.MathRidgePlayConfig = {
@@ -84,9 +84,26 @@
 			</div>
 
 			<div class="step-card hidden" id="reduceStep">
-				<h2>Step 3: Match Pieces and Write the Reduced Fraction</h2>
-				<div class="read-line" id="crossInstruction">Tap matching prime pieces on the top and bottom. Then write the reduced fraction.</div>
+				<h2>Step 3: Match Prime Pieces</h2>
+				<div class="relic-assist-card" id="shelfScaleAssist">
+					<img class="relic-assist-img" src="assets/images/relic/Shelf_Scale_Relic_True_Alpha.png" alt="" loading="lazy" decoding="async">
+					<div>
+						<strong>Use Shelf Scale</strong>
+						<span>Let the 2-1 relic cross matching top and bottom pieces, then show what remains.</span>
+					</div>
+					<button type="button" class="relic-assist-button" onclick="useShelfScaleRelic()">Use Relic</button>
+				</div>
+				<div class="read-line" id="crossInstruction">Tap matching prime pieces on the top and bottom. A matched top piece and bottom piece cancel each other.</div>
 				<div class="prime-form" id="primeForm"></div>
+				<div class="leftover-preview hidden" id="leftoverPreview"></div>
+				<div class="input-row">
+					<button class="primary-action" id="checkMatchesBtn" onclick="checkMatchingPieces()">Check Matching Pieces</button>
+				</div>
+			</div>
+
+			<div class="step-card hidden" id="finalStep">
+				<h2>Step 4: Write the Reduced Fraction</h2>
+				<div class="read-line">Use the leftover pieces from Step 3. If every piece on one shelf crossed out, that shelf becomes 1.</div>
 
 				<div class="answer-row fraction-answer-row">
 					<span class="fraction answer-fraction">
@@ -95,11 +112,8 @@
 					</span>
 				</div>
 
-				<div class="hint-box">If every prime piece on one shelf is matched, that shelf becomes 1.</div>
-
 				<div class="input-row">
 					<button class="primary-action" onclick="checkAnswer()">Check Reduced Fraction</button>
-					<button id="showMatchBtn" class="secondary-action" onclick="showMatchingPieces()">Show Matching Pieces</button>
 				</div>
 			</div>
 
@@ -117,6 +131,6 @@
 	</div>
 
 	<script src="assets/js/mathridge-play.js?v=20260608-cert-preview-nowrap" defer></script>
-	<script src="assets/js/play6.js?v=20260606-wrong-sound" defer></script>
+	<script src="assets/js/play6.js?v=20260610-relic-match-step" defer></script>
 </body>
 </html>

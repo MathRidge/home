@@ -42,6 +42,10 @@ const PRIMES_BY_STAGE = {
   medium: [2,3,5,7,11],
   hard: [2,3,5,7,11,13]
 };
+const VALID_PRIME_COPY_STRINGS = PRIMES_BY_STAGE.hard.map(String);
+const VALID_SINGLE_DIGIT_COPY_STRINGS = ["2","3","5","7"];
+const VALID_TWO_DIGIT_COPY_STRINGS = ["11","13"];
+const VALID_PRIME_COPY_SET = new Set(VALID_PRIME_COPY_STRINGS);
 
 document.addEventListener("click", event => {
   if(event.target.closest("button") && !event.target.closest("#ladderPopup") && !event.target.closest("#namePopup") && !event.target.closest("#certificatePopup")){
@@ -433,12 +437,8 @@ function buildRoundCandidate(){
   const diffs = {};
   bases.forEach(b => diffs[b] = (topCounts[b] || 0) - (bottomCounts[b] || 0));
 
-  if(bases.filter(b => diffs[b] !== 0).length < 2){
-    productTopFactors.push(2);
-    topCounts[2] = (topCounts[2] || 0) + 1;
-    if(!bases.includes(2)) bases.push(2);
-    bases.sort((a,b)=>a-b);
-    bases.forEach(b => diffs[b] = (topCounts[b] || 0) - (bottomCounts[b] || 0));
+  if(nonZeroCountFromDiffs(diffs) < 2){
+    return buildRoundCandidate();
   }
 
   const productTop = product(productTopFactors);
@@ -552,18 +552,92 @@ function newRound(){
 function makeFactorInput(id, index){
   const input = document.createElement("input");
   input.className = "factor-input";
-  input.maxLength = 2;
+  input.maxLength = 80;
   input.inputMode = "numeric";
   input.setAttribute("aria-label", `${id} factor ${index+1}`);
 
   input.addEventListener("input", () => {
-    input.value = input.value.replace(/[^0-9]/g,"").slice(0,2);
+    const rawValue = input.value;
+    const tokens = parsePrimeCopyTokens(rawValue);
+    const hasListSyntax = /[^0-9]/.test(rawValue) || tokens.length > 1;
+
+    if(tokens.length && hasListSyntax){
+      distributePrimeCopyTokens(id, input, tokens);
+      return;
+    }
+
+    input.value = rawValue.replace(/[^0-9]/g,"").slice(0,2);
     const allInputs = [...document.querySelectorAll(`#${id} input`)];
     const currentIndex = allInputs.indexOf(input);
-    if(input.value && allInputs[currentIndex + 1]) allInputs[currentIndex + 1].focus();
+    if(isCompletePrimeCopy(input.value) && allInputs[currentIndex + 1]) allInputs[currentIndex + 1].focus();
   });
 
   return input;
+}
+
+function parsePrimeCopyDigits(digits){
+  const clean = String(digits || "").replace(/\D/g, "");
+  const tokens = [];
+  let index = 0;
+
+  while(index < clean.length){
+    const nextTwo = clean.slice(index, index + 2);
+    if(VALID_TWO_DIGIT_COPY_STRINGS.includes(nextTwo)){
+      tokens.push(nextTwo);
+      index += 2;
+      continue;
+    }
+
+    const nextOne = clean[index];
+    if(VALID_SINGLE_DIGIT_COPY_STRINGS.includes(nextOne)){
+      tokens.push(nextOne);
+      index += 1;
+      continue;
+    }
+
+    return [];
+  }
+
+  return tokens;
+}
+
+function parsePrimeCopyTokens(raw){
+  const text = String(raw || "").trim();
+  if(!text) return [];
+
+  const chunks = text.split(/[^0-9]+/).filter(Boolean);
+  if(!chunks.length) return [];
+
+  const tokens = [];
+  for(const chunk of chunks){
+    const parsed = parsePrimeCopyDigits(chunk);
+    if(!parsed.length) return [];
+    tokens.push(...parsed);
+  }
+  return tokens;
+}
+
+function isCompletePrimeCopy(value){
+  return VALID_PRIME_COPY_SET.has(String(value || "").trim());
+}
+
+function distributePrimeCopyTokens(id, startInput, tokens){
+  const allInputs = [...document.querySelectorAll(`#${id} input`)];
+  const startIndex = allInputs.indexOf(startInput);
+  if(startIndex < 0) return;
+
+  for(let i = startIndex; i < allInputs.length; i++){
+    allInputs[i].value = "";
+  }
+
+  tokens.forEach((token, offset) => {
+    const target = allInputs[startIndex + offset];
+    if(target) target.value = token;
+  });
+
+  const nextInput = allInputs[startIndex + tokens.length];
+  const lastFilledInput = allInputs[Math.min(startIndex + tokens.length - 1, allInputs.length - 1)];
+  (nextInput || lastFilledInput)?.focus();
 }
 
 function buildGroupedInputs(id, firstCount, secondCount, type){
@@ -595,7 +669,21 @@ function buildGroupedInputs(id, firstCount, secondCount, type){
 }
 
 function getInputFactors(id){
-  return [...document.querySelectorAll(`#${id} input`)].map(i => Number(i.value)).filter(Boolean);
+  const factors = [];
+  [...document.querySelectorAll(`#${id} input`)].forEach(input => {
+    const rawValue = input.value.trim();
+    if(!rawValue) return;
+
+    const tokens = parsePrimeCopyTokens(rawValue);
+    if(tokens.length){
+      factors.push(...tokens.map(Number));
+      return;
+    }
+
+    const fallbackValue = Number(rawValue.replace(/\D/g, ""));
+    if(fallbackValue) factors.push(fallbackValue);
+  });
+  return factors;
 }
 
 function checkTop(){

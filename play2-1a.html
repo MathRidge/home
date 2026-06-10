@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/mathridge-play.css?v=20260608-cert-preview-nowrap" />
-  <link rel="stylesheet" href="assets/css/play2-1a.css?v=20260606-locked-steps" />
+  <link rel="stylesheet" href="assets/css/play2-1a.css?v=20260610-step1-confirm" />
   <script>
     window.MathRidgePlayConfig = {
       playNumber: 5,
@@ -56,6 +56,9 @@
         <h2>Step 1: Choose the friendly chunk</h2>
         <p>A friendly chunk is close, below the shelf, and easy for the group to divide.</p>
         <div class="choice-grid" id="chunkChoices"></div>
+        <div class="chunk-confirm-row">
+          <button class="primary-action" id="checkChunkChoiceBtn" type="button" onclick="checkFriendlyChunk()">Check Friendly Chunk</button>
+        </div>
         <div class="feedback" id="chunkFeedback"></div>
       </div>
 
@@ -100,6 +103,6 @@
   </div>
 
   <script src="assets/js/mathridge-play.js?v=20260608-cert-preview-nowrap" defer></script>
-  <script src="assets/js/play2-1a.js?v=20260606-locked-steps" defer></script>
+  <script src="assets/js/play2-1a.js?v=20260610-step1-confirm" defer></script>
 </body>
 </html>

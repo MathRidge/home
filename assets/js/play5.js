@@ -48,6 +48,8 @@
 	let completedSteps = new Set();
 	let latestRaceRank = null;
 	let latestSavedRaceSeconds = null;
+	let selectedGroupValue = null;
+	let selectedGroupButton = null;
 
 	function shell() {
 		return window.MathRidgePlay || null;
@@ -255,7 +257,7 @@
 			choice.type = "button";
 			choice.className = "choice";
 			choice.textContent = item.text;
-			choice.onclick = () => handleGroupChoice(choice, item.value);
+			choice.onclick = () => selectGroupChoice(choice, item.value);
 			box.appendChild(choice);
 		});
 	}
@@ -340,7 +342,19 @@
 		configurePairInputs("newTopInput", "newBottomInput", current.top / group, current.bottom / group, "#shrinkStep button");
 	}
 
-	function handleGroupChoice(choice, selected) {
+	function resetGroupChoiceSelection() {
+		selectedGroupValue = null;
+		selectedGroupButton = null;
+		document.querySelectorAll("#groupChoices .choice").forEach(choice => choice.classList.remove("selected", "wrong-flash", "correct-flash"));
+		const checkButton = byId("checkGroupChoiceBtn");
+		if (checkButton) {
+			checkButton.disabled = false;
+			checkButton.removeAttribute("aria-disabled");
+			checkButton.classList.remove("is-play-armed");
+		}
+	}
+
+	function selectGroupChoice(choice, selected) {
 		if (finalAnswered) return;
 		if (!stageStarted) {
 			const feedback = byId("feedback");
@@ -349,15 +363,43 @@
 		}
 
 		touchClimbTimer();
-		if (choice.classList.contains("correct-flash")) return;
+		document.querySelectorAll("#groupChoices .choice").forEach(button => button.classList.remove("selected", "wrong-flash"));
+		selectedGroupValue = selected;
+		selectedGroupButton = choice;
+		choice.classList.add("selected");
+		shell()?.playSfx?.("firstTap");
+		const feedback = byId("feedback");
+		if (feedback) {
+			feedback.textContent = "Selection ready. Tap Check Selection twice to confirm.";
+			feedback.className = "feedback";
+		}
+	}
+
+	function checkGroupChoice() {
+		if (finalAnswered) return;
+		if (!stageStarted) {
+			const feedback = byId("feedback");
+			if (feedback) feedback.textContent = "Press START the Climb first. The timer begins when the question is uncovered.";
+			return;
+		}
+
+		touchClimbTimer();
+		if (!selectedGroupButton && selectedGroupValue === null) {
+			const feedback = byId("feedback");
+			if (feedback) {
+				feedback.textContent = "Choose a shared group first, then confirm it.";
+				feedback.className = "feedback bad-text";
+			}
+			return;
+		}
 
 		const possibleGroups = sharedGroups();
 		const noGroupLeft = possibleGroups.length === 0;
-		const isCorrectGroup = selected !== null && possibleGroups.includes(selected);
-		const isCorrectFinish = selected === null && noGroupLeft;
+		const isCorrectGroup = selectedGroupValue !== null && possibleGroups.includes(selectedGroupValue);
+		const isCorrectFinish = selectedGroupValue === null && noGroupLeft;
 
 		if (isCorrectGroup || isCorrectFinish) {
-			choice.classList.add("correct-flash");
+			selectedGroupButton.classList.add("correct-flash");
 			const feedback = byId("feedback");
 			if (feedback) {
 				feedback.textContent = "✅ Correct. Keep going.";
@@ -367,7 +409,9 @@
 			if (isCorrectFinish) {
 				finishProblem();
 			} else {
-				current.chosenGroup = selected;
+				current.chosenGroup = selectedGroupValue;
+				selectedGroupValue = null;
+				selectedGroupButton = null;
 				markCorrectStep(`group-${reductionCycle}`);
 				prepareRewriteSteps();
 				showStep("topStep", "topOuterInput");
@@ -375,16 +419,30 @@
 			return;
 		}
 
-		choice.classList.add("wrong-flash");
+		selectedGroupButton.classList.add("wrong-flash");
 		const feedback = byId("feedback");
 		if (feedback) {
-			feedback.textContent = selected === null
+			feedback.textContent = selectedGroupValue === null
 				? "Not yet. Both shelves can still share a group of 2, 3, or 5."
-				: `Not yet. Both shelves must fit into groups of ${selected}. Try another choice.`;
+				: `Not yet. Both shelves must fit into groups of ${selectedGroupValue}. Try another choice.`;
 			feedback.className = "feedback bad-text";
 		}
 		markMistake();
-		window.setTimeout(() => choice.classList.remove("wrong-flash"), 550);
+		const wrongButton = selectedGroupButton;
+		selectedGroupValue = null;
+		selectedGroupButton = null;
+		wrongButton?.classList.remove("selected");
+		window.setTimeout(() => wrongButton?.classList.remove("wrong-flash"), 550);
+	}
+
+	function warnReversedRewrite(box, inputPrefix, expectedOuter, group) {
+		if (!box) return;
+		box.textContent = `Close. The two values are right, but the order matters: ${expectedOuter}(${group}) means ${expectedOuter} groups of ${group}. ${group}(${expectedOuter}) means ${group} groups of ${expectedOuter}. Please rewrite it as ${expectedOuter}(${group}) before moving on.`;
+		box.className = "feedback warning-text";
+		const outerInput = byId(`${inputPrefix}OuterInput`);
+		const innerInput = byId(`${inputPrefix}InnerInput`);
+		if (outerInput) outerInput.style.borderColor = "#f2b84b";
+		if (innerInput) innerInput.style.borderColor = "#f2b84b";
 	}
 
 	function checkTopRewrite() {
@@ -406,6 +464,11 @@
 			}
 			markCorrectStep(`top-${reductionCycle}`);
 			showStep("bottomStep", "bottomOuterInput");
+			return;
+		}
+
+		if (outer === current.chosenGroup && inner === expectedOuter && expectedOuter !== current.chosenGroup) {
+			warnReversedRewrite(box, "top", expectedOuter, current.chosenGroup);
 			return;
 		}
 
@@ -436,6 +499,11 @@
 			markCorrectStep(`bottom-${reductionCycle}`);
 			prepareShrinkStep();
 			showStep("shrinkStep", "newTopInput");
+			return;
+		}
+
+		if (outer === current.chosenGroup && inner === expectedOuter && expectedOuter !== current.chosenGroup) {
+			warnReversedRewrite(box, "bottom", expectedOuter, current.chosenGroup);
 			return;
 		}
 
@@ -508,6 +576,7 @@
 
 	function resetCycleSteps() {
 		["topStep", "bottomStep", "shrinkStep"].forEach(id => byId(id)?.classList.add("hidden"));
+		resetGroupChoiceSelection();
 		["topFeedback", "bottomFeedback", "shrinkFeedback"].forEach(id => {
 			const box = byId(id);
 			if (!box) return;
@@ -895,6 +964,7 @@ function openSavedCertificateFromCabin() {
 	};
 
 	window.startClimbFromGate = startClimbFromGate;
+	window.checkGroupChoice = checkGroupChoice;
 	window.checkTopRewrite = checkTopRewrite;
 	window.checkBottomRewrite = checkBottomRewrite;
 	window.checkShrink = checkShrink;
