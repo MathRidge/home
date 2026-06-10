@@ -131,6 +131,44 @@
   text-align: left;
 }
 
+.exp-entry {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px;
+}
+
+.exp-entry .exp-input-wide {
+  flex: 1 1 190px;
+  max-width: 280px;
+}
+
+.exp-insert-tools {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.exp-insert-button {
+  min-width: 44px;
+  min-height: 42px;
+  border: 1px solid rgba(255, 231, 168, 0.48);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 231, 168, 0.22), rgba(242, 184, 75, 0.14)),
+    rgba(5, 9, 20, 0.54);
+  color: var(--gold-light);
+  font-size: 1.1rem;
+  font-weight: 950;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.exp-insert-button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 0 14px rgba(255, 231, 168, 0.22);
+}
+
 .exam-input:focus,
 .fraction-input:focus,
 .exp-input-wide:focus {
@@ -264,5 +302,13 @@
   .exp-input-wide {
     width: 100%;
     text-align: center;
+  }
+
+  .exp-entry {
+    align-items: center;
+  }
+
+  .exp-entry .exp-input-wide {
+    max-width: none;
   }
 }

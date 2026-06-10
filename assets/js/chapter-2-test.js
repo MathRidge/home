@@ -90,6 +90,7 @@
   let finished = false;
   let correctionMode = false;
   let correctionTimers = new WeakMap();
+  let lastExponentInsertAt = 0;
 
   const startPanel = document.getElementById("startPanel");
   const startExamButton = document.getElementById("startExamButton");
@@ -240,14 +241,14 @@
   function fractionInputHTML(topField, bottomField) {
     return `
       <span class="fraction answer-fraction">
-        <span class="top"><input class="fraction-input" data-field="${topField}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="${topField}"></span>
-        <span class="bottom"><input class="fraction-input" data-field="${bottomField}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="${bottomField}"></span>
+        <span class="top"><input class="fraction-input" data-field="${topField}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="${topField}"></span>
+        <span class="bottom"><input class="fraction-input" data-field="${bottomField}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="${bottomField}"></span>
       </span>
     `;
   }
 
   function inputHTML(field, label, className = "exam-input") {
-    return `<input class="${className}" data-field="${field}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="${escapeHTML(label)}" />`;
+    return `<input class="${className}" data-field="${field}" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="${escapeHTML(label)}" />`;
   }
 
   function baseQuestion(type, stageLabel, concept, relicName, difficulty) {
@@ -455,14 +456,24 @@
         <strong>Pack the shelves with exponents</strong>
         <div class="exp-row">
           <span class="method-label">Top shelf exponential form</span>
-          <input class="exp-input-wide" data-field="topExp" type="text" inputmode="text" autocomplete="off" aria-label="top shelf exponential form" />
-          <button type="button" data-exp-insert data-target-field="topExp">^</button>
+          <div class="exp-entry">
+            <input class="exp-input-wide" data-field="topExp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="top shelf exponential form" />
+            <div class="exp-insert-tools" aria-label="top shelf math inserts">
+              <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="x" data-target-field="topExp" aria-label="insert multiplication">x</button>
+              <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="^" data-target-field="topExp" aria-label="insert exponent">^</button>
+            </div>
+          </div>
           <div class="exp-preview" data-preview-for="topExp"></div>
         </div>
         <div class="exp-row">
           <span class="method-label">Bottom shelf exponential form</span>
-          <input class="exp-input-wide" data-field="bottomExp" type="text" inputmode="text" autocomplete="off" aria-label="bottom shelf exponential form" />
-          <button type="button" data-exp-insert data-target-field="bottomExp">^</button>
+          <div class="exp-entry">
+            <input class="exp-input-wide" data-field="bottomExp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="bottom shelf exponential form" />
+            <div class="exp-insert-tools" aria-label="bottom shelf math inserts">
+              <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="x" data-target-field="bottomExp" aria-label="insert multiplication">x</button>
+              <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="^" data-target-field="bottomExp" aria-label="insert exponent">^</button>
+            </div>
+          </div>
           <div class="exp-preview" data-preview-for="bottomExp"></div>
         </div>
         <div class="fraction-answer-row">
@@ -1010,16 +1021,25 @@
     questionGrid.querySelectorAll(".exp-input-wide").forEach(updateExponentPreviewForInput);
   }
 
-  function insertExponentCaret(button) {
+  function sanitizeExponentInput(value) {
+    return String(value || "")
+      .replace(/[\u00d7\u00b7*X]/g, "x")
+      .replace(/[^\d^x]/g, "");
+  }
+
+  function insertExponentToken(button) {
     const card = button.closest(".question-card");
     const target = card?.querySelector(`[data-field="${button.dataset.targetField}"]`);
     if (!target || target.disabled) return;
+    const token = button.dataset.expInsert || "^";
     const start = target.selectionStart ?? target.value.length;
     const end = target.selectionEnd ?? target.value.length;
-    target.value = `${target.value.slice(0, start)}^${target.value.slice(end)}`;
-    target.focus();
-    target.setSelectionRange(start + 1, start + 1);
-    updateExponentPreviewForInput(target);
+    target.value = sanitizeExponentInput(`${target.value.slice(0, start)}${token}${target.value.slice(end)}`);
+    const caret = start + token.length;
+    target.focus({ preventScroll: true });
+    target.setSelectionRange(caret, caret);
+    target.dispatchEvent(new Event("input", { bubbles: true }));
+    target.setSelectionRange(caret, caret);
   }
 
   function startExam() {
@@ -1065,12 +1085,28 @@
     gradeExam();
   });
 
-  questionGrid?.addEventListener("click", event => {
+  function handleExponentInsertControl(event, source = "click") {
     const expButton = event.target.closest("[data-exp-insert]");
-    if (expButton) {
-      insertExponentCaret(expButton);
-      return;
-    }
+    if (!expButton) return false;
+    event.preventDefault();
+    if (source === "click" && Date.now() - lastExponentInsertAt < 500) return true;
+    lastExponentInsertAt = Date.now();
+    insertExponentToken(expButton);
+    return true;
+  }
+
+  questionGrid?.addEventListener("pointerdown", event => {
+    handleExponentInsertControl(event, "pointer");
+  });
+
+  if (!window.PointerEvent) {
+    questionGrid?.addEventListener("touchstart", event => {
+      handleExponentInsertControl(event, "touch");
+    }, { passive: false });
+  }
+
+  questionGrid?.addEventListener("click", event => {
+    handleExponentInsertControl(event, "click");
   });
 
   questionGrid?.addEventListener("input", event => {
@@ -1080,6 +1116,14 @@
     card?.classList.remove("is-unanswered");
 
     if (input.classList.contains("exp-input-wide")) {
+      const start = input.selectionStart ?? input.value.length;
+      const before = input.value;
+      input.value = sanitizeExponentInput(input.value);
+      if (input.value !== before) {
+        const shift = before.length - input.value.length;
+        const nextCaret = Math.max(0, start - shift);
+        input.setSelectionRange(nextCaret, nextCaret);
+      }
       updateExponentPreviewForInput(input);
     } else {
       input.value = input.value.replace(/[^\d]/g, "");
