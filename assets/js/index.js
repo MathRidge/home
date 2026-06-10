@@ -416,6 +416,7 @@ function stageRelicName(id) {
 }
 
 function stageRelicImage(id) {
+  const version = "20260609-relic-preview";
   const relicImages = {
     "1_1": "assets/images/relic/term_stone.png",
     "1_2": "assets/images/relic/sign_compass_relic_alpha.png",
@@ -427,7 +428,7 @@ function stageRelicImage(id) {
     "2_3": "assets/images/relic/fraction_loom_relic_true_alpha.png",
     "2_4": "assets/images/relic/power_tally_relic_true_alpha.png"
   };
-  return relicImages[id] || "";
+  return relicImages[id] ? `${relicImages[id]}?v=${version}` : "";
 }
 
 function stageRelicKind(id) {
@@ -470,12 +471,13 @@ function renderRelicVaultCard(lesson) {
   const status = relicVaultStatus(lesson);
   const certificateTitle = certificateTitles[lesson.id] || lesson.title;
   const dormantClass = lesson.id === "2_1a" ? "dormant" : "";
+  const relicId = escapeHTML(lesson.id);
 
   return `
-    <article class="relic-card ${gathered ? "gathered" : "locked"} ${dormantClass}">
+    <article class="relic-card ${gathered ? "gathered" : "locked"} ${dormantClass}" data-relic-id="${relicId}">
       <div class="relic-card-art" aria-hidden="true">
         <span class="relic-display-light"></span>
-        ${relicImage ? `<img class="relic-floating-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : `<span class="relic-missing-mark">?</span>`}
+        ${relicImage ? `<img class="relic-floating-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async" onerror="handleRelicPreviewError(this)">` : `<span class="relic-missing-mark">?</span>`}
       </div>
       <div class="relic-card-body">
         <span class="relic-stage">${escapeHTML(lesson.section)} ${escapeHTML(lesson.tag)}</span>
@@ -486,6 +488,13 @@ function renderRelicVaultCard(lesson) {
       </div>
     </article>
   `;
+}
+
+function handleRelicPreviewError(img) {
+  const mark = document.createElement("span");
+  mark.className = "relic-missing-mark";
+  mark.textContent = "?";
+  img.replaceWith(mark);
 }
 
 function renderRelicVault() {
@@ -538,7 +547,7 @@ function renderTrailCard(lesson) {
   const relicKind = stageRelicKind(lesson.id);
   const relicState = stageRelicProofState(lesson.id, relicKind);
   const relicProof = earned && relicName
-    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""} ${relicState.className}" aria-label="${escapeHTML(relicName)} ${escapeHTML(relicState.status.toLowerCase())}">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>${escapeHTML(relicState.label)}</span><strong>${escapeHTML(relicName)}</strong><em>${escapeHTML(relicState.status)}</em></div>`
+    ? `<div class="stage-relic-proof ${relicImage ? "has-image" : ""} ${relicKind === "Vision Relic" ? "vision-relic" : ""} ${relicState.className}" data-relic-id="${escapeHTML(lesson.id)}" aria-label="${escapeHTML(relicName)} ${escapeHTML(relicState.status.toLowerCase())}">${relicImage ? `<img class="stage-relic-img" src="${escapeHTML(relicImage)}" alt="" loading="lazy" decoding="async">` : ""}<span>${escapeHTML(relicState.label)}</span><strong>${escapeHTML(relicName)}</strong><em>${escapeHTML(relicState.status)}</em></div>`
     : "";
 
   return `

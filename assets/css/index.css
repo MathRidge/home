@@ -6092,6 +6092,19 @@ body.index-page .relic-floating-img {
   animation: relicFloatOnDisplay 3.8s ease-in-out infinite;
 }
 
+body.index-page .relic-card[data-relic-id="2_2"] .relic-floating-img,
+body.index-page .relic-card[data-relic-id="2_3"] .relic-floating-img,
+body.index-page .relic-card[data-relic-id="2_4"] .relic-floating-img {
+  top: 12%;
+  width: min(82%, 300px);
+  max-height: 74%;
+}
+
+body.index-page .relic-card[data-relic-id="2_3"] .relic-floating-img {
+  top: 14%;
+  width: min(88%, 314px);
+}
+
 body.index-page .relic-card.gathered .relic-floating-img {
   filter:
     drop-shadow(0 20px 22px rgba(0,0,0,0.42))
@@ -6111,6 +6124,13 @@ body.index-page .relic-card.locked .relic-card-art img {
   animation: none;
 }
 
+body.index-page .relic-card.locked[data-relic-id="2_2"] .relic-floating-img,
+body.index-page .relic-card.locked[data-relic-id="2_3"] .relic-floating-img,
+body.index-page .relic-card.locked[data-relic-id="2_4"] .relic-floating-img {
+  opacity: .46;
+  filter: grayscale(.56) brightness(.76) drop-shadow(0 14px 18px rgba(0,0,0,0.42));
+}
+
 body.index-page .relic-card.dormant.gathered .relic-display-light {
   background:
     radial-gradient(circle, rgba(190,207,255,0.32), rgba(105,136,211,0.14) 42%, transparent 72%);
@@ -6125,6 +6145,13 @@ body.index-page .relic-missing-mark {
   color: rgba(255,247,232,0.62);
   font-size: 3rem;
   font-weight: 900;
+}
+
+body.index-page .stage-relic-proof[data-relic-id="2_2"] .stage-relic-img,
+body.index-page .stage-relic-proof[data-relic-id="2_3"] .stage-relic-img,
+body.index-page .stage-relic-proof[data-relic-id="2_4"] .stage-relic-img {
+  width: 100px;
+  height: 108px;
 }
 
 body.index-page .relic-card-body {
@@ -6157,6 +6184,14 @@ body.index-page .relic-card-body {
   body.index-page .relic-floating-img {
     width: 46%;
     max-height: 43%;
+  }
+
+  body.index-page .relic-card[data-relic-id="2_2"] .relic-floating-img,
+  body.index-page .relic-card[data-relic-id="2_3"] .relic-floating-img,
+  body.index-page .relic-card[data-relic-id="2_4"] .relic-floating-img {
+    top: 12%;
+    width: 82%;
+    max-height: 74%;
   }
 }
 
@@ -6203,6 +6238,32 @@ body.index-page .certificate-vault-callout span {
 
 body.index-page .certificate-vault-panel {
   overflow: visible;
+  background:
+    linear-gradient(180deg, rgba(7,16,29,0.18), rgba(7,16,29,0.24)),
+    url("../images/index-ui/Certificate%20wall%20vertical%20background%20loop.png") center top / min(100%, 785px) auto repeat-y,
+    linear-gradient(180deg, rgba(16,32,51,0.78), rgba(7,16,29,0.86));
+  background-color: #07101d;
+}
+
+body.index-page .certificates-section {
+  background:
+    linear-gradient(180deg, rgba(7,16,29,0.10), rgba(7,16,29,0.18)),
+    url("../images/index-ui/Certificate%20wall%20vertical%20background%20loop.png") center top / min(100%, 785px) auto repeat-y;
+}
+
+@media (max-width: 980px) and (orientation: landscape) {
+  body.index-page .certificate-vault-panel {
+    background:
+      linear-gradient(180deg, rgba(7,16,29,0.16), rgba(7,16,29,0.22)),
+      url("../images/index-ui/certificate%20wall%20horizontal%20background%20loop.png") center top / min(100%, 827px) auto repeat-y,
+      linear-gradient(180deg, rgba(16,32,51,0.78), rgba(7,16,29,0.86));
+  }
+
+  body.index-page .certificates-section {
+    background:
+      linear-gradient(180deg, rgba(7,16,29,0.08), rgba(7,16,29,0.16)),
+      url("../images/index-ui/certificate%20wall%20horizontal%20background%20loop.png") center top / min(100%, 827px) auto repeat-y;
+  }
 }
 
 body.index-page .certificate-vault-title-card {
@@ -7037,6 +7098,9 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 @media (max-width: 760px), (max-width: 980px) and (orientation: landscape) {
   body.index-page .top-actions.open .drawer-only-nav {
     display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
   }
 
   body.index-page .banner-return-hit {
@@ -7051,7 +7115,7 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   body.index-page .panel-header .message-banner-return-cabin {
     position: absolute !important;
     z-index: 35 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     pointer-events: auto !important;
     touch-action: manipulation;
     user-select: none;
@@ -7073,11 +7137,11 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   body.index-page .panel-header .relic-banner-return-cabin::before,
   body.index-page .panel-header .message-banner-return-cabin::before {
     inset: auto !important;
-    left: -4% !important;
-    top: -16% !important;
+    left: 0 !important;
+    top: 0 !important;
     z-index: 0 !important;
-    width: 108% !important;
-    height: 132% !important;
+    width: 100% !important;
+    height: 100% !important;
     border-radius: inherit !important;
     border: 0 !important;
     background:
@@ -7098,12 +7162,12 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   body.index-page .panel-header .relic-banner-return-cabin::after,
   body.index-page .panel-header .message-banner-return-cabin::after {
     inset: auto !important;
-    top: -24% !important;
-    bottom: -24% !important;
-    left: -46% !important;
+    top: -18% !important;
+    bottom: -18% !important;
+    left: -38% !important;
     z-index: 1 !important;
     display: block !important;
-    width: 42% !important;
+    width: 36% !important;
     border-radius: inherit !important;
     background:
       linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.12) 38%, rgba(255, 237, 184, 0.48) 50%, transparent 70%) !important;
@@ -7125,7 +7189,7 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   body.index-page .panel-header .message-banner-return-cabin:focus-visible,
   body.index-page .panel-header .message-banner-return-cabin.is-touch-preview,
   body.index-page .panel-header .message-banner-return-cabin.is-mobile-confirm-ready {
-    overflow: visible !important;
+    overflow: hidden !important;
     border: 0 !important;
     border-color: transparent !important;
     outline: 0 !important;
@@ -7165,7 +7229,7 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   body.index-page .panel-header .message-banner-return-cabin.is-touch-preview::after,
   body.index-page .panel-header .message-banner-return-cabin.is-mobile-confirm-ready::after {
     opacity: 1;
-    transform: translateX(335%) skewX(-14deg) !important;
+    transform: translateX(385%) skewX(-14deg) !important;
     transition-duration: 0.52s !important;
   }
 }
