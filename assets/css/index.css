@@ -6411,22 +6411,27 @@ body.index-page .certificate-vault-title-card {
 body.index-page .certificate-vault-intro {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin: 18px 22px 0;
-  padding: 14px 16px;
+  justify-content: center;
+  gap: 12px;
+  width: min(70%, 620px);
+  margin: 18px auto 0;
+  padding: 12px 14px;
   border-radius: 16px;
-  border: 1px solid rgba(255,231,168,0.22);
+  border: 1px solid rgba(255,231,168,0.18);
   background:
-    linear-gradient(135deg, rgba(255,247,232,0.11), rgba(92,58,28,0.18)),
-    rgba(7,16,29,0.34);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    linear-gradient(135deg, rgba(255,247,232,0.09), rgba(92,58,28,0.12)),
+    rgba(7,16,29,0.20);
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.16),
+    inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 body.index-page .certificate-vault-copy {
   display: grid;
   gap: 4px;
   min-width: 0;
+  justify-items: center;
+  text-align: center;
 }
 
 body.index-page .certificate-vault-intro strong {
@@ -6436,20 +6441,21 @@ body.index-page .certificate-vault-intro strong {
 }
 
 body.index-page .certificate-vault-intro span {
-  color: rgba(255,247,232,0.76);
-  font-weight: 760;
-  line-height: 1.35;
+  display: none;
 }
 
 body.index-page .certificate-vault-mode-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 10px;
 }
 
 body.index-page .certificate-vault-mode-btn {
-  min-width: 192px;
+  width: min(100%, 238px);
+  min-width: 0;
+  padding-inline: 18px;
+  white-space: normal;
 }
 
 body.index-page .certificate-vault-mode-btn.active {
@@ -6550,12 +6556,12 @@ body.index-page .certificate-shelf {
   position: relative;
   overflow: hidden;
   border-radius: 22px;
-  border: 1px solid rgba(255,231,168,0.22);
+  border: 1px solid rgba(255,231,168,0.16);
   background:
-    radial-gradient(circle at 16% 0%, rgba(242,184,75,0.17), transparent 38%),
-    linear-gradient(180deg, rgba(9,21,35,0.72), rgba(5,13,24,0.68));
+    radial-gradient(circle at 16% 0%, rgba(242,184,75,0.11), transparent 38%),
+    linear-gradient(180deg, rgba(9,21,35,0.42), rgba(5,13,24,0.34));
   box-shadow:
-    0 18px 42px rgba(0,0,0,0.25),
+    0 16px 34px rgba(0,0,0,0.18),
     inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
@@ -6575,10 +6581,11 @@ body.index-page .certificate-shelf-heading {
   position: relative;
   z-index: 1;
   display: flex;
-  align-items: end;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
   padding: 18px 18px 8px;
+  text-align: center;
 }
 
 body.index-page .certificate-shelf-heading h3 {
@@ -6610,13 +6617,15 @@ body.index-page .certificate-shelf-heading strong {
 body.index-page .certificate-carousel {
   position: relative;
   z-index: 1;
+  --certificate-card-width: clamp(270px, 30vw, 338px);
+  --certificate-edge-space: max(18px, calc((100% - var(--certificate-card-width)) / 2));
   display: flex;
   gap: 16px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
-  scroll-padding: 18px;
-  padding: 10px 18px 28px;
+  scroll-padding-inline: var(--certificate-edge-space);
+  padding: 10px var(--certificate-edge-space) 28px;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -6635,7 +6644,7 @@ body.index-page .certificate-carousel::-webkit-scrollbar-thumb {
 }
 
 body.index-page .certificate-carousel-item {
-  flex: 0 0 clamp(270px, 30vw, 338px);
+  flex: 0 0 var(--certificate-card-width);
   scroll-snap-align: center;
 }
 
@@ -6652,8 +6661,8 @@ body.index-page .certificate-vault-card {
   color: #4f351c;
   cursor: default;
   box-shadow:
-    0 18px 34px rgba(0,0,0,0.34),
-    0 0 0 1px rgba(255,231,168,0.18);
+    0 14px 24px rgba(0,0,0,0.22),
+    0 0 0 1px rgba(255,231,168,0.14);
   transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
 }
 
@@ -6662,7 +6671,7 @@ body.index-page .certificate-vault-card:focus-within {
   transform: translateY(-4px);
   filter: brightness(1.05) saturate(1.04);
   box-shadow:
-    0 24px 44px rgba(0,0,0,0.38),
+    0 18px 32px rgba(0,0,0,0.28),
     0 0 24px rgba(246,201,108,0.24),
     0 0 0 1px rgba(255,231,168,0.42);
   outline: none;
@@ -6849,18 +6858,20 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 
 @media (max-width: 760px) {
   body.index-page .certificate-vault-intro {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
-    margin: 14px 14px 0;
+    width: min(72%, 330px);
+    margin: 14px auto 0;
+    padding: 11px 12px;
   }
 
   body.index-page .certificate-vault-mode-actions {
     width: 100%;
-    justify-content: stretch;
+    justify-content: center;
   }
 
   body.index-page .certificate-vault-mode-btn {
-    flex: 1 1 150px;
+    flex: 0 1 238px;
     min-width: 0;
   }
 
@@ -6873,24 +6884,25 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   }
 
   body.index-page .certificate-vault-shelves {
-    gap: 18px;
-    padding: 14px;
+    gap: 16px;
+    padding: 14px 11%;
   }
 
   body.index-page .certificate-shelf-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 15px 15px 4px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14px 12px 2px;
   }
 
   body.index-page .certificate-carousel {
+    --certificate-card-width: min(72vw, 292px);
+    --certificate-edge-space: max(14px, calc((100% - var(--certificate-card-width)) / 2));
     gap: 14px;
-    scroll-padding: 14px;
-    padding: 10px 14px 24px;
   }
 
   body.index-page .certificate-carousel-item {
-    flex-basis: calc(100% - 28px);
+    flex-basis: var(--certificate-card-width);
   }
 
   body.index-page .certificate-vault-card {

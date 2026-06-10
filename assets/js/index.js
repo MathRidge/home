@@ -85,9 +85,10 @@ const chapterTests = [
     id: "chapter_1",
     chapter: "Chapter 1 Test",
     range: "Covers 1-1 to 1-4",
-    title: "Term Vision Checkpoint",
+    title: "Term Vision Mastery Assessment",
     masteryTitle: "Signed Term Structure",
-    assessmentTitle: "Chapter 1 Mastery Assessment",
+    assessmentTitle: "Term Vision Mastery Assessment",
+    checkpointTitle: "",
     bodyText: "Awarded for demonstrating mastery in recognizing terms, interpreting sign behavior, and evaluating signed expressions through structural reasoning.",
     image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_1", "mathRidge_testResult_chapter1"],
@@ -100,9 +101,10 @@ const chapterTests = [
     id: "chapter_2",
     chapter: "Chapter 2 Test",
     range: "Covers 2-1 to 2-4",
-    title: "Prime Element Vision Checkpoint",
+    title: "Prime Element Vision Mastery Assessment",
     masteryTitle: "Prime Element Structure",
-    assessmentTitle: "Chapter 2 Mastery Assessment",
+    assessmentTitle: "Prime Element Vision Mastery Assessment",
+    checkpointTitle: "",
     bodyText: "Awarded for demonstrating mastery in seeing values as prime pieces, simplifying fraction structures, and tracking repeated factors.",
     image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_2", "mathRidge_testResult_chapter2"],
@@ -748,8 +750,8 @@ function renderCertificateWall() {
 }
 
 function certificateVaultChapterTitle(chapter) {
-  const chapterNumber = String(chapter || "").match(/Chapter\s+(\d+)/i)?.[1] || "";
-  return chapterNumber ? `Chapter ${chapterNumber} Certificate Shelf` : "Certificate Shelf";
+  const concept = String(chapter || "").split(":").slice(1).join(":").trim();
+  return concept ? `${concept} Shelf` : "Certificate Shelf";
 }
 
 function certificateVaultLengthClass(text) {
@@ -799,16 +801,13 @@ function renderCertificateVaultShelf(chapter) {
     const lesson = lessons.find(entry => entry.id === item.id);
     return lesson?.chapter === chapter;
   });
-  const earnedCount = chapterItems.filter(item => hasCertificate(item.id)).length;
 
   return `
     <section class="certificate-shelf" aria-label="${escapeHTML(certificateVaultChapterTitle(chapter))}">
       <div class="certificate-shelf-heading">
         <div>
           <h3>${escapeHTML(certificateVaultChapterTitle(chapter))}</h3>
-          <p>${escapeHTML(chapter || "")}</p>
         </div>
-        <strong>${earnedCount} / ${chapterItems.length}</strong>
       </div>
       <div class="certificate-carousel" role="list">
         ${chapterItems.map(item => `<div class="certificate-carousel-item" role="listitem">${renderCertificateVaultCard(item)}</div>`).join("")}
@@ -842,8 +841,8 @@ function showCertificateVaultMode(mode = "shelves") {
   if (display) display.dataset.mode = nextMode;
   panel?.classList.toggle("showing-tests", nextMode === "tests");
   if (modeButton) {
-    modeButton.textContent = nextMode === "tests" ? "Back to Certificate Shelf" : "Test Results";
-    modeButton.setAttribute("aria-label", nextMode === "tests" ? "Back to Certificate Shelf" : "Show Test Results");
+    modeButton.textContent = nextMode === "tests" ? "Achievement Certificates" : "Mastery Certificates";
+    modeButton.setAttribute("aria-label", nextMode === "tests" ? "Show achievement certificates" : "Show mastery certificates");
   }
 
   if (testsPanel) testsPanel.hidden = nextMode !== "tests";
@@ -953,7 +952,7 @@ function testCertificateDetails(test) {
     masteryTitle: test.masteryTitle || test.title,
     bodyText: test.bodyText || "Awarded for demonstrating mastery through careful mathematical reasoning.",
     assessmentTitle: test.assessmentTitle || test.chapter.replace(" Test", " Mastery Assessment"),
-    checkpointTitle: test.title,
+    checkpointTitle: test.checkpointTitle ?? test.title,
     scoreText: data ? `${correct} / ${total}` : "-- / 40",
     performanceText: percent,
     statusText: testMasteryStatus(data),
@@ -1000,11 +999,13 @@ function renderTestResultStats(test) {
 
 function renderTestCertificateOverlay(test) {
   const details = testCertificateDetails(test);
+  const assessmentLines = [details.assessmentTitle, details.checkpointTitle].filter(Boolean);
+  const assessmentText = assessmentLines.map(escapeHTML).join("<br>");
 
   if (!details.data) {
     return `
       <div class="result-certificate-overlay mastery pending">
-        <span class="result-cert-pending-assessment">${escapeHTML(details.assessmentTitle)}<br>${escapeHTML(details.checkpointTitle)}</span>
+        <span class="result-cert-pending-assessment">${assessmentText}</span>
         <em class="result-cert-pending-date">Official Result Awaits</em>
       </div>
     `;
@@ -1015,7 +1016,7 @@ function renderTestCertificateOverlay(test) {
       <strong class="result-cert-title">${escapeHTML(details.masteryTitle)}</strong>
       <span class="result-cert-name">${escapeHTML(details.studentName)}</span>
       <span class="result-cert-body">${escapeHTML(details.bodyText)}</span>
-      <span class="result-cert-assessment">${escapeHTML(details.assessmentTitle)}<br>${escapeHTML(details.checkpointTitle)}</span>
+      <span class="result-cert-assessment">${assessmentText}</span>
       <span class="result-cert-score">
         Final Score: ${escapeHTML(details.scoreText)}<br>
         Performance: ${escapeHTML(details.performanceText)}<br>
@@ -1201,9 +1202,21 @@ function createTestCertificateCanvas(test, templateImage = null) {
 
   ctx.fillStyle = "#4f351c";
   setTestCanvasFont(ctx, { weight: "700", size: width * 0.023, family: TEST_CERT_SERIF });
-  ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.603);
-  setTestCanvasFont(ctx, { weight: "500", size: width * 0.020, family: TEST_CERT_SERIF });
-  ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.628);
+  if (details.checkpointTitle) {
+    ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.603);
+    setTestCanvasFont(ctx, { weight: "500", size: width * 0.020, family: TEST_CERT_SERIF });
+    ctx.fillText(details.checkpointTitle.toUpperCase(), width / 2, height * 0.628);
+  } else {
+    const assessmentSize = fitTestCanvasFont(ctx, details.assessmentTitle, {
+      weight: "700",
+      maxSize: width * 0.023,
+      minSize: width * 0.016,
+      family: TEST_CERT_SERIF,
+      maxWidth: width * 0.62
+    });
+    setTestCanvasFont(ctx, { weight: "700", size: assessmentSize, family: TEST_CERT_SERIF });
+    ctx.fillText(details.assessmentTitle.toUpperCase(), width / 2, height * 0.616);
+  }
 
   ctx.fillStyle = "#51341c";
   setTestCanvasFont(ctx, { weight: "700", size: width * 0.019, family: TEST_CERT_SERIF });
