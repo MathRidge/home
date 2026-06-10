@@ -465,14 +465,14 @@ function stageRelicImage(id) {
     "1_4": "assets/images/relic/factor_forge_alpha.png",
     "2_1a": "assets/images/relic/shelf_scale_inactive.png",
     "2_1": "assets/images/relic/Shelf_Scale_Relic_True_Alpha.png",
-    "2_2": "assets/images/relic/primewood_seed_relic_true_alpha.png",
-    "2_3": "assets/images/relic/fraction_loom_relic_true_alpha.png",
-    "2_4": "assets/images/relic/power_tally_relic_true_alpha.png"
+    "2_2": "assets/images/relic/primewood_seed_relic_preview.png",
+    "2_3": "assets/images/relic/fraction_loom_relic_preview.png",
+    "2_4": "assets/images/relic/power_tally_relic_preview.png"
   };
   const relicVersions = {
-    "2_2": "20260610-primewood-refresh",
-    "2_3": "20260610-fraction-loom-refresh",
-    "2_4": "20260610-power-tally-refresh"
+    "2_2": "20260610-primewood-preview",
+    "2_3": "20260610-fraction-loom-preview",
+    "2_4": "20260610-power-tally-preview"
   };
   const version = relicVersions[id] || "20260609-relic-preview";
   return relicImages[id] ? `${relicImages[id]}?v=${version}` : "";
