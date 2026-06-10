@@ -153,6 +153,16 @@
 	transform: translateY(-1px);
 }
 
+.choice-card.selected {
+	border-color: #2563eb !important;
+	background: linear-gradient(180deg, #dbeafe, #fff8db) !important;
+	box-shadow:
+		0 14px 26px rgba(37, 99, 235, 0.18),
+		0 0 0 4px rgba(37, 99, 235, 0.16),
+		inset 0 1px 0 rgba(255,255,255,0.76) !important;
+	transform: translateY(-1px);
+}
+
 .choice-card.correct {
 	background: linear-gradient(180deg, #dcfce7, #f7fff5) !important;
 	border-color: #65b86f !important;
@@ -192,6 +202,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	gap: 0.24em;
 	min-width: 1.7em;
 	padding: 0.05em 0.35em;
 	margin-left: 6px;
@@ -201,6 +212,18 @@
 	color: #d97800;
 	font-size: 1.28rem;
 	box-shadow: 0 4px 12px rgba(91, 54, 0, 0.10);
+}
+
+.factor-part,
+.mini-op {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.mini-op {
+	color: #7a4b00;
+	font-size: 0.86em;
 }
 
 .input-row,

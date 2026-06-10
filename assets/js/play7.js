@@ -13,6 +13,39 @@
 	const CERT_SIGNATURE = "Presented by Math Ridge Creator: Kuan-Yuan Huang";
 	const TOTAL_STEPS = 5;
 	const PRIMES = [2, 3, 5, 7];
+	const PROBLEM_BANKS = {
+		easy: [
+			{ operation: "multiply", first: { top: 2, bottom: 3 }, second: { top: 9, bottom: 10 } },
+			{ operation: "multiply", first: { top: 4, bottom: 5 }, second: { top: 15, bottom: 8 } },
+			{ operation: "multiply", first: { top: 6, bottom: 7 }, second: { top: 14, bottom: 15 } },
+			{ operation: "multiply", first: { top: 8, bottom: 9 }, second: { top: 15, bottom: 20 } },
+			{ operation: "divide", first: { top: 2, bottom: 5 }, second: { top: 6, bottom: 25 } },
+			{ operation: "divide", first: { top: 3, bottom: 8 }, second: { top: 9, bottom: 20 } },
+			{ operation: "divide", first: { top: 4, bottom: 15 }, second: { top: 8, bottom: 25 } },
+			{ operation: "divide", first: { top: 6, bottom: 25 }, second: { top: 9, bottom: 10 } }
+		],
+		medium: [
+			{ operation: "multiply", first: { top: 18, bottom: 25 }, second: { top: 35, bottom: 24 } },
+			{ operation: "multiply", first: { top: 32, bottom: 45 }, second: { top: 27, bottom: 56 } },
+			{ operation: "multiply", first: { top: 40, bottom: 63 }, second: { top: 21, bottom: 50 } },
+			{ operation: "multiply", first: { top: 48, bottom: 35 }, second: { top: 25, bottom: 72 } },
+			{ operation: "multiply", first: { top: 16, bottom: 25 }, second: { top: 35, bottom: 28 } },
+			{ operation: "divide", first: { top: 28, bottom: 45 }, second: { top: 35, bottom: 54 } },
+			{ operation: "divide", first: { top: 30, bottom: 49 }, second: { top: 45, bottom: 56 } },
+			{ operation: "divide", first: { top: 24, bottom: 49 }, second: { top: 36, bottom: 56 } },
+			{ operation: "divide", first: { top: 54, bottom: 35 }, second: { top: 45, bottom: 28 } }
+		],
+		hard: [
+			{ operation: "multiply", first: { top: 48, bottom: 35 }, second: { top: 63, bottom: 80 } },
+			{ operation: "multiply", first: { top: 96, bottom: 125 }, second: { top: 75, bottom: 64 } },
+			{ operation: "multiply", first: { top: 90, bottom: 112 }, second: { top: 49, bottom: 75 } },
+			{ operation: "multiply", first: { top: 64, bottom: 105 }, second: { top: 98, bottom: 45 } },
+			{ operation: "divide", first: { top: 70, bottom: 81 }, second: { top: 42, bottom: 125 } },
+			{ operation: "divide", first: { top: 84, bottom: 125 }, second: { top: 70, bottom: 81 } },
+			{ operation: "divide", first: { top: 98, bottom: 81 }, second: { top: 63, bottom: 125 } },
+			{ operation: "divide", first: { top: 75, bottom: 112 }, second: { top: 45, bottom: 98 } }
+		]
+	};
 
 	const usedProblemKeys = new Set();
 
@@ -27,6 +60,8 @@
 	let pageHasStartedClimb = false;
 	let finalAnswered = false;
 	let matchesChecked = false;
+	let selectedSetupChoice = null;
+	let selectedSetupButton = null;
 	let achievementShown = false;
 	let progressThemeTimer = null;
 	let completedSteps = new Set();
@@ -84,9 +119,6 @@
 		} catch (error) {}
 	}
 
-	function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-	function randomItem(list) { return list[Math.floor(Math.random() * list.length)]; }
-
 	function shuffle(arr) {
 		const copy = [...arr];
 		for (let i = copy.length - 1; i > 0; i--) {
@@ -96,7 +128,6 @@
 		return copy;
 	}
 
-	function product(arr) { return arr.reduce((a, b) => a * b, 1); }
 	function gcd(a, b) { while (b) [a, b] = [b, a % b]; return Math.abs(a); }
 
 	function countMap(arr) {
@@ -112,35 +143,85 @@
 		return PRIMES.every(p => (A[p] || 0) === (B[p] || 0));
 	}
 
-	function getDifficultyRule() {
-		if (score < 3) return { sharedMin: 1, sharedMax: 2, extraMin: 1, extraMax: 2 };
-		if (score < 6) return { sharedMin: 2, sharedMax: 3, extraMin: 1, extraMax: 2 };
-		return { sharedMin: 2, sharedMax: 4, extraMin: 2, extraMax: 3 };
+	function getDifficultyBand() {
+		if (score <= 3) return "easy";
+		if (score <= 6) return "medium";
+		return "hard";
 	}
 
-	function makeRandomFactors(count) {
-		const list = [];
-		for (let i = 0; i < count; i++) list.push(randomItem(PRIMES));
-		return list;
+	function primeFactorsOf(value) {
+		const factors = [];
+		let rest = Math.abs(Number(value || 0));
+		if (!Number.isInteger(rest) || rest < 1) return [];
+		PRIMES.forEach(prime => {
+			while (rest % prime === 0) {
+				factors.push(prime);
+				rest /= prime;
+			}
+		});
+		return rest === 1 ? factors : [];
 	}
 
-	function makeFinalFactors() {
-		const rule = getDifficultyRule();
-		const sharedCount = randInt(rule.sharedMin, rule.sharedMax);
-		const shared = makeRandomFactors(sharedCount);
-		const topExtra = makeRandomFactors(randInt(rule.extraMin, rule.extraMax));
-		const bottomExtra = makeRandomFactors(randInt(rule.extraMin, rule.extraMax));
+	function displayedValues(seed) {
+		return [seed.first.top, seed.first.bottom, seed.second.top, seed.second.bottom].map(Number);
+	}
+
+	function isValidProblemSeed(seed, band) {
+		const values = displayedValues(seed);
+		if (values.some(value => !Number.isInteger(value) || value <= 1)) return false;
+		if (new Set(values).size !== values.length) return false;
+		if (seed.first.top === seed.first.bottom || seed.second.top === seed.second.bottom) return false;
+		if (values.some(value => primeFactorsOf(value).length === 0)) return false;
+		if (band === "easy" && values.some(value => value > 30)) return false;
+		if (band === "medium" && values.some(value => value < 10 || value > 99)) return false;
+		if (band === "hard" && (values.some(value => value < 10 || value > 144) || values.filter(value => value >= 100).length > 1)) return false;
+		return true;
+	}
+
+	function makeProblemFromSeed(seed) {
+		const first = { ...seed.first };
+		const shownSecond = { ...seed.second };
+		const operation = seed.operation === "divide" ? "divide" : "multiply";
+		const afterSecond = operation === "divide"
+			? { top: shownSecond.bottom, bottom: shownSecond.top }
+			: { ...shownSecond };
+		const topFactors = [
+			...primeFactorsOf(first.top),
+			...primeFactorsOf(afterSecond.top)
+		];
+		const bottomFactors = [
+			...primeFactorsOf(first.bottom),
+			...primeFactorsOf(afterSecond.bottom)
+		];
+		const numerator = first.top * afterSecond.top;
+		const denominator = first.bottom * afterSecond.bottom;
+		const g = gcd(numerator, denominator);
+		const reducedTop = numerator / g;
+		const reducedBottom = denominator / g;
+
 		return {
-			topFactors: shuffle([...shared, ...topExtra]),
-			bottomFactors: shuffle([...shared, ...bottomExtra])
+			operation,
+			first,
+			shownSecond,
+			afterSecond,
+			correctSetup: { first, second: afterSecond, key: setupKey(first, afterSecond) },
+			topFactors: shuffle(topFactors),
+			bottomFactors: shuffle(bottomFactors),
+			topParts: [first.top, afterSecond.top],
+			bottomParts: [first.bottom, afterSecond.bottom],
+			numerator,
+			denominator,
+			reducedTop,
+			reducedBottom
 		};
 	}
 
-	function splitFactors(factors) {
-		const copy = shuffle(factors);
-		if (copy.length <= 1) return [[copy[0] || 1], [1]];
-		const cut = randInt(1, copy.length - 1);
-		return [copy.slice(0, cut), copy.slice(cut)];
+	function problemFitsLearningRules(problem) {
+		if (!problem) return false;
+		if (problem.numerator === problem.denominator) return false;
+		if (problem.reducedTop === 1 && problem.reducedBottom === 1) return false;
+		if (!problem.topFactors.length || !problem.bottomFactors.length) return false;
+		return true;
 	}
 
 	function fractionHtml(top, bottom) {
@@ -155,60 +236,26 @@
 		return `${fractionHtml(f1.top, f1.bottom)}<span class="op-symbol">×</span>${fractionHtml(f2.top, f2.bottom)}`;
 	}
 
+	function productExpressionHtml(parts) {
+		return parts.map(value => `<span class="factor-part">${value}</span>`).join(`<span class="mini-op">×</span>`);
+	}
+
 	function makeProblem() {
-		let attempt = 0;
-		while (attempt < 400) {
-			attempt++;
-			const made = makeFinalFactors();
-			const [topA, topB] = splitFactors(made.topFactors);
-			const [bottomA, bottomB] = splitFactors(made.bottomFactors);
-			const first = { top: product(topA), bottom: product(bottomA) };
-			const afterSecond = { top: product(topB), bottom: product(bottomB) };
-			const operation = Math.random() < 0.5 ? "multiply" : "divide";
-			const shownSecond = operation === "divide"
-				? { top: afterSecond.bottom, bottom: afterSecond.top }
-				: { ...afterSecond };
-			const numerator = product(made.topFactors);
-			const denominator = product(made.bottomFactors);
-			if (numerator === denominator) continue;
-			const g = gcd(numerator, denominator);
-			const reducedTop = numerator / g;
-			const reducedBottom = denominator / g;
-			if (reducedTop === 1 && reducedBottom === 1) continue;
+		const band = getDifficultyBand();
+		const candidates = shuffle(PROBLEM_BANKS[band] || PROBLEM_BANKS.easy)
+			.filter(seed => isValidProblemSeed(seed, band))
+			.map(makeProblemFromSeed)
+			.filter(problemFitsLearningRules);
 
-			const key = `${operation}|${first.top}/${first.bottom}|${shownSecond.top}/${shownSecond.bottom}|${numerator}/${denominator}`;
-			if (usedProblemKeys.has(key) && usedProblemKeys.size < 80) continue;
-			if (usedProblemKeys.size >= 80) usedProblemKeys.clear();
+		for (const problem of candidates) {
+			const key = `${band}|${problem.operation}|${problem.first.top}/${problem.first.bottom}|${problem.shownSecond.top}/${problem.shownSecond.bottom}`;
+			if (usedProblemKeys.has(key) && usedProblemKeys.size < candidates.length) continue;
+			if (usedProblemKeys.size >= candidates.length) usedProblemKeys.clear();
 			usedProblemKeys.add(key);
-
-			return {
-				operation,
-				first,
-				shownSecond,
-				afterSecond,
-				correctSetup: { first, second: afterSecond, key: setupKey(first, afterSecond) },
-				topFactors: made.topFactors,
-				bottomFactors: made.bottomFactors,
-				numerator,
-				denominator,
-				reducedTop,
-				reducedBottom
-			};
+			return problem;
 		}
 
-		return {
-			operation: "divide",
-			first: { top: 2, bottom: 5 },
-			shownSecond: { top: 6, bottom: 25 },
-			afterSecond: { top: 25, bottom: 6 },
-			correctSetup: { first: { top: 2, bottom: 5 }, second: { top: 25, bottom: 6 }, key: "2/5x25/6" },
-			topFactors: [2, 5, 5],
-			bottomFactors: [5, 2, 3],
-			numerator: 50,
-			denominator: 30,
-			reducedTop: 5,
-			reducedBottom: 3
-		};
+		return makeProblemFromSeed(PROBLEM_BANKS.easy[0]);
 	}
 
 	function renderProblem() {
@@ -264,10 +311,33 @@
 			button.type = "button";
 			button.className = "choice-card";
 			button.innerHTML = setupHtml(choice.f1, choice.f2);
-			button.onclick = () => checkSetupChoice(button, choice);
+			button.onclick = () => selectSetupChoice(button, choice);
 			grid.appendChild(button);
 			resizeOperationLine(button);
 		});
+	}
+
+	function selectSetupChoice(button, choice) {
+		if (stageComplete || completedSteps.has("setup")) return;
+		touchClimbTimer();
+		shell()?.playSfx?.("firstTap");
+		selectedSetupChoice = choice;
+		selectedSetupButton = button;
+		document.querySelectorAll("#setupChoices .choice-card").forEach(card => card.classList.remove("selected"));
+		button?.classList.add("selected");
+		const setup = byId("setupDisplay");
+		if (setup) setup.innerHTML = `Selected setup: ${setupHtml(choice.f1, choice.f2)}`;
+		setLocalFeedback("setupFeedback", "Selection ready. Tap Check Setup twice to confirm.", "neutral");
+	}
+
+	function confirmSetupChoice() {
+		if (stageComplete || completedSteps.has("setup")) return;
+		touchClimbTimer();
+		if (!selectedSetupChoice || !selectedSetupButton) {
+			setLocalFeedback("setupFeedback", "Choose a setup first, then confirm it.", "bad");
+			return;
+		}
+		checkSetupChoice(selectedSetupButton, selectedSetupChoice);
 	}
 
 	function buildInputs(id, count) {
@@ -346,6 +416,14 @@
 		if (completeFlow) completeFlow.innerHTML = "";
 		const finalBlock = byId("finalAnswerBlock");
 		if (finalBlock) finalBlock.classList.add("hidden");
+		const setupButton = byId("checkSetupBtn");
+		if (setupButton) {
+			setupButton.disabled = false;
+			setupButton.removeAttribute("aria-disabled");
+			setupButton.classList.remove("is-play-armed");
+		}
+		selectedSetupChoice = null;
+		selectedSetupButton = null;
 		setText("completeMessage", "");
 	}
 
@@ -359,8 +437,10 @@
 		matchesChecked = false;
 		completedSteps = new Set();
 
-		setText("topFocusValue", round.numerator);
-		setText("bottomFocusValue", round.denominator);
+		const topFocus = byId("topFocusValue");
+		if (topFocus) topFocus.innerHTML = productExpressionHtml(round.topParts);
+		const bottomFocus = byId("bottomFocusValue");
+		if (bottomFocus) bottomFocus.innerHTML = productExpressionHtml(round.bottomParts);
 		buildInputs("topInputs", round.topFactors.length);
 		buildInputs("bottomInputs", round.bottomFactors.length);
 		resetStepVisuals();
@@ -377,12 +457,21 @@
 		if (stageComplete || completedSteps.has("setup")) return;
 		if (!choice || choice.key !== round.correctSetup.key) {
 			button.classList.add("wrong");
+			button.classList.remove("selected");
+			selectedSetupChoice = null;
+			selectedSetupButton = null;
 			markMistake();
 			setLocalFeedback("setupFeedback", round.operation === "divide" ? "Not yet. Only the fraction after ÷ flips." : "Not yet. Multiplication keeps both fractions in place.", "bad");
 			return;
 		}
 		button.classList.add("correct");
 		document.querySelectorAll("#setupChoices .choice-card").forEach(card => card.disabled = true);
+		const setupButton = byId("checkSetupBtn");
+		if (setupButton) {
+			setupButton.disabled = true;
+			setupButton.setAttribute("aria-disabled", "true");
+			setupButton.classList.remove("is-play-armed");
+		}
 		const setup = byId("setupDisplay");
 		if (setup) setup.innerHTML = `Correct setup: ${setupHtml(round.correctSetup.first, round.correctSetup.second)}`;
 		markCorrectStep("setup");
@@ -843,6 +932,7 @@ function openSavedCertificateFromCabin() {
 	};
 
 	window.startClimbFromGate = startClimbFromGate;
+	window.confirmSetupChoice = confirmSetupChoice;
 	window.checkTop = checkTop;
 	window.checkBottom = checkBottom;
 	window.checkMatches = checkMatches;
