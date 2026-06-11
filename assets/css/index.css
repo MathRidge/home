@@ -7461,3 +7461,30 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
     line-height: 1.28 !important;
   }
 }
+
+/* Cabin banner subtitle: slightly higher and airier on mobile. */
+@media (max-width: 760px) {
+  body.index-page .cabin-panel .cabin-title-card .panel-title {
+    top: 30.9% !important;
+  }
+
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    line-height: 1.42 !important;
+  }
+}
+
+@media (max-width: 380px) {
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    line-height: 1.36 !important;
+  }
+}
+
+@media (max-width: 980px) and (orientation: landscape) {
+  body.index-page .cabin-panel .cabin-title-card .panel-title {
+    top: 51.4% !important;
+  }
+
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    line-height: 1.38 !important;
+  }
+}
