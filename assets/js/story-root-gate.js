@@ -872,40 +872,40 @@
 
   function chapterTwoTestSetupFrames() {
     return [
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Primewood Gate Trial Setup", relicReveal: "clear" },
-      { bg: "visionRelicCase", sprite: "none", elder: "elder", speaker: "Narrator", text: "The four Vision Relics rested on Shellwick's table.", relicReveal: "lights" },
-      { bg: "visionRelicCase", sprite: "none", elder: "elder", speaker: "Narrator", text: "Shelf Scale. Primewood Seed. Fraction Loom. Power Tally.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "We have all four Vision Relics.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "So we go back to the gate?", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Yes. Calmly. Heroically. Without tripping.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "A pause.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Probably.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Primewood Gate will not test whether you carry the relics.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "It will not?", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It will test whether the relics have entered your thinking.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "I do not feel relics in there.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "That may be good.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It is a figure of speech.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Good. The Shelf Scale looked heavy.", relicReveal: "all" },
-      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Far above the Root Gate, your phone flashed blue again.", relicReveal: "clear" },
-      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "You", text: "My phone." },
-      { bg: "bluePhoneSignal", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "We are closer than before." },
-      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Then we should go now." },
-      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You may reach the gate." },
-      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "But do not reach faster than you understand." },
-      { bg: "bluePhoneSignal", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "That sounds like wisdom." },
-      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "You", text: "It also sounds like a warning." },
-      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Most useful wisdom does." },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "Primewood Gate Trial Setup", relicReveal: "clear" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The four Vision Relics rested on Shellwick's table.", relicReveal: "lights" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "Shelf Scale. Primewood Seed. Fraction Loom. Power Tally.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "We have all four Vision Relics.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "You", text: "So we go back to the gate?", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Yes. Calmly. Heroically. Without tripping.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "A pause.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Probably.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "The Primewood Gate will not test whether you carry the relics.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "It will not?", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "It will test whether the relics have entered your thinking.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "I do not feel relics in there.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "You", text: "That may be good.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "It is a figure of speech.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Good. The Shelf Scale looked heavy.", relicReveal: "all" },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Far above the Root Gate, your phone flashed blue again.", relicReveal: "clear" },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "You", text: "My phone." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Mira", text: "We are closer than before." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "You", text: "Then we should go now." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "You may reach the gate." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "But do not reach faster than you understand." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Mira", text: "That sounds like wisdom." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "You", text: "It also sounds like a warning." },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Most useful wisdom does." },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate rose beyond the higher trail.", relicReveal: "clear" },
-      { bg: "primewoodGateExterior", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Four sockets waited on the stone.", relicReveal: "lights" },
+      { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "Four sockets waited on the stone.", relicReveal: "lights" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Shelf Scale balanced the first socket.", relicReveal: "term" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Seed rooted itself into the second.", relicReveal: "sign" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom threaded silver light through the third.", relicReveal: "parity" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally sparked across the final socket.", relicReveal: "factor" },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "See beneath the number. Clean what can be cleaned. Compact what repeats.", board: "primewoodGateRule", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "I understood almost all of that.", board: "primewoodGateRule", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Enough to begin.", board: "primewoodGateRule", relicReveal: "all", reward: "chapter2-test-setup" }
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "See beneath the number. Clean what can be cleaned. Compact what repeats.", board: "primewoodGateRule", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Mira", text: "I understood almost all of that.", board: "primewoodGateRule", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Enough to begin.", board: "primewoodGateRule", relicReveal: "clear", reward: "chapter2-test-setup" }
     ];
   }
 
@@ -1028,14 +1028,16 @@
     const miraKey = frame.sprite;
     const elderKey = frame.elder || (frame.speaker === "Elder Shellwick" ? "elder" : "");
     const active = frame.speaker === "Elder Shellwick" ? "elder" : "mira";
+    const hasMira = Boolean(miraKey && miraKey !== "none");
+    const hasElder = Boolean(elderKey && elderKey !== "none");
 
-    if (miraKey && miraKey !== "none") revealActor("mira", miraKey, frame.motion || "");
+    if (hasMira) revealActor("mira", miraKey, frame.motion || "");
     else hideActor("mira");
 
-    if (elderKey && elderKey !== "none") revealActor("elder", elderKey, "");
+    if (hasElder) revealActor("elder", elderKey, "");
     else hideActor("elder");
 
-    if (miraKey && elderKey) setActorFocus(active);
+    if (hasMira && hasElder) setActorFocus(active);
   }
 
   function setBackground(key) {
@@ -2231,6 +2233,7 @@
     const frame = frames[currentIndex];
     const boardReview = Boolean(frame.board && ["board", "chapterTwoBoard"].includes(frame.bg));
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
+    const primewoodGateRelics = frame.bg === "primewoodGateExterior" && relicFocus;
     const voiceFiles = frameVoiceFiles(frame);
     const soundCues = frameSoundCues(frame);
     prepareStoryAudio(currentIndex);
@@ -2238,9 +2241,10 @@
     clearInteraction();
     rewardPanel?.classList.add("hidden");
     storyVn?.classList.toggle("is-board-review", boardReview);
+    storyVn?.classList.toggle("is-primewood-gate-relics", primewoodGateRelics);
 
     setBackground(frame.bg);
-    setRelicReveal(frame.relicReveal || "");
+    setRelicReveal(boardReview ? "clear" : frame.relicReveal || "");
     setBlackboard(frame.board || "");
     if (boardReview || relicFocus) {
       hideActor("mira");

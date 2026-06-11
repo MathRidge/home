@@ -658,6 +658,10 @@
     return questionCards().filter(card => card.classList.contains("needs-correction"));
   }
 
+  function firstUnansweredCorrectionCard() {
+    return correctionCards().find(card => !answerForCard(card).answered);
+  }
+
   function clearCorrectionTimers() {
     correctionTimers = new WeakMap();
   }
@@ -935,8 +939,9 @@
       const answer = answerForCard(card);
       const feedback = card.querySelector(".question-feedback");
       if (answer.correct) correct += 1;
+      const unanswered = !answer.answered;
 
-      card.classList.remove("is-unanswered");
+      card.classList.toggle("is-unanswered", unanswered);
       card.classList.toggle("is-correct", answer.correct);
       card.classList.toggle("is-wrong", !answer.correct);
       card.classList.toggle("needs-correction", !answer.correct);
@@ -945,7 +950,9 @@
       if (feedback) {
         feedback.textContent = answer.correct
           ? "Correct on first submit."
-          : `Your answer: ${answer.display}. Try this one again for practice.`;
+          : unanswered
+            ? "This question was not complete before time expired. Fill every required part first."
+            : `Your answer: ${answer.display}. Try this one again for practice.`;
       }
     });
 
@@ -960,8 +967,11 @@
       submitButton.disabled = !correctionMode;
       submitButton.textContent = correctionMode ? "Check Corrections" : "Corrections Complete";
     }
+    const hasMissingCorrection = Boolean(firstUnansweredCorrectionCard());
     examMessage.textContent = correctionMode
-      ? "Original score is locked. Correct the red questions for practice."
+      ? (options.forced && hasMissingCorrection
+          ? "Time expired. Start with the unanswered red question first."
+          : "Original score is locked. Correct the red questions for practice.")
       : "Perfect first run. Chapter 2 is fully proven.";
     updateAnsweredCount();
 
@@ -971,8 +981,9 @@
 
   function checkCorrections() {
     if (!correctionMode) return;
+    const firstMissing = firstUnansweredCorrectionCard();
     const firstReady = correctionCards().find(card => answerForCard(card).answered);
-    const target = firstReady || correctionCards()[0];
+    const target = firstMissing || firstReady || correctionCards()[0];
     if (!target) {
       completeCorrections();
       return;
@@ -1162,7 +1173,7 @@
 
   reviewButton?.addEventListener("click", () => {
     resultLayer.classList.add("hidden");
-    const firstCorrection = correctionCards()[0];
+    const firstCorrection = firstUnansweredCorrectionCard() || correctionCards()[0];
     if (firstCorrection) scrollToCorrectionCard(firstCorrection, 80);
     else examForm.scrollIntoView({ behavior: "smooth", block: "center" });
   });
