@@ -83,6 +83,37 @@
 
   miraVoiceFilesByText.set("Forty questions. Only three mistakes. I might panic a little.", ["mira-Only-three-mistakes….mp3"]);
 
+  elderVoiceFilesByText.set("The Primewood Gate will not test whether you carry the relics.", ["elder-The-Primewood-Gate-will-not-test-whether-you-car.mp3"]);
+  elderVoiceFilesByText.set("It will test whether the relics have entered your thinking.", ["elder-It-will-test-whether-the-relics-have-entered-you.mp3"]);
+  elderVoiceFilesByText.set("It is a figure of speech.", ["elder-[whispering]It-is-a-figure-of-speech.mp3"]);
+  elderVoiceFilesByText.set("You may reach the gate.", ["elder-You-may-reach-the-gate.mp3"]);
+  elderVoiceFilesByText.set("But do not reach faster than you understand.", ["elder-But-do-not-reach-faster-than-you-understand.mp3"]);
+  elderVoiceFilesByText.set("Most useful wisdom does.", ["elder-Most-useful-wisdom-does.mp3"]);
+  elderVoiceFilesByText.set("Enough to begin.", ["elder-Enough-to-begin.mp3"]);
+  elderVoiceFilesByText.set("The Ridge did not take it beyond reach. It moved it beyond your current understanding.", ["elder-The-Ridge-did-not-take-it-beyond-reach.-[long-pa.mp3"]);
+  elderVoiceFilesByText.set("What the Ridge hides behind a gate, it means to be reached.", ["elder-[wisdom]What-the-Ridge-hides-behind-a-gate,-[pau.mp3"]);
+  elderVoiceFilesByText.set("You will reach it. But not by rushing.", ["elder-You-will-reach-it.-[long-pause]But-not-by-rushin.mp3"]);
+  elderVoiceFilesByText.set("Check again. Then move.", ["elder-Check-again.-Then-move.mp3"]);
+  elderVoiceFilesByText.set("That is not the lesson, but I accept the observation.", ["elder-[sighing]That-is-not-the-lesson,-but-[pause]-I-a.mp3"]);
+
+  miraVoiceFilesByText.set("We have all four Vision Relics.", ["mira-We-have-all-four-Vision-Relics.mp3"]);
+  miraVoiceFilesByText.set("Yes. Calmly. Heroically. Without tripping.", ["mira-Yes.-Calmly.-Heroically.-Without-tripping.mp3"]);
+  miraVoiceFilesByText.set("Probably.", ["mira-probably.mp3"]);
+  miraVoiceFilesByText.set("It will not?", ["mira-It-will-not.mp3"]);
+  miraVoiceFilesByText.set("I do not feel relics in there.", ["mira-I-do-not-feel-relics-in-there.mp3"]);
+  miraVoiceFilesByText.set("Good. The Shelf Scale looked heavy.", ["mira-Good.-The-Shelf-Scale-looked-heavy.mp3"]);
+  miraVoiceFilesByText.set("That sounds like wisdom.", ["mira-That-sounds-like-wisdom.mp3"]);
+  miraVoiceFilesByText.set("I understood almost all of that.", ["mira-I-understood-almost-all-of-that.mp3"]);
+  miraVoiceFilesByText.set("I can see inside them.", ["mira-I-can-see-inside-them.mp3"]);
+  miraVoiceFilesByText.set("There! I can see it!", ["mira-There!-I-can-see-it!.mp3"]);
+  miraVoiceFilesByText.set("No. That is not right. We did have it for a second.", ["mira-No.-That-is-not-right.-We-did-have-it-for-a-seco.mp3"]);
+  miraVoiceFilesByText.set("You rushed. Which is different.", ["mira-You-rushed.-Which-is-different.mp3"]);
+  miraVoiceFilesByText.set("That is our new rule.", ["mira-[emphasis]That-is-our-new-rule.mp3"]);
+  miraVoiceFilesByText.set("You helped me get through Root Gate and Primewood Gate. So now I will help you reach the next one.", ["mira-[emphasis]You-helped-me-get-through-Root-Gate[pa.mp3"]);
+  miraVoiceFilesByText.set("Fractions, prime roots, emergency noodles... and patience?", ["mira-Fractions,-prime-roots,-emergency-noodles...-[lo.mp3"]);
+  miraVoiceFilesByText.set("Emergency noodles are also patient. They wait in the satchel.", ["mira-Emergency-noodles-are-also-patient.-They-wait-in.mp3"]);
+  miraVoiceFilesByText.set("Come on. We check again, then move.", ["mira-[excited]Come-on.-We-check-again,-then-move.mp3"]);
+
   const relicRevealCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.34, fadeOut: 260, lockMs: 760 };
   const softRevealCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 240, lockMs: 560 };
   const gateRumbleCue = { file: "gate-open-lock.mp3", start: 0.3, end: 3.8, volume: 0.34, fadeOut: 900, lockMs: 2000 };
