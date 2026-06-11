@@ -15,7 +15,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
   <link rel="apple-touch-icon" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
   <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-minus-toggle" />
-  <link rel="stylesheet" href="assets/css/chapter-2-test.css?v=20260610-phone-number-pad" />
+  <link rel="stylesheet" href="assets/css/chapter-2-test.css?v=20260611-time-sticker" />
 </head>
 <body class="chapter-2-test-page">
   <main class="exam-shell chapter-2-exam-shell">
@@ -26,9 +26,12 @@
         <h1>Prime Element Vision Test</h1>
         <p>Complete all 50 questions in under 35 minutes. A score of 92% or higher proves the Chapter 2 methods are yours.</p>
       </div>
-      <div class="timer-card" aria-live="polite">
-        <span>Time Remaining</span>
-        <strong id="timerText">35:00</strong>
+      <div class="timer-card time-sticker" id="timeSticker" aria-live="polite">
+        <button class="time-sticker-button" id="timeStickerButton" type="button" aria-expanded="false" aria-controls="timeStickerPanel">Time</button>
+        <div class="time-sticker-panel" id="timeStickerPanel" aria-hidden="true">
+          <span>Time Remaining</span>
+          <strong id="timerText">35:00</strong>
+        </div>
       </div>
     </header>
 
@@ -89,6 +92,6 @@
     </div>
   </section>
 
-  <script src="assets/js/chapter-2-test.js?v=20260610-season-one-ending"></script>
+  <script src="assets/js/chapter-2-test.js?v=20260611-time-sticker"></script>
 </body>
 </html>

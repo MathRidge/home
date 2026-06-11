@@ -99,6 +99,9 @@
   const questionGrid = document.getElementById("questionGrid");
   const timerText = document.getElementById("timerText");
   const timerCard = document.querySelector(".timer-card");
+  const timeSticker = document.getElementById("timeSticker");
+  const timeStickerButton = document.getElementById("timeStickerButton");
+  const timeStickerPanel = document.getElementById("timeStickerPanel");
   const answeredCount = document.getElementById("answeredCount");
   const examMessage = document.getElementById("examMessage");
   const resultLayer = document.getElementById("resultLayer");
@@ -806,6 +809,39 @@
     timerId = 0;
   }
 
+  function setTimeStickerOpen(open) {
+    timeSticker?.classList.toggle("is-open", open);
+    timeStickerButton?.setAttribute("aria-expanded", open ? "true" : "false");
+    timeStickerPanel?.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+
+  function activeExamInput() {
+    const active = document.activeElement;
+    return active?.matches?.(".question-card input") ? active : null;
+  }
+
+  function shouldPreservePhoneKeypad(event) {
+    const active = activeExamInput();
+    if (!active || active.disabled || finished) return false;
+
+    const target = event.target;
+    if (target.closest?.(".question-card input")) return false;
+    if (target.closest?.("[data-exp-insert]")) return false;
+    if (target.closest?.("button, a, textarea, select, [contenteditable='true']")) return false;
+    return true;
+  }
+
+  function handleDocumentPointerStart(event) {
+    if (timeSticker?.classList.contains("is-open") && !event.target.closest?.("#timeSticker")) {
+      setTimeStickerOpen(false);
+    }
+
+    if (!shouldPreservePhoneKeypad(event)) return;
+    const active = activeExamInput();
+    event.preventDefault();
+    window.setTimeout(() => active?.focus?.({ preventScroll: true }), 0);
+  }
+
   function firstUnansweredCard() {
     return questionCards().find(card => !answerForCard(card).answered);
   }
@@ -1104,6 +1140,22 @@
   }
 
   startExamButton?.addEventListener("click", startExam);
+
+  timeStickerButton?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    setTimeStickerOpen(!timeSticker?.classList.contains("is-open"));
+  });
+
+  document.addEventListener("pointerdown", handleDocumentPointerStart, { capture: true });
+
+  if (!window.PointerEvent) {
+    document.addEventListener("touchstart", handleDocumentPointerStart, { capture: true, passive: false });
+  }
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") setTimeStickerOpen(false);
+  });
 
   examForm?.addEventListener("submit", event => {
     event.preventDefault();
