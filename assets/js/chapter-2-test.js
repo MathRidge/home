@@ -10,6 +10,7 @@
   const CHAPTER_RESULT_DATA_KEY = "mathRidge_testResult_chapter_2_data";
   const CHAPTER_ATTEMPTS_KEY = "mathRidge_testAttempts_chapter_2";
   const CHAPTER_ATTEMPT_HISTORY_KEY = "mathRidge_testAttemptHistory_chapter_2";
+  const CHAPTER_TWO_ENDING_KEY = "mathRidge_storyComplete_chapter_2_ending";
   const TEST_RESULT_CERTIFICATE_IMAGE = "assets/images/test-results/math_ridge_certificate_mastery_template_true_alpha.png?v=20260608-mastery-certificate";
   const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
   const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
@@ -108,6 +109,7 @@
   const scoreRing = document.getElementById("scoreRing");
   const reviewButton = document.getElementById("reviewButton");
   const retryButton = document.getElementById("retryButton");
+  const returnTrailLink = document.getElementById("returnTrailLink");
   const correctionCompletePanel = document.getElementById("correctionCompletePanel");
   const correctionRetryButton = document.getElementById("correctionRetryButton");
   const submitButton = examForm?.querySelector(".submit-button");
@@ -141,6 +143,11 @@
       earnedCert?.studentName ||
       earnedCert?.certificateName
     );
+  }
+
+  function hasSeenChapterTwoEnding() {
+    try { return localStorage.getItem(CHAPTER_TWO_ENDING_KEY) === "true"; }
+    catch (error) { return false; }
   }
 
   function positiveInteger(value, fallback = 0) {
@@ -979,8 +986,12 @@
     resultTitle.textContent = result.passed ? "Prime Element Vision Proven" : "Prime Element Vision Needs Review";
     scoreRing.textContent = `${result.percent}%`;
 
+    const shouldContinueEnding = result.passed && !hasSeenChapterTwoEnding();
+
     resultSummary.textContent = result.passed
-      ? "You passed the Chapter 2 checkpoint. Your Prime Element Vision mastery result is saved on this device."
+      ? shouldContinueEnding
+        ? "You passed the Chapter 2 checkpoint. Your mastery result is saved. Continue to the Season 1 ending before returning to the trail."
+        : "You passed the Chapter 2 checkpoint. Your Prime Element Vision mastery result is saved on this device."
       : result.forced
         ? "Time expired before the test was complete. Your first score is locked. Correct the red questions for practice, then retake the test when you are ready."
         : "The Chapter 2 test needs 46 correct answers. Your first score is locked. Correct the red questions for practice, then retake the test.";
@@ -991,6 +1002,13 @@
       <div><strong>${formatTime(result.usedSeconds)}</strong><span>time used</span></div>
       <div><strong>${positiveInteger(result.attempts, positiveInteger(result.attemptNumber, 1))}</strong><span>attempts</span></div>
     `;
+
+    if (returnTrailLink) {
+      returnTrailLink.href = shouldContinueEnding ? "story-chapter-2-ending.html" : "index.html?view=quest#quest";
+      returnTrailLink.textContent = shouldContinueEnding ? "Continue to Season 1 Ending" : "Return to Mountain Trail";
+      returnTrailLink.classList.toggle("primary-action", shouldContinueEnding);
+      returnTrailLink.classList.toggle("secondary-action", !shouldContinueEnding);
+    }
 
     resultLayer.classList.remove("hidden");
   }

@@ -132,6 +132,8 @@ const ROOT_GATE_PASS_KEY = "mathRidge_rootGatePassed_chapter_1";
 const ROOT_GATE_INTRO_KEY = "mathRidge_storyComplete_root_gate_intro";
 const CHAPTER_ONE_TEST_PASS_KEY = "mathRidge_testPassed_chapter_1";
 const CHAPTER_TWO_TEST_PASS_KEY = "mathRidge_testPassed_chapter_2";
+const CHAPTER_TWO_TEST_SETUP_STORY_KEY = "mathRidge_storyComplete_chapter_2_test_setup";
+const CHAPTER_TWO_ENDING_STORY_KEY = "mathRidge_storyComplete_chapter_2_ending";
 
 function isTermManualUnlocked() {
   try {
@@ -249,14 +251,29 @@ function isRootGateUnlocked() {
 function isChapterTwoTestPassed() {
   return localStorage.getItem(CHAPTER_TWO_TEST_PASS_KEY) === "true";
 }
+function hasStoryFlag(key) {
+  try { return localStorage.getItem(key) === "true"; }
+  catch (error) { return false; }
+}
+function hasWatchedChapterTwoTestSetup() {
+  return hasStoryFlag(CHAPTER_TWO_TEST_SETUP_STORY_KEY);
+}
+function hasWatchedChapterTwoEnding() {
+  return hasStoryFlag(CHAPTER_TWO_ENDING_STORY_KEY);
+}
 function isChapterTwoTestUnlocked() {
   return isChapterTwoTestPassed() || isChapterTwoRelicsComplete() || hasCertificate("2_4") || hasCompletedPlay("2_4");
 }
 function chapterTwoTestHref() {
-  return isChapterTwoTestUnlocked() ? "chapter-2-test.html" : "#";
+  if (!isChapterTwoTestUnlocked()) return "#";
+  if (isChapterTwoTestPassed() && !hasWatchedChapterTwoEnding()) return "story-chapter-2-ending.html";
+  if (!hasWatchedChapterTwoTestSetup()) return "story-chapter-2-test-setup.html";
+  return "chapter-2-test.html";
 }
 function chapterTwoTestActionText() {
   if (!isChapterTwoTestUnlocked()) return "Locked";
+  if (isChapterTwoTestPassed() && !hasWatchedChapterTwoEnding()) return "Watch Ending";
+  if (!hasWatchedChapterTwoTestSetup()) return "Gate Setup";
   return isChapterTwoTestPassed() ? "Review / Retake" : "Begin Test";
 }
 
@@ -423,7 +440,15 @@ function renderRootGateCard() {
 function renderChapterTwoTestCard() {
   const unlocked = isChapterTwoTestUnlocked();
   const passed = isChapterTwoTestPassed();
-  const status = passed ? "Mastery proven" : unlocked ? "Test ready" : "Five relics required";
+  const status = !unlocked
+    ? "Five relics required"
+    : passed && !hasWatchedChapterTwoEnding()
+      ? "Ending ready"
+      : !hasWatchedChapterTwoTestSetup()
+        ? "Setup ready"
+        : passed
+          ? "Mastery proven"
+          : "Test ready";
   const href = chapterTwoTestHref();
 
   return `
@@ -681,6 +706,13 @@ function renderMenuLinks(options = {}) {
 }
 
 function renderMenuStoryArchive() {
+  const chapterTwoSetupReplay = hasWatchedChapterTwoTestSetup()
+    ? `<a class="jump-link story-jump" href="story-chapter-2-test-setup.html?watch=1"><span><i aria-hidden="true">2</i> Primewood Gate Trial Setup</span><strong>Replay</strong></a>`
+    : "";
+  const chapterTwoEndingReplay = hasWatchedChapterTwoEnding()
+    ? `<a class="jump-link story-jump" href="story-chapter-2-ending.html?watch=1"><span><i aria-hidden="true">2</i> Season 1 Ending</span><strong>Replay</strong></a>`
+    : "";
+
   return `
     <div class="quick-box story-archive-box">
       <h3>Story Archive</h3>
@@ -688,6 +720,8 @@ function renderMenuStoryArchive() {
       <div class="link-list story-link-list">
         <a class="jump-link story-jump" href="prologue.html"><span><i aria-hidden="true">P</i> Begin Prologue Story</span><strong>Opening</strong></a>
         <a class="jump-link story-jump" href="story-stage-1-1.html?watch=1"><span><i aria-hidden="true">1</i> 1-1 Story Scene</span><strong>Replay</strong></a>
+        ${chapterTwoSetupReplay}
+        ${chapterTwoEndingReplay}
       </div>
     </div>
   `;
@@ -708,9 +742,18 @@ function renderMenuRootGateLink() {
 function renderMenuChapterTwoTestLink() {
   const unlocked = isChapterTwoTestUnlocked();
   const passed = isChapterTwoTestPassed();
+  const status = !unlocked
+    ? "Locked"
+    : passed && !hasWatchedChapterTwoEnding()
+      ? "Ending"
+      : !hasWatchedChapterTwoTestSetup()
+        ? "Setup"
+        : passed
+          ? "Passed"
+          : "Ready";
   return `
     <a class="jump-link chapter-two-test-jump ${unlocked ? "" : "locked"}" href="${chapterTwoTestHref()}" onclick="return handleChapterTwoTestClick(event)">
-      <span><i aria-hidden="true">II</i> Prime Element Vision Test</span><strong>${passed ? "Passed" : unlocked ? "Ready" : "Locked"}</strong>
+      <span><i aria-hidden="true">II</i> Prime Element Vision Test</span><strong>${status}</strong>
     </a>
   `;
 }
@@ -1497,6 +1540,8 @@ function resetAllProgress() {
   try { localStorage.removeItem(ROOT_GATE_PASS_KEY); } catch (error) {}
   try { localStorage.removeItem(ROOT_GATE_INTRO_KEY); } catch (error) {}
   try { localStorage.removeItem(CHAPTER_ONE_TEST_PASS_KEY); } catch (error) {}
+  try { localStorage.removeItem(CHAPTER_TWO_TEST_SETUP_STORY_KEY); } catch (error) {}
+  try { localStorage.removeItem(CHAPTER_TWO_ENDING_STORY_KEY); } catch (error) {}
   try { localStorage.removeItem("mathRidge_testResult_chapter_1_data"); } catch (error) {}
 
   chapterTests.forEach(test => {

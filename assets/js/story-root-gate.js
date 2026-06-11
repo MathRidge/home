@@ -6,6 +6,8 @@
   const PASS_STORY_KEY = "mathRidge_storyComplete_root_gate_pass";
   const FAIL_STORY_KEY = "mathRidge_storyComplete_root_gate_fail";
   const CHAPTER_TWO_OPENING_KEY = "mathRidge_storyComplete_chapter_2_opening";
+  const CHAPTER_TWO_TEST_SETUP_KEY = "mathRidge_storyComplete_chapter_2_test_setup";
+  const CHAPTER_TWO_ENDING_KEY = "mathRidge_storyComplete_chapter_2_ending";
 
   const bgBase = "assets/images/bg-scene/Stage-1-1/";
   const chapterTwoBgBase = "assets/images/bg-scene/Chapter-2/";
@@ -151,7 +153,17 @@
     ["It heard me reflectively.", [funnyPipeCue]],
     ["Shellwick decided not to argue.", [funnyPipeCue]],
     ["She reached inside her satchel and pulled out a pencil. Then a spoon. Then the same emergency cup noodles.", [satchelCue, funnyPipeCue]],
-    ["The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time.", [softRevealCue]]
+    ["The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time.", [softRevealCue]],
+    ["The four Vision Relics rested on Shellwick's table.", [softRevealCue]],
+    ["Shelf Scale. Primewood Seed. Fraction Loom. Power Tally.", [relicRevealCue]],
+    ["Far above the Root Gate, your phone flashed blue again.", [softRevealCue]],
+    ["The Primewood Gate rose beyond the higher trail.", [gateRumbleCue]],
+    ["Four sockets waited on the stone.", [softRevealCue]],
+    ["The four Vision Relics shone together.", chapterUnlockCues],
+    ["The Primewood Gate opened.", [gateOpenCue]],
+    ["The unfinished shared 3 glowed red.", [gateLockCue]],
+    ["The bridge cracked beneath the almost-finished path.", [gateRumbleCue]],
+    ["The Primewood Gate closed gently behind you.", [gateLockCue]]
   ]);
 
   const relicOrder = ["term", "sign", "parity", "factor"];
@@ -246,6 +258,42 @@
         { label: "Relics", text: "Vision Relics", kind: "answer" },
         { label: "Objective", text: "Open Manual 2-1", kind: "rule" }
       ]
+    },
+    primewoodGateRule: {
+      badge: "Primewood Gate",
+      title: "Vision Relic Trial",
+      rows: [
+        { label: "See", text: "beneath the number", kind: "magic" },
+        { label: "Clean", text: "what can be cleaned", kind: "rule" },
+        { label: "Compact", text: "what repeats", kind: "answer" }
+      ]
+    },
+    primewoodCleanCheck: {
+      badge: "Gate Warning",
+      title: "Check Before Crossing",
+      rows: [
+        { label: "Start", text: "30 / 42", kind: "problem" },
+        { label: "Clean", text: "(2 x 3 x 5) / (2 x 3 x 7)", kind: "magic" },
+        { label: "Almost", text: "15 / 21 still shares 3", kind: "rule" }
+      ]
+    },
+    primewoodCleanFinal: {
+      badge: "Prime Element Vision",
+      title: "Clean All Shared Roots",
+      rows: [
+        { label: "Almost", text: "15 / 21", kind: "problem" },
+        { label: "Check", text: "3 x 5 / 3 x 7", kind: "magic" },
+        { label: "Move", text: "5 / 7", kind: "answer" }
+      ]
+    },
+    seasonOneComplete: {
+      badge: "Season 1",
+      title: "Check Again. Then Move.",
+      rows: [
+        { label: "Term Vision", text: "signs, terms, stacks, groups", kind: "magic" },
+        { label: "Prime Vision", text: "shelves, roots, fractions, powers", kind: "answer" },
+        { label: "Rule", text: "check again before crossing", kind: "rule" }
+      ]
     }
   };
 
@@ -289,7 +337,7 @@
     }
   };
 
-  let frames = mode === "result" ? resultFrames(outcome) : mode === "chapter2" ? chapterTwoFrames() : introFrames();
+  let frames = storyFramesForMode();
   let currentIndex = 0;
   let currentBgKey = "";
   let typeTimer = 0;
@@ -334,6 +382,14 @@
   function frameText(frame) {
     const text = fillPlayerName(frame.text || "");
     return isNarration(frame) ? `[ ${text} ]` : text;
+  }
+
+  function storyFramesForMode() {
+    if (mode === "result") return resultFrames(outcome);
+    if (mode === "chapter2") return chapterTwoFrames();
+    if (mode === "chapter2-test-setup") return chapterTwoTestSetupFrames();
+    if (mode === "chapter2-ending") return chapterTwoEndingFrames();
+    return introFrames();
   }
 
   function introFrames() {
@@ -765,6 +821,101 @@
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Elder Shellwick", text: "Then, slightly official apprentices... prepare yourselves." },
       { bg: "pathBeyondRootGate", sprite: "none", elder: "none", speaker: "Narrator", text: "The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time." },
       { bg: "pathBeyondRootGate", sprite: "none", elder: "none", speaker: "Narrator", text: "A new path was waiting.", reward: "chapter2" }
+    ];
+  }
+
+  function chapterTwoTestSetupFrames() {
+    return [
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Primewood Gate Trial Setup", relicReveal: "clear" },
+      { bg: "visionRelicCase", sprite: "none", elder: "elder", speaker: "Narrator", text: "The four Vision Relics rested on Shellwick's table.", relicReveal: "lights" },
+      { bg: "visionRelicCase", sprite: "none", elder: "elder", speaker: "Narrator", text: "Shelf Scale. Primewood Seed. Fraction Loom. Power Tally.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "We have all four Vision Relics.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "So we go back to the gate?", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Yes. Calmly. Heroically. Without tripping.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "A pause.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "Probably.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Primewood Gate will not test whether you carry the relics.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "It will not?", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It will test whether the relics have entered your thinking.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "I do not feel relics in there.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "That may be good.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "It is a figure of speech.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Good. The Shelf Scale looked heavy.", relicReveal: "all" },
+      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Far above the Root Gate, your phone flashed blue again.", relicReveal: "clear" },
+      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "You", text: "My phone." },
+      { bg: "bluePhoneSignal", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "We are closer than before." },
+      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Then we should go now." },
+      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You may reach the gate." },
+      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "But do not reach faster than you understand." },
+      { bg: "bluePhoneSignal", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "That sounds like wisdom." },
+      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "You", text: "It also sounds like a warning." },
+      { bg: "bluePhoneSignal", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Most useful wisdom does." },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate rose beyond the higher trail.", relicReveal: "clear" },
+      { bg: "primeValley", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Four sockets waited on the stone.", relicReveal: "lights" },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Shelf Scale balanced the first socket.", relicReveal: "term" },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Seed rooted itself into the second.", relicReveal: "sign" },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom threaded silver light through the third.", relicReveal: "parity" },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally sparked across the final socket.", relicReveal: "factor" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "See beneath the number. Clean what can be cleaned. Compact what repeats.", board: "primewoodGateRule", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "I understood almost all of that.", board: "primewoodGateRule", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Enough to begin.", board: "primewoodGateRule", relicReveal: "all", reward: "chapter2-test-setup" }
+    ];
+  }
+
+  function chapterTwoEndingFrames() {
+    return [
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "Primewood Gate Result: Season 1 Ending", relicReveal: "clear" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Shelf Scale balanced matching shelves.", relicReveal: "term" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Seed revealed prime roots.", relicReveal: "sign" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom rewove divided paths.", relicReveal: "parity" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally compacted repeated factors.", relicReveal: "factor" },
+      { bg: "visionRelicCase", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "The four Vision Relics shone together.", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Numbers opened in the air, revealing their prime elements.", board: "roots12", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I can see inside them.", board: "roots12", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Their prime pieces.", board: "roots12", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Their prime elements.", board: "roots12", relicReveal: "all" },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate opened.", relicReveal: "all" },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Beyond the gate, a thin bridge of light reached toward your phone.", relicReveal: "clear" },
+      { bg: "bluePhoneSignal", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "There! I can see it!" },
+      { bg: "bluePhoneSignal", sprite: "miraDetermined", elder: "elder", speaker: "You", text: "The phone is right there." },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "A final fraction appeared across the path.", board: "primewoodCleanCheck" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "30 over 42 opened into 2 x 3 x 5 over 2 x 3 x 7.", board: "primewoodCleanCheck" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "The shared 2 vanished, and 15 over 21 remained.", board: "primewoodCleanCheck" },
+      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The bridge almost completed itself." },
+      { bg: "chapterTwoBoard", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The unfinished shared 3 glowed red.", board: "primewoodCleanCheck" },
+      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The bridge cracked beneath the almost-finished path." },
+      { bg: "bluePhoneSignal", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The phone lifted farther into the blue light." },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "A warning burned across the gate: Clean all shared roots before crossing.", board: "primewoodCleanCheck" },
+      { bg: "primeValley", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "We almost had it." },
+      { bg: "primeValley", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Her voice fell quiet. Then her eyes sharpened." },
+      { bg: "primeValley", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "No. That is not right. We did have it for a second." },
+      { bg: "primeValley", sprite: "miraWorried", elder: "elder", speaker: "You", text: "I messed up." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Mira", text: "You rushed. Which is different." },
+      { bg: "primeValley", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Then we climb higher." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Ridge did not take it beyond reach. It moved it beyond your current understanding." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "What the Ridge hides behind a gate, it means to be reached." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You will reach it. But not by rushing." },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "elder", speaker: "Narrator", text: "Shellwick pointed to the unfinished fraction.", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "elder", speaker: "Narrator", text: "15 over 21 opened into 3 x 5 over 3 x 7.", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "elder", speaker: "Narrator", text: "The shared 3 faded. 5 over 7 remained.", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Check again. Then move.", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "That is our new rule.", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Our?", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Yes. Our.", board: "primewoodCleanFinal" },
+      { bg: "primeValley", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate closed gently behind you.", relicReveal: "clear" },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Above it, a new gate flickered. Your phone's blue light waited behind it, farther now, but still visible." },
+      { bg: "bluePhoneSignal", sprite: "miraDetermined", elder: "none", speaker: "Mira", text: "You helped me get through Root Gate and Primewood Gate. So now I will help you reach the next one." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The first season teaches patience." },
+      { bg: "primeValley", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Fractions, prime roots, emergency noodles... and patience?" },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Mostly patience." },
+      { bg: "primeValley", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Emergency noodles are also patient. They wait in the satchel." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "That is not the lesson, but I accept the observation." },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "The path home had moved higher.", board: "seasonOneComplete" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "You had a direction.", board: "seasonOneComplete" },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "You had Prime Element Vision.", board: "seasonOneComplete" },
+      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "none", speaker: "Narrator", text: "And you were no longer climbing alone.", board: "seasonOneComplete" },
+      { bg: "chapterTwoBoard", sprite: "miraDetermined", elder: "none", speaker: "Mira", text: "Come on. We check again, then move.", board: "seasonOneComplete", reward: "chapter2-season1" }
     ];
   }
 
@@ -1829,6 +1980,41 @@
   }
 
   function rewardContent(kind) {
+    if (kind === "chapter2-test-setup") {
+      return {
+        key: CHAPTER_TWO_TEST_SETUP_KEY,
+        title: "Primewood Gate Trial Ready",
+        summary: "The Vision Relics have entered your thinking. The gate is ready to test what you can do without their help.",
+        lines: [
+          "Checkpoint: Prime Element Vision Test",
+          "Questions: 50",
+          "Passing Score: 46 / 50 or higher",
+          "Rule: prepare paper and pencil. No calculator.",
+          "Reminder: check again, then move."
+        ],
+        actions: [
+          { href: "chapter-2-test.html", text: "Begin Chapter 2 Test" },
+          { href: "index.html?view=quest#quest", text: "Return to Mountain Trail", secondary: true }
+        ]
+      };
+    }
+
+    if (kind === "chapter2-season1") {
+      return {
+        key: CHAPTER_TWO_ENDING_KEY,
+        title: "Season 1 Complete",
+        summary: "Prime Element Vision awakened. The path home moved higher, but it is no longer invisible.",
+        lines: [
+          "Season 1: Term Vision + Prime Element Vision",
+          "New Rule: Check again. Then move.",
+          "Next Objective: return to Mountain Trail and prepare for the higher gate."
+        ],
+        actions: [
+          { href: "index.html?view=quest#quest", text: "Return to Mountain Trail" }
+        ]
+      };
+    }
+
     if (kind === "chapter2") {
       return {
         key: CHAPTER_TWO_OPENING_KEY,
@@ -1905,7 +2091,8 @@
     stopVoice();
     stopSoundCues({ fadeMs: 280 });
     if (kind === "pass") playSoundCues(certificateUnlockCues);
-    if (kind === "chapter2") playSoundCues(chapterUnlockCues);
+    if (kind === "chapter2" || kind === "chapter2-season1") playSoundCues(chapterUnlockCues);
+    if (kind === "chapter2-test-setup") playSoundCues(softRevealCue);
     const content = rewardContent(kind);
     try {
       localStorage.setItem(content.key, "true");

@@ -35,6 +35,7 @@
 	const CERT_BODY_SERIF = '"Inter", "Trebuchet MS", Arial, sans-serif';
 	const CONFIRM_NAV_DELAY_MS = 780;
 	const POINTER_SFX_SUPPRESS_MS = 1400;
+	const CHAPTER_TWO_TEST_SETUP_KEY = "mathRidge_storyComplete_chapter_2_test_setup";
 	const sfxPresets = {
 		firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1200, fadeOut: 240 },
 		secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1200, fadeOut: 240 },
@@ -977,9 +978,25 @@
 		ensureBottomControlsDom();
 	}
 
+	function hasSeenChapterTwoTestSetup() {
+		try { return localStorage.getItem(CHAPTER_TWO_TEST_SETUP_KEY) === "true"; }
+		catch (error) { return false; }
+	}
+
+	function certificateContinueHref(meta) {
+		if (config.playId === "2_4" && !hasSeenChapterTwoTestSetup()) return "story-chapter-2-test-setup.html";
+		return meta.continueHref || "";
+	}
+
+	function certificateContinueLabel(meta) {
+		if (config.playId === "2_4" && !hasSeenChapterTwoTestSetup()) return "Begin Primewood Gate Setup";
+		return meta.continueLabel || "Continue";
+	}
+
 	function renderCertificateActions(meta) {
-		const continueAction = meta.continueHref
-			? `<a class="trail-button primary-action" href="${escapeHTML(meta.continueHref)}">${escapeHTML(meta.continueLabel || "Continue")}</a>`
+		const href = certificateContinueHref(meta);
+		const continueAction = href
+			? `<a class="trail-button primary-action" href="${escapeHTML(href)}">${escapeHTML(certificateContinueLabel(meta))}</a>`
 			: "";
 		const returnClass = continueAction ? "secondary-action" : "primary-action";
 
