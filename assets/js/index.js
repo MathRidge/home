@@ -77,6 +77,7 @@ const TEST_RESULT_CERTIFICATE_TEMPLATE = {
 };
 const TEST_CERT_SERIF = '"Playfair Display", "Palatino Linotype", Georgia, serif';
 const TEST_CERT_SCRIPT = '"Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive';
+const MASTERY_CERTIFICATE_MIN_PERCENT = 80;
 let testCertificateTemplateImage = null;
 let testCertificateTemplatePromise = null;
 
@@ -90,6 +91,7 @@ const chapterTests = [
     assessmentTitle: "Term Vision Mastery Assessment",
     checkpointTitle: "",
     bodyText: "Awarded for demonstrating mastery in recognizing terms, interpreting sign behavior, and evaluating signed expressions through structural reasoning.",
+    retryBodyText: "Good attempt. Keep building sign-structure mastery, strengthen the method, and try again.",
     image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_1", "mathRidge_testResult_chapter1"],
     dataKey: "mathRidge_testResult_chapter_1_data",
@@ -106,6 +108,7 @@ const chapterTests = [
     assessmentTitle: "Prime Element Vision Mastery Assessment",
     checkpointTitle: "",
     bodyText: "Awarded for demonstrating mastery in seeing values as prime pieces, simplifying fraction structures, and tracking repeated factors.",
+    retryBodyText: "Good attempt. Keep building prime-piece mastery, strengthen the method, and try again.",
     image: TEST_RESULT_CERTIFICATE_IMAGE,
     storageKeys: ["mathRidge_testResult_chapter_2", "mathRidge_testResult_chapter2"],
     dataKey: "mathRidge_testResult_chapter_2_data",
@@ -1051,12 +1054,25 @@ function bestTestAttempt(data, history) {
   }, null);
 }
 
+function isTestCertificateWorthy(data) {
+  const percent = Number(data?.percent);
+  return Boolean(data && Number.isFinite(percent) && percent >= MASTERY_CERTIFICATE_MIN_PERCENT);
+}
+
 function testMasteryStatus(data) {
   if (!data) return "Awaiting Attempt";
   const percent = Number(data.percent);
+  if (!isTestCertificateWorthy(data)) return "Practice Needed";
   if (!data.passed) return "Retry Recommended";
   if (Number.isFinite(percent) && percent >= 95) return "Passed with Distinction";
   return "Passed";
+}
+
+function testCertificateBodyText(test, data) {
+  if (data && isTestCertificateWorthy(data) && !data.passed) {
+    return test.retryBodyText || "Good attempt. Keep building mastery, strengthen the method, and try again.";
+  }
+  return test.bodyText || "Awarded for demonstrating mastery through careful mathematical reasoning.";
 }
 
 function testCertificateDetails(test) {
@@ -1069,7 +1085,7 @@ function testCertificateDetails(test) {
     data,
     studentName: preferredCertificateName(data),
     masteryTitle: test.masteryTitle || test.title,
-    bodyText: test.bodyText || "Awarded for demonstrating mastery through careful mathematical reasoning.",
+    bodyText: testCertificateBodyText(test, data),
     assessmentTitle: test.assessmentTitle || test.chapter.replace(" Test", " Mastery Assessment"),
     checkpointTitle: test.checkpointTitle ?? test.title,
     scoreText: data ? `${correct} / ${total}` : "-- / 40",
@@ -1130,6 +1146,20 @@ function renderTestCertificateOverlay(test) {
     `;
   }
 
+  if (!isTestCertificateWorthy(details.data)) {
+    return `
+      <div class="result-certificate-overlay mastery recorded">
+        <span class="result-cert-pending-assessment">${assessmentText}</span>
+        <span class="result-cert-score">
+          Final Score: ${escapeHTML(details.scoreText)}<br>
+          Performance: ${escapeHTML(details.performanceText)}<br>
+          Status: ${escapeHTML(details.statusText)}
+        </span>
+        <em class="result-cert-pending-date">Mastery certificate opens at ${MASTERY_CERTIFICATE_MIN_PERCENT}%.</em>
+      </div>
+    `;
+  }
+
   return `
     <div class="result-certificate-overlay mastery ${details.data.passed ? "passed" : "retry"}">
       <strong class="result-cert-title">${escapeHTML(details.masteryTitle)}</strong>
@@ -1154,18 +1184,19 @@ function renderTestResults(targetId = "") {
 
   const html = chapterTests.map(test => {
     const data = readTestResultData(test);
-    const image = data ? readTestResultImage(test) : test.image;
+    const certificateWorthy = isTestCertificateWorthy(data);
+    const image = certificateWorthy ? readTestResultImage(test) : test.image;
     return `
       <article class="test-result-card">
         <h4>${escapeHTML(test.chapter)}</h4>
         <p><strong>${escapeHTML(test.title)}</strong><br>${escapeHTML(test.range)}</p>
-        <div class="result-image-frame test-certificate-frame ${data ? (data.passed ? "passed" : "retry") : "pending"}">
+        <div class="result-image-frame test-certificate-frame ${data ? (certificateWorthy ? (data.passed ? "passed" : "retry") : "recorded") : "pending"}">
           <img src="${escapeHTML(image)}" alt="${escapeHTML(test.chapter)} result preview" />
           ${renderTestCertificateOverlay(test)}
         </div>
         ${renderTestResultStats(test)}
         <div class="result-note">${escapeHTML(test.note)}</div>
-        ${data ? `
+        ${certificateWorthy ? `
           <div class="result-card-actions test-result-save-actions">
             <button class="pill-btn result-save-btn" type="button" onclick="downloadTestCertificate('${test.id}')">Save Mastery Certificate</button>
           </div>
@@ -1431,6 +1462,13 @@ function downloadTestCertificate(testId) {
   const details = testCertificateDetails(test);
   if (!details.data) {
     showModal("No Test Result Yet", "Complete the chapter test first, then the mastery certificate can be saved to this device.", [
+      { text: "OK", className: "gold-btn", action: closeModal }
+    ]);
+    return;
+  }
+
+  if (!isTestCertificateWorthy(details.data)) {
+    showModal("Mastery Certificate Not Ready", `A score of ${MASTERY_CERTIFICATE_MIN_PERCENT}% or higher can be saved as a mastery certificate. This attempt is recorded, and you can retake the checkpoint when ready.`, [
       { text: "OK", className: "gold-btn", action: closeModal }
     ]);
     return;

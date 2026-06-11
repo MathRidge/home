@@ -14,20 +14,23 @@
   <link rel="shortcut icon" type="image/png" href="assets/images/logo/MathRidge_AppIcon_true_alpha.png?v=20260602-app-icon" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
   <link rel="apple-touch-icon" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
-  <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-minus-toggle" />
+  <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260611-time-sticker" />
 </head>
-<body>
+<body class="root-gate-test-page">
   <main class="exam-shell">
     <header class="exam-hero">
       <a class="return-link" href="index.html?view=quest#quest">Mountain Trail</a>
       <div>
         <p class="exam-kicker">Chapter 1 Checkpoint</p>
         <h1>Root Gate Exam</h1>
-        <p>Complete all 40 direct-answer questions in under 15 minutes. A score of 92% or higher opens Chapter 2.</p>
+        <p>Complete all 40 direct-answer questions in under 20 minutes. A score of 92% or higher opens Chapter 2.</p>
       </div>
-      <div class="timer-card" aria-live="polite">
-        <span>Time Remaining</span>
-        <strong id="timerText">15:00</strong>
+      <div class="timer-card time-sticker" id="timeSticker" aria-live="polite">
+        <button class="time-sticker-button" id="timeStickerButton" type="button" aria-expanded="false" aria-controls="timeStickerPanel">Time</button>
+        <div class="time-sticker-panel" id="timeStickerPanel" aria-hidden="true">
+          <span>Time Remaining</span>
+          <strong id="timerText">20:00</strong>
+        </div>
       </div>
     </header>
 
@@ -88,6 +91,6 @@
     </div>
   </section>
 
-  <script src="assets/js/root-gate-test.js?v=20260608-mastery-certificate"></script>
+  <script src="assets/js/root-gate-test.js?v=20260611-time-sticker"></script>
 </body>
 </html>

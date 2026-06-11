@@ -6467,6 +6467,8 @@ body.index-page .certificate-vault-tests .test-results-grid {
   scroll-padding: 4px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 body.index-page .certificate-vault-tests .test-result-card {
@@ -6475,7 +6477,9 @@ body.index-page .certificate-vault-tests .test-result-card {
 }
 
 body.index-page .certificate-vault-tests .test-results-grid::-webkit-scrollbar {
-  height: 9px;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body.index-page .certificate-vault-tests .test-results-grid::-webkit-scrollbar-track {
@@ -6591,10 +6595,14 @@ body.index-page .certificate-carousel {
   scroll-padding-inline: var(--certificate-edge-space);
   padding: 10px var(--certificate-edge-space) 28px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 body.index-page .certificate-carousel::-webkit-scrollbar {
-  height: 9px;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 body.index-page .certificate-carousel::-webkit-scrollbar-track {
@@ -6605,6 +6613,12 @@ body.index-page .certificate-carousel::-webkit-scrollbar-track {
 body.index-page .certificate-carousel::-webkit-scrollbar-thumb {
   background: rgba(242,184,75,0.44);
   border-radius: 999px;
+}
+
+body.index-page .certificate-vault-tests .test-results-grid,
+body.index-page .certificate-carousel {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
 }
 
 body.index-page .certificate-carousel-item {

@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const TIME_LIMIT_SECONDS = 35 * 60;
+  const TIME_LIMIT_SECONDS = 40 * 60;
   const TOTAL_QUESTIONS = 50;
   const PASSING_CORRECT = 46;
   const CHAPTER_PASS_KEY = "mathRidge_testPassed_chapter_2";

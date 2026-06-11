@@ -147,6 +147,94 @@ h1 {
   color: var(--red);
 }
 
+.root-gate-test-page .time-sticker {
+  position: fixed;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(10px, env(safe-area-inset-right));
+  z-index: 70;
+  min-width: 0;
+  display: block;
+  justify-items: initial;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.root-gate-test-page .time-sticker-button {
+  min-height: 34px;
+  min-width: 58px;
+  border: 1px solid rgba(255, 231, 168, 0.26);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: rgba(5, 9, 20, 0.46);
+  color: rgba(255, 231, 168, 0.78);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.root-gate-test-page .time-sticker-button:focus-visible {
+  outline: 2px solid rgba(255, 231, 168, 0.78);
+  outline-offset: 2px;
+}
+
+.root-gate-test-page .time-sticker-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 132px;
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 231, 168, 0.32);
+  border-radius: 8px;
+  background: rgba(5, 9, 20, 0.82);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top right;
+  transition: opacity 160ms ease, transform 180ms ease, visibility 160ms ease;
+  visibility: hidden;
+}
+
+.root-gate-test-page .time-sticker.is-open .time-sticker-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+}
+
+.root-gate-test-page .time-sticker-panel span {
+  color: rgba(255, 247, 232, 0.66);
+  font-size: 0.68rem;
+  font-weight: 850;
+}
+
+.root-gate-test-page .time-sticker-panel strong {
+  color: var(--gold-light);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.root-gate-test-page .time-sticker.is-warning .time-sticker-button {
+  border-color: rgba(239, 119, 119, 0.38);
+  color: rgba(255, 203, 203, 0.82);
+}
+
+.root-gate-test-page .time-sticker.is-warning .time-sticker-panel strong {
+  color: var(--red);
+}
+
 .exam-status {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -543,6 +631,19 @@ button:disabled,
 
   .timer-card {
     justify-self: stretch;
+  }
+
+  .root-gate-test-page .time-sticker {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+    justify-self: auto;
+  }
+
+  .root-gate-test-page .time-sticker-button {
+    min-height: 32px;
+    min-width: 54px;
+    padding: 0 10px;
+    font-size: 0.68rem;
   }
 
   .exam-status,

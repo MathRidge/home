@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const TIME_LIMIT_SECONDS = 15 * 60;
+  const TIME_LIMIT_SECONDS = 20 * 60;
   const TOTAL_QUESTIONS = 40;
   const PASSING_CORRECT = 37;
   const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";
@@ -42,6 +42,9 @@
   const questionGrid = document.getElementById("questionGrid");
   const timerText = document.getElementById("timerText");
   const timerCard = document.querySelector(".timer-card");
+  const timeSticker = document.getElementById("timeSticker");
+  const timeStickerButton = document.getElementById("timeStickerButton");
+  const timeStickerPanel = document.getElementById("timeStickerPanel");
   const answeredCount = document.getElementById("answeredCount");
   const examMessage = document.getElementById("examMessage");
   const resultLayer = document.getElementById("resultLayer");
@@ -527,6 +530,18 @@
     timerId = 0;
   }
 
+  function setTimeStickerOpen(open) {
+    timeSticker?.classList.toggle("is-open", open);
+    timeStickerButton?.setAttribute("aria-expanded", open ? "true" : "false");
+    timeStickerPanel?.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+
+  function handleTimeStickerOutsidePointer(event) {
+    if (timeSticker?.classList.contains("is-open") && !event.target.closest?.("#timeSticker")) {
+      setTimeStickerOpen(false);
+    }
+  }
+
   function firstUnansweredCard() {
     return questionCards().find(card => !answerForCard(card).answered);
   }
@@ -772,6 +787,22 @@
   }
 
   startExamButton?.addEventListener("click", startExam);
+
+  timeStickerButton?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    setTimeStickerOpen(!timeSticker?.classList.contains("is-open"));
+  });
+
+  document.addEventListener("pointerdown", handleTimeStickerOutsidePointer, { capture: true });
+
+  if (!window.PointerEvent) {
+    document.addEventListener("touchstart", handleTimeStickerOutsidePointer, { capture: true, passive: true });
+  }
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") setTimeStickerOpen(false);
+  });
 
   examForm?.addEventListener("submit", event => {
     event.preventDefault();
