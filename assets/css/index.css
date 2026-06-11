@@ -6408,47 +6408,11 @@ body.index-page .certificate-vault-title-card {
   }
 }
 
-body.index-page .certificate-vault-intro {
+body.index-page .certificate-vault-banner-actions {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 12px;
-  width: min(70%, 620px);
-  margin: 18px auto 0;
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,231,168,0.18);
-  background:
-    linear-gradient(135deg, rgba(255,247,232,0.09), rgba(92,58,28,0.12)),
-    rgba(7,16,29,0.20);
-  box-shadow:
-    0 10px 24px rgba(0,0,0,0.16),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-}
-
-body.index-page .certificate-vault-copy {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-  justify-items: center;
-  text-align: center;
-}
-
-body.index-page .certificate-vault-intro strong {
-  color: #ffe3a8;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: clamp(1rem, 1.7vw, 1.28rem);
-}
-
-body.index-page .certificate-vault-intro span {
-  display: none;
-}
-
-body.index-page .certificate-vault-mode-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+  margin-top: 10px;
+  pointer-events: auto;
 }
 
 body.index-page .certificate-vault-mode-btn {
@@ -6857,19 +6821,6 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 }
 
 @media (max-width: 760px) {
-  body.index-page .certificate-vault-intro {
-    align-items: center;
-    flex-direction: column;
-    width: min(72%, 330px);
-    margin: 14px auto 0;
-    padding: 11px 12px;
-  }
-
-  body.index-page .certificate-vault-mode-actions {
-    width: 100%;
-    justify-content: center;
-  }
-
   body.index-page .certificate-vault-mode-btn {
     flex: 0 1 238px;
     min-width: 0;
@@ -7411,5 +7362,88 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   body.index-page .message-panel .message-title-card .panel-title p {
     font-size: clamp(0.66rem, 1.18vw, 0.80rem) !important;
     line-height: 1.12 !important;
+  }
+}
+
+/* Banner subtitle refinement: keep controls in the art and give captions room to breathe. */
+@media (max-width: 760px), (max-width: 980px) and (orientation: landscape) {
+  body.index-page .certificate-vault-banner-actions {
+    margin-top: 12px !important;
+  }
+
+  body.index-page .certificate-vault-banner-actions,
+  body.index-page .certificate-vault-banner-actions * {
+    pointer-events: auto !important;
+  }
+
+  body.index-page .certificate-vault-title-card .certificate-vault-mode-btn {
+    width: min(100%, 190px) !important;
+    min-height: 34px !important;
+    padding: 8px 14px !important;
+    border-radius: 999px !important;
+    font-size: clamp(0.68rem, 2.4vw, 0.84rem) !important;
+    line-height: 1.05 !important;
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.24),
+      inset 0 1px 0 rgba(255, 255, 255, 0.26) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body.index-page .cabin-panel .cabin-title-card .panel-title {
+    left: 3.6% !important;
+    top: 32.8% !important;
+    width: 43.2% !important;
+  }
+
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    font-size: clamp(0.52rem, 2.02vw, 0.61rem) !important;
+    line-height: 1.32 !important;
+  }
+
+  body.index-page .certificate-vault-title-card .panel-title {
+    left: 14% !important;
+    top: 42.8% !important;
+    width: 72% !important;
+  }
+
+  body.index-page .certificate-vault-title-card .panel-title p {
+    font-size: clamp(0.66rem, 2.68vw, 0.80rem) !important;
+    line-height: 1.34 !important;
+  }
+
+  body.index-page .certificate-vault-shelves {
+    padding-top: 18px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    font-size: 0.50rem !important;
+    line-height: 1.28 !important;
+  }
+
+  body.index-page .certificate-vault-title-card .panel-title p {
+    font-size: 0.63rem !important;
+    line-height: 1.30 !important;
+  }
+
+  body.index-page .certificate-vault-title-card .certificate-vault-mode-btn {
+    min-height: 32px !important;
+    font-size: 0.66rem !important;
+  }
+}
+
+@media (max-width: 980px) and (orientation: landscape) {
+  body.index-page .cabin-panel .cabin-title-card .panel-title p {
+    line-height: 1.30 !important;
+  }
+
+  body.index-page .certificate-vault-title-card .panel-title {
+    top: 39.2% !important;
+  }
+
+  body.index-page .certificate-vault-title-card .panel-title p {
+    line-height: 1.28 !important;
   }
 }

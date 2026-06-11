@@ -943,10 +943,6 @@ function renderCertificateVault() {
   const shelves = document.getElementById("certificateVaultShelves");
   if (!shelves) return;
 
-  const earnedCount = certificateList.filter(item => hasCertificate(item.id)).length;
-  const progress = document.getElementById("certificateVaultProgress");
-  if (progress) progress.textContent = `Certificates earned: ${earnedCount} / ${certificateList.length}`;
-
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
   shelves.innerHTML = chapters.map(renderCertificateVaultShelf).join("");
   const display = document.getElementById("certificateVaultDisplay");

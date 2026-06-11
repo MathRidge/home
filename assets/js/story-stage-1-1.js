@@ -251,6 +251,7 @@
 
   const relicRevealCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.55, volume: 0.34, fadeOut: 260, lockMs: 760 };
   const softRelicCue = { file: "enchanted-spell-casting.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 240, lockMs: 560 };
+  const phoneSignalCue = { file: "magic ping.mp3", start: 0, end: 1.9, volume: 0.22, fadeOut: 420, lockMs: 620 };
   const relicFadeCue = { file: "whoosh.mp3", start: 0, end: 1.25, volume: 0.18, fadeOut: 260, lockMs: 500 };
   const funnyPipeCue = { file: "funny-pipe-effect.mp3", start: 0, end: 1.35, volume: 0.24, fadeOut: 220, lockMs: 620 };
   const chalkCueA = { file: "chuck-writing.mp3", start: 0.45, end: 2.3, volume: 0.34, fadeOut: 260, lockMs: 1200 };
@@ -273,6 +274,10 @@
     ["Mira walked beside you, still hugging her little satchel close.", [{ file: "walk-steps.mp3", start: 0.2, end: 5.2, volume: 0.18, fadeOut: 900, lockMs: 800 }]],
     ["Then her stomach made a tiny sound. Grrrumble.", [{ file: "tummy-growling.mp3", volume: 0.48, end: 2.25, fadeIn: 760, fadeOut: 420 }]],
     ["You kept walking. But one question would not leave your mind.", [{ file: "walk-steps.mp3", start: 0.35, end: 5.65, volume: 0.16, fadeOut: 1000, lockMs: 800 }]],
+    ["My phone...", [phoneSignalCue]],
+    ["My phone... absorbed a rock?", [phoneSignalCue]],
+    ["So my way home is inside my phone.", [phoneSignalCue]],
+    ["And your phone is somewhere on Math Ridge.", [phoneSignalCue]],
     ["Mira opened her satchel. It looked far too small to hold anything important.", [satchelCueA]],
     ["Mira opened her emergency satchel. Her arm went in farther than it should have.", [satchelCueB]],
     ["She pulled out a wooden spoon.", [{ file: "satchel search.mp3", start: 4.75, end: 5.55, volume: 0.24, fadeOut: 220 }]],
@@ -293,6 +298,7 @@
     ["The second became a compass with two glowing needles, one positive and one negative. Relic 1-2: The Sign Compass", [relicRevealCue]],
     ["The third became a crystal prism that split stacked signs into one true direction. Relic 1-3: The Parity Prism", [relicRevealCue]],
     ["The fourth became a small forge that gathered equal pieces into faster groups. Relic 1-4: The Factor Forge", [relicRevealCue]],
+    ["And my phone?", [phoneSignalCue]],
     ["The lights faded. Mira clenched her fists.", [relicFadeCue]],
     ["He handed Mira a thin booklet. The cover read: Term Manual: The Bigger Sign Rule.", manualRewardCues],
     ["Mira opened the manual. She flipped one page. Then another. Then another. Her face slowly went blank.", [{ file: "certificate-paper-rustle.mp3", start: 0, end: 2.05, volume: 0.24, fadeOut: 520 }]],
@@ -302,7 +308,8 @@
     ["She looked proud. Then Elder Shellwick wrote: 5 + (-8)", [{ file: "chuck-writing.mp3", start: 8.95, end: 10.8, volume: 0.32, fadeOut: 300 }]],
     ["Elder Shellwick nodded. 5 + (-8) = -3", [{ file: "chuck-writing.mp3", start: 11.15, end: 12.55, volume: 0.22, fadeOut: 260 }]],
     ["You eat noodles and try again?", [funnyPipeCue]],
-    ["And walking into storage closets while looking for doors.", [funnyPipeCue]]
+    ["And walking into storage closets while looking for doors.", [funnyPipeCue]],
+    ["Outside, Math Ridge glowed. Somewhere above, your phone flashed faintly blue. The first relic was waiting.", [phoneSignalCue]]
   ]);
 
   const forestAmbience = {

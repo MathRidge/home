@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260609-certificate-wall-polish" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260611-banner-subtitles" />
 </head>
 
 <body class="index-page is-index-loading" data-index-page="true">
@@ -211,21 +211,14 @@
           <div class="panel-title">
             <h2 id="certificatesTitle">Certificate Vault</h2>
             <p>Each shelf holds the official achievements earned from the trail.</p>
+            <div class="certificate-vault-banner-actions" aria-label="Certificate Vault view">
+              <button class="gold-btn certificate-vault-mode-btn" id="certificateVaultModeButton" type="button" onclick="toggleCertificateVaultMode()">Mastery Certificates</button>
+            </div>
           </div>
           <button class="banner-return-hit certificate-banner-return-cabin" type="button" onclick="showSection('cabin')" aria-label="Return to Cabin">Return to Cabin</button>
         </header>
 
         <div class="certificate-vault-wall">
-          <div class="certificate-vault-intro">
-            <div class="certificate-vault-copy">
-              <strong id="certificateVaultProgress">Certificates earned: 0 / 9</strong>
-              <span>Swipe a shelf left or right, then use the certificate's Click to View button to open the trail certificate message.</span>
-            </div>
-            <div class="certificate-vault-mode-actions" aria-label="Certificate Vault view">
-              <button class="gold-btn certificate-vault-mode-btn" id="certificateVaultModeButton" type="button" onclick="toggleCertificateVaultMode()">Mastery Certificates</button>
-            </div>
-          </div>
-
           <div class="certificate-vault-display" id="certificateVaultDisplay" data-mode="shelves">
             <div class="certificate-vault-shelves" id="certificateVaultShelves" aria-live="polite"></div>
             <div class="certificate-vault-tests" id="certificateVaultTestsPanel" hidden>
