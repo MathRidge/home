@@ -7462,9 +7462,10 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
   }
 }
 
-/* Cabin banner subtitle: slightly higher and airier on mobile. */
+/* Cabin banner subtitle: slightly higher, left-aligned to the printed title, and airier on mobile. */
 @media (max-width: 760px) {
   body.index-page .cabin-panel .cabin-title-card .panel-title {
+    left: 2.4% !important;
     top: 30.9% !important;
   }
 
@@ -7481,6 +7482,7 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 
 @media (max-width: 980px) and (orientation: landscape) {
   body.index-page .cabin-panel .cabin-title-card .panel-title {
+    left: 6.2% !important;
     top: 51.4% !important;
   }
 
