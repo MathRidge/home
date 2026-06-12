@@ -92,6 +92,7 @@
   let correctionMode = false;
   let correctionTimers = new WeakMap();
   let lastExponentInsertAt = 0;
+  let lastActiveExamInput = null;
 
   const startPanel = document.getElementById("startPanel");
   const startExamButton = document.getElementById("startExamButton");
@@ -102,6 +103,7 @@
   const timeSticker = document.getElementById("timeSticker");
   const timeStickerButton = document.getElementById("timeStickerButton");
   const timeStickerPanel = document.getElementById("timeStickerPanel");
+  const questionNavButton = document.getElementById("questionNavButton");
   const answeredCount = document.getElementById("answeredCount");
   const examMessage = document.getElementById("examMessage");
   const resultLayer = document.getElementById("resultLayer");
@@ -115,7 +117,7 @@
   const returnTrailLink = document.getElementById("returnTrailLink");
   const correctionCompletePanel = document.getElementById("correctionCompletePanel");
   const correctionRetryButton = document.getElementById("correctionRetryButton");
-  const submitButton = examForm?.querySelector(".submit-button");
+  const submitButton = document.getElementById("chapterSubmitButton") || examForm?.querySelector(".submit-button");
 
   function readJSON(key) {
     try { return JSON.parse(localStorage.getItem(key)); }
@@ -467,7 +469,7 @@
         <div class="exp-row">
           <span class="method-label">Top shelf exponential form</span>
           <div class="exp-entry">
-            <input class="exp-input-wide" data-field="topExp" type="text" inputmode="numeric" pattern="[0-9x^]*" autocomplete="off" enterkeyhint="next" aria-label="top shelf exponential form" />
+            <input class="exp-input-wide" data-field="topExp" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="next" aria-label="top shelf exponential form" />
             <div class="exp-insert-tools" aria-label="top shelf math inserts">
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="x" data-target-field="topExp" aria-label="insert multiplication">x</button>
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="^" data-target-field="topExp" aria-label="insert exponent">^</button>
@@ -478,7 +480,7 @@
         <div class="exp-row">
           <span class="method-label">Bottom shelf exponential form</span>
           <div class="exp-entry">
-            <input class="exp-input-wide" data-field="bottomExp" type="text" inputmode="numeric" pattern="[0-9x^]*" autocomplete="off" enterkeyhint="next" aria-label="bottom shelf exponential form" />
+            <input class="exp-input-wide" data-field="bottomExp" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="next" aria-label="bottom shelf exponential form" />
             <div class="exp-insert-tools" aria-label="bottom shelf math inserts">
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="x" data-target-field="bottomExp" aria-label="insert multiplication">x</button>
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="^" data-target-field="bottomExp" aria-label="insert exponent">^</button>
@@ -828,7 +830,14 @@
 
   function activeExamInput() {
     const active = document.activeElement;
-    return active?.matches?.(".question-card input") ? active : null;
+    if (active?.matches?.(".question-card input")) {
+      lastActiveExamInput = active;
+      return active;
+    }
+    if (lastActiveExamInput?.isConnected && !lastActiveExamInput.disabled) {
+      return lastActiveExamInput;
+    }
+    return null;
   }
 
   function shouldPreservePhoneKeypad(event) {
@@ -978,6 +987,7 @@
 
     finished = true;
     stopTimer();
+    setQuestionNavVisible(false);
 
     let correct = 0;
     const cards = questionCards();
@@ -1078,7 +1088,7 @@
     if (!preview) return;
     const counts = parseExponentExpression(input.value);
     if (!counts) {
-      preview.textContent = input.value.trim() ? "Use form like 2^4 x 3^3 x 7." : "";
+      preview.textContent = "";
       return;
     }
     const html = VALID_EXP_BASES
@@ -1105,7 +1115,9 @@
 
   function insertExponentToken(button) {
     const card = button.closest(".question-card");
-    const target = card?.querySelector(`[data-field="${button.dataset.targetField}"]`);
+    const target =
+      card?.querySelector(`[data-field="${button.dataset.targetField}"]`) ||
+      activeExamInput();
     if (!target || target.disabled) return;
     const token = button.dataset.expInsert || "^";
     const start = target.selectionStart ?? target.value.length;
@@ -1116,6 +1128,45 @@
     target.setSelectionRange(caret, caret);
     target.dispatchEvent(new Event("input", { bubbles: true }));
     target.setSelectionRange(caret, caret);
+    window.setTimeout(() => {
+      target.focus({ preventScroll: true });
+      target.setSelectionRange(caret, caret);
+    }, 0);
+  }
+
+  function setQuestionNavVisible(visible) {
+    questionNavButton?.classList.toggle("hidden", !visible);
+  }
+
+  function questionScrollAnchor() {
+    return window.scrollY + Math.max(120, window.innerHeight * 0.28);
+  }
+
+  function currentQuestionIndex() {
+    const cards = questionCards();
+    if (!cards.length) return -1;
+    const anchor = questionScrollAnchor();
+    let current = 0;
+    cards.forEach((card, index) => {
+      if (card.getBoundingClientRect().top + window.scrollY <= anchor) current = index;
+    });
+    return current;
+  }
+
+  function nextQuestionTarget() {
+    const cards = questionCards();
+    if (!cards.length) return null;
+    const current = currentQuestionIndex();
+    const afterCurrent = cards.slice(current + 1);
+    return afterCurrent.find(card => !answerForCard(card).answered) ||
+      cards.find(card => !answerForCard(card).answered) ||
+      cards[(current + 1 + cards.length) % cards.length];
+  }
+
+  function goToNextQuestion() {
+    const target = nextQuestionTarget();
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function startExam() {
@@ -1125,6 +1176,7 @@
     startPanel.classList.add("hidden");
     examForm.classList.remove("hidden");
     startTimer();
+    setQuestionNavVisible(true);
     questionGrid.querySelector("input")?.focus();
   }
 
@@ -1136,10 +1188,12 @@
     startedAt = 0;
     timerText.textContent = formatTime(TIME_LIMIT_SECONDS);
     timerCard?.classList.remove("is-warning");
+    lastActiveExamInput = null;
     resultLayer.classList.add("hidden");
     hideCorrectionCompletePanel();
     examForm.classList.add("hidden");
     startPanel.classList.remove("hidden");
+    setQuestionNavVisible(false);
     examMessage.textContent = "Answer every question before submitting.";
     if (submitButton) {
       submitButton.disabled = false;
@@ -1168,6 +1222,11 @@
     if (event.key === "Escape") setTimeStickerOpen(false);
   });
 
+  questionNavButton?.addEventListener("click", event => {
+    event.preventDefault();
+    goToNextQuestion();
+  });
+
   examForm?.addEventListener("submit", event => {
     event.preventDefault();
     if (correctionMode) {
@@ -1181,21 +1240,26 @@
     const expButton = event.target.closest("[data-exp-insert]");
     if (!expButton) return false;
     event.preventDefault();
-    if (source === "click" && Date.now() - lastExponentInsertAt < 500) return true;
-    lastExponentInsertAt = Date.now();
+    event.stopPropagation();
+    const now = Date.now();
+    if (now - lastExponentInsertAt < 220) {
+      const card = expButton.closest(".question-card");
+      const target = card?.querySelector(`[data-field="${expButton.dataset.targetField}"]`) || activeExamInput();
+      window.setTimeout(() => target?.focus?.({ preventScroll: true }), 0);
+      return true;
+    }
+    lastExponentInsertAt = now;
     insertExponentToken(expButton);
     return true;
   }
 
   questionGrid?.addEventListener("pointerdown", event => {
     handleExponentInsertControl(event, "pointer");
-  });
+  }, { capture: true });
 
-  if (!window.PointerEvent) {
-    questionGrid?.addEventListener("touchstart", event => {
-      handleExponentInsertControl(event, "touch");
-    }, { passive: false });
-  }
+  questionGrid?.addEventListener("touchstart", event => {
+    handleExponentInsertControl(event, "touch");
+  }, { capture: true, passive: false });
 
   questionGrid?.addEventListener("click", event => {
     handleExponentInsertControl(event, "click");
@@ -1223,6 +1287,12 @@
 
     updateAnsweredCount();
     if (correctionMode) scheduleCorrectionCheck(card, 700);
+  });
+
+  questionGrid?.addEventListener("focusin", event => {
+    if (event.target.matches(".question-card input")) {
+      lastActiveExamInput = event.target;
+    }
   });
 
   questionGrid?.addEventListener("keydown", event => {

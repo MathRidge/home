@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Math Ridge | Chapter 2 Mastery Test</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="theme-color" content="#050914" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -15,7 +18,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
   <link rel="apple-touch-icon" href="assets/images/logo/MathRidge_AppIcon_iOS_opaque_1024.png?v=20260602-ios-opaque-icon" />
   <link rel="stylesheet" href="assets/css/root-gate-test.css?v=20260531-root-gate-minus-toggle" />
-  <link rel="stylesheet" href="assets/css/chapter-2-test.css?v=20260612-mobile-submit" />
+  <link rel="stylesheet" href="assets/css/chapter-2-test.css?v=20260612-nav-fab" />
 </head>
 <body class="chapter-2-test-page">
   <main class="exam-shell chapter-2-exam-shell">
@@ -33,6 +36,7 @@
           <strong id="timerText">40:00</strong>
         </div>
       </div>
+      <button class="question-nav-button hidden" id="questionNavButton" type="button" aria-label="Go to the next question">Next</button>
     </header>
 
     <section class="exam-status" aria-label="Exam rules">
@@ -59,7 +63,6 @@
           <strong id="answeredCount">0 / 50 answered</strong>
           <span id="examMessage">Answer every question before submitting.</span>
         </div>
-        <button class="submit-button" type="submit">Submit Test</button>
       </div>
 
       <div class="question-grid chapter-2-question-grid" id="questionGrid"></div>
@@ -73,6 +76,8 @@
           <a class="secondary-action" href="index.html?view=quest#quest">Return to Mountain Trail</a>
         </div>
       </section>
+
+      <button class="submit-button chapter-submit-fab" id="chapterSubmitButton" type="submit">Submit Test</button>
     </form>
   </main>
 
@@ -92,6 +97,6 @@
     </div>
   </section>
 
-  <script src="assets/js/chapter-2-test.js?v=20260612-mobile-submit"></script>
+  <script src="assets/js/chapter-2-test.js?v=20260612-nav-fab"></script>
 </body>
 </html>

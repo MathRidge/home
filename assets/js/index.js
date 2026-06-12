@@ -271,7 +271,7 @@ function chapterTwoTestHref() {
   if (!isChapterTwoTestUnlocked()) return "#";
   if (isChapterTwoTestPassed() && !hasWatchedChapterTwoEnding()) return "story-chapter-2-ending.html";
   if (!hasWatchedChapterTwoTestSetup()) return "story-chapter-2-test-setup.html";
-  return "chapter-2-test.html";
+  return "chapter-2-test.html?v=20260612-nav-fab";
 }
 function chapterTwoTestActionText() {
   if (!isChapterTwoTestUnlocked()) return "Locked";
