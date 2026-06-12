@@ -467,7 +467,7 @@
         <div class="exp-row">
           <span class="method-label">Top shelf exponential form</span>
           <div class="exp-entry">
-            <input class="exp-input-wide" data-field="topExp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="top shelf exponential form" />
+            <input class="exp-input-wide" data-field="topExp" type="text" inputmode="numeric" pattern="[0-9x^]*" autocomplete="off" enterkeyhint="next" aria-label="top shelf exponential form" />
             <div class="exp-insert-tools" aria-label="top shelf math inserts">
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="x" data-target-field="topExp" aria-label="insert multiplication">x</button>
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="^" data-target-field="topExp" aria-label="insert exponent">^</button>
@@ -478,7 +478,7 @@
         <div class="exp-row">
           <span class="method-label">Bottom shelf exponential form</span>
           <div class="exp-entry">
-            <input class="exp-input-wide" data-field="bottomExp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="next" aria-label="bottom shelf exponential form" />
+            <input class="exp-input-wide" data-field="bottomExp" type="text" inputmode="numeric" pattern="[0-9x^]*" autocomplete="off" enterkeyhint="next" aria-label="bottom shelf exponential form" />
             <div class="exp-insert-tools" aria-label="bottom shelf math inserts">
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="x" data-target-field="bottomExp" aria-label="insert multiplication">x</button>
               <button class="exp-insert-button" type="button" tabindex="-1" data-exp-insert="^" data-target-field="bottomExp" aria-label="insert exponent">^</button>
@@ -543,18 +543,27 @@
   }
 
   function fractionAnswer(card) {
+    const topText = fieldValue(card, "answerTop");
+    const bottomText = fieldValue(card, "answerBottom");
     const top = integerField(card, "answerTop");
     const bottom = integerField(card, "answerBottom");
-    return { top, bottom, answered: top !== null && bottom !== null && bottom > 0 };
+    return {
+      top,
+      bottom,
+      topText,
+      bottomText,
+      answered: Boolean(topText && bottomText),
+      valid: top !== null && bottom !== null && bottom > 0
+    };
   }
 
   function formatFractionAnswer(answer) {
     if (!answer || !answer.answered) return "blank";
-    return `${answer.top}/${answer.bottom}`;
+    return `${answer.topText || answer.top}/${answer.bottomText || answer.bottom}`;
   }
 
-  function allIntegersPresent(card, fields) {
-    return fields.every(field => integerField(card, field) !== null);
+  function allFieldsFilled(card, fields) {
+    return fields.every(field => fieldValue(card, field) !== "");
   }
 
   function parseExponentExpression(raw) {
@@ -597,7 +606,7 @@
 
     if (question.type === "split-division") {
       const fields = ["chunk", "leftover", "chunkCount", "leftoverCount", "answer"];
-      const answered = allIntegersPresent(card, fields);
+      const answered = allFieldsFilled(card, fields);
       const correct = answered &&
         integerField(card, "chunk") === question.chunk &&
         integerField(card, "leftover") === question.leftover &&
@@ -610,8 +619,9 @@
     if (question.type === "one-split-reduction") {
       const fields = ["topCount", "topGroup", "bottomCount", "bottomGroup"];
       const fraction = fractionAnswer(card);
-      const answered = allIntegersPresent(card, fields) && fraction.answered;
+      const answered = allFieldsFilled(card, fields) && fraction.answered;
       const correct = answered &&
+        fraction.valid &&
         integerField(card, "topCount") === question.topCount &&
         integerField(card, "topGroup") === question.group &&
         integerField(card, "bottomCount") === question.bottomCount &&
@@ -623,13 +633,13 @@
 
     if (question.type === "direct-reduction" || question.type === "fraction-product") {
       const fraction = fractionAnswer(card);
-      const correct = fraction.answered && fraction.top === question.reducedTop && fraction.bottom === question.reducedBottom;
+      const correct = fraction.valid && fraction.top === question.reducedTop && fraction.bottom === question.reducedBottom;
       return { answered: fraction.answered, correct, display: formatFractionAnswer(fraction) };
     }
 
     if (question.type === "prime-pieces") {
       const fields = ["factorA", "factorB", "factorC"];
-      const answered = allIntegersPresent(card, fields);
+      const answered = allFieldsFilled(card, fields);
       const values = fields.map(field => integerField(card, field));
       const correct = answered && values.every(value => value > 1) && product(values) === question.value;
       return { answered, correct, display: answered ? values.join(" x ") : "blank" };
@@ -642,6 +652,7 @@
     const bottomCounts = parseExponentExpression(bottomExpRaw);
     const answered = Boolean(topExpRaw && bottomExpRaw && fraction.answered);
     const correct = answered &&
+      fraction.valid &&
       sameCountMap(topCounts, question.topCounts) &&
       sameCountMap(bottomCounts, question.bottomCounts) &&
       hasRequiredExponentNotation(topExpRaw, question.topCounts) &&
@@ -826,7 +837,7 @@
 
     const target = event.target;
     if (target.closest?.(".question-card input")) return false;
-    if (target.closest?.("[data-exp-insert]")) return false;
+    if (target.closest?.("[data-exp-insert]")) return true;
     if (target.closest?.("button, a, textarea, select, [contenteditable='true']")) return false;
     return true;
   }
