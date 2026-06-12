@@ -78,6 +78,7 @@ const TEST_RESULT_CERTIFICATE_TEMPLATE = {
 const TEST_CERT_SERIF = '"Playfair Display", "Palatino Linotype", Georgia, serif';
 const TEST_CERT_SCRIPT = '"Snell Roundhand", "Bickham Script Pro", "Edwardian Script ITC", "Brush Script MT", "Segoe Script", cursive';
 const MASTERY_CERTIFICATE_MIN_PERCENT = 80;
+const TEST_PASS_MIN_PERCENT = 92;
 let testCertificateTemplateImage = null;
 let testCertificateTemplatePromise = null;
 
@@ -232,13 +233,31 @@ function hasCertificate(id) {
   const cert = readCertificate(id);
   return Boolean(cert && cert.completed);
 }
+function testById(id) {
+  return chapterTests.find(test => test.id === id);
+}
+function isPassingTestData(data) {
+  if (!data) return false;
+  if (data.passed === true) return true;
+  const percent = Number(data.percent);
+  if (Number.isFinite(percent) && percent >= TEST_PASS_MIN_PERCENT) return true;
+  const correct = Number(data.correct);
+  const total = Number(data.totalQuestions);
+  return Number.isFinite(correct) && Number.isFinite(total) && total > 0 &&
+    (correct / total) * 100 >= TEST_PASS_MIN_PERCENT;
+}
+function isStoredTestPassed(testId) {
+  const test = testById(testId);
+  return isPassingTestData(test?.dataKey ? readJSONStorage(test.dataKey) : null);
+}
 function hasCompletedNote(id) { return localStorage.getItem(storageKeyNote(id)) === "true"; }
 function hasUnlockedNote(id) { return localStorage.getItem(storageKeyNoteUnlocked(id)) === "true"; }
 function hasCompletedPlay(id) { return localStorage.getItem(storageKeyPlayComplete(id)) === "true"; }
 function lessonIndex(id) { return lessons.findIndex(lesson => lesson.id === id); }
 function isRootGatePassed() {
   return localStorage.getItem(ROOT_GATE_PASS_KEY) === "true" ||
-    localStorage.getItem(CHAPTER_ONE_TEST_PASS_KEY) === "true";
+    localStorage.getItem(CHAPTER_ONE_TEST_PASS_KEY) === "true" ||
+    isStoredTestPassed("chapter_1");
 }
 function isChapterOneRelicsComplete() {
   return ["1_1", "1_2", "1_3", "1_4"].every(id => hasCertificate(id) || hasCompletedPlay(id));
@@ -252,7 +271,8 @@ function isRootGateUnlocked() {
     isChapterOneRelicsComplete();
 }
 function isChapterTwoTestPassed() {
-  return localStorage.getItem(CHAPTER_TWO_TEST_PASS_KEY) === "true";
+  return localStorage.getItem(CHAPTER_TWO_TEST_PASS_KEY) === "true" ||
+    isStoredTestPassed("chapter_2");
 }
 function hasStoryFlag(key) {
   try { return localStorage.getItem(key) === "true"; }
@@ -271,7 +291,7 @@ function chapterTwoTestHref() {
   if (!isChapterTwoTestUnlocked()) return "#";
   if (isChapterTwoTestPassed() && !hasWatchedChapterTwoEnding()) return "story-chapter-2-ending.html";
   if (!hasWatchedChapterTwoTestSetup()) return "story-chapter-2-test-setup.html";
-  return "chapter-2-test.html?v=20260612-nav-fab";
+  return "chapter-2-test.html?v=20260612-timeout-pass";
 }
 function chapterTwoTestActionText() {
   if (!isChapterTwoTestUnlocked()) return "Locked";
@@ -1063,13 +1083,13 @@ function testMasteryStatus(data) {
   if (!data) return "Awaiting Attempt";
   const percent = Number(data.percent);
   if (!isTestCertificateWorthy(data)) return "Practice Needed";
-  if (!data.passed) return "Retry Recommended";
+  if (!isPassingTestData(data)) return "Retry Recommended";
   if (Number.isFinite(percent) && percent >= 95) return "Passed with Distinction";
   return "Passed";
 }
 
 function testCertificateBodyText(test, data) {
-  if (data && isTestCertificateWorthy(data) && !data.passed) {
+  if (data && isTestCertificateWorthy(data) && !isPassingTestData(data)) {
     return test.retryBodyText || "Good attempt. Keep building mastery, strengthen the method, and try again.";
   }
   return test.bodyText || "Awarded for demonstrating mastery through careful mathematical reasoning.";
@@ -1115,7 +1135,7 @@ function renderTestResultStats(test) {
 
   const latestScore = data ? `${Number(data.correct || 0)}/${Number(data.totalQuestions || 40)}` : "--";
   const bestScore = best ? `${Number(best.correct || 0)}/${Number(data?.totalQuestions || 40)}` : latestScore;
-  const resultText = data?.passed ? "Passed" : "Retry";
+  const resultText = isPassingTestData(data) ? "Passed" : "Retry";
   const dateText = formatTestDate(data?.completedAt);
   const attemptLabel = positiveTestInteger(data?.attemptNumber, attempts || 1);
 
@@ -1161,7 +1181,7 @@ function renderTestCertificateOverlay(test) {
   }
 
   return `
-    <div class="result-certificate-overlay mastery ${details.data.passed ? "passed" : "retry"}">
+    <div class="result-certificate-overlay mastery ${isPassingTestData(details.data) ? "passed" : "retry"}">
       <strong class="result-cert-title">${escapeHTML(details.masteryTitle)}</strong>
       <span class="result-cert-name">${escapeHTML(details.studentName)}</span>
       <span class="result-cert-body">${escapeHTML(details.bodyText)}</span>
@@ -1185,12 +1205,13 @@ function renderTestResults(targetId = "") {
   const html = chapterTests.map(test => {
     const data = readTestResultData(test);
     const certificateWorthy = isTestCertificateWorthy(data);
+    const testPassed = isPassingTestData(data);
     const image = certificateWorthy ? readTestResultImage(test) : test.image;
     return `
       <article class="test-result-card">
         <h4>${escapeHTML(test.chapter)}</h4>
         <p><strong>${escapeHTML(test.title)}</strong><br>${escapeHTML(test.range)}</p>
-        <div class="result-image-frame test-certificate-frame ${data ? (certificateWorthy ? (data.passed ? "passed" : "retry") : "recorded") : "pending"}">
+        <div class="result-image-frame test-certificate-frame ${data ? (certificateWorthy ? (testPassed ? "passed" : "retry") : "recorded") : "pending"}">
           <img src="${escapeHTML(image)}" alt="${escapeHTML(test.chapter)} result preview" />
           ${renderTestCertificateOverlay(test)}
         </div>

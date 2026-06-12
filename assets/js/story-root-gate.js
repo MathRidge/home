@@ -2041,7 +2041,7 @@
           "Reminder: check again, then move."
         ],
         actions: [
-          { href: "chapter-2-test.html?v=20260612-nav-fab", text: "Begin Chapter 2 Test" },
+          { href: "chapter-2-test.html?v=20260612-timeout-pass", text: "Begin Chapter 2 Test" },
           { href: "index.html?view=quest#quest", text: "Return to Mountain Trail", secondary: true }
         ]
       };

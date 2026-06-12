@@ -1017,7 +1017,7 @@
     const roundedPercent = Math.round(percent * 10) / 10;
     const usedSeconds = Math.min(elapsedSeconds(), TIME_LIMIT_SECONDS);
     const errors = TOTAL_QUESTIONS - correct;
-    const passed = correct >= PASSING_CORRECT && !options.forced;
+    const passed = correct >= PASSING_CORRECT;
 
     correctionMode = errors > 0;
     if (submitButton) {
