@@ -80,14 +80,14 @@ const chapterTwoMapPads = [
   { key: "2_1a_trail", id: "2_1a", kind: "trail", label: "2-1a Trail", title: "Split Shelf Trail", action: "Enter Trail", x: 44.7, y: 79.8, w: 16.2, h: 5.8 },
   { key: "2_1_manual", id: "2_1", kind: "manual", label: "2-1b Manual", title: "Shelf Scale Manual", action: "Open Manual", x: 35.8, y: 69.8, w: 16.2, h: 5.8 },
   { key: "2_1_trail", id: "2_1", kind: "trail", label: "2-1b Trail", title: "Shelf Scale Trail", action: "Enter Trail", x: 48.7, y: 60.4, w: 16.2, h: 5.8 },
-  { key: "2_2_manual", id: "2_2", kind: "manual", label: "2-2 Manual", title: "Primewood Seed Manual", action: "Open Manual", x: 56.8, y: 51.7, w: 16.2, h: 5.8 },
-  { key: "2_2_trail", id: "2_2", kind: "trail", label: "2-2 Trail", title: "Primewood Seed Trail", action: "Enter Trail", x: 44.5, y: 44.1, w: 16.2, h: 5.8 },
-  { key: "2_3_manual", id: "2_3", kind: "manual", label: "2-3 Manual", title: "Fraction Loom Manual", action: "Open Manual", x: 42.4, y: 35.8, w: 16.2, h: 5.8 },
-  { key: "2_3_trail", id: "2_3", kind: "trail", label: "2-3 Trail", title: "Fraction Loom Trail", action: "Enter Trail", x: 47.4, y: 27.2, w: 16.2, h: 5.8 },
-  { key: "2_4_manual", id: "2_4", kind: "manual", label: "2-4 Manual", title: "Power Tally Manual", action: "Open Manual", x: 44.0, y: 21.0, w: 16.2, h: 5.8 },
-  { key: "2_4_trail", id: "2_4", kind: "trail", label: "2-4 Trail", title: "Power Tally Trail", action: "Enter Trail", x: 47.3, y: 13.6, w: 16.2, h: 5.8 },
+  { key: "2_2_manual", id: "2_2", kind: "manual", label: "2-2 Manual", title: "Primewood Seed Manual", action: "Open Manual", x: 43.8, y: 53.0, w: 16.2, h: 5.8 },
+  { key: "2_2_trail", id: "2_2", kind: "trail", label: "2-2 Trail", title: "Primewood Seed Trail", action: "Enter Trail", x: 35.5, y: 46.5, w: 16.2, h: 5.8 },
+  { key: "2_3_manual", id: "2_3", kind: "manual", label: "2-3 Manual", title: "Fraction Loom Manual", action: "Open Manual", x: 49.3, y: 40.7, w: 16.2, h: 5.8 },
+  { key: "2_3_trail", id: "2_3", kind: "trail", label: "2-3 Trail", title: "Fraction Loom Trail", action: "Enter Trail", x: 37.6, y: 33.1, w: 16.2, h: 5.8 },
+  { key: "2_4_manual", id: "2_4", kind: "manual", label: "2-4 Manual", title: "Power Tally Manual", action: "Open Manual", x: 48.3, y: 26.5, w: 16.2, h: 5.8 },
+  { key: "2_4_trail", id: "2_4", kind: "trail", label: "2-4 Trail", title: "Power Tally Trail", action: "Enter Trail", x: 43.0, y: 20.4, w: 16.2, h: 5.8 },
   { key: "chapter2_pipe", kind: "pipe", label: "Cabin Pipe", title: "Primewood Cabin Prep", action: "Enter Prep Scene", x: 80.0, y: 30.0, w: 25.0, h: 28.0 },
-  { key: "chapter2_gate", kind: "gate", label: "Primewood Gate", title: "Primewood Checkpoint", action: "Begin Checkpoint", x: 47.5, y: 5.8, w: 26.0, h: 9.0 },
+  { key: "chapter2_gate", kind: "gate", label: "Primewood Gate", title: "Primewood Checkpoint", action: "Begin Checkpoint", x: 46.7, y: 13.9, w: 20.0, h: 7.0 },
   { key: "chapter2_cabin", kind: "cabin", label: "The Cabin", title: "Return to The Cabin", action: "Return to Cabin", x: 72.0, y: 83.0, w: 28.0, h: 17.0 }
 ];
 
