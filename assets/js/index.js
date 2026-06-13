@@ -45,6 +45,89 @@ const stageCardThemes = {
   "2_4": "stage-2-4-exponential-bloom"
 };
 
+const chapterOneMapImage = "assets/images/index-ui/Chapter 1 map.png?v=20260613-chapter-map";
+const chapterOneMapPads = [
+  { key: "1_1_manual", id: "1_1", kind: "manual", label: "1-1 Manual", title: "Term Stone Manual", action: "Open Manual", x: 35.5, y: 87.8, w: 16.2, h: 6.2 },
+  { key: "1_1_trail", id: "1_1", kind: "trail", label: "1-1 Trail", title: "Term Stone Trail", action: "Enter Trail", x: 41.4, y: 69.9, w: 15.7, h: 5.9 },
+  { key: "1_2_manual", id: "1_2", kind: "manual", label: "1-2 Manual", title: "Sign Compass Manual", action: "Open Manual", x: 57.7, y: 61.1, w: 15.7, h: 5.8 },
+  { key: "1_2_trail", id: "1_2", kind: "trail", label: "1-2 Trail", title: "Sign Compass Trail", action: "Enter Trail", x: 40.5, y: 53.2, w: 15.7, h: 5.8 },
+  { key: "1_3_manual", id: "1_3", kind: "manual", label: "1-3 Manual", title: "Parity Prism Manual", action: "Open Manual", x: 57.8, y: 44.4, w: 15.7, h: 5.8 },
+  { key: "1_3_trail", id: "1_3", kind: "trail", label: "1-3 Trail", title: "Parity Prism Trail", action: "Enter Trail", x: 40.7, y: 38.3, w: 15.7, h: 5.8 },
+  { key: "1_4_manual", id: "1_4", kind: "manual", label: "1-4 Manual", title: "Factor Forge Manual", action: "Open Manual", x: 56.8, y: 30.7, w: 15.7, h: 5.8 },
+  { key: "1_4_trail", id: "1_4", kind: "trail", label: "1-4 Trail", title: "Factor Forge Trail", action: "Enter Trail", x: 42.7, y: 23.2, w: 15.7, h: 5.8 },
+  { key: "root_pipe", kind: "pipe", label: "Cabin Pipe", title: "Shellwick's Cabin Prep", action: "Enter Prep Scene", x: 86.0, y: 18.0, w: 21.0, h: 20.0 },
+  { key: "root_gate", kind: "gate", label: "Root Gate", title: "Root Gate Checkpoint", action: "Begin Checkpoint", x: 48.1, y: 11.6, w: 18.0, h: 8.2 },
+  { key: "map_cabin", kind: "cabin", label: "The Cabin", title: "Return to The Cabin", action: "Return to Cabin", x: 78.0, y: 86.5, w: 27.5, h: 23.0 }
+];
+
+const chapterOneMapCopy = {
+  "1_1_manual": "Learn that every term has a sign direction and a size before it becomes an answer.",
+  "1_1_trail": "Build the signed box by hand and prove you can compare sizes with the correct final sign.",
+  "1_2_manual": "Learn how positive and negative terms separate into teams before combining.",
+  "1_2_trail": "Use the Term Stone support to sort teams, compare total sizes, and watch the structure repeat.",
+  "1_3_manual": "Learn why adding each team first makes longer signed expressions easier to see.",
+  "1_3_trail": "Use the Sign Compass support, total the teams, and simplify the final signed result.",
+  "1_4_manual": "Learn how repeated addition becomes a chunk plan and why grouping makes multiplication clearer.",
+  "1_4_trail": "Break repeated groups into friendly chunks, then rebuild the total with a clean plan.",
+  root_pipe: "Ride the pipe path back down to Shellwick's cabin before facing the Root Gate.",
+  root_gate: "Face the Chapter 1 checkpoint after the cabin prep scene is complete.",
+  map_cabin: "Return to the Cabin, your quiet home base for vaults, messages, and progress."
+};
+
+const chapterTwoMapImage = "assets/images/index-ui/Chapter 2 map.png?v=20260613-chapter-map";
+const chapterTwoMapPads = [
+  { key: "2_1a_manual", id: "2_1a", kind: "manual", label: "2-1a Manual", title: "Split Shelf Manual", action: "Open Manual", x: 44.0, y: 90.2, w: 15.6, h: 5.6 },
+  { key: "2_1a_trail", id: "2_1a", kind: "trail", label: "2-1a Trail", title: "Split Shelf Trail", action: "Enter Trail", x: 47.0, y: 81.8, w: 15.4, h: 5.4 },
+  { key: "2_1_manual", id: "2_1", kind: "manual", label: "2-1b Manual", title: "Shelf Scale Manual", action: "Open Manual", x: 52.8, y: 73.0, w: 15.4, h: 5.4 },
+  { key: "2_1_trail", id: "2_1", kind: "trail", label: "2-1b Trail", title: "Shelf Scale Trail", action: "Enter Trail", x: 51.6, y: 63.2, w: 15.4, h: 5.4 },
+  { key: "2_2_manual", id: "2_2", kind: "manual", label: "2-2 Manual", title: "Primewood Seed Manual", action: "Open Manual", x: 44.7, y: 54.2, w: 15.4, h: 5.4 },
+  { key: "2_2_trail", id: "2_2", kind: "trail", label: "2-2 Trail", title: "Primewood Seed Trail", action: "Enter Trail", x: 42.0, y: 45.3, w: 15.4, h: 5.4 },
+  { key: "2_3_manual", id: "2_3", kind: "manual", label: "2-3 Manual", title: "Fraction Loom Manual", action: "Open Manual", x: 45.5, y: 37.2, w: 15.4, h: 5.4 },
+  { key: "2_3_trail", id: "2_3", kind: "trail", label: "2-3 Trail", title: "Fraction Loom Trail", action: "Enter Trail", x: 49.4, y: 28.9, w: 15.4, h: 5.4 },
+  { key: "2_4_manual", id: "2_4", kind: "manual", label: "2-4 Manual", title: "Power Tally Manual", action: "Open Manual", x: 47.5, y: 21.8, w: 15.4, h: 5.4 },
+  { key: "2_4_trail", id: "2_4", kind: "trail", label: "2-4 Trail", title: "Power Tally Trail", action: "Enter Trail", x: 46.7, y: 14.8, w: 15.4, h: 5.4 },
+  { key: "chapter2_pipe", kind: "pipe", label: "Cabin Pipe", title: "Primewood Cabin Prep", action: "Enter Prep Scene", x: 78.8, y: 28.8, w: 23.5, h: 26.0 },
+  { key: "chapter2_gate", kind: "gate", label: "Primewood Gate", title: "Primewood Checkpoint", action: "Begin Checkpoint", x: 42.0, y: 4.8, w: 25.0, h: 13.0 },
+  { key: "chapter2_cabin", kind: "cabin", label: "The Cabin", title: "Return to The Cabin", action: "Return to Cabin", x: 72.0, y: 83.0, w: 28.0, h: 17.0 }
+];
+
+const chapterTwoMapCopy = {
+  "2_1a_manual": "Learn how a large shelf value can split into friendly chunks before division.",
+  "2_1a_trail": "Break big values into friendly chunks, divide each part, then recombine the result.",
+  "2_1_manual": "Learn why top and bottom shelves can remove matching pieces without changing the fraction.",
+  "2_1_trail": "Rewrite fractions as grouped copies, remove matching shelves, and name the simpler fraction.",
+  "2_2_manual": "Learn how values are built from prime pieces like 2, 3, 5, and 7.",
+  "2_2_trail": "Break each value into prime pieces and recognize which pieces build the number.",
+  "2_3_manual": "Learn how fraction products become easier when all shelves are written as prime pieces.",
+  "2_3_trail": "Multiply or divide fractions by matching prime pieces across top and bottom shelves.",
+  "2_4_manual": "Learn how repeated prime pieces can be counted with exponents.",
+  "2_4_trail": "Pack repeated prime pieces into exponent form, then simplify the final fraction.",
+  chapter2_pipe: "Ride the pipe back down to Shellwick's cabin before facing the Primewood checkpoint.",
+  chapter2_gate: "Begin the Chapter 2 checkpoint after the cabin prep scene is complete.",
+  chapter2_cabin: "Return to the Cabin, your quiet home base for vaults, messages, and progress."
+};
+
+const trailMapConfigs = {
+  chapter1: {
+    key: "chapter1",
+    image: chapterOneMapImage,
+    pads: chapterOneMapPads,
+    copy: chapterOneMapCopy,
+    imageAlt: "Chapter 1 Mountain Trail map",
+    blockClass: "chapter-one-map-block",
+    completeTotal: 8
+  },
+  chapter2: {
+    key: "chapter2",
+    image: chapterTwoMapImage,
+    pads: chapterTwoMapPads,
+    copy: chapterTwoMapCopy,
+    imageAlt: "Chapter 2 Mountain Trail map",
+    blockClass: "chapter-two-map-block",
+    completeTotal: 10
+  }
+};
+
 function stageImageSlug(id) {
   return stageCardThemes[id] || "";
 }
@@ -409,32 +492,291 @@ function preferredCertificateName(data = null) {
   );
 }
 
+function trailMapPadState(pad, config = trailMapConfigs.chapter1) {
+  if (pad.kind === "cabin") {
+    return {
+      unlocked: true,
+      completed: false,
+      current: false,
+      status: "Home base",
+      actionHref: "#",
+      actionKind: "section",
+      section: "cabin",
+      lockedReason: ""
+    };
+  }
+
+  if (pad.kind === "pipe") {
+    if (config.key === "chapter2") {
+      const unlocked = isChapterTwoTestUnlocked();
+      const completed = hasWatchedChapterTwoTestSetup();
+      return {
+        unlocked,
+        completed,
+        current: unlocked && !completed,
+        status: completed ? "Prep seen" : unlocked ? "Prep ready" : "Five relics required",
+        actionHref: unlocked ? `story-chapter-2-test-setup.html${completed ? "?watch=1" : ""}` : "#",
+        actionKind: "link",
+        actionText: completed ? "Replay Prep Scene" : "Enter Prep Scene",
+        lockedReason: unlocked ? "" : "Complete the Chapter 2 trail through 2-4 before taking the cabin pipe."
+      };
+    }
+
+    const unlocked = isRootGateUnlocked();
+    const completed = hasWatchedRootGateIntro();
+    return {
+      unlocked,
+      completed,
+      current: unlocked && !completed,
+      status: completed ? "Prep seen" : unlocked ? "Prep ready" : "Four relics required",
+      actionHref: unlocked ? `story-root-gate.html${completed ? "?watch=1" : ""}` : "#",
+      actionKind: "link",
+      actionText: completed ? "Replay Prep Scene" : "Enter Prep Scene",
+      lockedReason: unlocked ? "" : "Collect all four Chapter 1 relics before taking the cabin pipe."
+    };
+  }
+
+  if (pad.kind === "gate") {
+    if (config.key === "chapter2") {
+      const testUnlocked = isChapterTwoTestUnlocked();
+      const prepSeen = hasWatchedChapterTwoTestSetup();
+      const passed = isChapterTwoTestPassed();
+      const unlocked = testUnlocked && (prepSeen || passed);
+      return {
+        unlocked,
+        completed: passed,
+        current: unlocked && !passed,
+        status: passed ? hasWatchedChapterTwoEnding() ? "Mastery proven" : "Ending ready" : unlocked ? "Checkpoint ready" : testUnlocked ? "Take the pipe first" : "Five relics required",
+        actionHref: unlocked ? chapterTwoTestHref() : "#",
+        actionKind: "link",
+        actionText: passed && !hasWatchedChapterTwoEnding() ? "Watch Ending" : passed ? "Review / Retake" : "Begin Checkpoint",
+        lockedReason: testUnlocked
+          ? "Take the cabin pipe to Shellwick's prep scene before entering the checkpoint."
+          : "Complete the Chapter 2 trail through 2-4 before the Primewood Gate opens."
+      };
+    }
+
+    const rootUnlocked = isRootGateUnlocked();
+    const prepSeen = hasWatchedRootGateIntro();
+    const passed = isRootGatePassed();
+    const unlocked = rootUnlocked || passed;
+    return {
+      unlocked,
+      completed: passed,
+      current: unlocked && !passed,
+      status: passed ? "Gate opened" : unlocked ? prepSeen ? "Checkpoint ready" : "Gate ready" : "Four relics required",
+      actionHref: unlocked ? rootGateHref() : "#",
+      actionKind: "link",
+      actionText: passed ? "Review / Retake" : "Pass the Gate",
+      lockedReason: "Collect all four Chapter 1 relics before the Root Gate opens."
+    };
+  }
+
+  const index = lessonIndex(pad.id);
+  const lesson = lessons[index];
+  const unlocked = pad.kind === "manual" ? isNoteUnlocked(index) : isPlayUnlocked(index);
+  const completed = pad.kind === "manual"
+    ? hasCompletedNote(pad.id) || hasCertificate(pad.id)
+    : hasCompletedPlay(pad.id) || hasCertificate(pad.id);
+  const href = lesson ? (pad.kind === "manual" ? lesson.noteFile : lesson.playFile) : "#";
+  const previousLesson = index > 0 ? lessons[index - 1] : null;
+  const lockedReason = pad.kind === "manual"
+    ? previousLesson
+      ? `Complete ${previousLesson.section} Trail first.`
+      : "Finish the opening story to unlock this manual."
+    : `Complete ${lesson?.section || "this"} Manual first.`;
+
+  return {
+    unlocked,
+    completed,
+    current: unlocked && !completed,
+    status: completed ? "Completed" : unlocked ? "Ready" : "Locked",
+    actionHref: unlocked ? href : "#",
+    actionKind: "link",
+    actionText: completed ? (pad.kind === "manual" ? "Review Manual" : "Replay Trail") : pad.action,
+    lockedReason
+  };
+}
+
+function trailMapPadClass(pad, config) {
+  const state = trailMapPadState(pad, config);
+  const classes = ["trail-map-pad", `pad-${pad.kind}`];
+  if (state.unlocked) classes.push("is-unlocked");
+  else classes.push("is-locked");
+  if (state.completed) classes.push("is-completed");
+  if (state.current) classes.push("is-current");
+  return classes.join(" ");
+}
+
+function renderTrailMapPad(pad, config) {
+  const state = trailMapPadState(pad, config);
+  const style = `--pad-x:${pad.x}%; --pad-y:${pad.y}%; --pad-w:${pad.w}%; --pad-h:${pad.h}%;`;
+  return `
+    <button class="${trailMapPadClass(pad, config)}" type="button" data-map-pad="${escapeHTML(pad.key)}" style="${style}" aria-label="${escapeHTML(pad.label)} ${escapeHTML(state.status)}">
+      <span>${escapeHTML(pad.label)}</span>
+    </button>
+  `;
+}
+
+function renderTrailMap(chapter, chapterLessons, config) {
+  const chapterNote = chapterLessons[0]?.chapterNote || "";
+  const completedCount = config.pads.filter(pad => {
+    if (!pad.id) return false;
+    return trailMapPadState(pad, config).completed;
+  }).length;
+
+  return `
+    <div class="chapter-block trail-map-block ${config.blockClass}">
+      <div class="chapter-label trail-map-label"><strong>${escapeHTML(chapter)}</strong><span>${escapeHTML(chapterNote)}</span></div>
+      <div class="trail-map-shell" id="${escapeHTML(config.key)}TrailMap" data-map-key="${escapeHTML(config.key)}">
+        <img class="trail-map-image" src="${escapeHTML(config.image)}" alt="${escapeHTML(config.imageAlt)}" loading="lazy" decoding="async" />
+        <div class="trail-map-pads" aria-label="${escapeHTML(chapter)} trail stages">
+          ${config.pads.map(pad => renderTrailMapPad(pad, config)).join("")}
+        </div>
+        <div class="trail-map-progress-pill" aria-hidden="true">${completedCount} / ${config.completeTotal}</div>
+        <div class="trail-map-card-layer" hidden>
+          <article class="trail-map-card" role="dialog" aria-modal="false" aria-labelledby="${escapeHTML(config.key)}MapCardTitle">
+            <button class="trail-map-card-close" type="button" data-map-close aria-label="Close stage card">&times;</button>
+            <span class="trail-map-card-kicker"></span>
+            <h3 id="${escapeHTML(config.key)}MapCardTitle"></h3>
+            <p></p>
+            <strong class="trail-map-card-status"></strong>
+            <div class="trail-map-card-actions"></div>
+          </article>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderTrail(options = {}) {
   const trail = document.getElementById("trailChapters");
   if (!trail) return;
   if (!options.force && trail.dataset.rendered === "true") return;
 
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
-
-  trail.innerHTML = chapters.map(chapter => {
-    const chapterLessons = lessons.filter(lesson => lesson.chapter === chapter);
-    const chapterNote = chapterLessons[0].chapterNote;
-
-    return `
-      <div class="chapter-block">
-        <div class="chapter-label"><strong>${escapeHTML(chapter)}</strong><span>${escapeHTML(chapterNote)}</span></div>
-        <div class="node-grid">
-          ${chapterLessons.map(renderTrailCard).join("")}
-        </div>
-        ${chapter.startsWith("Chapter 1") ? renderRootGateCard() : ""}
-        ${chapter.startsWith("Chapter 2") ? renderChapterTwoTestCard() : ""}
+  const chapterOne = chapters.find(chapter => chapter.startsWith("Chapter 1")) || chapters[0];
+  const chapterTwo = chapters.find(chapter => chapter.startsWith("Chapter 2"));
+  const chapterTwoOpen = Boolean(chapterTwo && isRootGatePassed());
+  const activeChapter = chapterTwoOpen ? chapterTwo : chapterOne;
+  const activeConfig = chapterTwoOpen ? trailMapConfigs.chapter2 : trailMapConfigs.chapter1;
+  const activeLessons = lessons.filter(lesson => lesson.chapter === activeChapter);
+  const transitionMarkup = chapterTwoOpen
+    ? `
+      <div class="trail-map-transition-stage" aria-hidden="true">
+        <img class="trail-map-transition-map trail-map-transition-from" src="${escapeHTML(trailMapConfigs.chapter1.image)}" alt="" loading="eager" decoding="async" />
+        <img class="trail-map-transition-map trail-map-transition-to" src="${escapeHTML(trailMapConfigs.chapter2.image)}" alt="" loading="eager" decoding="async" />
       </div>
-    `;
-  }).join("");
+    `
+    : "";
+
+  trail.innerHTML = `
+    <div class="trail-map-journey ${chapterTwoOpen ? "is-chapter-two-open" : "is-chapter-one-open"}" data-active-map="${escapeHTML(activeConfig.key)}">
+      ${transitionMarkup}
+      ${renderTrailMap(activeChapter, activeLessons, activeConfig)}
+    </div>
+  `;
 
   trail.dataset.rendered = "true";
   writeTrailStateSnapshot();
-  bindStageCardInteractions();
+  bindTrailMapInteractions();
+}
+
+function trailMapActionMarkup(pad, state, config) {
+  if (!state.unlocked) {
+    return `<button class="pill-btn trail-map-card-action locked" type="button" disabled>Locked</button>`;
+  }
+
+  if (state.actionKind === "section") {
+    return `<button class="gold-btn trail-map-card-action" type="button" onclick="showSection('${escapeHTML(state.section)}')">${escapeHTML(state.actionText || pad.action)}</button>`;
+  }
+
+  const clickHandler = pad.kind === "manual"
+    ? ` onclick="return handleNoteClick(event, '${escapeHTML(pad.id)}')"`
+    : pad.kind === "trail"
+      ? ` onclick="return handlePlayClick(event, '${escapeHTML(pad.id)}')"`
+      : pad.kind === "gate"
+        ? config.key === "chapter2"
+          ? ` onclick="return handleChapterTwoTestClick(event)"`
+          : ` onclick="return handleRootGateClick(event)"`
+        : "";
+
+  return `<a class="gold-btn trail-map-card-action" href="${escapeHTML(state.actionHref)}"${clickHandler}>${escapeHTML(state.actionText || pad.action)}</a>`;
+}
+
+function openTrailMapCard(map, key) {
+  const config = trailMapConfigs[map?.dataset?.mapKey];
+  const layer = map?.querySelector(".trail-map-card-layer");
+  const kicker = map?.querySelector(".trail-map-card-kicker");
+  const title = map?.querySelector(".trail-map-card h3");
+  const text = map?.querySelector(".trail-map-card p");
+  const status = map?.querySelector(".trail-map-card-status");
+  const actions = map?.querySelector(".trail-map-card-actions");
+  const pad = config?.pads.find(item => item.key === key);
+  if (!map || !layer || !pad || !kicker || !title || !text || !status || !actions) return;
+
+  const state = trailMapPadState(pad, config);
+  map.querySelectorAll(".trail-map-pad").forEach(button => {
+    button.classList.toggle("is-selected", button.dataset.mapPad === key);
+  });
+
+  kicker.textContent = pad.label;
+  title.textContent = pad.title;
+  text.textContent = state.unlocked
+    ? (config.copy[pad.key] || "")
+    : state.lockedReason;
+  status.textContent = state.status;
+  actions.innerHTML = trailMapActionMarkup(pad, state, config);
+  layer.hidden = false;
+  map.classList.add("is-card-open");
+  layer.dataset.activePad = key;
+}
+
+function closeTrailMapCard(map = null) {
+  const maps = map ? [map] : Array.from(document.querySelectorAll(".trail-map-shell.is-card-open"));
+  maps.forEach(currentMap => {
+    const layer = currentMap.querySelector(".trail-map-card-layer");
+    if (!layer || layer.hidden) return;
+
+    layer.hidden = true;
+    layer.removeAttribute("data-active-pad");
+    currentMap.classList.remove("is-card-open");
+    currentMap.querySelectorAll(".trail-map-pad.is-selected").forEach(button => button.classList.remove("is-selected"));
+  });
+  mobileConfirm()?.clear?.();
+}
+
+function bindTrailMapInteractions() {
+  document.querySelectorAll(".trail-map-shell").forEach(map => {
+    if (map.dataset.mapBound === "true") return;
+    map.dataset.mapBound = "true";
+
+    map.addEventListener("click", event => {
+      const closeButton = event.target.closest("[data-map-close]");
+      if (closeButton) {
+        event.preventDefault();
+        closeTrailMapCard(map);
+        return;
+      }
+
+      const padButton = event.target.closest("[data-map-pad]");
+      if (padButton) {
+        event.preventDefault();
+        openTrailMapCard(map, padButton.dataset.mapPad);
+        return;
+      }
+
+      if (map.classList.contains("is-card-open") && !event.target.closest(".trail-map-card")) {
+        closeTrailMapCard(map);
+      }
+    });
+  });
+
+  if (bindTrailMapInteractions.escapeBound) return;
+  bindTrailMapInteractions.escapeBound = true;
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeTrailMapCard();
+  });
 }
 
 function renderRootGateCard() {
@@ -1673,11 +2015,11 @@ const bgClasses = ["quest-bg", "menu-bg", "cabin-bg", "message-bg", "prologue-bg
 function updateActiveNav(id) {
   const labels = {
     home: "Home",
-    quest: "Trail",
-    quick: "Menu",
+    quest: "Mountain Trail",
+    quick: "Study Desk",
     cabin: "Cabin",
-    certificates: "Certificate Wall",
-    relics: "Relics",
+    certificates: "Certificate Vault",
+    relics: "Relic Vault",
     message: "Message",
     prologue: ""
   };
@@ -1750,7 +2092,7 @@ function showSection(id, options = {}) {
 function normalizeSectionName(value) {
   if (!value) return "";
   if (value === "trail" || value === "mountain-trail") return "quest";
-  if (value === "menu") return "quick";
+  if (value === "menu" || value === "study-desk" || value === "study") return "quick";
   if (value === "certificate" || value === "certificate-wall" || value === "certificate-vault") return "certificates";
   if (value === "relic" || value === "relic-vault") return "relics";
   if (value === "story") return "prologue";

@@ -324,7 +324,7 @@ h1, h2, h3 {
   body { background-attachment: scroll; }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
   .topbar {
     top: 10px;
     left: 9px;
@@ -412,6 +412,19 @@ h1, h2, h3 {
     transition:
       transform .32s cubic-bezier(.22, .78, .26, 1),
       opacity .18s ease;
+  }
+
+  .top-actions::before {
+    content: "Travel Pouch";
+    display: block;
+    margin: 0 0 4px;
+    color: #ffe3a8;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.14rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.42);
   }
 
   .top-actions.open.closing {
@@ -551,7 +564,7 @@ h1, h2, h3 {
   display: none;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
   .mobile-confirm-note {
     display: block;
     margin-top: auto;

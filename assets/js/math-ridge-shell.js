@@ -6,10 +6,10 @@
 (function () {
   "use strict";
 
-  const MOBILE_MENU_QUERY = "(max-width: 680px)";
+  const MOBILE_MENU_QUERY = "(max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse)";
   const MOBILE_CONFIRM_QUERY = "(max-width: 760px), (hover: none) and (pointer: coarse)";
   const MOBILE_CONFIRM_DURATION = 5600;
-  const MOBILE_CONFIRM_NOTE = "Ridge controls use two taps: first to arm, second to enter.";
+  const MOBILE_CONFIRM_NOTE = "Tap once to light a place. Tap again to travel.";
   const SHELL_SOUND_BASE = "voice/sound/";
   const INDEX_LOADED_KEY = "mathRidge_indexLoaded_v1";
   const POINTER_TAP_GUARD_MS = 1400;

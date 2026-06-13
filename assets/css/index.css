@@ -954,7 +954,7 @@ body.index-page .test-result-save-actions .result-save-btn { margin-inline:auto;
   .ridge-divider span { font-size: .66rem; letter-spacing: .13em; }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
   body.index-page #noteTopActions.open { z-index: 150; }
 }
 
@@ -3848,7 +3848,7 @@ body.index-page .jump-link.is-touch-preview::after {
 }
 
 /* Mobile drawer: keep the sidebar feeling like a premium game menu, not flat controls. */
-@media (max-width: 680px) {
+@media (max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
   body.index-page #noteTopActions.open {
     border-left-color: rgba(255, 231, 168, 0.24) !important;
     background:
@@ -5090,7 +5090,7 @@ body.index-page .top-actions .story-locked:focus-visible {
 }
 
 /* Mobile app safe area: keep the Index nav below the phone clock/battery bar. */
-@media (max-width: 680px) {
+@media (max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
   body.index-page .topbar {
     top: 10px !important;
     top: calc(env(safe-area-inset-top, 0px) + 10px) !important;
@@ -7488,5 +7488,414 @@ body.index-page .certificate-vault-card.not-earned .certificate-vault-lesson {
 
   body.index-page .cabin-panel .cabin-title-card .panel-title p {
     line-height: 1.38 !important;
+  }
+}
+
+/* Mobile game-world cleanup: Cabin is the hub, the drawer is only a Travel fallback. */
+@media (max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  body.index-page #noteTopActions.open {
+    align-items: center !important;
+    padding-inline: 18px !important;
+  }
+
+  body.index-page #noteTopActions.open .pill-btn {
+    width: min(100%, 236px) !important;
+    justify-content: center !important;
+    text-align: center !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  body.index-page #noteTopActions.open .pill-btn:nth-last-of-type(1) {
+    margin-top: 2px;
+  }
+}
+
+/* Mountain Trail map flow: one active chapter map, one stage card, no old card grid. */
+body.index-page .trail-map-journey {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  isolation: isolate;
+}
+
+body.index-page .trail-map-block {
+  width: min(100%, 760px);
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.index-page .trail-map-label {
+  width: min(100%, 720px);
+  margin: 0 auto 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(246, 201, 108, 0.24);
+  border-radius: 16px;
+  background: rgba(8, 18, 30, 0.56);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.20);
+}
+
+body.index-page .trail-map-shell {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(246, 201, 108, 0.32);
+  border-radius: 28px;
+  background: #07131f;
+  box-shadow:
+    0 30px 76px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+body.index-page .trail-map-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body.index-page .trail-map-pads,
+body.index-page .trail-map-card-layer {
+  position: absolute;
+  inset: 0;
+}
+
+body.index-page .trail-map-pad {
+  position: absolute;
+  left: var(--pad-x);
+  top: var(--pad-y);
+  width: var(--pad-w);
+  height: var(--pad-h);
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: transparent;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.index-page .trail-map-pad span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+body.index-page .trail-map-pad::before,
+body.index-page .trail-map-pad::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  pointer-events: none;
+}
+
+body.index-page .trail-map-pad::before {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 241, 178, 0.55), rgba(242, 184, 75, 0.10) 52%, transparent 72%);
+  filter: blur(4px);
+  transform: scale(0.78);
+}
+
+body.index-page .trail-map-pad::after {
+  border: 1px solid rgba(255, 235, 168, 0.50);
+  box-shadow:
+    0 0 0 1px rgba(78, 193, 255, 0.08),
+    0 0 18px rgba(246, 201, 108, 0.26);
+  transform: scale(0.90);
+}
+
+body.index-page .trail-map-pad.pad-gate,
+body.index-page .trail-map-pad.pad-pipe,
+body.index-page .trail-map-pad.pad-cabin {
+  border-radius: 22px;
+}
+
+body.index-page .trail-map-pad.is-unlocked::after {
+  opacity: 0.18;
+}
+
+body.index-page .trail-map-pad.is-current::before,
+body.index-page .trail-map-pad.is-current::after,
+body.index-page .trail-map-pad:hover::before,
+body.index-page .trail-map-pad:hover::after,
+body.index-page .trail-map-pad:focus-visible::before,
+body.index-page .trail-map-pad:focus-visible::after,
+body.index-page .trail-map-pad.is-selected::before,
+body.index-page .trail-map-pad.is-selected::after {
+  opacity: 0.78;
+  transform: scale(1);
+}
+
+body.index-page .trail-map-pad.is-completed::after {
+  border-color: rgba(139, 230, 172, 0.58);
+  box-shadow: 0 0 22px rgba(111, 220, 156, 0.28);
+}
+
+body.index-page .trail-map-pad.is-locked {
+  cursor: pointer;
+}
+
+body.index-page .trail-map-pad.is-locked::after {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.20);
+  opacity: 0.06;
+}
+
+body.index-page .trail-map-pad:focus-visible {
+  outline: 2px solid rgba(255, 235, 168, 0.90);
+  outline-offset: 3px;
+}
+
+body.index-page .trail-map-progress-pill {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: 4;
+  min-width: 62px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 232, 166, 0.34);
+  border-radius: 999px;
+  background: rgba(6, 16, 28, 0.58);
+  color: #ffe4a6;
+  font: 800 0.76rem/1 "Nunito", system-ui, sans-serif;
+  text-align: center;
+  letter-spacing: 0.04em;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+}
+
+body.index-page .trail-map-card-layer[hidden] {
+  display: none !important;
+}
+
+body.index-page .trail-map-card-layer {
+  z-index: 10;
+  pointer-events: none;
+}
+
+body.index-page .trail-map-card {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(16px, 4vw, 30px);
+  display: grid;
+  gap: 10px;
+  width: min(88%, 420px);
+  padding: clamp(15px, 3.6vw, 20px);
+  border: 1px solid rgba(255, 232, 166, 0.42);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(28, 41, 54, 0.94), rgba(10, 20, 31, 0.96)),
+    rgba(10, 20, 31, 0.96);
+  color: #fff7e8;
+  box-shadow:
+    0 24px 58px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateX(-50%);
+  pointer-events: auto;
+}
+
+body.index-page .trail-map-card-close {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 247, 232, 0.86);
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.index-page .trail-map-card-kicker {
+  color: #f6c96c;
+  font: 900 0.76rem/1 "Nunito", system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+body.index-page .trail-map-card h3 {
+  margin: 0;
+  padding-right: 34px;
+  color: #fff7e8;
+  font-size: clamp(1.18rem, 4.8vw, 1.58rem);
+  line-height: 1.04;
+}
+
+body.index-page .trail-map-card p {
+  margin: 0;
+  color: rgba(255, 247, 232, 0.84);
+  font-size: clamp(0.90rem, 3.45vw, 1.02rem);
+  line-height: 1.32;
+}
+
+body.index-page .trail-map-card-status {
+  justify-self: start;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 232, 166, 0.12);
+  color: #ffe4a6;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+body.index-page .trail-map-card-actions {
+  display: grid;
+  gap: 8px;
+}
+
+body.index-page .trail-map-card-action {
+  width: 100%;
+  min-height: 46px;
+  justify-content: center;
+  text-align: center;
+}
+
+body.index-page .trail-map-card-action.locked {
+  opacity: 0.68;
+}
+
+body.index-page .trail-map-transition-stage {
+  display: none;
+}
+
+body.index-page .trail-map-journey.is-chapter-two-open .trail-map-transition-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  display: block;
+  overflow: hidden;
+  border-radius: 28px;
+  pointer-events: none;
+  animation: trail-map-transition-fade 1400ms ease forwards;
+}
+
+body.index-page .trail-map-transition-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 11, 20, 0.34);
+}
+
+body.index-page .trail-map-transition-map {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(100%, 760px);
+  height: auto;
+  border-radius: 28px;
+  box-shadow: 0 30px 76px rgba(0, 0, 0, 0.38);
+}
+
+body.index-page .trail-map-transition-from {
+  animation: trail-map-slide-down 1100ms cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+body.index-page .trail-map-transition-to {
+  animation: trail-map-drop-in 1100ms cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+@keyframes trail-map-slide-down {
+  from {
+    opacity: 0.92;
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 34%) scale(0.96);
+  }
+}
+
+@keyframes trail-map-drop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -28%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes trail-map-transition-fade {
+  0%, 78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (max-width: 760px), (max-width: 980px) and (orientation: landscape) {
+  body.index-page .quest-body {
+    padding-inline: clamp(8px, 2.8vw, 14px) !important;
+  }
+
+  body.index-page .trail-map-label {
+    margin-bottom: 10px;
+    border-radius: 14px;
+  }
+
+  body.index-page .trail-map-label strong {
+    font-size: clamp(0.95rem, 3.8vw, 1.12rem);
+  }
+
+  body.index-page .trail-map-label span {
+    font-size: clamp(0.74rem, 2.8vw, 0.86rem);
+  }
+
+  body.index-page .trail-map-shell {
+    border-radius: 22px;
+  }
+
+  body.index-page .trail-map-progress-pill {
+    right: 10px;
+    top: 10px;
+    min-width: 54px;
+    padding: 6px 10px;
+    font-size: 0.70rem;
+  }
+
+  body.index-page .trail-map-card {
+    bottom: 12px;
+    width: calc(100% - 26px);
+    border-radius: 18px;
+  }
+
+  body.index-page .trail-map-card-action {
+    min-height: 44px;
+  }
+
+  body.index-page .trail-map-transition-map {
+    width: 100%;
+    border-radius: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.index-page .trail-map-journey.is-chapter-two-open .trail-map-transition-stage {
+    display: none;
+  }
+
+  body.index-page .trail-map-pad::before,
+  body.index-page .trail-map-pad::after {
+    transition: none;
   }
 }

@@ -17,8 +17,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260524-mobile-scrollbar" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260611-banner-subtitles" />
+  <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260613-mobile-travel" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260613-trail-map" />
 </head>
 
 <body class="index-page is-index-loading" data-index-page="true">
@@ -46,7 +46,7 @@
   <div class="reading-progress" aria-hidden="true"></div>
 
   <main class="app-shell" id="appShell">
-    <nav class="topbar" aria-label="Math Ridge main navigation">
+    <nav class="topbar" aria-label="Math Ridge travel routes">
       <a class="brand" href="#home" onclick="showSection('home'); return false;" aria-label="Math Ridge Home">
         <img class="brand-logo" src="assets/images/logo/math-ridge-logo.webp" alt="Math Ridge logo" />
         <div class="brand-text">
@@ -55,18 +55,18 @@
         </div>
       </a>
 
-      <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open navigation menu" aria-controls="noteTopActions" aria-expanded="false">
+      <button class="hamburger-btn" type="button" onclick="toggleNoteMenu()" aria-label="Open travel pouch" aria-controls="noteTopActions" aria-expanded="false">
         <span class="hamburger-lines" aria-hidden="true"></span>
       </button>
 
-      <div class="top-actions" id="noteTopActions" aria-label="Navigation links">
+      <div class="top-actions" id="noteTopActions" aria-label="Travel routes">
         <button class="pill-btn" type="button" onclick="showSection('home')">Home</button>
-        <button class="pill-btn" type="button" onclick="showSection('quest')">Trail</button>
+        <button class="pill-btn" type="button" onclick="showSection('quest')">Mountain Trail</button>
         <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
-        <button class="pill-btn drawer-only-nav" type="button" onclick="showSection('certificates')">Certificate Wall</button>
-        <button class="pill-btn drawer-only-nav" type="button" onclick="showSection('relics')">Relics</button>
+        <button class="pill-btn drawer-only-nav" type="button" onclick="showSection('certificates')">Certificate Vault</button>
+        <button class="pill-btn drawer-only-nav" type="button" onclick="showSection('relics')">Relic Vault</button>
         <button class="pill-btn" type="button" onclick="showSection('message')">Message</button>
-        <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
+        <button class="pill-btn" type="button" onclick="showSection('quick')">Study Desk</button>
       </div>
     </nav>
 
@@ -92,7 +92,7 @@
           <div class="hero-actions">
             <button class="pill-btn hero-start-trail" type="button" onclick="showSection('quest')">Start Trail</button>
             <button class="pill-btn hero-view-cabin" type="button" onclick="showSection('cabin')">View Cabin</button>
-            <p class="mobile-double-tap-note">Ridge controls use two taps: first to arm, second to enter.</p>
+            <p class="mobile-double-tap-note">Tap once to light a place. Tap again to travel.</p>
           </div>
         </div>
 
@@ -122,7 +122,7 @@
             <h2 id="questTitle">Mountain Trail</h2>
             <p>Follow the guided path from Manual to Trail. Each climb builds the next kind of math vision.</p>
           </div>
-          <button class="pill-btn" type="button" onclick="showSection('quick')">Menu</button>
+          <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
         </header>
         <div class="quest-body" id="trailChapters" aria-live="polite"></div>
       </div>
@@ -132,14 +132,14 @@
       <div class="panel quick-panel">
         <header class="panel-header study-title-card">
           <div class="panel-title">
-            <h2 id="quickTitle">Study Desk Menu</h2>
-            <p>For students or teachers who want direct access instead of the guided room navigation.</p>
+            <h2 id="quickTitle">Study Desk</h2>
+            <p>A quiet desk for replaying scenes, opening manuals, and checking trail resources when needed.</p>
           </div>
-          <button class="pill-btn" type="button" onclick="showSection('home')">Home</button>
+          <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
         </header>
 
         <div class="quick-nav">
-          <div class="room-map interactive-room-map" aria-label="Clickable study desk navigation">
+          <div class="room-map interactive-room-map" aria-label="Clickable study desk">
             <button class="hotspot note" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Manual links from the closed book">Manual</button>
             <button class="hotspot play" type="button" onclick="document.getElementById('chapterLinks').scrollIntoView({behavior:'smooth'})" aria-label="Open Trail links from the open notebook">Trail</button>
             <button class="hotspot trail" type="button" onclick="showSection('quest')" aria-label="Go to Mountain Trail from the outdoor view">Trail</button>
@@ -161,12 +161,12 @@
           <button class="cabin-banner-return-home" type="button" onclick="showSection('home')" aria-label="Return Home"></button>
         </header>
 
-        <div class="escape-spots cabin-interactive-map" aria-label="Cabin navigation">
+        <div class="escape-spots cabin-interactive-map" aria-label="Cabin travel room">
           <picture>
             <source media="(orientation: portrait)" srcset="assets/images/index-ui/cabin_interactive_mobile_vertical.png" />
-            <img src="assets/images/index-ui/cabin_interactive_mobile_horizontal.png" alt="The Cabin navigation room" />
+            <img src="assets/images/index-ui/cabin_interactive_mobile_horizontal.png" alt="The Cabin room" />
           </picture>
-          <button class="room-spot cabin-hotspot cabin-hotspot-menu" type="button" onclick="showSection('quick')" aria-label="Open Menu"></button>
+          <button class="room-spot cabin-hotspot cabin-hotspot-menu" type="button" onclick="showSection('quick')" aria-label="Open Study Desk"></button>
           <button class="room-spot cabin-hotspot cabin-hotspot-trail" type="button" onclick="showSection('quest')" aria-label="Open Mountain Trail"></button>
           <button class="room-spot cabin-hotspot cabin-hotspot-certificates" type="button" onclick="showSection('certificates')" aria-label="Open Certificate Vault"></button>
           <button class="room-spot cabin-hotspot cabin-hotspot-relics" type="button" onclick="showSection('relics')" aria-label="Open Relic Vault"></button>
@@ -293,7 +293,7 @@
     </div>
   </main>
 
-  <script src="assets/js/math-ridge-shell.js?v=20260604-confirm-nav-delay"></script>
-<script src="assets/js/index.js?v=20260612-timeout-pass"></script>
+  <script src="assets/js/math-ridge-shell.js?v=20260613-mobile-travel"></script>
+<script src="assets/js/index.js?v=20260613-trail-map"></script>
 </body>
 </html>
