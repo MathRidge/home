@@ -7899,3 +7899,99 @@ body.index-page .trail-map-transition-to {
     transition: none;
   }
 }
+
+/* Full-screen Mountain Trail map: no navigation chrome while the trail is active. */
+body.index-page.is-quest-map-active .reading-progress {
+  display: none !important;
+}
+
+body.index-page .app-shell.quest-bg {
+  background: #050c16 !important;
+}
+
+body.index-page .app-shell.quest-bg .topbar,
+body.index-page .app-shell.quest-bg .drawer-backdrop,
+body.index-page .app-shell.quest-bg .trail-title-card,
+body.index-page .app-shell.quest-bg .trail-map-label {
+  display: none !important;
+}
+
+body.index-page .app-shell.quest-bg #quest {
+  min-height: 100svh !important;
+  padding: 0 !important;
+}
+
+body.index-page .app-shell.quest-bg .quest-panel {
+  width: 100vw !important;
+  max-width: none !important;
+  min-height: 100svh !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+body.index-page .app-shell.quest-bg .quest-body {
+  display: block !important;
+  min-height: 100svh !important;
+  padding: 0 !important;
+}
+
+body.index-page .app-shell.quest-bg .trail-map-journey {
+  min-height: 100svh;
+  align-items: start;
+  justify-items: center;
+  background: #050c16;
+}
+
+body.index-page .app-shell.quest-bg .trail-map-block {
+  width: min(100vw, 948px) !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+}
+
+body.index-page .app-shell.quest-bg .chapter-two-map-block {
+  width: min(100vw, 1024px) !important;
+}
+
+body.index-page .app-shell.quest-bg .trail-map-shell {
+  width: 100% !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #050c16 !important;
+  box-shadow: none !important;
+}
+
+body.index-page .app-shell.quest-bg .trail-map-image {
+  width: 100% !important;
+}
+
+body.index-page .app-shell.quest-bg .trail-map-progress-pill {
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+}
+
+body.index-page .app-shell.quest-bg .trail-map-card {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+}
+
+@media (max-width: 760px), (max-width: 980px) and (orientation: landscape) {
+  body.index-page .app-shell.quest-bg .trail-map-block,
+  body.index-page .app-shell.quest-bg .chapter-two-map-block {
+    width: 100vw !important;
+  }
+
+  body.index-page .app-shell.quest-bg .trail-map-progress-pill {
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
+  }
+
+  body.index-page .app-shell.quest-bg .trail-map-card {
+    width: min(calc(100vw - 26px), 430px);
+  }
+}

@@ -47,16 +47,16 @@ const stageCardThemes = {
 
 const chapterOneMapImage = "assets/images/index-ui/Chapter 1 map.png?v=20260613-chapter-map";
 const chapterOneMapPads = [
-  { key: "1_1_manual", id: "1_1", kind: "manual", label: "1-1 Manual", title: "Term Stone Manual", action: "Open Manual", x: 35.5, y: 87.8, w: 16.2, h: 6.2 },
-  { key: "1_1_trail", id: "1_1", kind: "trail", label: "1-1 Trail", title: "Term Stone Trail", action: "Enter Trail", x: 41.4, y: 69.9, w: 15.7, h: 5.9 },
-  { key: "1_2_manual", id: "1_2", kind: "manual", label: "1-2 Manual", title: "Sign Compass Manual", action: "Open Manual", x: 57.7, y: 61.1, w: 15.7, h: 5.8 },
-  { key: "1_2_trail", id: "1_2", kind: "trail", label: "1-2 Trail", title: "Sign Compass Trail", action: "Enter Trail", x: 40.5, y: 53.2, w: 15.7, h: 5.8 },
-  { key: "1_3_manual", id: "1_3", kind: "manual", label: "1-3 Manual", title: "Parity Prism Manual", action: "Open Manual", x: 57.8, y: 44.4, w: 15.7, h: 5.8 },
-  { key: "1_3_trail", id: "1_3", kind: "trail", label: "1-3 Trail", title: "Parity Prism Trail", action: "Enter Trail", x: 40.7, y: 38.3, w: 15.7, h: 5.8 },
-  { key: "1_4_manual", id: "1_4", kind: "manual", label: "1-4 Manual", title: "Factor Forge Manual", action: "Open Manual", x: 56.8, y: 30.7, w: 15.7, h: 5.8 },
-  { key: "1_4_trail", id: "1_4", kind: "trail", label: "1-4 Trail", title: "Factor Forge Trail", action: "Enter Trail", x: 42.7, y: 23.2, w: 15.7, h: 5.8 },
-  { key: "root_pipe", kind: "pipe", label: "Cabin Pipe", title: "Shellwick's Cabin Prep", action: "Enter Prep Scene", x: 86.0, y: 18.0, w: 21.0, h: 20.0 },
-  { key: "root_gate", kind: "gate", label: "Root Gate", title: "Root Gate Checkpoint", action: "Begin Checkpoint", x: 48.1, y: 11.6, w: 18.0, h: 8.2 },
+  { key: "1_1_manual", id: "1_1", kind: "manual", label: "1-1 Manual", title: "Term Stone Manual", action: "Open Manual", x: 35.8, y: 90.4, w: 17.2, h: 6.8 },
+  { key: "1_1_trail", id: "1_1", kind: "trail", label: "1-1 Trail", title: "Term Stone Trail", action: "Enter Trail", x: 41.0, y: 71.2, w: 16.6, h: 6.2 },
+  { key: "1_2_manual", id: "1_2", kind: "manual", label: "1-2 Manual", title: "Sign Compass Manual", action: "Open Manual", x: 56.3, y: 62.0, w: 16.6, h: 6.2 },
+  { key: "1_2_trail", id: "1_2", kind: "trail", label: "1-2 Trail", title: "Sign Compass Trail", action: "Enter Trail", x: 41.0, y: 54.0, w: 16.6, h: 6.2 },
+  { key: "1_3_manual", id: "1_3", kind: "manual", label: "1-3 Manual", title: "Parity Prism Manual", action: "Open Manual", x: 58.0, y: 46.4, w: 16.6, h: 6.2 },
+  { key: "1_3_trail", id: "1_3", kind: "trail", label: "1-3 Trail", title: "Parity Prism Trail", action: "Enter Trail", x: 41.0, y: 38.4, w: 16.6, h: 6.2 },
+  { key: "1_4_manual", id: "1_4", kind: "manual", label: "1-4 Manual", title: "Factor Forge Manual", action: "Open Manual", x: 56.3, y: 31.4, w: 16.6, h: 6.2 },
+  { key: "1_4_trail", id: "1_4", kind: "trail", label: "1-4 Trail", title: "Factor Forge Trail", action: "Enter Trail", x: 44.0, y: 23.4, w: 16.6, h: 6.2 },
+  { key: "root_pipe", kind: "pipe", label: "Cabin Pipe", title: "Shellwick's Cabin Prep", action: "Enter Prep Scene", x: 86.0, y: 18.0, w: 22.0, h: 22.0 },
+  { key: "root_gate", kind: "gate", label: "Root Gate", title: "Root Gate Checkpoint", action: "Begin Checkpoint", x: 48.0, y: 13.0, w: 22.0, h: 9.5 },
   { key: "map_cabin", kind: "cabin", label: "The Cabin", title: "Return to The Cabin", action: "Return to Cabin", x: 78.0, y: 86.5, w: 27.5, h: 23.0 }
 ];
 
@@ -76,18 +76,18 @@ const chapterOneMapCopy = {
 
 const chapterTwoMapImage = "assets/images/index-ui/Chapter 2 map.png?v=20260613-chapter-map";
 const chapterTwoMapPads = [
-  { key: "2_1a_manual", id: "2_1a", kind: "manual", label: "2-1a Manual", title: "Split Shelf Manual", action: "Open Manual", x: 44.0, y: 90.2, w: 15.6, h: 5.6 },
-  { key: "2_1a_trail", id: "2_1a", kind: "trail", label: "2-1a Trail", title: "Split Shelf Trail", action: "Enter Trail", x: 47.0, y: 81.8, w: 15.4, h: 5.4 },
-  { key: "2_1_manual", id: "2_1", kind: "manual", label: "2-1b Manual", title: "Shelf Scale Manual", action: "Open Manual", x: 52.8, y: 73.0, w: 15.4, h: 5.4 },
-  { key: "2_1_trail", id: "2_1", kind: "trail", label: "2-1b Trail", title: "Shelf Scale Trail", action: "Enter Trail", x: 51.6, y: 63.2, w: 15.4, h: 5.4 },
-  { key: "2_2_manual", id: "2_2", kind: "manual", label: "2-2 Manual", title: "Primewood Seed Manual", action: "Open Manual", x: 44.7, y: 54.2, w: 15.4, h: 5.4 },
-  { key: "2_2_trail", id: "2_2", kind: "trail", label: "2-2 Trail", title: "Primewood Seed Trail", action: "Enter Trail", x: 42.0, y: 45.3, w: 15.4, h: 5.4 },
-  { key: "2_3_manual", id: "2_3", kind: "manual", label: "2-3 Manual", title: "Fraction Loom Manual", action: "Open Manual", x: 45.5, y: 37.2, w: 15.4, h: 5.4 },
-  { key: "2_3_trail", id: "2_3", kind: "trail", label: "2-3 Trail", title: "Fraction Loom Trail", action: "Enter Trail", x: 49.4, y: 28.9, w: 15.4, h: 5.4 },
-  { key: "2_4_manual", id: "2_4", kind: "manual", label: "2-4 Manual", title: "Power Tally Manual", action: "Open Manual", x: 47.5, y: 21.8, w: 15.4, h: 5.4 },
-  { key: "2_4_trail", id: "2_4", kind: "trail", label: "2-4 Trail", title: "Power Tally Trail", action: "Enter Trail", x: 46.7, y: 14.8, w: 15.4, h: 5.4 },
-  { key: "chapter2_pipe", kind: "pipe", label: "Cabin Pipe", title: "Primewood Cabin Prep", action: "Enter Prep Scene", x: 78.8, y: 28.8, w: 23.5, h: 26.0 },
-  { key: "chapter2_gate", kind: "gate", label: "Primewood Gate", title: "Primewood Checkpoint", action: "Begin Checkpoint", x: 42.0, y: 4.8, w: 25.0, h: 13.0 },
+  { key: "2_1a_manual", id: "2_1a", kind: "manual", label: "2-1a Manual", title: "Split Shelf Manual", action: "Open Manual", x: 35.8, y: 90.0, w: 16.6, h: 6.0 },
+  { key: "2_1a_trail", id: "2_1a", kind: "trail", label: "2-1a Trail", title: "Split Shelf Trail", action: "Enter Trail", x: 44.7, y: 79.8, w: 16.2, h: 5.8 },
+  { key: "2_1_manual", id: "2_1", kind: "manual", label: "2-1b Manual", title: "Shelf Scale Manual", action: "Open Manual", x: 35.8, y: 69.8, w: 16.2, h: 5.8 },
+  { key: "2_1_trail", id: "2_1", kind: "trail", label: "2-1b Trail", title: "Shelf Scale Trail", action: "Enter Trail", x: 48.7, y: 60.4, w: 16.2, h: 5.8 },
+  { key: "2_2_manual", id: "2_2", kind: "manual", label: "2-2 Manual", title: "Primewood Seed Manual", action: "Open Manual", x: 56.8, y: 51.7, w: 16.2, h: 5.8 },
+  { key: "2_2_trail", id: "2_2", kind: "trail", label: "2-2 Trail", title: "Primewood Seed Trail", action: "Enter Trail", x: 44.5, y: 44.1, w: 16.2, h: 5.8 },
+  { key: "2_3_manual", id: "2_3", kind: "manual", label: "2-3 Manual", title: "Fraction Loom Manual", action: "Open Manual", x: 42.4, y: 35.8, w: 16.2, h: 5.8 },
+  { key: "2_3_trail", id: "2_3", kind: "trail", label: "2-3 Trail", title: "Fraction Loom Trail", action: "Enter Trail", x: 47.4, y: 27.2, w: 16.2, h: 5.8 },
+  { key: "2_4_manual", id: "2_4", kind: "manual", label: "2-4 Manual", title: "Power Tally Manual", action: "Open Manual", x: 44.0, y: 21.0, w: 16.2, h: 5.8 },
+  { key: "2_4_trail", id: "2_4", kind: "trail", label: "2-4 Trail", title: "Power Tally Trail", action: "Enter Trail", x: 47.3, y: 13.6, w: 16.2, h: 5.8 },
+  { key: "chapter2_pipe", kind: "pipe", label: "Cabin Pipe", title: "Primewood Cabin Prep", action: "Enter Prep Scene", x: 80.0, y: 30.0, w: 25.0, h: 28.0 },
+  { key: "chapter2_gate", kind: "gate", label: "Primewood Gate", title: "Primewood Checkpoint", action: "Begin Checkpoint", x: 47.5, y: 5.8, w: 26.0, h: 9.0 },
   { key: "chapter2_cabin", kind: "cabin", label: "The Cabin", title: "Return to The Cabin", action: "Return to Cabin", x: 72.0, y: 83.0, w: 28.0, h: 17.0 }
 ];
 
@@ -2057,6 +2057,8 @@ function showSection(id, options = {}) {
 
   const target = document.getElementById(nextId);
   if (target) target.classList.add("active");
+  document.body.dataset.activeSection = nextId;
+  document.body.classList.toggle("is-quest-map-active", nextId === "quest");
 
   if (shell) {
     shell.classList.remove(...bgClasses);
