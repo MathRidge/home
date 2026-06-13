@@ -7,14 +7,22 @@
   const loadingText = document.getElementById("prologueLoadingText");
   const orientationNote = document.getElementById("prologueOrientationNote");
   const beginButton = document.getElementById("prologueBeginButton");
+  const skipButtons = [
+    document.getElementById("prologueSkipButton"),
+    document.getElementById("prologueSkipTopButton")
+  ].filter(Boolean);
+  const PROFILE_KEY = "mathRidge_playerProfile_v1";
   const READ_KEY = "mathRidge_mangaPrologueSeen_v1";
   const PROLOGUE_LOADED_KEY = "mathRidge_prologueLoaded_v1";
+  const STORY_STAGE_URL = "story-stage-1-1.html";
+  const STORY_STAGE_SKIP_URL = `${STORY_STAGE_URL}?skip=1`;
   const VOICE_BASE = "voice/Mira/";
   const VOICE_TRIGGER_SCREEN_RATIO = 0.5;
   const NEXT_SCENE_PREFETCH = [
-    "story-stage-1-1.html",
-    "assets/css/story-stage-1-1.css?v=20260604-fit-dialogue",
-    "assets/js/story-stage-1-1.js?v=20260604-sprite-decode",
+    STORY_STAGE_URL,
+    STORY_STAGE_SKIP_URL,
+    "assets/css/story-stage-1-1.css?v=20260612-story-skip",
+    "assets/js/story-stage-1-1.js?v=20260612-story-skip",
     "assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png",
     "assets/images/bg-scene/Stage-1-1/story-bg-cipher_ridge.png",
     "assets/images/Mira-sprite/Mira-sprite-alpha-png/mira-holding-hat.png",
@@ -75,9 +83,49 @@
         : "Begin";
     if (orientationNote) {
       orientationNote.textContent = needsLandscape
-        ? "Turn your phone sideways before beginning so the story opens in a wider view."
+        ? "Turn sideways. If rotation is locked, unlock Portrait Orientation Lock or use Skip Story."
         : "Ready. Tap Begin when you are comfortable.";
     }
+  }
+
+  function readProfile() {
+    try {
+      const profile = JSON.parse(localStorage.getItem(PROFILE_KEY));
+      return profile && typeof profile === "object" ? profile : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function hasStoryName() {
+    const profile = readProfile();
+    return Boolean(String(profile?.nickname || profile?.certificateName || "").trim());
+  }
+
+  function writeProfileName(name) {
+    const cleanName = String(name || "").trim().replace(/\s+/g, " ").slice(0, 24) || "Ridge Wanderer";
+    const existing = readProfile() || {};
+    const profile = Object.assign({
+      version: 1,
+      pronoun: "they",
+      pronounLabel: "they / them",
+      createdAt: new Date().toISOString()
+    }, existing, {
+      nickname: existing.nickname || cleanName,
+      certificateName: existing.certificateName || cleanName,
+      updatedAt: new Date().toISOString()
+    });
+
+    try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (error) {}
+    return profile;
+  }
+
+  function ensureSkipStoryName() {
+    if (hasStoryName()) return true;
+    const name = window.prompt("What name should Mira use in the story?", "");
+    if (name === null) return false;
+    writeProfileName(name);
+    return true;
   }
 
   function hasLoadedThisSession() {
@@ -154,6 +202,20 @@
     document.body.classList.remove("prologue-loading");
     window.setTimeout(() => loadingGate?.setAttribute("hidden", ""), 380);
     updateProgress();
+  }
+
+  function skipPrologueToStoryReward() {
+    const confirmed = window.confirm(
+      "Skip to the end of this story scene? The trail will unlock from the normal reward page, and you can replay the story later from Menu."
+    );
+    if (!confirmed) return;
+    if (!ensureSkipStoryName()) return;
+
+    stopVoice();
+    rememberLoadedThisSession();
+    try { localStorage.setItem(READ_KEY, "true"); } catch (error) {}
+    prefetchNextSceneAssets();
+    window.location.href = STORY_STAGE_SKIP_URL;
   }
 
   function prefetchNextSceneAssets() {
@@ -327,6 +389,7 @@
     markImagesLoaded();
     preloadPrologueAssets();
     beginButton?.addEventListener("click", beginPrologue);
+    skipButtons.forEach(button => button.addEventListener("click", skipPrologueToStoryReward));
     syncBeginState();
   });
   window.addEventListener("load", updateProgress);

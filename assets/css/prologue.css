@@ -147,6 +147,11 @@ body.prologue-preload-seen .prologue-loading-gate {
   box-shadow: none;
 }
 
+.prologue-skip-button {
+  width: 100%;
+  margin-top: 10px;
+}
+
 .reader-progress span {
   display: block;
   width: 100%;
@@ -167,12 +172,22 @@ body.prologue-preload-seen .prologue-loading-gate {
 
 .prologue-top-nav {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: calc(12px + env(safe-area-inset-top)) 14px 14px;
   background: linear-gradient(180deg, #030508 0%, rgba(3, 5, 8, 0.92) 72%, rgba(3, 5, 8, 0) 100%);
 }
 
 .prologue-top-nav .reader-btn {
+  flex: 0 1 auto;
   width: min(260px, 100%);
+}
+
+.prologue-top-nav .prologue-skip-link {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 132px;
 }
 
 .manga-page {
@@ -280,6 +295,16 @@ body.prologue-preload-seen .prologue-loading-gate {
 }
 
 @media (max-width: 520px) {
+  .prologue-top-nav {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .prologue-top-nav .reader-btn,
+  .prologue-top-nav .prologue-skip-link {
+    width: 100%;
+  }
+
   .prologue-end-nav {
     grid-template-columns: 1fr;
   }

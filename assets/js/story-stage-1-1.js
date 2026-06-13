@@ -662,7 +662,16 @@
     return 0;
   }
 
+  function shouldSkipToRewardFromUrl() {
+    try {
+      return new URLSearchParams(window.location.search).get("skip") === "1";
+    } catch (error) {
+      return false;
+    }
+  }
+
   let currentIndex = initialFrameIndex();
+  const autoSkipToReward = shouldSkipToRewardFromUrl();
   let nameLockedOnFrame = false;
   let choiceSolvedOnFrame = false;
   let currentSegments = [];
@@ -711,6 +720,7 @@
   const nextBtn = document.getElementById("nextBtn");
   const autoPlayBtn = document.getElementById("autoPlayBtn");
   const storyHelpBtn = document.getElementById("storyHelpBtn");
+  const storySkipBtn = document.getElementById("storySkipBtn");
   const progressBar = document.getElementById("storyProgressBar");
   const interactionPanel = document.getElementById("interactionPanel");
   const nameForm = document.getElementById("nameForm");
@@ -765,6 +775,45 @@
 
   function formatText(value) {
     return String(value || "").replace(/\{\{playerName\}\}/g, playerName());
+  }
+
+  function hasProfileName() {
+    const profile = readProfile();
+    return Boolean(String(profile?.nickname || profile?.certificateName || "").trim());
+  }
+
+  function ensureSkipProfileName() {
+    if (hasProfileName()) return true;
+    const name = window.prompt("What name should Mira use in the story?", "");
+    if (name === null) return false;
+    writeProfileName(name);
+    return true;
+  }
+
+  function rewardFrameIndex() {
+    const found = frames.findIndex(frame => frame.reward);
+    return found >= 0 ? found : frames.length - 1;
+  }
+
+  function skipToReward(options = {}) {
+    const shouldConfirm = options.confirm !== false;
+    if (shouldConfirm) {
+      const confirmed = window.confirm(
+        "Skip to the reward page? The Term Manual will unlock here, and you can replay this story later from Menu."
+      );
+      if (!confirmed) return false;
+    }
+
+    if (!ensureSkipProfileName()) return false;
+
+    clearAutoPlayTimer();
+    stopTyping(false);
+    stopVoice();
+    stopAmbient();
+    stopSoundCues({ fadeMs: 120 });
+    currentIndex = rewardFrameIndex();
+    renderFrame();
+    return true;
   }
 
   function isTightStoryViewport() {
@@ -2349,6 +2398,10 @@
   backBtn.addEventListener("click", goBack);
   autoPlayBtn?.addEventListener("click", toggleAutoPlay);
   storyHelpBtn?.addEventListener("click", resetTapGuide);
+  storySkipBtn?.addEventListener("click", event => {
+    event.preventDefault();
+    skipToReward({ confirm: true });
+  });
   updateAutoPlayButton();
 
   document.addEventListener("pointerdown", event => {
@@ -2422,8 +2475,9 @@
   prepareUiTapSound();
   prepareStoryAudio(currentIndex, 6);
   preloadStoryStartup().finally(() => {
-    renderFrame();
+    const skipped = autoSkipToReward && skipToReward({ confirm: false });
+    if (!skipped) renderFrame();
     hideStoryLoading();
-    window.setTimeout(showTapGuide, 420);
+    if (!skipped) window.setTimeout(showTapGuide, 420);
   });
 })();
