@@ -612,8 +612,11 @@ function trailMapPadClass(pad, config) {
 function renderTrailMapPad(pad, config) {
   const state = trailMapPadState(pad, config);
   const style = `--pad-x:${pad.x}%; --pad-y:${pad.y}%; --pad-w:${pad.w}%; --pad-h:${pad.h}%;`;
+  const disabledAttrs = state.unlocked
+    ? `aria-disabled="false"`
+    : `disabled aria-disabled="true" title="${escapeHTML(state.lockedReason || state.status)}"`;
   return `
-    <button class="${trailMapPadClass(pad, config)}" type="button" data-map-pad="${escapeHTML(pad.key)}" style="${style}" aria-label="${escapeHTML(pad.label)} ${escapeHTML(state.status)}">
+    <button class="${trailMapPadClass(pad, config)}" type="button" data-map-pad="${escapeHTML(pad.key)}" style="${style}" aria-label="${escapeHTML(pad.label)} ${escapeHTML(state.status)}" ${disabledAttrs}>
       <span>${escapeHTML(pad.label)}</span>
     </button>
   `;
@@ -773,6 +776,8 @@ function openTrailMapCard(map, key) {
   if (!map || !layer || !pad || !kicker || !title || !text || !status || !actions) return;
 
   const state = trailMapPadState(pad, config);
+  if (!state.unlocked) return;
+
   map.querySelectorAll(".trail-map-pad").forEach(button => {
     button.classList.toggle("is-selected", button.dataset.mapPad === key);
   });
@@ -819,6 +824,7 @@ function bindTrailMapInteractions() {
       const padButton = event.target.closest("[data-map-pad]");
       if (padButton) {
         event.preventDefault();
+        if (padButton.disabled || padButton.classList.contains("is-locked")) return;
         openTrailMapCard(map, padButton.dataset.mapPad);
         return;
       }
@@ -1128,13 +1134,6 @@ function renderMenuLinks(options = {}) {
 }
 
 function renderMenuStoryArchive() {
-  const chapterTwoSetupReplay = hasWatchedChapterTwoTestSetup()
-    ? `<a class="jump-link story-jump" href="story-chapter-2-test-setup.html?watch=1"><span><i aria-hidden="true">2</i> Primewood Gate Trial Setup</span><strong>Replay</strong></a>`
-    : "";
-  const chapterTwoEndingReplay = hasWatchedChapterTwoEnding()
-    ? `<a class="jump-link story-jump" href="story-chapter-2-ending.html?watch=1"><span><i aria-hidden="true">2</i> Season 1 Ending</span><strong>Replay</strong></a>`
-    : "";
-
   return `
     <div class="quick-box story-archive-box">
       <h3>Story Archive</h3>
@@ -1142,8 +1141,6 @@ function renderMenuStoryArchive() {
       <div class="link-list story-link-list">
         <a class="jump-link story-jump" href="prologue.html"><span><i aria-hidden="true">P</i> Begin Prologue Story</span><strong>Opening</strong></a>
         <a class="jump-link story-jump" href="story-stage-1-1.html?watch=1"><span><i aria-hidden="true">1</i> 1-1 Story Scene</span><strong>Replay</strong></a>
-        ${chapterTwoSetupReplay}
-        ${chapterTwoEndingReplay}
       </div>
     </div>
   `;
@@ -1176,6 +1173,25 @@ function renderMenuChapterTwoTestLink() {
   return `
     <a class="jump-link chapter-two-test-jump ${unlocked ? "" : "locked"}" href="${chapterTwoTestHref()}" onclick="return handleChapterTwoTestClick(event)">
       <span><i aria-hidden="true">II</i> Prime Element Vision Test</span><strong>${status}</strong>
+    </a>
+    ${renderMenuChapterTwoSceneLinks()}
+  `;
+}
+
+function renderMenuChapterTwoSceneLinks() {
+  const testUnlocked = isChapterTwoTestUnlocked();
+  const setupSeen = hasWatchedChapterTwoTestSetup();
+  const testPassed = isChapterTwoTestPassed();
+  const endingSeen = hasWatchedChapterTwoEnding();
+  const setupHref = setupSeen ? "story-chapter-2-test-setup.html?watch=1" : "story-chapter-2-test-setup.html";
+  const endingHref = endingSeen ? "story-chapter-2-ending.html?watch=1" : "story-chapter-2-ending.html";
+
+  return `
+    <a class="jump-link story-jump ${testUnlocked ? "" : "locked"}" href="${testUnlocked ? setupHref : "#"}">
+      <span><i aria-hidden="true">2</i> Primewood Gate Trial Setup</span><strong>${setupSeen ? "Replay" : testUnlocked ? "Ready" : "Locked"}</strong>
+    </a>
+    <a class="jump-link story-jump ${testPassed || endingSeen ? "" : "locked"}" href="${testPassed || endingSeen ? endingHref : "#"}">
+      <span><i aria-hidden="true">2</i> Season 1 Ending</span><strong>${endingSeen ? "Replay" : testPassed ? "Ready" : "Pass Test"}</strong>
     </a>
   `;
 }

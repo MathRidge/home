@@ -7699,13 +7699,38 @@ body.index-page .trail-map-pad.is-completed::after {
 }
 
 body.index-page .trail-map-pad.is-locked {
-  cursor: pointer;
+  cursor: not-allowed;
+}
+
+body.index-page .trail-map-pad.is-locked:disabled {
+  pointer-events: auto;
+}
+
+body.index-page .trail-map-pad.is-locked::before {
+  background:
+    linear-gradient(135deg, rgba(245, 248, 252, 0.32), rgba(74, 82, 94, 0.26)),
+    rgba(20, 24, 30, 0.42);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.36);
+  opacity: 0.58;
+  filter: none;
+  transform: scale(0.98);
+  -webkit-backdrop-filter: grayscale(1) saturate(0.15) brightness(0.72);
+  backdrop-filter: grayscale(1) saturate(0.15) brightness(0.72);
 }
 
 body.index-page .trail-map-pad.is-locked::after {
   border-color: rgba(255, 255, 255, 0.16);
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.20);
-  opacity: 0.06;
+  opacity: 0.22;
+  transform: scale(0.98);
+}
+
+body.index-page .trail-map-pad.is-locked:hover::before,
+body.index-page .trail-map-pad.is-locked:hover::after,
+body.index-page .trail-map-pad.is-locked:focus-visible::before,
+body.index-page .trail-map-pad.is-locked:focus-visible::after {
+  opacity: 0.58;
+  transform: scale(0.98);
 }
 
 body.index-page .trail-map-pad:focus-visible {
