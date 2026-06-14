@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/math-ridge-shell.css?v=20260613-mobile-travel" />
-  <link rel="stylesheet" href="assets/css/index.css?v=20260613-mobile-trail-banner" />
+  <link rel="stylesheet" href="assets/css/index.css?v=20260613-trail-chapter-switch" />
 </head>
 
 <body class="index-page is-index-loading" data-index-page="true">
@@ -123,6 +123,10 @@
             <p>Follow the guided path from Manual to Trail. Each climb builds the next kind of math vision.</p>
           </div>
           <button class="pill-btn" type="button" onclick="showSection('cabin')">Cabin</button>
+          <div class="trail-chapter-switch" aria-label="Choose Mountain Trail chapter">
+            <button class="trail-chapter-btn" type="button" data-trail-chapter-button="chapter1" onclick="return selectTrailChapter('chapter1')">Chapter 1</button>
+            <button class="trail-chapter-btn" type="button" data-trail-chapter-button="chapter2" onclick="return selectTrailChapter('chapter2')">Chapter 2</button>
+          </div>
         </header>
         <div class="quest-body" id="trailChapters" aria-live="polite"></div>
       </div>
@@ -294,6 +298,6 @@
   </main>
 
   <script src="assets/js/math-ridge-shell.js?v=20260613-mobile-travel"></script>
-<script src="assets/js/index.js?v=20260613-chapter2-pad-map"></script>
+<script src="assets/js/index.js?v=20260613-trail-chapter-switch"></script>
 </body>
 </html>

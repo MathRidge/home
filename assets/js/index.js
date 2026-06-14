@@ -208,6 +208,7 @@ function storageKeyPlayComplete(id) { return `mathRidge_playComplete_${id}`; }
 function storageKeyCert(id) { return `mathRidge_cert_${id}`; }
 
 const TRAIL_STATE_KEY = "mathRidge_trail_state_v1";
+const TRAIL_ACTIVE_CHAPTER_KEY = "mathRidge_active_trail_chapter_v1";
 const STAGE_REVEAL_HINT_KEY = "mathRidge_stageRevealHintSeen_v1";
 const PLAYER_PROFILE_KEY = "mathRidge_playerProfile_v1";
 const CERTIFICATE_FULL_NAME_KEY = "mathRidge_certificateFullName_v1";
@@ -649,15 +650,70 @@ function renderTrailMap(chapter, chapterLessons, config) {
   `;
 }
 
+function canViewTrailChapter(chapterKey) {
+  return chapterKey === "chapter1" || (chapterKey === "chapter2" && isRootGatePassed());
+}
+
+function readTrailChapterPreference(chapterTwoAvailable = isRootGatePassed()) {
+  let saved = "";
+  try { saved = localStorage.getItem(TRAIL_ACTIVE_CHAPTER_KEY) || ""; }
+  catch (error) { saved = ""; }
+
+  if (saved === "chapter1") return "chapter1";
+  if (saved === "chapter2" && chapterTwoAvailable) return "chapter2";
+  return chapterTwoAvailable ? "chapter2" : "chapter1";
+}
+
+function writeTrailChapterPreference(chapterKey) {
+  try { localStorage.setItem(TRAIL_ACTIVE_CHAPTER_KEY, chapterKey); }
+  catch (error) {}
+}
+
+function syncTrailChapterSwitch(activeKey = readTrailChapterPreference(), chapterTwoAvailable = isRootGatePassed()) {
+  document.querySelectorAll("[data-trail-chapter-button]").forEach(button => {
+    const key = button.dataset.trailChapterButton;
+    const isActive = key === activeKey;
+    const isLocked = key === "chapter2" && !chapterTwoAvailable;
+
+    button.classList.toggle("is-active", isActive);
+    button.classList.toggle("is-locked", isLocked);
+    button.disabled = isLocked;
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    button.setAttribute("aria-disabled", isLocked ? "true" : "false");
+  });
+}
+
+function selectTrailChapter(chapterKey) {
+  const nextKey = chapterKey === "chapter2" ? "chapter2" : "chapter1";
+  if (!canViewTrailChapter(nextKey)) {
+    showModal("Chapter 2 Locked", "Open the Root Gate first. Chapter 2 becomes available after the Chapter 1 checkpoint is cleared.", [
+      { text: "Back to Trail", className: "gold-btn", action: () => closeModal() }
+    ]);
+    syncTrailChapterSwitch(readTrailChapterPreference(false), false);
+    return false;
+  }
+
+  writeTrailChapterPreference(nextKey);
+  renderTrail({ force: true });
+  syncTrailChapterSwitch(nextKey, isRootGatePassed());
+  return false;
+}
+
 function renderTrail(options = {}) {
   const trail = document.getElementById("trailChapters");
   if (!trail) return;
-  if (!options.force && trail.dataset.rendered === "true") return;
+  if (!options.force && trail.dataset.rendered === "true") {
+    const chapterTwoAvailable = Boolean(isRootGatePassed());
+    syncTrailChapterSwitch(readTrailChapterPreference(chapterTwoAvailable), chapterTwoAvailable);
+    return;
+  }
 
   const chapters = [...new Set(lessons.map(lesson => lesson.chapter))];
   const chapterOne = chapters.find(chapter => chapter.startsWith("Chapter 1")) || chapters[0];
   const chapterTwo = chapters.find(chapter => chapter.startsWith("Chapter 2"));
-  const chapterTwoOpen = Boolean(chapterTwo && isRootGatePassed());
+  const chapterTwoAvailable = Boolean(chapterTwo && isRootGatePassed());
+  const activeChapterKey = readTrailChapterPreference(chapterTwoAvailable);
+  const chapterTwoOpen = chapterTwoAvailable && activeChapterKey === "chapter2";
   const activeChapter = chapterTwoOpen ? chapterTwo : chapterOne;
   const activeConfig = chapterTwoOpen ? trailMapConfigs.chapter2 : trailMapConfigs.chapter1;
   const activeLessons = lessons.filter(lesson => lesson.chapter === activeChapter);
@@ -680,6 +736,7 @@ function renderTrail(options = {}) {
   trail.dataset.rendered = "true";
   writeTrailStateSnapshot();
   bindTrailMapInteractions();
+  syncTrailChapterSwitch(activeConfig.key, chapterTwoAvailable);
 }
 
 function trailMapActionMarkup(pad, state, config) {
@@ -2722,6 +2779,7 @@ document.addEventListener("DOMContentLoaded", () => {
 window.handleStageImageFallback = handleStageImageFallback;
 window.handleRelicPreviewError = handleRelicPreviewError;
 window.showSection = showSection;
+window.selectTrailChapter = selectTrailChapter;
 window.showCabinPanel = showCabinPanel;
 window.showCertificateVaultMode = showCertificateVaultMode;
 window.toggleCertificateVaultMode = toggleCertificateVaultMode;
