@@ -768,12 +768,13 @@ function openTrailMapCard(map, key) {
   const config = trailMapConfigs[map?.dataset?.mapKey];
   const layer = map?.querySelector(".trail-map-card-layer");
   const kicker = map?.querySelector(".trail-map-card-kicker");
+  const card = map?.querySelector(".trail-map-card");
   const title = map?.querySelector(".trail-map-card h3");
   const text = map?.querySelector(".trail-map-card p");
   const status = map?.querySelector(".trail-map-card-status");
   const actions = map?.querySelector(".trail-map-card-actions");
   const pad = config?.pads.find(item => item.key === key);
-  if (!map || !layer || !pad || !kicker || !title || !text || !status || !actions) return;
+  if (!map || !layer || !pad || !card || !kicker || !title || !text || !status || !actions) return;
 
   const state = trailMapPadState(pad, config);
   if (!state.unlocked) return;
@@ -781,6 +782,10 @@ function openTrailMapCard(map, key) {
   map.querySelectorAll(".trail-map-pad").forEach(button => {
     button.classList.toggle("is-selected", button.dataset.mapPad === key);
   });
+  card.classList.remove("is-manual-card", "is-trail-card");
+  if (pad.kind === "manual" || pad.kind === "trail") {
+    card.classList.add(`is-${pad.kind}-card`);
+  }
 
   kicker.textContent = pad.label;
   title.textContent = pad.title;
