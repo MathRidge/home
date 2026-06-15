@@ -7760,19 +7760,21 @@ body.index-page .trail-map-card-layer[hidden] {
 }
 
 body.index-page .trail-map-card-layer {
-  z-index: 10;
+  z-index: 280;
   pointer-events: none;
 }
 
 body.index-page .trail-map-card {
   position: absolute;
+  z-index: 280;
   left: 50%;
   top: clamp(16px, 4vw, 30px);
   display: grid;
-  gap: 10px;
+  box-sizing: border-box;
+  gap: 8px;
   width: min(88%, 420px);
   min-height: clamp(220px, 30vw, 252px);
-  padding: clamp(28px, 4.4vw, 36px) clamp(26px, 4.2vw, 34px) clamp(22px, 3.8vw, 30px);
+  padding: clamp(38px, 6vw, 48px) clamp(46px, 8vw, 60px) clamp(30px, 5vw, 40px);
   border: 0;
   border-radius: 24px;
   background:
@@ -7823,6 +7825,8 @@ body.index-page .trail-map-card-close {
 }
 
 body.index-page .trail-map-card-kicker {
+  justify-self: center;
+  max-width: 100%;
   color: #f6c96c;
   font: 900 0.76rem/1 "Nunito", system-ui, sans-serif;
   letter-spacing: 0.12em;
@@ -7830,24 +7834,30 @@ body.index-page .trail-map-card-kicker {
 }
 
 body.index-page .trail-map-card h3 {
+  justify-self: center;
+  width: 100%;
   margin: 0;
-  padding-right: 34px;
+  padding-right: 0;
   color: #fff7e8;
   font-size: clamp(1.18rem, 4.8vw, 1.58rem);
   line-height: 1.04;
+  text-align: center;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.42);
 }
 
 body.index-page .trail-map-card p {
+  justify-self: center;
+  width: 100%;
   margin: 0;
   color: rgba(255, 247, 232, 0.84);
   font-size: clamp(0.90rem, 3.45vw, 1.02rem);
   line-height: 1.32;
+  text-align: center;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.38);
 }
 
 body.index-page .trail-map-card-status {
-  justify-self: start;
+  justify-self: center;
   padding: 6px 10px;
   border-radius: 999px;
   background: rgba(255, 232, 166, 0.12);
@@ -7858,12 +7868,13 @@ body.index-page .trail-map-card-status {
 
 body.index-page .trail-map-card-actions {
   display: grid;
+  justify-items: center;
   gap: 8px;
 }
 
 body.index-page .trail-map-card-action {
-  width: 100%;
-  min-height: 46px;
+  width: min(100%, 236px);
+  min-height: 42px;
   justify-content: center;
   text-align: center;
 }
@@ -7978,11 +7989,13 @@ body.index-page .trail-map-transition-to {
     top: 12px;
     bottom: auto;
     width: calc(100% - 26px);
+    padding: 34px 46px 28px;
     border-radius: 18px;
   }
 
   body.index-page .trail-map-card-action {
-    min-height: 44px;
+    width: min(82%, 232px);
+    min-height: 40px;
   }
 
   body.index-page .trail-map-transition-map {
@@ -8127,10 +8140,10 @@ body.index-page.is-quest-map-active .reading-progress {
 
   body.index-page .app-shell.quest-bg .trail-map-card {
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
     bottom: auto;
     width: min(calc(100vw - 26px), 430px);
-    z-index: 80;
+    z-index: 280;
   }
 }
 
@@ -8247,9 +8260,9 @@ body.index-page.is-quest-map-active .reading-progress {
   }
 
   body.index-page .app-shell.quest-bg .trail-map-card {
-    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
     width: min(calc(100vw - 28px), 520px);
     min-height: 188px;
-    padding: 26px 30px 22px;
+    padding: 28px 54px 24px;
   }
 }
