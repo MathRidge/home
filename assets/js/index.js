@@ -764,6 +764,23 @@ function trailMapActionMarkup(pad, state, config) {
   return `<a class="gold-btn trail-map-card-action" href="${escapeHTML(state.actionHref)}"${clickHandler}>${escapeHTML(state.actionText || pad.action)}</a>`;
 }
 
+function placeTrailMapCard(map, card, pad) {
+  const inset = 12;
+  const mapRect = map.getBoundingClientRect();
+  const cardHeight = card.offsetHeight || 0;
+  const visibleTop = Math.max(mapRect.top, 0);
+  const visibleBottom = Math.min(mapRect.bottom, window.innerHeight || document.documentElement.clientHeight);
+  const mapHeight = map.clientHeight || mapRect.height || 0;
+  const desiredTop = pad.y >= 50
+    ? visibleTop - mapRect.top + inset
+    : visibleBottom - mapRect.top - cardHeight - inset;
+  const maxTop = Math.max(inset, mapHeight - cardHeight - inset);
+  const nextTop = Math.min(Math.max(desiredTop, inset), maxTop);
+
+  card.style.top = `${Math.round(nextTop)}px`;
+  card.style.bottom = "auto";
+}
+
 function openTrailMapCard(map, key) {
   const config = trailMapConfigs[map?.dataset?.mapKey];
   const layer = map?.querySelector(".trail-map-card-layer");
@@ -782,10 +799,11 @@ function openTrailMapCard(map, key) {
   map.querySelectorAll(".trail-map-pad").forEach(button => {
     button.classList.toggle("is-selected", button.dataset.mapPad === key);
   });
-  card.classList.remove("is-manual-card", "is-trail-card");
+  card.classList.remove("is-manual-card", "is-trail-card", "is-map-card-top", "is-map-card-bottom");
   if (pad.kind === "manual" || pad.kind === "trail") {
     card.classList.add(`is-${pad.kind}-card`);
   }
+  card.classList.add(pad.y >= 50 ? "is-map-card-top" : "is-map-card-bottom");
 
   kicker.textContent = pad.label;
   title.textContent = pad.title;
@@ -797,6 +815,7 @@ function openTrailMapCard(map, key) {
   layer.hidden = false;
   map.classList.add("is-card-open");
   layer.dataset.activePad = key;
+  placeTrailMapCard(map, card, pad);
 }
 
 function closeTrailMapCard(map = null) {
@@ -804,6 +823,11 @@ function closeTrailMapCard(map = null) {
   maps.forEach(currentMap => {
     const layer = currentMap.querySelector(".trail-map-card-layer");
     if (!layer || layer.hidden) return;
+    const card = currentMap.querySelector(".trail-map-card");
+    if (card) {
+      card.style.top = "";
+      card.style.bottom = "";
+    }
 
     layer.hidden = true;
     layer.removeAttribute("data-active-pad");

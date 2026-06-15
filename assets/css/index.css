@@ -7768,7 +7768,8 @@ body.index-page .trail-map-card {
   position: absolute;
   z-index: 280;
   left: 50%;
-  top: clamp(16px, 4vw, 30px);
+  top: auto;
+  bottom: auto;
   display: grid;
   box-sizing: border-box;
   gap: 8px;
@@ -7788,6 +7789,16 @@ body.index-page .trail-map-card {
     0 24px 58px rgba(0, 0, 0, 0.42);
   transform: translateX(-50%);
   pointer-events: auto;
+}
+
+body.index-page .trail-map-card.is-map-card-top {
+  top: clamp(16px, 4vw, 30px);
+  bottom: auto;
+}
+
+body.index-page .trail-map-card.is-map-card-bottom {
+  top: auto;
+  bottom: clamp(16px, 4vw, 30px);
 }
 
 body.index-page .trail-map-card.is-manual-card {
@@ -7986,11 +7997,21 @@ body.index-page .trail-map-transition-to {
   }
 
   body.index-page .trail-map-card {
-    top: 12px;
+    top: auto;
     bottom: auto;
     width: calc(100% - 26px);
     padding: 34px 46px 28px;
     border-radius: 18px;
+  }
+
+  body.index-page .trail-map-card.is-map-card-top {
+    top: 12px;
+    bottom: auto;
+  }
+
+  body.index-page .trail-map-card.is-map-card-bottom {
+    top: auto;
+    bottom: 12px;
   }
 
   body.index-page .trail-map-card-action {
@@ -8139,11 +8160,21 @@ body.index-page.is-quest-map-active .reading-progress {
   }
 
   body.index-page .app-shell.quest-bg .trail-map-card {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    position: absolute;
+    top: auto;
     bottom: auto;
     width: min(calc(100vw - 26px), 430px);
     z-index: 280;
+  }
+
+  body.index-page .app-shell.quest-bg .trail-map-card.is-map-card-top {
+    top: 12px;
+    bottom: auto;
+  }
+
+  body.index-page .app-shell.quest-bg .trail-map-card.is-map-card-bottom {
+    top: auto;
+    bottom: 12px;
   }
 }
 
@@ -8260,9 +8291,18 @@ body.index-page.is-quest-map-active .reading-progress {
   }
 
   body.index-page .app-shell.quest-bg .trail-map-card {
-    top: calc(env(safe-area-inset-top, 0px) + 8px);
     width: min(calc(100vw - 28px), 520px);
     min-height: 188px;
     padding: 28px 54px 24px;
+  }
+
+  body.index-page .app-shell.quest-bg .trail-map-card.is-map-card-top {
+    top: 10px;
+    bottom: auto;
+  }
+
+  body.index-page .app-shell.quest-bg .trail-map-card.is-map-card-bottom {
+    top: auto;
+    bottom: 10px;
   }
 }
