@@ -24,7 +24,7 @@
 <body class="index-page is-index-loading" data-index-page="true">
   <script>
     try {
-      if (sessionStorage.getItem("mathRidge_indexLoaded_v1") === "true") {
+      if (sessionStorage.getItem("mathRidge_indexLoaded_v2") === "true") {
         document.body.classList.add("index-preload-seen");
       }
     } catch (error) {}
@@ -34,7 +34,7 @@
       <span class="index-loading-mark" aria-hidden="true"></span>
       <p class="index-loading-kicker">Preparing the Ridge</p>
       <h1 id="indexLoadingTitle">Loading Math Ridge</h1>
-      <p class="index-loading-text" id="indexLoadingText">Warming up sounds and trail paths...</p>
+      <p class="index-loading-text" id="indexLoadingText">Preparing page art and trail paths...</p>
       <div class="index-loading-bar" aria-hidden="true">
         <span id="indexLoadingBar"></span>
       </div>
@@ -297,7 +297,7 @@
     </div>
   </main>
 
-  <script src="assets/js/math-ridge-shell.js?v=20260613-mobile-travel"></script>
+  <script src="assets/js/math-ridge-shell.js?v=20260614-index-asset-preload"></script>
 <script src="assets/js/index.js?v=20260614-map-card-dynamic-position"></script>
 </body>
 </html>

@@ -11,20 +11,116 @@
   const MOBILE_CONFIRM_DURATION = 5600;
   const MOBILE_CONFIRM_NOTE = "Tap once to light a place. Tap again to travel.";
   const SHELL_SOUND_BASE = "voice/sound/";
-  const INDEX_LOADED_KEY = "mathRidge_indexLoaded_v1";
+  const INDEX_LOADED_KEY = "mathRidge_indexLoaded_v2";
   const POINTER_TAP_GUARD_MS = 1400;
   const CONFIRM_NAV_DELAY_MS = 780;
   const shellSfxPresets = {
     firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1120, fadeOut: 240 },
     secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 }
   };
-  const INDEX_PRELOAD_IMAGES = [
-    "assets/images/logo/math-ridge-logo.webp",
-    "assets/images/backgrounds/desktop/student-overlook-wide-desktop.webp",
-    "assets/images/backgrounds/desktop/fantasy-trail-blue-desktop.webp",
-    "assets/images/backgrounds/desktop/study-cabin-desktop.webp",
-    "assets/images/backgrounds/desktop/study-room-template-desktop.webp",
-    "assets/images/backgrounds/desktop/desk-closeup-desktop.webp"
+  const INDEX_PRELOAD_IMAGE_GROUPS = [
+    {
+      label: "Warming up sounds and trail paths...",
+      images: [
+        "assets/images/logo/math-ridge-logo.webp",
+        "assets/images/logo/logold.svg",
+        "assets/images/logo/MathRidge_AppIcon_true_alpha.png",
+        "assets/images/logo/mathridge_eighth_notes_true_alpha_v2_256px.png"
+      ]
+    },
+    {
+      label: "Painting the ridge backgrounds...",
+      images: [
+        "assets/images/backgrounds/desktop/student-overlook-wide-desktop.webp",
+        "assets/images/backgrounds/desktop/fantasy-trail-blue-desktop.webp",
+        "assets/images/backgrounds/desktop/study-cabin-desktop.webp",
+        "assets/images/backgrounds/desktop/study-room-template-desktop.webp",
+        "assets/images/backgrounds/desktop/desk-closeup-desktop.webp",
+        "assets/images/backgrounds/desktop/sunrise-cloud-trail-desktop.webp",
+        "assets/images/backgrounds/mobile/student-overlook-portrait-tall-mobile.webp",
+        "assets/images/backgrounds/mobile/fantasy-trail-blue-mobile.webp",
+        "assets/images/backgrounds/mobile/study-cabin-mobile.webp",
+        "assets/images/backgrounds/mobile/study-room-template-mobile.webp",
+        "assets/images/backgrounds/mobile/desk-closeup-mobile.webp",
+        "assets/images/backgrounds/mobile/mathridge-background.png"
+      ]
+    },
+    {
+      label: "Preparing cabin and vault banners...",
+      images: [
+        "assets/images/index-ui/maintain_trail_title_card_desktop_1079x125.webp",
+        "assets/images/index-ui/maintain_trail_title_card_mobile_353x207.webp",
+        "assets/images/index-ui/study_desk_title_card_desktop_1079x125.webp",
+        "assets/images/index-ui/study_desk_title_card_mobile_353x207.webp",
+        "assets/images/index-ui/The Cabin Banner 1080 x 270 mobile.png",
+        "assets/images/index-ui/The Cabin Banner 353x207 mobile.png",
+        "assets/images/index-ui/message_desk_title_card_desktop_1079x150.webp",
+        "assets/images/index-ui/message_desk_title_card_mobile_353x207.webp",
+        "assets/images/index-ui/Message 353x207 mobile vertical.png",
+        "assets/images/index-ui/Message 780x320 mobile horizontal.png",
+        "assets/images/index-ui/cabin_interactive_mobile_vertical.png",
+        "assets/images/index-ui/cabin_interactive_mobile_horizontal.png"
+      ]
+    },
+    {
+      label: "Laying out the mountain maps...",
+      images: [
+        "assets/images/index-ui/Chapter 1 map.png",
+        "assets/images/index-ui/Chapter 2 map.png",
+        "assets/images/index-ui/Manual card bg.png",
+        "assets/images/index-ui/Trail card bg.png"
+      ]
+    },
+    {
+      label: "Polishing relic and certificate vaults...",
+      images: [
+        "assets/images/index-ui/relic_vaults_mobile_vertical.png",
+        "assets/images/index-ui/relict_vaults_mobile_horizontal.png",
+        "assets/images/index-ui/relics mobile vertical loop.png",
+        "assets/images/index-ui/relic_display_vault.png",
+        "assets/images/index-ui/Certificate Wall mobile vertical.png",
+        "assets/images/index-ui/Certificate Wall mobile horizontal.png",
+        "assets/images/index-ui/Certificate wall vertical background loop.png",
+        "assets/images/index-ui/certificate wall horizontal background loop.png",
+        "assets/images/index-ui/certificate_display_vault_clean.png",
+        "assets/images/index-ui/certificate_display_vault_prefilled.png",
+        "assets/images/test-results/math_ridge_certificate_true_alpha.png",
+        "assets/images/test-results/math_ridge_certificate_prefilled_template_true_alpha.png",
+        "assets/images/test-results/math_ridge_certificate_mastery_template_true_alpha.png",
+        "assets/images/test-results/chapter-1-test-result.svg",
+        "assets/images/test-results/chapter-2-test-result.svg"
+      ]
+    },
+    {
+      label: "Setting relics on the shelves...",
+      images: [
+        "assets/images/relic/term_stone.png",
+        "assets/images/relic/sign_compass_relic_alpha.png",
+        "assets/images/relic/parity_prism_true_alpha.png",
+        "assets/images/relic/factor_forge_alpha.png",
+        "assets/images/relic/shelf_scale_inactive.png",
+        "assets/images/relic/Shelf_Scale_Relic_True_Alpha.png",
+        "assets/images/relic/primewood_seed_relic_preview.png",
+        "assets/images/relic/primewood_seed_relic_true_alpha.png",
+        "assets/images/relic/fraction_loom_relic_preview.png",
+        "assets/images/relic/fraction_loom_relic_true_alpha.png",
+        "assets/images/relic/power_tally_relic_preview.png",
+        "assets/images/relic/power_tally_relic_true_alpha.png"
+      ]
+    },
+    {
+      label: "Preparing stage cards...",
+      images: [
+        "assets/images/stages/stage-1-1-trail-start.webp",
+        "assets/images/stages/stage-1-2-mountain-peak.webp",
+        "assets/images/stages/stage-1-3-mountain-trail.webp",
+        "assets/images/stages/stage-1-4-mountain-cabin.webp",
+        "assets/images/stages/stage-2-1-mountain-library.webp",
+        "assets/images/stages/stage-2-2-ancient-tree.webp",
+        "assets/images/stages/stage-2-3-math-workstation.webp",
+        "assets/images/stages/stage-2-4-exponential-bloom.webp"
+      ]
+    }
   ];
 
   let mobileConfirmTarget = null;
@@ -440,14 +536,57 @@
     return isMobileDrawer() && document.body.classList.contains("note-menu-open");
   }
 
+  function uniqueIndexPreloadImages() {
+    const images = INDEX_PRELOAD_IMAGE_GROUPS.flatMap(group => group.images || []);
+    return Array.from(new Set(images.filter(Boolean)));
+  }
+
+  function indexPreloadMessage(percent) {
+    const groups = INDEX_PRELOAD_IMAGE_GROUPS;
+    if (!groups.length) return "Preparing the Ridge...";
+    const index = Math.min(groups.length - 1, Math.floor((Math.max(0, Math.min(99, percent)) / 100) * groups.length));
+    return groups[index]?.label || "Preparing the Ridge...";
+  }
+
   function preloadIndexImage(src) {
     return new Promise(resolve => {
       const image = new Image();
-      const done = () => resolve(src);
-      image.onload = done;
-      image.onerror = done;
+      let settled = false;
+      const done = ok => {
+        if (settled) return;
+        settled = true;
+        resolve({ src, ok });
+      };
+
+      image.decoding = "async";
+      image.onload = () => done(true);
+      image.onerror = () => done(false);
       image.src = src;
     });
+  }
+
+  function runIndexPreloadWork(onProgress) {
+    const soundTasks = ["firstTap", "secondTap"].map(name => {
+      prepareShellSfx(name);
+      const bufferTask = prepareShellSfxBuffer(name);
+      return bufferTask || Promise.resolve(name);
+    });
+    const imageTasks = uniqueIndexPreloadImages().map(preloadIndexImage);
+    const tasks = [...soundTasks, ...imageTasks];
+    const total = Math.max(1, tasks.length);
+    let completed = 0;
+
+    onProgress?.(0, total);
+
+    const trackedTasks = tasks.map(task => Promise.resolve(task)
+      .catch(error => error)
+      .then(result => {
+        completed += 1;
+        onProgress?.(completed, total, result);
+        return result;
+      }));
+
+    return Promise.allSettled(trackedTasks);
   }
 
   function setIndexLoadProgress(percent, text) {
@@ -479,26 +618,33 @@
       document.body.classList.add("index-preload-seen");
     }
 
-    const loadSounds = ["firstTap", "secondTap"].map(name => {
-      prepareShellSfx(name);
-      return prepareShellSfxBuffer(name);
-    }).filter(Boolean);
-    const loadImages = INDEX_PRELOAD_IMAGES.map(preloadIndexImage);
-    const preloadWork = Promise.allSettled([...loadSounds, ...loadImages]);
+    let preloadSettled = false;
+    let gateReady = false;
+    const preloadWork = runIndexPreloadWork((completed, total) => {
+      if (skipGate || gateReady) return;
+      const percent = Math.min(96, Math.round(10 + (completed / total) * 84));
+      setIndexLoadProgress(percent, indexPreloadMessage(percent));
+    }).then(result => {
+      preloadSettled = true;
+      return result;
+    });
     const minimumDisplay = new Promise(resolve => window.setTimeout(resolve, 620));
-    const safetyTimeout = new Promise(resolve => window.setTimeout(resolve, 3600));
+    const safetyTimeout = new Promise(resolve => window.setTimeout(() => resolve("timeout"), 10000));
 
-    if (!skipGate) setIndexLoadProgress(38, "Warming up sounds and trail paths...");
+    if (!skipGate) setIndexLoadProgress(10, "Warming up sounds and trail paths...");
 
     Promise.race([
-      Promise.all([preloadWork, minimumDisplay]),
+      Promise.all([preloadWork, minimumDisplay]).then(() => "ready"),
       safetyTimeout
-    ]).then(() => {
+    ]).then(status => {
       if (skipGate) return;
+      gateReady = true;
       gate.classList.add("is-ready");
       beginButton.disabled = false;
       beginButton.textContent = "Begin";
-      setIndexLoadProgress(100, "Ready to climb.");
+      setIndexLoadProgress(100, status === "timeout" && !preloadSettled
+        ? "Ready to climb. Final art keeps warming."
+        : "Ready to climb.");
     });
 
     const begin = () => {
