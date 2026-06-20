@@ -257,6 +257,11 @@ body.play-page.play-8 {
 	animation: boardShake 0.42s ease;
 }
 
+.math-ridge-wrong-shake {
+	animation: mathRidgeWrongShake 0.38s ease both;
+	transform-origin: center;
+}
+
 .challenge-board h2 {
 	display: none;
 }
@@ -267,6 +272,20 @@ body.play-page.play-8 {
 	40% { transform: translateX(calc(-50% + 6px)); }
 	60% { transform: translateX(calc(-50% - 4px)); }
 	80% { transform: translateX(calc(-50% + 4px)); }
+}
+
+@keyframes mathRidgeWrongShake {
+	0%, 100% { transform: translateX(0); }
+	18% { transform: translateX(-5px) rotate(-0.4deg); }
+	36% { transform: translateX(5px) rotate(0.4deg); }
+	54% { transform: translateX(-3px) rotate(-0.25deg); }
+	72% { transform: translateX(3px) rotate(0.25deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.math-ridge-wrong-shake {
+		animation: none;
+	}
 }
 
 .stage-badge,

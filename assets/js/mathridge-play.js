@@ -186,6 +186,8 @@
 	let armedBottomControlTimer = null;
 	let armedTrialControl = null;
 	let armedTrialControlTimer = null;
+	let lastFeedbackPointerTarget = null;
+	let lastFeedbackPointerAt = 0;
 	let pendingExitTarget = null;
 	let confettiTimer = null;
 	const sfxAudioCache = new Map();
@@ -514,12 +516,60 @@
 		return play();
 	}
 
+	function isCoarseTouchDevice() {
+		return Boolean(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches);
+	}
+
+	function vibrateWrongAnswer(pattern = 36) {
+		if (!isCoarseTouchDevice()) return false;
+		if (!window.navigator || typeof window.navigator.vibrate !== "function") return false;
+		try {
+			window.navigator.vibrate(pattern);
+			return true;
+		} catch (error) {
+			return false;
+		}
+	}
+
+	function resolveWrongFeedbackTarget(target = null) {
+		if (target && target.nodeType === 1) return target;
+		if (lastFeedbackPointerTarget && Date.now() - lastFeedbackPointerAt < 900 && document.contains(lastFeedbackPointerTarget)) {
+			return lastFeedbackPointerTarget;
+		}
+		const active = document.activeElement;
+		if (!active || active === document.body || active === document.documentElement) return null;
+		if (active.matches?.("button, a, input, select, textarea, .choice-card, .choice, .term-card, .number-card, .answer-card")) {
+			return active;
+		}
+		return active.closest?.("button, a, .choice-card, .choice, .term-card, .number-card, .answer-card, .step-card, .practice-card") || null;
+	}
+
+	function shakeWrongAnswerTarget(target = null) {
+		const element = resolveWrongFeedbackTarget(target);
+		if (!element?.classList) return false;
+		element.classList.remove("math-ridge-wrong-shake");
+		void element.offsetWidth;
+		element.classList.add("math-ridge-wrong-shake");
+		window.setTimeout(() => element.classList.remove("math-ridge-wrong-shake"), 460);
+		return true;
+	}
+
+	function wrongAnswerFeedback(target = null, options = {}) {
+		if (options.sound !== false) playSfx("wrong", { feedback: false, force: options.forceSound === true });
+		vibrateWrongAnswer(options.vibrationPattern || 36);
+		shakeWrongAnswerTarget(target || options.target || options.feedbackTarget || null);
+	}
+
 	function playSfx(cueLike, options = {}) {
 		const cue = normalizeSfx(cueLike);
 		if (cue?._cacheName === "secondTap" && !options.single) {
 			playSingleSfx("firstTap", { force: true });
 			window.setTimeout(() => playSingleSfx("secondTap", { force: true }), 58);
 			return null;
+		}
+		if (cue?._cacheName === "wrong" && options.feedback !== false) {
+			vibrateWrongAnswer(options.vibrationPattern || 36);
+			shakeWrongAnswerTarget(options.feedbackTarget || options.target || null);
 		}
 		return playSingleSfx(cueLike, options);
 	}
@@ -2762,6 +2812,8 @@
 	});
 
 	document.addEventListener("pointerdown", event => {
+		lastFeedbackPointerTarget = event.target?.closest?.("button, a, input, select, textarea, .choice-card, .choice, .term-card, .number-card, .answer-card, .step-card, .practice-card") || null;
+		lastFeedbackPointerAt = Date.now();
 		if (!pendingPlayAmbience) return;
 		if (!event.target.closest("button, a, input, select, textarea, label")) return;
 		retryPlayAmbience();
@@ -2818,6 +2870,9 @@
 		reviveProgressTurtle,
 		updateShelf,
 		playSfx,
+		wrongAnswerFeedback,
+		vibrateWrongAnswer,
+		shakeWrongAnswerTarget,
 		playPageAmbience,
 		stopPlayAmbience,
 		setTrialMusicEnabled,

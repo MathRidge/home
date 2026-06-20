@@ -16,7 +16,8 @@
   const CONFIRM_NAV_DELAY_MS = 780;
   const shellSfxPresets = {
     firstTap: { file: "first tap.mp3", volume: 0.55, start: 0.08, maxMs: 1120, fadeOut: 240 },
-    secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 }
+    secondTap: { file: "second tap.mp3", volume: 0.58, start: 0.08, maxMs: 1120, fadeOut: 240 },
+    mapPad: { file: "universfield-button.mp3", volume: 0.52, start: 0, maxMs: 1120, fadeOut: 180 }
   };
   const INDEX_PRELOAD_IMAGE_GROUPS = [
     {
@@ -566,7 +567,7 @@
   }
 
   function runIndexPreloadWork(onProgress) {
-    const soundTasks = ["firstTap", "secondTap"].map(name => {
+    const soundTasks = ["firstTap", "secondTap", "mapPad"].map(name => {
       prepareShellSfx(name);
       const bufferTask = prepareShellSfxBuffer(name);
       return bufferTask || Promise.resolve(name);
@@ -652,6 +653,7 @@
       unlockShellAudioContext();
       prepareShellSfx("firstTap");
       prepareShellSfx("secondTap");
+      prepareShellSfx("mapPad");
       playShellSfx("secondTap");
       rememberIndexLoadedThisSession();
       gate.classList.add("is-hidden");
@@ -772,6 +774,7 @@
   function bindShellEvents() {
     prepareShellSfx("firstTap");
     prepareShellSfx("secondTap");
+    prepareShellSfx("mapPad");
     injectMobileConfirmNote();
     prepareIndexLoadingGate();
 

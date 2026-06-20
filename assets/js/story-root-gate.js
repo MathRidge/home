@@ -19,6 +19,7 @@
   const elderVoiceBase = "voice/elder/";
   const soundBase = "voice/sound/";
   const AUTO_PLAY_DELAY_MS = 2500;
+  const BOARD_WRITE_DEFAULT_MS = 4300;
   const TAP_GUIDE_KEY = "mathRidge_storyTapGuideSeen_v1";
   const UI_TAP_SOUND = { file: "first tap.mp3", volume: 0.42, start: 0.08 };
 
@@ -126,6 +127,7 @@
   const gateOpenCue = { file: "gate-open-lock.mp3", start: 8.7, end: 13.8, volume: 0.4, fadeOut: 1200, lockMs: 2000 };
   const chalkCueA = { file: "chuck-writing.mp3", start: 0.45, end: 2.25, volume: 0.28, fadeOut: 260, lockMs: 1100 };
   const chalkCueB = { file: "chuck-writing.mp3", start: 3.1, end: 5.25, volume: 0.28, fadeOut: 320, lockMs: 1200 };
+  const boardWriteCue = { file: "chuck-writing.mp3", start: 0.45, end: 5.25, volume: 0.24, fadeOut: 460, lockMs: 0 };
   const satchelCue = { file: "satchel search.mp3", start: 1.1, end: 4.2, volume: 0.3, fadeOut: 850, lockMs: 900 };
   const certificateUnlockCues = [
     { file: "certificate-paper-rustle.mp3", start: 0, end: 2.2, volume: 0.4, fadeOut: 520, lockMs: 1000 },
@@ -213,6 +215,12 @@
   ]);
 
   const relicOrder = ["term", "sign", "parity", "factor"];
+  const chapterTwoRelicSources = {
+    term: "assets/images/relic/Shelf_Scale_Relic_True_Alpha.png?v=20260620-primewood-relics",
+    sign: "assets/images/relic/primewood_seed_relic_true_alpha.png?v=20260620-primewood-relics",
+    parity: "assets/images/relic/fraction_loom_relic_true_alpha.png?v=20260620-primewood-relics",
+    factor: "assets/images/relic/power_tally_relic_true_alpha.png?v=20260620-primewood-relics"
+  };
 
   const blackboardStates = {
     rootGate: {
@@ -401,6 +409,8 @@
   let voiceAdvanceLocked = false;
   let soundAdvanceLocked = false;
   let soundAdvanceTimer = null;
+  let boardWriteTimer = null;
+  let boardWriteLocked = false;
   let autoPlayEnabled = false;
   let autoPlayTimer = null;
   const PRELOAD_AHEAD_FRAMES = 4;
@@ -442,8 +452,8 @@
     return [
       { bg: "cabinEvening", sprite: "miraDetermined", speaker: "Narrator", text: "Root Gate Finale: Return to Elder Shellwick" },
       { bg: "cabinEvening", sprite: "miraDetermined", speaker: "Narrator", text: "The door of Elder Shellwick's cabin opened by itself. Warm lantern light spilled onto the path." },
-      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "Inside, the familiar smell of tea, parchment, and old rain filled the room." },
-      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Narrator", text: "Mira stepped in first, covered in dust, leaves, and at least one tiny twig stuck in her hat." },
+      { bg: "cabinInside", sprite: "none", elder: "none", speaker: "Narrator", text: "Inside, the familiar smell of tea, parchment, and old rain filled the room." },
+      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "none", speaker: "Narrator", text: "Mira stepped in first, covered in dust, leaves, and at least one tiny twig stuck in her hat." },
       { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "Elder Shellwick... we have returned!" },
       { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Narrator", text: "The twig slipped from her hat and landed on the floor." },
       { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "...mostly intact." },
@@ -902,10 +912,10 @@
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Seed rooted itself into the second.", relicReveal: "sign" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom threaded silver light through the third.", relicReveal: "parity" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally sparked across the final socket.", relicReveal: "factor" },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", relicReveal: "clear" },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "See beneath the number. Clean what can be cleaned. Compact what repeats.", board: "primewoodGateRule", relicReveal: "clear" },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Mira", text: "I understood almost all of that.", board: "primewoodGateRule", relicReveal: "clear" },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Enough to begin.", board: "primewoodGateRule", relicReveal: "clear", reward: "chapter2-test-setup" }
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", boardWrite: true, boardWriteDuration: 4300, relicReveal: "clear" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "See beneath the number. Clean what can be cleaned. Compact what repeats.", board: "primewoodGateRule", relicReveal: "clear" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "I understood almost all of that.", board: "primewoodGateRule", relicReveal: "clear" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Enough to begin.", board: "primewoodGateRule", relicReveal: "clear", reward: "chapter2-test-setup" }
     ];
   }
 
@@ -917,10 +927,10 @@
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom rewove divided paths.", relicReveal: "parity" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally compacted repeated factors.", relicReveal: "factor" },
       { bg: "visionRelicCase", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "The four Vision Relics shone together.", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Numbers opened in the air, revealing their prime elements.", board: "roots12", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I can see inside them.", board: "roots12", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Their prime pieces.", board: "roots12", relicReveal: "all" },
-      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Their prime elements.", board: "roots12", relicReveal: "all" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Numbers opened in the air, revealing their prime elements.", board: "roots12", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I can see inside them.", board: "roots12", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Their prime pieces.", board: "roots12", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Their prime elements.", board: "roots12", relicReveal: "clear" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate opened.", relicReveal: "all" },
       { bg: "primewoodBridgePhone", sprite: "none", elder: "none", speaker: "Narrator", text: "Beyond the gate, a thin bridge of light reached toward your phone.", relicReveal: "clear" },
       { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "There! I can see it!" },
@@ -1055,6 +1065,7 @@
 
   function setRelicReveal(state = "") {
     if (!relicRevealStage || !relicRevealStage.children.length) return;
+    syncChapterTwoRelicImages();
 
     const relicItems = [...relicRevealStage.querySelectorAll(".story-relic")];
     const activeRelic = relicOrder.includes(state) ? state : "";
@@ -1091,18 +1102,39 @@
     if (state === "lights") relicRevealStage.classList.add("has-lights");
   }
 
-  function setBlackboard(stateKey = "") {
+  function syncChapterTwoRelicImages() {
+    if (!relicRevealStage || !String(mode).startsWith("chapter2")) return;
+    relicRevealStage.querySelectorAll(".story-relic").forEach(item => {
+      const img = item.querySelector("img");
+      const nextSrc = chapterTwoRelicSources[item.dataset.relic];
+      if (!img || !nextSrc) return;
+      if (img.getAttribute("src") !== nextSrc) img.setAttribute("src", nextSrc);
+    });
+  }
+
+  function setWriteTiming(element, delayMs, durationMs, text) {
+    if (!element) return;
+    const steps = Math.max(6, String(text || "").length);
+    element.style.setProperty("--write-delay", `${Math.max(0, delayMs)}ms`);
+    element.style.setProperty("--write-duration", `${Math.max(120, durationMs)}ms`);
+    element.style.setProperty("--write-steps", steps);
+  }
+
+  function setBlackboard(stateKey = "", options = {}) {
     if (!blackboardStage) return;
     const state = blackboardStates[stateKey];
     if (!state) {
       blackboardStage.classList.add("is-hidden");
+      blackboardStage.classList.remove("is-writing-board");
       blackboardStage.setAttribute("aria-hidden", "true");
       blackboardStage.replaceChildren();
       return;
     }
 
+    const writeOn = Boolean(options.writeOn);
     blackboardStage.replaceChildren();
     blackboardStage.dataset.board = stateKey;
+    blackboardStage.classList.toggle("is-writing-board", writeOn);
 
     const glow = document.createElement("span");
     glow.className = "blackboard-glow";
@@ -1112,11 +1144,13 @@
     const badge = document.createElement("span");
     badge.className = "blackboard-badge";
     badge.textContent = state.badge;
+    if (writeOn) setWriteTiming(badge, 0, 520, state.badge);
     blackboardStage.appendChild(badge);
 
     const title = document.createElement("strong");
     title.className = "blackboard-title";
     title.textContent = state.title;
+    if (writeOn) setWriteTiming(title, 560, 880, state.title);
     blackboardStage.appendChild(title);
 
     const list = document.createElement("div");
@@ -1130,11 +1164,13 @@
       const label = document.createElement("span");
       label.className = "blackboard-label";
       label.textContent = row.label;
+      if (writeOn) setWriteTiming(label, 1520 + index * 720, 260, row.label);
       item.appendChild(label);
 
       const text = document.createElement("span");
       text.className = "blackboard-text";
       text.textContent = row.text;
+      if (writeOn) setWriteTiming(text, 1700 + index * 720, 720, row.text);
       item.appendChild(text);
       list.appendChild(item);
     });
@@ -2228,10 +2264,30 @@
     progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
   }
 
+  function clearBoardWriteDelay() {
+    if (boardWriteTimer) {
+      window.clearTimeout(boardWriteTimer);
+      boardWriteTimer = null;
+    }
+    boardWriteLocked = false;
+    storyVn?.classList.remove("is-board-writing");
+    dialogueBox?.classList.remove("is-waiting-for-board");
+  }
+
+  function playFrameDialogue(frame, voiceFiles, soundCues) {
+    typeText(frameText(frame));
+    playVoiceQueue(voiceFiles);
+    playSoundCues(soundCues);
+    setSoundAdvanceLock(soundCueLockDuration(soundCues, voiceFiles.length > 0));
+  }
+
   function renderFrame() {
     clearAutoPlayTimer();
+    clearBoardWriteDelay();
     const frame = frames[currentIndex];
     const boardReview = Boolean(frame.board && ["board", "chapterTwoBoard"].includes(frame.bg));
+    const boardState = frame.board ? blackboardStates[frame.board] : null;
+    const boardWrite = boardReview && Boolean(frame.boardWrite || boardState?.writeOn);
     const relicFocus = Boolean(frame.relicReveal && !["clear", "fade"].includes(frame.relicReveal));
     const primewoodGateRelics = frame.bg === "primewoodGateExterior" && relicFocus;
     const voiceFiles = frameVoiceFiles(frame);
@@ -2245,7 +2301,7 @@
 
     setBackground(frame.bg);
     setRelicReveal(boardReview ? "clear" : frame.relicReveal || "");
-    setBlackboard(frame.board || "");
+    setBlackboard(frame.board || "", { writeOn: boardWrite });
     if (boardReview || relicFocus) {
       hideActor("mira");
       hideActor("elder");
@@ -2258,17 +2314,39 @@
     backBtn.disabled = currentIndex === 0;
     nextBtn.disabled = false;
     nextBtn.textContent = frame.reward ? "Complete" : "Next";
-    typeText(frameText(frame));
-    playVoiceQueue(voiceFiles);
-    playSoundCues(soundCues);
-    setSoundAdvanceLock(soundCueLockDuration(soundCues, voiceFiles.length > 0));
+
+    if (boardWrite) {
+      const writeDuration = Math.max(1200, Number(frame.boardWriteDuration || boardState?.writeDuration || BOARD_WRITE_DEFAULT_MS));
+      const frameIndex = currentIndex;
+      boardWriteLocked = true;
+      nextBtn.disabled = true;
+      dialogueText.textContent = "";
+      dialogueBox?.classList.add("is-waiting-for-board");
+      storyVn?.classList.add("is-board-writing");
+      playSoundCues(frame.boardWriteCue || boardState?.writeCue || boardWriteCue);
+      boardWriteTimer = window.setTimeout(() => {
+        if (currentIndex !== frameIndex) return;
+        boardWriteTimer = null;
+        boardWriteLocked = false;
+        nextBtn.disabled = false;
+        dialogueBox?.classList.remove("is-waiting-for-board");
+        storyVn?.classList.remove("is-board-writing");
+        blackboardStage?.classList.remove("is-writing-board");
+        playFrameDialogue(frame, voiceFiles, soundCues);
+        updateProgress();
+      }, writeDuration);
+      updateProgress();
+      return;
+    }
+
+    playFrameDialogue(frame, voiceFiles, soundCues);
     updateProgress();
   }
 
   function goNext() {
     clearAutoPlayTimer();
     const frame = frames[currentIndex];
-    if (voiceAdvanceLocked || soundAdvanceLocked) return;
+    if (boardWriteLocked || voiceAdvanceLocked || soundAdvanceLocked) return;
     if (isTyping) {
       stopTyping(true);
       scheduleAutoPlay();
@@ -2284,7 +2362,7 @@
 
   function goBack() {
     clearAutoPlayTimer();
-    if (voiceAdvanceLocked || soundAdvanceLocked) return;
+    if (boardWriteLocked || voiceAdvanceLocked || soundAdvanceLocked) return;
     stopTyping(false);
     currentIndex = Math.max(0, currentIndex - 1);
     renderFrame();

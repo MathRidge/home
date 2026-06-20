@@ -107,6 +107,8 @@ const chapterTwoMapCopy = {
   chapter2_cabin: "Return to the Cabin, your quiet home base for vaults, messages, and progress."
 };
 
+const TRAIL_MAP_CARD_ACTIVATE_DELAY_MS = 1260;
+
 const trailMapConfigs = {
   chapter1: {
     key: "chapter1",
@@ -639,7 +641,7 @@ function renderTrailMap(chapter, chapterLessons, config) {
         </div>
         <div class="trail-map-progress-pill" aria-hidden="true">${completedCount} / ${config.completeTotal}</div>
         <div class="trail-map-card-layer" hidden>
-          <article class="trail-map-card" role="dialog" aria-modal="false" aria-labelledby="${escapeHTML(config.key)}MapCardTitle">
+          <article class="trail-map-card" role="dialog" aria-modal="false" aria-labelledby="${escapeHTML(config.key)}MapCardTitle" tabindex="0">
             <button class="trail-map-card-close" type="button" data-map-close aria-label="Close stage card">&times;</button>
             <span class="trail-map-card-kicker"></span>
             <h3 id="${escapeHTML(config.key)}MapCardTitle"></h3>
@@ -696,6 +698,7 @@ function selectTrailChapter(chapterKey) {
     return false;
   }
 
+  mobileConfirm()?.play?.("firstTap");
   writeTrailChapterPreference(nextKey);
   renderTrail({ force: true });
   syncTrailChapterSwitch(nextKey, isRootGatePassed());
@@ -742,28 +745,6 @@ function renderTrail(options = {}) {
   syncTrailChapterSwitch(activeConfig.key, chapterTwoAvailable);
 }
 
-function trailMapActionMarkup(pad, state, config) {
-  if (!state.unlocked) {
-    return `<button class="pill-btn trail-map-card-action locked" type="button" disabled>Locked</button>`;
-  }
-
-  if (state.actionKind === "section") {
-    return `<button class="gold-btn trail-map-card-action" type="button" onclick="showSection('${escapeHTML(state.section)}')">${escapeHTML(state.actionText || pad.action)}</button>`;
-  }
-
-  const clickHandler = pad.kind === "manual"
-    ? ` onclick="return handleNoteClick(event, '${escapeHTML(pad.id)}')"`
-    : pad.kind === "trail"
-      ? ` onclick="return handlePlayClick(event, '${escapeHTML(pad.id)}')"`
-      : pad.kind === "gate"
-        ? config.key === "chapter2"
-          ? ` onclick="return handleChapterTwoTestClick(event)"`
-          : ` onclick="return handleRootGateClick(event)"`
-        : "";
-
-  return `<a class="gold-btn trail-map-card-action" href="${escapeHTML(state.actionHref)}"${clickHandler}>${escapeHTML(state.actionText || pad.action)}</a>`;
-}
-
 function placeTrailMapCard(map, card, pad) {
   const inset = 12;
   const mapRect = map.getBoundingClientRect();
@@ -779,6 +760,73 @@ function placeTrailMapCard(map, card, pad) {
 
   card.style.top = `${Math.round(nextTop)}px`;
   card.style.bottom = "auto";
+}
+
+function clearTrailMapCardArm(card) {
+  if (!card) return;
+  card.classList.remove("is-card-armed", "is-card-activating", "is-touch-preview", "is-pressed");
+  card.removeAttribute("data-card-armed");
+  if (card._trailMapArmTimer) {
+    window.clearTimeout(card._trailMapArmTimer);
+    card._trailMapArmTimer = null;
+  }
+}
+
+function armTrailMapCard(card) {
+  if (!card) return;
+  clearTrailMapCardArm(card);
+  card.classList.add("is-card-armed", "is-touch-preview", "is-pressed");
+  card.setAttribute("data-card-armed", "true");
+  mobileConfirm()?.play?.("firstTap");
+  card._trailMapArmTimer = window.setTimeout(() => {
+    clearTrailMapCardArm(card);
+  }, 5600);
+}
+
+function writeTrailMapCardAction(card, pad, state) {
+  if (!card || !pad || !state?.unlocked) return;
+  card.dataset.actionKind = state.actionKind || "link";
+  card.dataset.actionHref = state.actionHref || "";
+  card.dataset.actionSection = state.section || "";
+  card.dataset.actionLabel = state.actionText || pad.action || "";
+}
+
+function clearTrailMapCardAction(card) {
+  if (!card) return;
+  card.removeAttribute("data-action-kind");
+  card.removeAttribute("data-action-href");
+  card.removeAttribute("data-action-section");
+  card.removeAttribute("data-action-label");
+}
+
+function activateTrailMapCard(card) {
+  if (!card || card.classList.contains("is-card-activating")) return false;
+  if (card.dataset.cardArmed !== "true") {
+    armTrailMapCard(card);
+    return true;
+  }
+
+  const kind = card.dataset.actionKind || "";
+  const href = card.dataset.actionHref || "";
+  const section = card.dataset.actionSection || "";
+
+  mobileConfirm()?.play?.("secondTap");
+  clearTrailMapCardArm(card);
+  card.classList.add("is-card-activating", "is-pressed");
+
+  if (kind === "link" && href && href !== "#") warmNavigationTarget(href);
+
+  window.setTimeout(() => {
+    card.classList.remove("is-card-activating", "is-pressed");
+    if (kind === "section" && section) {
+      showSection(section);
+      return;
+    }
+    if (kind === "link" && href && href !== "#") {
+      window.location.href = href;
+    }
+  }, TRAIL_MAP_CARD_ACTIVATE_DELAY_MS);
+  return true;
 }
 
 function openTrailMapCard(map, key) {
@@ -811,7 +859,11 @@ function openTrailMapCard(map, key) {
     ? (config.copy[pad.key] || "")
     : state.lockedReason;
   status.textContent = state.status;
-  actions.innerHTML = trailMapActionMarkup(pad, state, config);
+  actions.innerHTML = "";
+  card.setAttribute("aria-label", `${pad.label}. ${state.actionText || pad.action || "Open"}.`);
+  clearTrailMapCardArm(card);
+  clearTrailMapCardAction(card);
+  writeTrailMapCardAction(card, pad, state);
   layer.hidden = false;
   map.classList.add("is-card-open");
   layer.dataset.activePad = key;
@@ -825,6 +877,8 @@ function closeTrailMapCard(map = null) {
     if (!layer || layer.hidden) return;
     const card = currentMap.querySelector(".trail-map-card");
     if (card) {
+      clearTrailMapCardArm(card);
+      clearTrailMapCardAction(card);
       card.style.top = "";
       card.style.bottom = "";
     }
@@ -854,13 +908,29 @@ function bindTrailMapInteractions() {
       if (padButton) {
         event.preventDefault();
         if (padButton.disabled || padButton.classList.contains("is-locked")) return;
+        mobileConfirm()?.play?.("mapPad", { single: true });
         openTrailMapCard(map, padButton.dataset.mapPad);
+        return;
+      }
+
+      const activeCard = event.target.closest(".trail-map-card");
+      if (activeCard) {
+        event.preventDefault();
+        activateTrailMapCard(activeCard);
         return;
       }
 
       if (map.classList.contains("is-card-open") && !event.target.closest(".trail-map-card")) {
         closeTrailMapCard(map);
       }
+    });
+
+    map.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const activeCard = event.target.closest(".trail-map-card");
+      if (!activeCard || !map.contains(activeCard)) return;
+      event.preventDefault();
+      activateTrailMapCard(activeCard);
     });
   });
 

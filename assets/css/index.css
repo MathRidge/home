@@ -7789,6 +7789,49 @@ body.index-page .trail-map-card {
     0 24px 58px rgba(0, 0, 0, 0.42);
   transform: translateX(-50%);
   pointer-events: auto;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    filter 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+body.index-page .trail-map-card::after {
+  content: "";
+  position: absolute;
+  inset: -36% -68%;
+  z-index: 0;
+  background:
+    linear-gradient(115deg,
+      transparent 38%,
+      rgba(255, 244, 196, 0.20) 48%,
+      rgba(255, 255, 255, 0.52) 52%,
+      rgba(255, 218, 121, 0.18) 58%,
+      transparent 68%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-42%) rotate(5deg);
+}
+
+body.index-page .trail-map-card.is-card-armed,
+body.index-page .trail-map-card.is-card-activating {
+  filter: saturate(1.14) brightness(1.08);
+  box-shadow:
+    0 28px 66px rgba(0, 0, 0, 0.46),
+    0 0 0 2px rgba(255, 230, 150, 0.28),
+    0 0 24px rgba(255, 198, 82, 0.28);
+  transform: translateX(-50%) scale(1.018);
+}
+
+body.index-page .trail-map-card.is-card-activating {
+  filter: saturate(1.2) brightness(1.12);
+  transform: translateX(-50%) scale(1.026);
+}
+
+body.index-page .trail-map-card.is-card-armed::after,
+body.index-page .trail-map-card.is-card-activating::after {
+  animation: trail-map-card-confirm-sweep 780ms ease both;
 }
 
 body.index-page .trail-map-card.is-map-card-top {
@@ -7883,6 +7926,10 @@ body.index-page .trail-map-card-actions {
   gap: 8px;
 }
 
+body.index-page .trail-map-card-actions:empty {
+  display: none;
+}
+
 body.index-page .trail-map-card-action {
   width: min(100%, 236px);
   min-height: 42px;
@@ -7966,6 +8013,20 @@ body.index-page .trail-map-transition-to {
   }
 }
 
+@keyframes trail-map-card-confirm-sweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-48%) rotate(5deg);
+  }
+  24% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(48%) rotate(5deg);
+  }
+}
+
 @media (max-width: 760px), (max-width: 980px) and (orientation: landscape) {
   body.index-page .quest-body {
     padding-inline: clamp(8px, 2.8vw, 14px) !important;
@@ -8031,7 +8092,10 @@ body.index-page .trail-map-transition-to {
   }
 
   body.index-page .trail-map-pad::before,
-  body.index-page .trail-map-pad::after {
+  body.index-page .trail-map-pad::after,
+  body.index-page .trail-map-card,
+  body.index-page .trail-map-card::after {
+    animation: none !important;
     transition: none;
   }
 }
