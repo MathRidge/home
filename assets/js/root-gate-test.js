@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const TIME_LIMIT_SECONDS = 20 * 60;
+  const TIME_LIMIT_SECONDS = 40 * 60;
   const TOTAL_QUESTIONS = 40;
   const PASSING_CORRECT = 37;
   const ROOT_GATE_UNLOCK_KEY = "mathRidge_rootGateUnlocked_chapter_1";
@@ -336,7 +336,7 @@
           <button class="minus-toggle" type="button" data-minus-toggle aria-pressed="false" aria-label="Turn on minus sign for question ${index + 1}">[-]</button>
           <label class="signed-size-box">
             <span class="answer-minus-mark" aria-hidden="true">-</span>
-            <input class="size-input" type="number" inputmode="numeric" min="0" step="1" placeholder="size" aria-label="Answer size for question ${index + 1}" />
+            <input class="size-input" type="text" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" autocomplete="off" placeholder="size" aria-label="Answer size for question ${index + 1}" />
           </label>
         </div>
         <div class="question-feedback" aria-live="polite"></div>
@@ -362,6 +362,12 @@
     const size = Number(rawSize);
     const answered = rawSize !== "" && Number.isFinite(size) && Number.isInteger(size) && size >= 0;
     return { answered, negative, size: Math.abs(size) };
+  }
+
+  function sanitizeSizeInput(input) {
+    if (!input) return;
+    const cleaned = String(input.value || "").replace(/[^\d]/g, "");
+    if (input.value !== cleaned) input.value = cleaned;
   }
 
   function formatAnswer(answer) {
@@ -831,6 +837,7 @@
 
   questionGrid?.addEventListener("input", event => {
     if (!event.target.matches(".size-input")) return;
+    sanitizeSizeInput(event.target);
     const card = event.target.closest(".question-card");
     if (correctionMode && !card?.classList.contains("needs-correction")) return;
     card?.classList.remove("is-unanswered");
@@ -845,6 +852,11 @@
       evaluateCorrectionCard(card);
     }
   });
+
+  questionGrid?.addEventListener("wheel", event => {
+    const input = event.target.closest?.(".size-input");
+    if (input && document.activeElement === input) input.blur();
+  }, { capture: true, passive: true });
 
   questionGrid?.addEventListener("keydown", event => {
     if (event.key !== "Enter" || !event.target.matches(".size-input")) return;
