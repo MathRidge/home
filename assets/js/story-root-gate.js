@@ -272,7 +272,7 @@
       rows: [
         { label: "Questions", text: "40", kind: "problem" },
         { label: "Pass", text: "37 or more correct", kind: "answer" },
-        { label: "Time", text: "15:00", kind: "rule" }
+        { label: "Time", text: "40:00", kind: "rule" }
       ]
     },
     chapterOneTools: {
@@ -2247,7 +2247,7 @@
       <div class="trial-facts">
         <span><strong>40</strong>questions</span>
         <span><strong>37+</strong>to pass</span>
-        <span><strong>15:00</strong>time limit</span>
+        <span><strong>40:00</strong>time limit</span>
       </div>
       <div class="reward-actions">
         <a href="root-gate-test.html">Begin Root Gate Mastery Trial</a>
