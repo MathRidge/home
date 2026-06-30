@@ -23,6 +23,43 @@
     parity: "assets/images/relic/parity_prism_true_alpha.png",
     factor: "assets/images/relic/factor_forge_alpha.png"
   };
+  const cameraPresets = new Set([
+    "camera-normal",
+    "camera-slow-zoom",
+    "camera-punch-in",
+    "camera-punch-out",
+    "camera-shake-soft",
+    "camera-shake-strong",
+    "camera-pan-left",
+    "camera-pan-right"
+  ]);
+  const sceneEffectSources = {
+    blueFocus: "assets/images/effect/fx_comic_blue_focus_burst_TRUE_ALPHA_1920x1080.png",
+    speedLines: "assets/images/effect/fx-speed-lines-white_TRUE_ALPHA.png",
+    concentratedLine: "assets/images/effect/concentrated-line-frame_TRUE_ALPHA.png",
+    redShock: "assets/images/effect/fx-comic-red-shock-burst.png",
+    darkVignette: "assets/images/effect/fx-dark-emotional-vignette.png"
+  };
+  const sceneEffectDurations = {
+    blueFocus: 900,
+    speedLines: 760,
+    concentratedLine: 900,
+    redShock: 760,
+    darkVignette: 1800
+  };
+  const emotionBubbleSource = "assets/images/effect/retro-empty-comic-bubbles-halftone_TRUE_ALPHA.png";
+  const emotionBubblePresets = {
+    happy: { glyph: "😄", shape: "round", tone: "happy" },
+    proud: { glyph: "⭐", shape: "long", tone: "proud" },
+    magic: { glyph: "✨", shape: "cloud", tone: "magic" },
+    idea: { glyph: "💡", shape: "square", tone: "magic" },
+    confused: { glyph: "?", shape: "thought", tone: "confused" },
+    worried: { glyph: "😟", shape: "thought", tone: "worried" },
+    frustrated: { glyph: "😣", shape: "jagged", tone: "worried" },
+    angry: { glyph: "💢", shape: "burst", tone: "angry" },
+    surprised: { glyph: "!?", shape: "impact", tone: "surprised" },
+    embarrassed: { glyph: "…", shape: "smallRound", tone: "worried" }
+  };
 
   const backgrounds = {
     arrival: `${bgBase}story-bg-s01-arrival.png`,
@@ -355,17 +392,17 @@
     { bg: "arrival", sprite: "holdingHat", motion: "fade-in", speaker: "Narrator", text: "Mira stepped onto the dirt trail, holding her oversized mage hat down with both hands." },
     { bg: "arrival", sprite: "holdingHat", speaker: "Mira", text: "Come on. Cipher Ridge Town is not far from here." },
     { bg: "arrival", sprite: "holdingHat", speaker: "Narrator", text: "She paused." },
-    { bg: "arrival", sprite: "confused", speaker: "Mira", text: "Probably." },
+    { bg: "arrival", sprite: "confused", speaker: "Mira", text: "Probably.", camera: "camera-shake-soft", effect: "redShock", emotion: "worried" },
     { bg: "arrival", sprite: "confused", speaker: "Narrator", text: "You looked at her." },
     { bg: "arrival", sprite: "confused", speaker: "You", text: "Probably?" },
     { bg: "arrival", sprite: "pointing", speaker: "Mira", text: "I-I mean, yes. Definitely. I am very good at directions." },
     { bg: "arrival", sprite: "butterfly", speaker: "Narrator", text: "A small butterfly-shaped symbol floated past her." },
     { bg: "arrival", sprite: "butterfly", speaker: "Narrator", text: "Mira's ears perked up." },
-    { bg: "arrival", sprite: "butterfly", speaker: "Mira", text: "Ooh..." },
+    { bg: "arrival", sprite: "butterfly", speaker: "Mira", text: "Ooh...", camera: "camera-punch-in", effect: "blueFocus", emotion: "magic" },
     { bg: "arrival", sprite: "butterfly", motion: "walk-right", speaker: "Narrator", text: "She started following it." },
     { bg: "arrival", sprite: "butterfly", speaker: "Narrator", text: "You cleared your throat." },
     { bg: "arrival", sprite: "butterfly", speaker: "You", text: "Mira?" },
-    { bg: "arrival", sprite: "turning", speaker: "Narrator", text: "She froze." },
+    { bg: "arrival", sprite: "turning", speaker: "Narrator", text: "She froze.", camera: "camera-shake-soft", effect: "redShock", emotion: "surprised" },
     { bg: "arrival", sprite: "shy", speaker: "Mira", text: "Right! Town. Elder Turtle. Very important. This way." },
     { bg: "arrival", sprite: "determined", speaker: "Narrator", text: "She marched forward with serious confidence." },
     { bg: "arrival", sprite: "turning", motion: "walk-left", speaker: "Narrator", text: "Then quietly turned around and walked the other direction." },
@@ -407,13 +444,13 @@
     { bg: "explain", sprite: "confused", speaker: "You", text: "They are not spell books." },
     { bg: "explain", sprite: "determined", speaker: "Mira", text: "That is what people say when they do not know they are holding spell books." },
     { bg: "explain", sprite: "neutral", speaker: "Narrator", text: "You were not sure how to answer that. Then you reached for your pocket again. Still empty." },
-    { bg: "explain", sprite: "worried", speaker: "You", text: "My phone..." },
+    { bg: "explain", sprite: "worried", speaker: "You", text: "My phone...", camera: "camera-punch-in", effect: "blueFocus", emotion: "worried" },
     { bg: "explain", sprite: "worried", speaker: "Narrator", text: "Mira's expression softened." },
     { bg: "explain", sprite: "worried", speaker: "Mira", text: "The only way to send you back is to find your device." },
     { bg: "explain", sprite: "confused", speaker: "You", text: "Why?" },
     { bg: "explain", sprite: "castingBack", speaker: "Narrator", text: "She pointed toward Math Ridge." },
     { bg: "explain", sprite: "pointing", speaker: "Mira", text: "Because your device absorbed the teleport stone." },
-    { bg: "explain", sprite: "confused", speaker: "You", text: "My phone... absorbed a rock?" },
+    { bg: "explain", sprite: "confused", speaker: "You", text: "My phone... absorbed a rock?", camera: "camera-shake-soft", effect: "redShock", emotion: "confused" },
     { bg: "explain", sprite: "pointing", speaker: "Mira", text: "A magic rock. A very important magic rock." },
     { bg: "explain", sprite: "worried", speaker: "Narrator", text: "She looked guilty." },
     { bg: "explain", sprite: "worried", speaker: "Mira", text: "When your device fell near the hedge, it landed on the teleport stone I used to return home. The stone broke, and its return spell went inside your device." },
@@ -421,7 +458,7 @@
     { bg: "explain", sprite: "backRightPeek", speaker: "Narrator", text: "You looked at the glowing peak." },
     { bg: "explain", sprite: "neutral", speaker: "You", text: "So my way home is inside my phone." },
     { bg: "explain", sprite: "worried", speaker: "Mira", text: "And your phone is somewhere on Math Ridge." },
-    { bg: "explain", sprite: "none", speaker: "Narrator", text: "The wind grew quiet. For a moment, the mountain seemed to listen." },
+    { bg: "explain", sprite: "none", speaker: "Narrator", text: "The wind grew quiet. For a moment, the mountain seemed to listen.", camera: "camera-slow-zoom", effect: "darkVignette" },
 
     { bg: "path", sprite: "none", speaker: "Narrator", text: "Scene 4: Why Were You in My World?" },
     { bg: "path", sprite: "back", motion: "fade-in", speaker: "Narrator", text: "You kept walking. But one question would not leave your mind." },
@@ -680,6 +717,7 @@
   let typeTargetText = "";
   let isTyping = false;
   let currentBgKey = "";
+  let currentCameraPreset = "";
   let activeVoice = null;
   let activeSoundCues = [];
   const preparedVoiceAudio = new Map();
@@ -706,6 +744,8 @@
   const storyVn = document.querySelector(".story-vn");
   const sceneBg = document.getElementById("sceneBg");
   const sceneFader = document.getElementById("sceneFader");
+  const sceneEffectOverlay = createSceneEffectOverlay();
+  const emotionBubble = createEmotionBubble();
   const miraStage = document.getElementById("miraStage");
   const miraSprite = document.getElementById("miraSprite");
   const elderStage = document.getElementById("elderStage");
@@ -1429,6 +1469,9 @@
     const spriteSrc = spriteSourceForKey(spriteKey);
     if (spriteSrc) jobs.push(prepareSpriteSource(spriteSrc));
     if (isShellwickScene(frame)) jobs.push(prepareSpriteSource(spriteSourceForKey("elder")));
+    const effect = sceneEffectForFrame(frame);
+    if (effect?.image) jobs.push(prepareSceneImageSource(effect.image));
+    if (normalizeEmotionBubble(frame)) jobs.push(prepareSceneImageSource(emotionBubbleSource));
     return jobs;
   }
 
@@ -1955,6 +1998,166 @@
     progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
   }
 
+  function createSceneEffectOverlay() {
+    if (!storyVn || typeof document === "undefined") return null;
+    let overlay = document.getElementById("sceneEffectOverlay");
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+    overlay.id = "sceneEffectOverlay";
+    overlay.className = "scene-effect-overlay";
+    overlay.setAttribute("aria-hidden", "true");
+    if (sceneFader?.parentNode === storyVn) storyVn.insertBefore(overlay, sceneFader);
+    else storyVn.appendChild(overlay);
+    return overlay;
+  }
+
+  function createEmotionBubble() {
+    if (!storyVn || typeof document === "undefined") return null;
+    let bubble = document.getElementById("storyEmotionBubble");
+    if (bubble) return bubble;
+
+    bubble = document.createElement("div");
+    bubble.id = "storyEmotionBubble";
+    bubble.className = "story-emotion-bubble";
+    bubble.setAttribute("aria-hidden", "true");
+
+    const glyph = document.createElement("span");
+    glyph.className = "story-emotion-glyph";
+    bubble.appendChild(glyph);
+
+    if (sceneFader?.parentNode === storyVn) storyVn.insertBefore(bubble, sceneFader);
+    else storyVn.appendChild(bubble);
+    return bubble;
+  }
+
+  function defaultEmotionCharacter(frame) {
+    if (frame?.speaker === "Elder Shellwick") return "elder";
+    const spriteKey = resolveFrameSprite(frame);
+    const sprite = sprites[spriteKey];
+    if (typeof sprite === "object" && sprite?.character) return sprite.character;
+    if (spriteKey === "elder" || spriteKey === "elderWriting") return "elder";
+    return "mira";
+  }
+
+  function normalizeEmotionBubble(frame) {
+    const emotion = frame?.emotion || frame?.moodBubble || frame?.emojiBubble;
+    if (!emotion) return null;
+
+    if (typeof emotion === "string") {
+      const preset = emotionBubblePresets[emotion] || {};
+      return {
+        key: emotion,
+        glyph: preset.glyph || emotion,
+        shape: preset.shape || "round",
+        tone: preset.tone || emotion,
+        character: defaultEmotionCharacter(frame)
+      };
+    }
+
+    const key = String(emotion.key || emotion.type || emotion.mood || "").trim();
+    const preset = emotionBubblePresets[key] || {};
+    const glyph = String(emotion.glyph || emotion.emoji || emotion.text || preset.glyph || "").trim();
+    if (!glyph) return null;
+
+    return {
+      key: key || "custom",
+      glyph,
+      shape: emotion.shape || preset.shape || "round",
+      tone: emotion.tone || preset.tone || key || "custom",
+      character: emotion.character || defaultEmotionCharacter(frame)
+    };
+  }
+
+  function setEmotionBubble(frame) {
+    if (!emotionBubble) return;
+    const next = normalizeEmotionBubble(frame);
+    if (!next) {
+      emotionBubble.classList.remove("is-active");
+      emotionBubble.removeAttribute("data-character");
+      emotionBubble.removeAttribute("data-shape");
+      emotionBubble.removeAttribute("data-tone");
+      emotionBubble.setAttribute("aria-hidden", "true");
+      return;
+    }
+
+    const character = next.character === "elder" ? "elder" : "mira";
+    const actorStage = actors[character]?.stage;
+    if (!actorStage) {
+      setEmotionBubble(null);
+      return;
+    }
+
+    emotionBubble.dataset.character = character;
+    emotionBubble.dataset.shape = next.shape;
+    emotionBubble.dataset.tone = next.tone;
+    const glyph = emotionBubble.querySelector(".story-emotion-glyph");
+    if (glyph) glyph.textContent = next.glyph;
+    emotionBubble.setAttribute("aria-hidden", "false");
+    emotionBubble.classList.remove("is-active");
+    void emotionBubble.offsetWidth;
+    emotionBubble.classList.add("is-active");
+  }
+
+  function normalizeCameraPreset(camera) {
+    const preset = String(camera || "camera-normal").trim();
+    return cameraPresets.has(preset) ? preset : "camera-normal";
+  }
+
+  function setCamera(camera) {
+    if (!storyVn) return;
+    const preset = normalizeCameraPreset(camera);
+    if (preset === currentCameraPreset) {
+      if (preset.includes("shake")) {
+        storyVn.dataset.camera = "camera-normal";
+        void storyVn.offsetWidth;
+      } else {
+        return;
+      }
+    }
+    currentCameraPreset = preset;
+    storyVn.dataset.camera = preset;
+  }
+
+  function normalizeSceneEffect(effect) {
+    if (!effect) return null;
+    if (typeof effect === "string") {
+      const image = sceneEffectSources[effect];
+      return image ? { key: effect, image, duration: sceneEffectDurations[effect] } : null;
+    }
+    const key = String(effect.key || effect.name || "").trim();
+    const image = effect.image || sceneEffectSources[key];
+    if (!key || !image) return null;
+    return {
+      key,
+      image,
+      duration: Number(effect.duration || effect.ms || sceneEffectDurations[key] || 900)
+    };
+  }
+
+  function sceneEffectForFrame(frame) {
+    return normalizeSceneEffect(frame?.effect || frame?.overlay || frame?.sceneEffect);
+  }
+
+  function setSceneEffect(effect) {
+    if (!sceneEffectOverlay) return;
+    const next = normalizeSceneEffect(effect);
+    if (!next) {
+      sceneEffectOverlay.classList.remove("is-active");
+      sceneEffectOverlay.removeAttribute("data-effect");
+      sceneEffectOverlay.style.removeProperty("background-image");
+      sceneEffectOverlay.style.removeProperty("--story-effect-duration");
+      return;
+    }
+
+    sceneEffectOverlay.classList.remove("is-active");
+    sceneEffectOverlay.dataset.effect = next.key;
+    sceneEffectOverlay.style.backgroundImage = `url("${next.image}")`;
+    sceneEffectOverlay.style.setProperty("--story-effect-duration", `${Math.max(120, next.duration)}ms`);
+    void sceneEffectOverlay.offsetWidth;
+    sceneEffectOverlay.classList.add("is-active");
+  }
+
   function setBackground(key) {
     if (!sceneBg) return;
     const nextKey = key || "arrival";
@@ -2319,13 +2522,17 @@
     storyVn?.classList.toggle("is-board-review", boardReview);
 
     setBackground(frame.bg);
+    setCamera(frame.camera || "camera-normal");
+    setSceneEffect(frame.effect || frame.overlay || frame.sceneEffect);
     setRelicReveal(frame.relicReveal || "");
     setBlackboard(frame.board || "");
     if (boardReview || relicFocus) {
       hideActor("mira");
       hideActor("elder");
+      setEmotionBubble(null);
     } else {
       setSprite(resolveFrameSprite(frame), frame.motion || "", frame);
+      setEmotionBubble(frame);
     }
     setDialogueSpeaker(frame);
     speakerName.textContent = isNarrationFrame(frame) ? "Narrator" : frame.speaker || "";

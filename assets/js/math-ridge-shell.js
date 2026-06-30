@@ -8,6 +8,7 @@
 
   const MOBILE_MENU_QUERY = "(max-width: 680px), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse)";
   const MOBILE_CONFIRM_QUERY = "(max-width: 760px), (hover: none) and (pointer: coarse)";
+  const MOBILE_CLEAN_NAV_QUERY = "(max-width: 760px) and (hover: none) and (pointer: coarse), (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse)";
   const MOBILE_CONFIRM_DURATION = 5600;
   const MOBILE_CONFIRM_NOTE = "Tap once to light a place. Tap again to travel.";
   const SHELL_SOUND_BASE = "voice/sound/";
@@ -143,6 +144,10 @@
 
   function isMobileConfirmMode() {
     return matchesQuery(MOBILE_CONFIRM_QUERY);
+  }
+
+  function isMobileCleanNavMode() {
+    return matchesQuery(MOBILE_CLEAN_NAV_QUERY);
   }
 
   function shellSoundUrl(file) {
@@ -467,6 +472,18 @@
     const button = getMenuButton();
     if (!menu) return;
 
+    if (isMobileCleanNavMode()) {
+      if (drawerCloseTimer) {
+        window.clearTimeout(drawerCloseTimer);
+        drawerCloseTimer = null;
+      }
+      menu.classList.remove("open", "closing");
+      document.body.classList.remove("note-menu-open");
+      clearMobileConfirm();
+      if (button) button.setAttribute("aria-expanded", "false");
+      return;
+    }
+
     injectMobileConfirmNote();
 
     const shouldOpen = isMobileDrawer() &&
@@ -534,7 +551,7 @@
   }
 
   function isDrawerOpen() {
-    return isMobileDrawer() && document.body.classList.contains("note-menu-open");
+    return !isMobileCleanNavMode() && isMobileDrawer() && document.body.classList.contains("note-menu-open");
   }
 
   function uniqueIndexPreloadImages() {
@@ -788,12 +805,16 @@
     window.addEventListener("resize", () => {
       updateReadingProgress();
       clearMobileConfirm();
-      if (!isMobileDrawer()) toggleNoteMenu(false);
+      if (isMobileCleanNavMode() || !isMobileDrawer()) toggleNoteMenu(false);
     });
 
-    window.addEventListener("orientationchange", clearMobileConfirm);
+    window.addEventListener("orientationchange", () => {
+      clearMobileConfirm();
+      if (isMobileCleanNavMode()) toggleNoteMenu(false);
+    });
 
     updateReadingProgress();
+    if (isMobileCleanNavMode()) toggleNoteMenu(false);
   }
 
   window.toggleNoteMenu = toggleNoteMenu;

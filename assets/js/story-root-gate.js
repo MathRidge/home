@@ -22,6 +22,43 @@
   const BOARD_WRITE_DEFAULT_MS = 4300;
   const TAP_GUIDE_KEY = "mathRidge_storyTapGuideSeen_v1";
   const UI_TAP_SOUND = { file: "first tap.mp3", volume: 0.42, start: 0.08 };
+  const cameraPresets = new Set([
+    "camera-normal",
+    "camera-slow-zoom",
+    "camera-punch-in",
+    "camera-punch-out",
+    "camera-shake-soft",
+    "camera-shake-strong",
+    "camera-pan-left",
+    "camera-pan-right"
+  ]);
+  const sceneEffectSources = {
+    blueFocus: "assets/images/effect/fx_comic_blue_focus_burst_TRUE_ALPHA_1920x1080.png",
+    speedLines: "assets/images/effect/fx-speed-lines-white_TRUE_ALPHA.png",
+    concentratedLine: "assets/images/effect/concentrated-line-frame_TRUE_ALPHA.png",
+    redShock: "assets/images/effect/fx-comic-red-shock-burst.png",
+    darkVignette: "assets/images/effect/fx-dark-emotional-vignette.png"
+  };
+  const sceneEffectDurations = {
+    blueFocus: 900,
+    speedLines: 760,
+    concentratedLine: 900,
+    redShock: 760,
+    darkVignette: 1800
+  };
+  const emotionBubbleSource = "assets/images/effect/retro-empty-comic-bubbles-halftone_TRUE_ALPHA.png";
+  const emotionBubblePresets = {
+    happy: { glyph: "😄", shape: "round", tone: "happy" },
+    proud: { glyph: "⭐", shape: "long", tone: "proud" },
+    magic: { glyph: "✨", shape: "cloud", tone: "magic" },
+    idea: { glyph: "💡", shape: "square", tone: "magic" },
+    confused: { glyph: "?", shape: "thought", tone: "confused" },
+    worried: { glyph: "😟", shape: "thought", tone: "worried" },
+    frustrated: { glyph: "😣", shape: "jagged", tone: "worried" },
+    angry: { glyph: "💢", shape: "burst", tone: "angry" },
+    surprised: { glyph: "!?", shape: "impact", tone: "surprised" },
+    embarrassed: { glyph: "…", shape: "smallRound", tone: "worried" }
+  };
 
   const backgrounds = {
     cabin: `${bgBase}story-bg-Shellwick_cabin.png`,
@@ -357,6 +394,7 @@
 
   const storyVn = document.querySelector(".story-vn");
   const sceneBg = document.getElementById("sceneBg");
+  const sceneFader = document.getElementById("sceneFader");
   const progressBar = document.getElementById("storyProgressBar");
   const blackboardStage = document.getElementById("blackboardStage");
   const relicRevealStage = document.getElementById("relicRevealStage");
@@ -374,6 +412,8 @@
   const nameForm = document.getElementById("nameForm");
   const choiceRow = document.getElementById("choiceRow");
   const feedbackText = document.getElementById("feedbackText");
+  const sceneEffectOverlay = createSceneEffectOverlay();
+  const emotionBubble = createEmotionBubble();
   const storyLoadingOverlay = createStoryLoadingOverlay();
 
   const actors = {
@@ -394,6 +434,7 @@
   let frames = storyFramesForMode();
   let currentIndex = 0;
   let currentBgKey = "";
+  let currentCameraPreset = "";
   let typeTimer = 0;
   let typeTargetText = "";
   let isTyping = false;
@@ -456,7 +497,7 @@
       { bg: "cabinInside", sprite: "miraTrailReturn", elder: "none", speaker: "Narrator", text: "Mira stepped in first, covered in dust, leaves, and at least one tiny twig stuck in her hat." },
       { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "Elder Shellwick... we have returned!" },
       { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Narrator", text: "The twig slipped from her hat and landed on the floor." },
-      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "...mostly intact." },
+      { bg: "cabinInside", sprite: "miraTrailReturn", elder: "elder", speaker: "Mira", text: "...mostly intact.", emotion: "embarrassed" },
       { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "You stepped in behind her. In your pack, four relics pulsed softly." },
       { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "The Term Stone. The Sign Compass. The Parity Prism. And the Factor Forge.", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Ah. So the lower trail has accepted you.", relicReveal: "all" },
@@ -471,15 +512,15 @@
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "Finally, the Factor Forge touched the table with a soft metallic hum.", relicReveal: "factor" },
       { bg: "emptyRelicTable", sprite: "miraCelebrating", elder: "elder", speaker: "Mira", text: "That means the Root Gate opens now, right?", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Narrator", text: "Elder Shellwick took a slow sip of tea. Mira waited. You waited. The relics waited.", relicReveal: "all" },
-      { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elderGentleNo", speaker: "Elder Shellwick", text: "No.", relicReveal: "all", voice: ["elder-[long-pause]No.mp3"] },
+      { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elderGentleNo", speaker: "Elder Shellwick", text: "No.", relicReveal: "all", voice: ["elder-[long-pause]No.mp3"], camera: "camera-shake-soft", effect: "redShock" },
       { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "No?", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "But we collected all four relics. And the Root Gate needs all four relics. Then... open?", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "Relics are not keys, Mira. They are witnesses.", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraConfused", elder: "elder", speaker: "You", text: "Witnesses?", relicReveal: "all" },
       { bg: "emptyRelicTable", sprite: "miraConfused", elder: "elder", speaker: "Elder Shellwick", text: "They prove you have reached the lessons. But reaching a lesson is not the same as mastering it.", relicReveal: "all" },
-      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "The Root Gate will ask for proof.", relicReveal: "all" },
+      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Elder Shellwick", text: "The Root Gate will ask for proof.", relicReveal: "all", camera: "camera-punch-in", effect: "darkVignette" },
       { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "What kind of proof?", relicReveal: "all" },
-      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The four relics flashed. Far outside, something deep in the mountain answered.", relicReveal: "all" },
+      { bg: "emptyRelicTable", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The four relics flashed. Far outside, something deep in the mountain answered.", relicReveal: "all", camera: "camera-punch-in", effect: "blueFocus" },
 
       { bg: "board", sprite: "miraNeutral", elder: "elderWriting", speaker: "Narrator", text: "Elder Shellwick walked to the chalkboard and drew a large circle.", board: "rootGate", relicReveal: "clear" },
       { bg: "board", sprite: "miraNeutral", elder: "elderWriting", speaker: "Elder Shellwick", text: "The Root Gate gathers everything you learned on the lower trail.", board: "rootGate" },
@@ -531,7 +572,7 @@
       { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Quiet panic. No wild guessing.", relicReveal: "all" },
       { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Elder Shellwick", text: "You have learned much, Mira. And so have you, {{playerName}}.", relicReveal: "all" },
       { bg: "bluePhoneSignal", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "The mountain wind moved through the gate. Far above, a faint blue light flickered. Your phone. Still out there. Still waiting.", relicReveal: "all" },
-      { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Elder Shellwick", text: "The Root Gate Mastery Trial begins when you are ready.", relicReveal: "all" },
+      { bg: "gate", sprite: "miraDetermined", elder: "elder", speaker: "Elder Shellwick", text: "The Root Gate Mastery Trial begins when you are ready.", relicReveal: "all", camera: "camera-slow-zoom", effect: "concentratedLine" },
       { bg: "gate", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Let's do our best. Definitely.", relicReveal: "all", reward: "intro" }
     ];
   }
@@ -854,12 +895,12 @@
       { bg: "cabinInside", sprite: "miraMagicSatchel", elder: "elder", speaker: "Narrator", text: "She reached inside her satchel and pulled out a pencil. Then a spoon. Then the same emergency cup noodles." },
       { bg: "cabinInside", sprite: "miraMagicSatchel", elder: "elder", speaker: "Mira", text: "This also holds more than it seems." },
       { bg: "cabinInside", sprite: "miraMagicSatchel", elder: "elder", speaker: "You", text: "That is lunch." },
-      { bg: "cabinInside", sprite: "miraMagicSatchel", elder: "elder", speaker: "Mira", text: "Emergency lunch." },
+      { bg: "cabinInside", sprite: "miraMagicSatchel", elder: "elder", speaker: "Mira", text: "Emergency lunch.", emotion: "proud" },
       { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The path beyond the Root Gate will require patience. And careful seeing." },
       { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "I can be careful." },
       { bg: "cabinInside", sprite: "miraConfused", elder: "elder", speaker: "Narrator", text: "A glowing moth drifted past the window. Mira's eyes followed it." },
       { bg: "cabinInside", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "You and Shellwick both looked at her. She slowly forced her eyes back to the table." },
-      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "I can be careful starting now." },
+      { bg: "cabinInside", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "I can be careful starting now.", emotion: "proud" },
       { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Progress." },
       { bg: "cabinInside", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Indeed." },
 
@@ -875,7 +916,7 @@
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "We did. And this time, we have certificates." },
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "That means we are at least slightly official." },
       { bg: "emptyRelicTable", sprite: "miraHappy", elder: "elder", speaker: "Elder Shellwick", text: "Then, slightly official apprentices... prepare yourselves." },
-      { bg: "pathBeyondRootGate", sprite: "none", elder: "none", speaker: "Narrator", text: "The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time." },
+      { bg: "pathBeyondRootGate", sprite: "none", elder: "none", speaker: "Narrator", text: "The booklet glowed in your hands. Outside, the mountain path above the Root Gate lit one stone at a time.", camera: "camera-slow-zoom", effect: "blueFocus" },
       { bg: "pathBeyondRootGate", sprite: "none", elder: "none", speaker: "Narrator", text: "A new path was waiting.", reward: "chapter2" }
     ];
   }
@@ -889,15 +930,15 @@
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "You", text: "So we go back to the gate?", relicReveal: "all" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Yes. Calmly. Heroically. Without tripping.", relicReveal: "all" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "A pause.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Probably.", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "The Primewood Gate will not test whether you carry the relics.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Probably.", relicReveal: "all", camera: "camera-shake-soft", effect: "redShock" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "The Primewood Gate will not test whether you carry the relics.", relicReveal: "all", camera: "camera-punch-in", effect: "darkVignette" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "It will not?", relicReveal: "all" },
-      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "It will test whether the relics have entered your thinking.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "It will test whether the relics have entered your thinking.", relicReveal: "all", camera: "camera-punch-in", effect: "concentratedLine" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "I do not feel relics in there.", relicReveal: "all" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "You", text: "That may be good.", relicReveal: "all" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "It is a figure of speech.", relicReveal: "all" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Mira", text: "Good. The Shelf Scale looked heavy.", relicReveal: "all" },
-      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Far above the Root Gate, your phone flashed blue again.", relicReveal: "clear" },
+      { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Narrator", text: "Far above the Root Gate, your phone flashed blue again.", relicReveal: "clear", camera: "camera-slow-zoom", effect: "blueFocus" },
       { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "You", text: "My phone." },
       { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Mira", text: "We are closer than before." },
       { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "You", text: "Then we should go now." },
@@ -906,13 +947,13 @@
       { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Mira", text: "That sounds like wisdom." },
       { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "You", text: "It also sounds like a warning." },
       { bg: "bluePhoneSignal", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Most useful wisdom does." },
-      { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate rose beyond the higher trail.", relicReveal: "clear" },
+      { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate rose beyond the higher trail.", relicReveal: "clear", camera: "camera-slow-zoom", effect: "darkVignette" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "Four sockets waited on the stone.", relicReveal: "lights" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Shelf Scale balanced the first socket.", relicReveal: "term" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Seed rooted itself into the second.", relicReveal: "sign" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom threaded silver light through the third.", relicReveal: "parity" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally sparked across the final socket.", relicReveal: "factor" },
-      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", boardWrite: true, boardWriteDuration: 4300, relicReveal: "clear" },
+      { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "Ancient words appeared across the gate.", board: "primewoodGateRule", boardWrite: true, boardWriteDuration: 4300, relicReveal: "clear", camera: "camera-punch-in", effect: "concentratedLine" },
       { bg: "board", sprite: "none", elder: "none", speaker: "Narrator", text: "See beneath the number. Clean what can be cleaned. Compact what repeats.", board: "primewoodGateRule", relicReveal: "clear" },
       { bg: "board", sprite: "none", elder: "none", speaker: "Mira", text: "I understood almost all of that.", board: "primewoodGateRule", relicReveal: "clear" },
       { bg: "board", sprite: "none", elder: "none", speaker: "Elder Shellwick", text: "Enough to begin.", board: "primewoodGateRule", relicReveal: "clear", reward: "chapter2-test-setup" }
@@ -926,42 +967,42 @@
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Seed revealed prime roots.", relicReveal: "sign" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Fraction Loom rewove divided paths.", relicReveal: "parity" },
       { bg: "visionRelicCase", sprite: "none", elder: "none", speaker: "Narrator", text: "The Power Tally compacted repeated factors.", relicReveal: "factor" },
-      { bg: "visionRelicCase", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "The four Vision Relics shone together.", relicReveal: "all" },
+      { bg: "visionRelicCase", sprite: "miraDetermined", elder: "elder", speaker: "Narrator", text: "The four Vision Relics shone together.", relicReveal: "all", camera: "camera-punch-in", effect: "blueFocus" },
       { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Narrator", text: "Numbers opened in the air, revealing their prime elements.", board: "roots12", relicReveal: "clear" },
-      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I can see inside them.", board: "roots12", relicReveal: "clear" },
+      { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "I can see inside them.", board: "roots12", relicReveal: "clear", camera: "camera-punch-in", effect: "concentratedLine" },
       { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Their prime pieces.", board: "roots12", relicReveal: "clear" },
       { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Their prime elements.", board: "roots12", relicReveal: "clear" },
-      { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate opened.", relicReveal: "all" },
-      { bg: "primewoodBridgePhone", sprite: "none", elder: "none", speaker: "Narrator", text: "Beyond the gate, a thin bridge of light reached toward your phone.", relicReveal: "clear" },
-      { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "There! I can see it!" },
-      { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "elder", speaker: "You", text: "The phone is right there." },
+      { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate opened.", relicReveal: "all", camera: "camera-slow-zoom", effect: "blueFocus" },
+      { bg: "primewoodBridgePhone", sprite: "none", elder: "none", speaker: "Narrator", text: "Beyond the gate, a thin bridge of light reached toward your phone.", relicReveal: "clear", camera: "camera-slow-zoom", effect: "blueFocus" },
+      { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "There! I can see it!", camera: "camera-punch-in", effect: "concentratedLine", emotion: "magic" },
+      { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "elder", speaker: "You", text: "The phone is right there.", emotion: "happy" },
       { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "A final fraction appeared across the path.", board: "primewoodCleanCheck" },
       { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "30 over 42 opened into 2 x 3 x 5 over 2 x 3 x 7.", board: "primewoodCleanCheck" },
       { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "The shared 2 vanished, and 15 over 21 remained.", board: "primewoodCleanCheck" },
-      { bg: "primewoodBridgePhone", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The bridge almost completed itself." },
+      { bg: "primewoodBridgePhone", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The bridge almost completed itself.", camera: "camera-slow-zoom", effect: "darkVignette", emotion: "worried" },
       { bg: "chapterTwoBoard", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The unfinished shared 3 glowed red.", board: "primewoodCleanCheck" },
-      { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The bridge cracked beneath the almost-finished path." },
+      { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The bridge cracked beneath the almost-finished path.", camera: "camera-shake-strong", effect: "redShock", emotion: "surprised" },
       { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "The phone lifted farther into the blue light." },
-      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "A warning burned across the gate: Clean all shared roots before crossing.", board: "primewoodCleanCheck" },
-      { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "We almost had it." },
+      { bg: "chapterTwoBoard", sprite: "none", elder: "none", speaker: "Narrator", text: "A warning burned across the gate: Clean all shared roots before crossing.", board: "primewoodCleanCheck", camera: "camera-punch-in", effect: "redShock" },
+      { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "Mira", text: "We almost had it.", emotion: "worried" },
       { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "Narrator", text: "Her voice fell quiet. Then her eyes sharpened." },
-      { bg: "primewoodBridgeWarning", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "No. That is not right. We did have it for a second." },
+      { bg: "primewoodBridgeWarning", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "No. That is not right. We did have it for a second.", emotion: "frustrated" },
       { bg: "primewoodBridgeWarning", sprite: "miraWorried", elder: "elder", speaker: "You", text: "I messed up." },
-      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Mira", text: "You rushed. Which is different." },
-      { bg: "primeValley", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Then we climb higher." },
+      { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Mira", text: "You rushed. Which is different.", emotion: "confused" },
+      { bg: "primeValley", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "Then we climb higher.", emotion: "proud" },
       { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The Ridge did not take it beyond reach. It moved it beyond your current understanding." },
       { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "What the Ridge hides behind a gate, it means to be reached." },
       { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "You will reach it. But not by rushing." },
       { bg: "chapterTwoBoard", sprite: "none", elder: "elder", speaker: "Narrator", text: "Shellwick pointed to the unfinished fraction.", board: "primewoodCleanFinal" },
       { bg: "chapterTwoBoard", sprite: "none", elder: "elder", speaker: "Narrator", text: "15 over 21 opened into 3 x 5 over 3 x 7.", board: "primewoodCleanFinal" },
       { bg: "chapterTwoBoard", sprite: "none", elder: "elder", speaker: "Narrator", text: "The shared 3 faded. 5 over 7 remained.", board: "primewoodCleanFinal" },
-      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Check again. Then move.", board: "primewoodCleanFinal" },
+      { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Check again. Then move.", board: "primewoodCleanFinal", camera: "camera-punch-in", effect: "concentratedLine" },
       { bg: "chapterTwoBoard", sprite: "miraDetermined", elder: "elder", speaker: "Mira", text: "That is our new rule.", board: "primewoodCleanFinal" },
       { bg: "chapterTwoBoard", sprite: "miraNeutral", elder: "elder", speaker: "You", text: "Our?", board: "primewoodCleanFinal" },
       { bg: "chapterTwoBoard", sprite: "miraHappy", elder: "elder", speaker: "Mira", text: "Yes. Our.", board: "primewoodCleanFinal" },
       { bg: "primewoodGateExterior", sprite: "none", elder: "none", speaker: "Narrator", text: "The Primewood Gate closed gently behind you.", relicReveal: "clear" },
       { bg: "primewoodBridgePhone", sprite: "none", elder: "none", speaker: "Narrator", text: "Above it, a new gate flickered. Your phone's blue light waited behind it, farther now, but still visible." },
-      { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "none", speaker: "Mira", text: "You helped me get through Root Gate and Primewood Gate. So now I will help you reach the next one." },
+      { bg: "primewoodBridgePhone", sprite: "miraDetermined", elder: "none", speaker: "Mira", text: "You helped me get through Root Gate and Primewood Gate. So now I will help you reach the next one.", emotion: "happy" },
       { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "The first season teaches patience." },
       { bg: "primeValley", sprite: "miraConfused", elder: "elder", speaker: "Mira", text: "Fractions, prime roots, emergency noodles... and patience?" },
       { bg: "primeValley", sprite: "miraNeutral", elder: "elder", speaker: "Elder Shellwick", text: "Mostly patience." },
@@ -1837,6 +1878,9 @@
     const elderKey = frame?.elder || (frame?.speaker === "Elder Shellwick" ? "elder" : "");
     if (miraKey && miraKey !== "none") jobs.push(prepareSpriteSource(spriteSourceForKey(miraKey)));
     if (elderKey && elderKey !== "none") jobs.push(prepareSpriteSource(spriteSourceForKey(elderKey)));
+    const effect = sceneEffectForFrame(frame);
+    if (effect?.image) jobs.push(prepareSceneImageSource(effect.image));
+    if (normalizeEmotionBubble(frame)) jobs.push(prepareSceneImageSource(emotionBubbleSource));
     return jobs;
   }
 
@@ -2264,6 +2308,166 @@
     progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
   }
 
+  function createSceneEffectOverlay() {
+    if (!storyVn || typeof document === "undefined") return null;
+    let overlay = document.getElementById("sceneEffectOverlay");
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+    overlay.id = "sceneEffectOverlay";
+    overlay.className = "scene-effect-overlay";
+    overlay.setAttribute("aria-hidden", "true");
+    if (sceneFader?.parentNode === storyVn) storyVn.insertBefore(overlay, sceneFader);
+    else storyVn.appendChild(overlay);
+    return overlay;
+  }
+
+  function createEmotionBubble() {
+    if (!storyVn || typeof document === "undefined") return null;
+    let bubble = document.getElementById("storyEmotionBubble");
+    if (bubble) return bubble;
+
+    bubble = document.createElement("div");
+    bubble.id = "storyEmotionBubble";
+    bubble.className = "story-emotion-bubble";
+    bubble.setAttribute("aria-hidden", "true");
+
+    const glyph = document.createElement("span");
+    glyph.className = "story-emotion-glyph";
+    bubble.appendChild(glyph);
+
+    if (sceneFader?.parentNode === storyVn) storyVn.insertBefore(bubble, sceneFader);
+    else storyVn.appendChild(bubble);
+    return bubble;
+  }
+
+  function defaultEmotionCharacter(frame) {
+    if (frame?.speaker === "Elder Shellwick") return "elder";
+    const miraKey = frame?.sprite;
+    const elderKey = frame?.elder || (frame?.speaker === "Elder Shellwick" ? "elder" : "");
+    if (miraKey && miraKey !== "none") return "mira";
+    if (elderKey && elderKey !== "none") return "elder";
+    return "mira";
+  }
+
+  function normalizeEmotionBubble(frame) {
+    const emotion = frame?.emotion || frame?.moodBubble || frame?.emojiBubble;
+    if (!emotion) return null;
+
+    if (typeof emotion === "string") {
+      const preset = emotionBubblePresets[emotion] || {};
+      return {
+        key: emotion,
+        glyph: preset.glyph || emotion,
+        shape: preset.shape || "round",
+        tone: preset.tone || emotion,
+        character: defaultEmotionCharacter(frame)
+      };
+    }
+
+    const key = String(emotion.key || emotion.type || emotion.mood || "").trim();
+    const preset = emotionBubblePresets[key] || {};
+    const glyph = String(emotion.glyph || emotion.emoji || emotion.text || preset.glyph || "").trim();
+    if (!glyph) return null;
+
+    return {
+      key: key || "custom",
+      glyph,
+      shape: emotion.shape || preset.shape || "round",
+      tone: emotion.tone || preset.tone || key || "custom",
+      character: emotion.character || defaultEmotionCharacter(frame)
+    };
+  }
+
+  function setEmotionBubble(frame) {
+    if (!emotionBubble) return;
+    const next = normalizeEmotionBubble(frame);
+    if (!next) {
+      emotionBubble.classList.remove("is-active");
+      emotionBubble.removeAttribute("data-character");
+      emotionBubble.removeAttribute("data-shape");
+      emotionBubble.removeAttribute("data-tone");
+      emotionBubble.setAttribute("aria-hidden", "true");
+      return;
+    }
+
+    const character = next.character === "elder" ? "elder" : "mira";
+    const actorStage = actors[character]?.stage;
+    if (!actorStage) {
+      setEmotionBubble(null);
+      return;
+    }
+
+    emotionBubble.dataset.character = character;
+    emotionBubble.dataset.shape = next.shape;
+    emotionBubble.dataset.tone = next.tone;
+    const glyph = emotionBubble.querySelector(".story-emotion-glyph");
+    if (glyph) glyph.textContent = next.glyph;
+    emotionBubble.setAttribute("aria-hidden", "false");
+    emotionBubble.classList.remove("is-active");
+    void emotionBubble.offsetWidth;
+    emotionBubble.classList.add("is-active");
+  }
+
+  function normalizeCameraPreset(camera) {
+    const preset = String(camera || "camera-normal").trim();
+    return cameraPresets.has(preset) ? preset : "camera-normal";
+  }
+
+  function setCamera(camera) {
+    if (!storyVn) return;
+    const preset = normalizeCameraPreset(camera);
+    if (preset === currentCameraPreset) {
+      if (preset.includes("shake")) {
+        storyVn.dataset.camera = "camera-normal";
+        void storyVn.offsetWidth;
+      } else {
+        return;
+      }
+    }
+    currentCameraPreset = preset;
+    storyVn.dataset.camera = preset;
+  }
+
+  function normalizeSceneEffect(effect) {
+    if (!effect) return null;
+    if (typeof effect === "string") {
+      const image = sceneEffectSources[effect];
+      return image ? { key: effect, image, duration: sceneEffectDurations[effect] } : null;
+    }
+    const key = String(effect.key || effect.name || "").trim();
+    const image = effect.image || sceneEffectSources[key];
+    if (!key || !image) return null;
+    return {
+      key,
+      image,
+      duration: Number(effect.duration || effect.ms || sceneEffectDurations[key] || 900)
+    };
+  }
+
+  function sceneEffectForFrame(frame) {
+    return normalizeSceneEffect(frame?.effect || frame?.overlay || frame?.sceneEffect);
+  }
+
+  function setSceneEffect(effect) {
+    if (!sceneEffectOverlay) return;
+    const next = normalizeSceneEffect(effect);
+    if (!next) {
+      sceneEffectOverlay.classList.remove("is-active");
+      sceneEffectOverlay.removeAttribute("data-effect");
+      sceneEffectOverlay.style.removeProperty("background-image");
+      sceneEffectOverlay.style.removeProperty("--story-effect-duration");
+      return;
+    }
+
+    sceneEffectOverlay.classList.remove("is-active");
+    sceneEffectOverlay.dataset.effect = next.key;
+    sceneEffectOverlay.style.backgroundImage = `url("${next.image}")`;
+    sceneEffectOverlay.style.setProperty("--story-effect-duration", `${Math.max(120, next.duration)}ms`);
+    void sceneEffectOverlay.offsetWidth;
+    sceneEffectOverlay.classList.add("is-active");
+  }
+
   function clearBoardWriteDelay() {
     if (boardWriteTimer) {
       window.clearTimeout(boardWriteTimer);
@@ -2300,13 +2504,17 @@
     storyVn?.classList.toggle("is-primewood-gate-relics", primewoodGateRelics);
 
     setBackground(frame.bg);
+    setCamera(frame.camera || "camera-normal");
+    setSceneEffect(frame.effect || frame.overlay || frame.sceneEffect);
     setRelicReveal(boardReview ? "clear" : frame.relicReveal || "");
     setBlackboard(frame.board || "", { writeOn: boardWrite });
     if (boardReview || relicFocus) {
       hideActor("mira");
       hideActor("elder");
+      setEmotionBubble(null);
     } else {
       setActors(frame);
+      setEmotionBubble(frame);
     }
     setSpeaker(frame);
 

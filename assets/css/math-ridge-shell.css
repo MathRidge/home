@@ -469,6 +469,29 @@ h1, h2, h3 {
   }
 }
 
+/* Mobile game mode: keep the learning/game screen clean and prevent the drawer
+   from becoming a thin landscape sidebar. Cabin and in-page buttons own routing. */
+@media (max-width: 760px) and (hover: none) and (pointer: coarse),
+       (max-width: 980px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  .topbar,
+  .drawer-backdrop {
+    display: none !important;
+  }
+
+  body.note-menu-open {
+    overflow: auto !important;
+  }
+
+  .page {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 18px) !important;
+  }
+
+  body.index-page .home-hero,
+  body.index-page .hub-section {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 14px) !important;
+  }
+}
+
 @media (max-width: 430px) {
   .top-actions .pill-btn,
   .top-actions .gold-btn.note-start-action {
