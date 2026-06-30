@@ -648,10 +648,10 @@ a {
   position: absolute;
   z-index: 4;
   width: clamp(86px, 10vw, 142px);
-  aspect-ratio: 1.18;
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  padding: 0.8rem;
+  padding: 0.74rem;
   pointer-events: none;
   background-image: url("../images/effect/retro-empty-comic-bubbles-halftone_TRUE_ALPHA.png");
   background-repeat: no-repeat;
@@ -668,6 +668,10 @@ a {
 .story-emotion-bubble.is-active {
   visibility: visible;
   animation: storyEmotionBubblePop 900ms cubic-bezier(.16, .9, .26, 1) both;
+}
+
+.story-emotion-bubble.is-active .story-emotion-glyph {
+  animation: storyEmotionGlyphPulse 820ms cubic-bezier(.18, .82, .24, 1) both;
 }
 
 .story-emotion-bubble[data-character="mira"] {
@@ -691,8 +695,8 @@ a {
 .story-emotion-bubble[data-shape="angled"] { background-position: 0 100%; }
 .story-emotion-bubble[data-shape="smallRound"] { background-position: 33.333% 100%; }
 .story-emotion-bubble[data-shape="long"] {
-  width: clamp(112px, 14vw, 182px);
-  aspect-ratio: 1.72;
+  width: clamp(94px, 11vw, 154px);
+  aspect-ratio: 1;
   background-position: 66.667% 100%;
 }
 .story-emotion-bubble[data-shape="impact"] { background-position: 100% 100%; }
@@ -708,6 +712,9 @@ a {
   font-weight: 900;
   line-height: 1;
   text-align: center;
+  transform: scale(1);
+  transform-origin: center;
+  will-change: transform;
   text-shadow:
     0 1px 0 rgba(255, 255, 255, 0.86),
     0 0 8px rgba(255, 231, 168, 0.65);
@@ -1662,6 +1669,24 @@ a {
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes storyEmotionGlyphPulse {
+  0% {
+    transform: scale(0.46);
+  }
+  24% {
+    transform: scale(1.34);
+  }
+  46% {
+    transform: scale(0.92);
+  }
+  68% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

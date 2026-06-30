@@ -48,18 +48,17 @@
   };
   const emotionBubbleSource = "assets/images/effect/retro-empty-comic-bubbles-halftone_TRUE_ALPHA.png";
   const emotionBubblePresets = {
-    happy: { glyph: "😄", shape: "round", tone: "happy" },
-    proud: { glyph: "⭐", shape: "long", tone: "proud" },
-    magic: { glyph: "✨", shape: "cloud", tone: "magic" },
-    idea: { glyph: "💡", shape: "square", tone: "magic" },
+    happy: { glyph: "\u203C", shape: "round", tone: "happy" },
+    proud: { glyph: "\u2726", shape: "long", tone: "proud" },
+    magic: { glyph: "\u2726", shape: "cloud", tone: "magic" },
+    idea: { glyph: "!", shape: "square", tone: "magic" },
     confused: { glyph: "?", shape: "thought", tone: "confused" },
-    worried: { glyph: "😟", shape: "thought", tone: "worried" },
-    frustrated: { glyph: "😣", shape: "jagged", tone: "worried" },
-    angry: { glyph: "💢", shape: "burst", tone: "angry" },
-    surprised: { glyph: "!?", shape: "impact", tone: "surprised" },
-    embarrassed: { glyph: "…", shape: "smallRound", tone: "worried" }
+    worried: { glyph: "...", shape: "thought", tone: "worried" },
+    frustrated: { glyph: "!!", shape: "jagged", tone: "worried" },
+    angry: { glyph: "\u{1F4A2}", shape: "burst", tone: "angry" },
+    surprised: { glyph: "\u2049", shape: "impact", tone: "surprised" },
+    embarrassed: { glyph: "...", shape: "smallRound", tone: "worried" }
   };
-
   const backgrounds = {
     cabin: `${bgBase}story-bg-Shellwick_cabin.png`,
     cabinInside: `${bgBase}story-bg-Shellwick_cabin_inside.png`,
@@ -2351,7 +2350,7 @@
   }
 
   function normalizeEmotionBubble(frame) {
-    const emotion = frame?.emotion || frame?.moodBubble || frame?.emojiBubble;
+    const emotion = frame?.emotion || frame?.moodBubble || frame?.symbolBubble;
     if (!emotion) return null;
 
     if (typeof emotion === "string") {
@@ -2367,7 +2366,7 @@
 
     const key = String(emotion.key || emotion.type || emotion.mood || "").trim();
     const preset = emotionBubblePresets[key] || {};
-    const glyph = String(emotion.glyph || emotion.emoji || emotion.text || preset.glyph || "").trim();
+    const glyph = String(emotion.glyph || emotion.mark || emotion.text || preset.glyph || "").trim();
     if (!glyph) return null;
 
     return {
