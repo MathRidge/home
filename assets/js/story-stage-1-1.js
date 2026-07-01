@@ -55,10 +55,14 @@
     sock: { key: "sock", size: "large" },
     noodles: { key: "noodles", size: "large" },
     pebble: { key: "pebble", size: "large" },
+    rock: { key: "pebble", size: "large" },
+    magicalRock: { key: "pebble", size: "large" },
     map: { key: "map", size: "wide" },
     pencils: { key: "pencils", size: "large" },
+    threePencils: { key: "pencils", size: "large" },
     cracker: { key: "cracker", size: "large" },
-    book: { key: "book", size: "wide" }
+    book: { key: "book", size: "wide" },
+    algebraBook: { key: "book", size: "wide" }
   };
   const emotionBubblePresets = {
     happy: { glyph: "\u203C", shape: "round", tone: "happy" },
@@ -496,9 +500,9 @@
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "Also not that." },
     { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "You raised an eyebrow. Mira quickly shoved it back in." },
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "This is not the time." },
-    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She dug deeper. A glowing pebble rolled out. Then a folded map. Then three pencils. Then a half-eaten cracker." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She dug deeper. A glowing pebble rolled out. Then a folded map. Then three pencils. Then a half-eaten cracker.", camera: "camera-path-close", item: { items: ["rock", "map", "threePencils", "cracker"], size: "collection" } },
     { bg: "path", sprite: "celebrating", speaker: "Mira", text: "Aha! The final manual!" },
-    { bg: "path", sprite: "hugSatchel", speaker: "Narrator", text: "She pulled out a book. The cover was scratched, bent, and painfully familiar." },
+    { bg: "path", sprite: "hugSatchel", speaker: "Narrator", text: "She pulled out a book. The cover was scratched, bent, and painfully familiar.", camera: "camera-path-close", item: "algebraBook" },
     { bg: "path", sprite: "confused", speaker: "Narrator", text: "Your eyes widened." },
     { bg: "path", sprite: "neutral", speaker: "You", text: "Wait." },
     { bg: "path", sprite: "celebrating", speaker: "Mira", text: "The final manual!" },
@@ -1813,11 +1817,14 @@
   }
 
   function frameSegments(frame) {
+    if (isNarrationFrame(frame)) {
+      return [formatText(frame?.text || "").trim()];
+    }
+
     const segments = frameAudioFiles(frame).length
       ? [formatText(frame?.text || "").trim()]
       : splitIntoReadableSegments(frame?.text || "");
-    if (!isNarrationFrame(frame)) return segments;
-    return segments.map(segment => `[ ${segment} ]`);
+    return segments;
   }
 
   function speakerToneClass(frame) {
@@ -2053,13 +2060,17 @@
     item.id = "storyItemPop";
     item.className = "story-item-pop";
     item.setAttribute("aria-hidden", "true");
+
+    const stage = document.createElement("div");
+    stage.className = "story-item-stage";
+    item.appendChild(stage);
+
     if (sceneFader?.parentNode === storyVn) storyVn.insertBefore(item, sceneFader);
     else storyVn.appendChild(item);
     return item;
   }
 
-  function normalizeStoryItem(frame) {
-    const item = frame?.item || frame?.storyItem;
+  function normalizeStoryItemEntry(item) {
     if (!item) return null;
 
     if (typeof item === "string") {
@@ -2077,19 +2088,55 @@
     };
   }
 
+  function normalizeStoryItem(frame) {
+    const item = frame?.item || frame?.storyItem || frame?.items;
+    if (!item) return null;
+
+    const itemList = Array.isArray(item)
+      ? item
+      : Array.isArray(item.items)
+        ? item.items
+        : [item];
+    const items = itemList
+      .map(normalizeStoryItemEntry)
+      .filter(Boolean);
+    if (!items.length) return null;
+
+    return {
+      items,
+      size: item.size || (items.length > 1 ? "collection" : items[0].size || ""),
+      placement: item.placement || items[0].placement || ""
+    };
+  }
+
   function setStoryItem(frame) {
     if (!storyItemPop) return;
     const next = normalizeStoryItem(frame);
+    const stage = storyItemPop.querySelector(".story-item-stage");
     if (!next) {
       storyItemPop.classList.remove("is-active");
       storyItemPop.removeAttribute("data-item");
       storyItemPop.removeAttribute("data-size");
       storyItemPop.removeAttribute("data-placement");
+      storyItemPop.removeAttribute("data-count");
+      if (stage) stage.replaceChildren();
       storyItemPop.setAttribute("aria-hidden", "true");
       return;
     }
 
-    storyItemPop.dataset.item = next.key;
+    if (stage) {
+      stage.replaceChildren();
+      next.items.forEach(entry => {
+        const sprite = document.createElement("span");
+        sprite.className = "story-item-sprite";
+        sprite.dataset.item = entry.key;
+        if (entry.size) sprite.dataset.size = entry.size;
+        stage.appendChild(sprite);
+      });
+    }
+
+    storyItemPop.dataset.item = next.items[0].key;
+    storyItemPop.dataset.count = String(next.items.length);
     if (next.size) storyItemPop.dataset.size = next.size;
     else storyItemPop.removeAttribute("data-size");
     if (next.placement) storyItemPop.dataset.placement = next.placement;
@@ -2612,7 +2659,10 @@
     }
     setDialogueSpeaker(frame);
     speakerName.textContent = isNarrationFrame(frame) ? "Narrator" : frame.speaker || "";
-    sceneCounter.textContent = `${currentIndex + 1} / ${frames.length}`;
+    if (sceneCounter) {
+      sceneCounter.textContent = "";
+      sceneCounter.setAttribute("aria-hidden", "true");
+    }
     backBtn.disabled = currentIndex === 0;
     nextBtn.disabled = false;
     nextBtn.textContent = currentIndex === frames.length - 1 ? "Complete" : "Next";

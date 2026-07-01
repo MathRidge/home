@@ -1237,6 +1237,10 @@
     dialogueBox.classList.toggle("is-narration", isNarration(frame));
     dialogueBox.classList.add(speakerClass(frame));
     speakerName.textContent = isNarration(frame) ? "Narrator" : frame.speaker || "";
+    if (sceneCounter) {
+      sceneCounter.textContent = "";
+      sceneCounter.setAttribute("aria-hidden", "true");
+    }
   }
 
   function clearAutoPlayTimer() {
@@ -2280,7 +2284,10 @@
     hideActor("mira");
     hideActor("elder");
     if (progressBar) progressBar.style.transform = "scaleX(1)";
-    if (sceneCounter) sceneCounter.textContent = "Trial Ready";
+    if (sceneCounter) {
+      sceneCounter.textContent = "";
+      sceneCounter.setAttribute("aria-hidden", "true");
+    }
     if (backBtn) backBtn.disabled = true;
     if (nextBtn) nextBtn.disabled = true;
 
@@ -2523,7 +2530,10 @@
     }
     setSpeaker(frame);
 
-    sceneCounter.textContent = `${currentIndex + 1} / ${frames.length}`;
+    if (sceneCounter) {
+      sceneCounter.textContent = "";
+      sceneCounter.setAttribute("aria-hidden", "true");
+    }
     backBtn.disabled = currentIndex === 0;
     nextBtn.disabled = false;
     nextBtn.textContent = frame.reward ? "Complete" : "Next";

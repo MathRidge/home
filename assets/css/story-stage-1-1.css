@@ -654,11 +654,10 @@ a {
 
 .story-emotion-bubble {
   position: absolute;
-  z-index: 4;
+  z-index: 6;
   width: clamp(86px, 10vw, 142px);
   aspect-ratio: 1;
-  display: grid;
-  place-items: center;
+  display: block;
   padding: 0.74rem;
   pointer-events: none;
   background-image: url("../images/effect/retro-empty-comic-bubbles-halftone_TRUE_ALPHA.png");
@@ -668,6 +667,7 @@ a {
   opacity: 0;
   visibility: hidden;
   transform: translate3d(0, 10px, 0) scale(0.82) rotate(-3deg);
+  overflow: hidden;
   filter:
     drop-shadow(0 12px 18px rgba(0, 0, 0, 0.36))
     drop-shadow(0 0 10px rgba(255, 244, 201, 0.18));
@@ -679,7 +679,7 @@ a {
 }
 
 .story-emotion-bubble.is-active .story-emotion-glyph {
-  animation: storyEmotionGlyphPulse 820ms cubic-bezier(.18, .82, .24, 1) both;
+  animation: storyEmotionGlyphPulse 1000ms cubic-bezier(.18, .82, .24, 1) both;
 }
 
 .story-emotion-bubble[data-character="mira"] {
@@ -731,19 +731,23 @@ a {
 .story-emotion-bubble[data-shape="impact"] { background-position: 100% 100%; }
 
 .story-emotion-glyph {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   display: inline-grid;
   place-items: center;
-  width: 72%;
-  height: 68%;
+  width: 58%;
+  height: 56%;
   color: #20170f;
   font-family: "Trebuchet MS", "Comic Sans MS", system-ui, sans-serif;
-  font-size: clamp(1.42rem, 3vw, 2.45rem);
+  font-size: clamp(1.22rem, 2.55vw, 2.1rem);
   font-weight: 900;
-  line-height: 1;
+  line-height: 0.9;
   text-align: center;
-  transform: scale(1);
+  transform: translate(-50%, -50%) scale(1);
   transform-origin: center;
   will-change: transform;
+  overflow: hidden;
   text-shadow:
     0 1px 0 rgba(255, 255, 255, 0.86),
     0 0 8px rgba(255, 231, 168, 0.65);
@@ -768,21 +772,51 @@ a {
 .story-item-pop {
   position: absolute;
   left: 50%;
-  top: clamp(112px, 26vh, 236px);
-  z-index: 4;
-  width: clamp(150px, 20vw, 260px);
-  aspect-ratio: 1;
+  top: auto;
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + clamp(178px, 25svh, 242px));
+  z-index: 6;
+  width: clamp(184px, 23vw, 320px);
+  min-height: clamp(142px, 17vw, 218px);
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 2vw, 26px);
+  border: 1px solid rgba(255, 231, 168, 0.54);
+  border-radius: 48% 52% 46% 54% / 56% 48% 52% 44%;
   pointer-events: none;
-  background-image: url("../images/effect/mathridge_items_TRUE_ALPHA.png");
-  background-repeat: no-repeat;
-  background-size: 400% 300%;
-  background-position: 0 0;
+  background:
+    radial-gradient(circle at 38% 28%, rgba(255, 255, 255, 0.96), rgba(255, 248, 222, 0.92) 44%, rgba(255, 222, 144, 0.72) 100%);
   opacity: 0;
   visibility: hidden;
-  transform: translate3d(-50%, 14px, 0) scale(0.6) rotate(-8deg);
+  transform: translate3d(-50%, 18px, 0) scale(0.62) rotate(-5deg);
   filter:
     drop-shadow(0 20px 24px rgba(0, 0, 0, 0.38))
     drop-shadow(0 0 18px rgba(255, 231, 168, 0.2));
+}
+
+.story-item-pop::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(121, 74, 20, 0.18);
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.72), transparent 24%),
+    radial-gradient(circle at 72% 78%, rgba(255, 231, 168, 0.34), transparent 30%);
+  pointer-events: none;
+}
+
+.story-item-pop::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -13px;
+  width: 34px;
+  height: 30px;
+  border-right: 1px solid rgba(255, 231, 168, 0.48);
+  border-bottom: 1px solid rgba(255, 231, 168, 0.48);
+  border-radius: 0 0 22px 0;
+  background: rgba(255, 242, 201, 0.86);
+  transform: translateX(-50%) rotate(38deg);
 }
 
 .story-item-pop.is-active {
@@ -790,21 +824,60 @@ a {
   animation: storyItemPopReveal 1180ms cubic-bezier(.16, .9, .22, 1) both;
 }
 
-.story-item-pop[data-item="spoon"] { background-position: 0 0; }
-.story-item-pop[data-item="sock"] { background-position: 33.333% 0; }
-.story-item-pop[data-item="noodles"] { background-position: 66.667% 0; }
-.story-item-pop[data-item="pebble"] { background-position: 100% 0; }
-.story-item-pop[data-item="map"] { background-position: 0 50%; }
-.story-item-pop[data-item="pencils"] { background-position: 33.333% 50%; }
-.story-item-pop[data-item="cracker"] { background-position: 66.667% 50%; }
-.story-item-pop[data-item="book"] { background-position: 100% 50%; }
+.story-item-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(4px, 0.75vw, 10px);
+  width: 100%;
+}
+
+.story-item-sprite {
+  width: clamp(106px, 14vw, 188px);
+  aspect-ratio: 1;
+  display: block;
+  flex: 0 0 auto;
+  background-image: url("../images/effect/mathridge_items_TRUE_ALPHA.png");
+  background-repeat: no-repeat;
+  background-size: 400% 300%;
+  background-position: 0 0;
+  filter:
+    drop-shadow(0 10px 12px rgba(0, 0, 0, 0.24))
+    drop-shadow(0 0 10px rgba(255, 247, 213, 0.3));
+}
+
+.story-item-pop[data-count="2"] .story-item-sprite {
+  width: clamp(82px, 10vw, 142px);
+}
+
+.story-item-pop[data-count="3"] .story-item-sprite,
+.story-item-pop[data-count="4"] .story-item-sprite {
+  width: clamp(66px, 7.8vw, 108px);
+}
+
+.story-item-sprite[data-item="spoon"] { background-position: 0 0; }
+.story-item-sprite[data-item="sock"] { background-position: 33.333% 0; }
+.story-item-sprite[data-item="noodles"] { background-position: 66.667% 0; }
+.story-item-sprite[data-item="pebble"],
+.story-item-sprite[data-item="rock"] { background-position: 100% 0; }
+.story-item-sprite[data-item="map"] { background-position: 0 50%; }
+.story-item-sprite[data-item="pencils"] { background-position: 33.333% 50%; }
+.story-item-sprite[data-item="cracker"] { background-position: 66.667% 50%; }
+.story-item-sprite[data-item="book"] { background-position: 100% 50%; }
 
 .story-item-pop[data-size="large"] {
-  width: clamp(178px, 24vw, 310px);
+  width: clamp(206px, 25vw, 340px);
 }
 
 .story-item-pop[data-size="wide"] {
-  width: clamp(190px, 26vw, 330px);
+  width: clamp(220px, 28vw, 370px);
+}
+
+.story-item-pop[data-size="collection"] {
+  width: clamp(244px, 30vw, 410px);
 }
 
 @media (max-width: 920px) and (orientation: landscape) {
@@ -842,13 +915,28 @@ a {
   }
 
   .story-item-pop {
-    top: clamp(58px, 18svh, 104px);
-    width: clamp(112px, 18vw, 172px);
+    bottom: calc(max(7px, env(safe-area-inset-bottom)) + min(37svh, 178px));
+    width: clamp(136px, 20vw, 218px);
+    min-height: clamp(92px, 15svh, 138px);
+    padding: 10px;
   }
 
   .story-item-pop[data-size="large"],
   .story-item-pop[data-size="wide"] {
-    width: clamp(132px, 21vw, 202px);
+    width: clamp(154px, 23vw, 248px);
+  }
+
+  .story-item-pop[data-size="collection"] {
+    width: clamp(210px, 32vw, 320px);
+  }
+
+  .story-item-sprite {
+    width: clamp(74px, 11vw, 124px);
+  }
+
+  .story-item-pop[data-count="3"] .story-item-sprite,
+  .story-item-pop[data-count="4"] .story-item-sprite {
+    width: clamp(48px, 7vw, 78px);
   }
 }
 
@@ -875,13 +963,28 @@ a {
   }
 
   .story-item-pop {
-    top: clamp(150px, 30svh, 250px);
-    width: clamp(124px, 35vw, 188px);
+    bottom: calc(max(10px, env(safe-area-inset-bottom)) + clamp(188px, 30svh, 278px));
+    width: clamp(168px, 44vw, 238px);
+    min-height: clamp(126px, 32vw, 178px);
+    padding: 13px;
   }
 
   .story-item-pop[data-size="large"],
   .story-item-pop[data-size="wide"] {
-    width: clamp(146px, 42vw, 220px);
+    width: clamp(188px, 50vw, 272px);
+  }
+
+  .story-item-pop[data-size="collection"] {
+    width: clamp(244px, 68vw, 340px);
+  }
+
+  .story-item-sprite {
+    width: clamp(86px, 25vw, 132px);
+  }
+
+  .story-item-pop[data-count="3"] .story-item-sprite,
+  .story-item-pop[data-count="4"] .story-item-sprite {
+    width: clamp(58px, 17vw, 88px);
   }
 }
 
@@ -1307,8 +1410,8 @@ a {
   z-index: 5;
   width: min(880px, calc(100% - 32px));
   margin: 0 auto;
-  min-height: clamp(122px, 18svh, 158px);
-  padding: 18px 22px 18px;
+  min-height: clamp(124px, 19svh, 174px);
+  padding: 24px 26px 20px;
   border: 1px solid rgba(255, 231, 168, 0.58);
   border-radius: 4px;
   background:
@@ -1345,23 +1448,30 @@ a {
 }
 
 .dialogue-meta {
-  display: flex;
-  position: relative;
-  z-index: 1;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  position: absolute;
+  left: 18px;
+  top: -24px;
+  z-index: 2;
+  display: block;
   color: var(--gold-light);
   font-size: 1.02rem;
   font-weight: 900;
 }
 
 #speakerName {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: clamp(126px, 19vw, 210px);
-  padding: 5px 18px 6px 22px;
+  min-height: 33px;
+  padding: 5px 20px 6px 24px;
   clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%, 12px 50%);
   background:
     linear-gradient(90deg, rgba(255, 231, 168, 0.24), rgba(49, 35, 106, 0.88) 52%, rgba(8, 15, 26, 0.78));
+  box-shadow:
+    0 0 0 1px rgba(255, 231, 168, 0.24) inset,
+    0 8px 18px rgba(0, 0, 0, 0.28),
+    0 0 18px rgba(255, 231, 168, 0.12);
   color: var(--gold-light);
   font-family: Georgia, "Times New Roman", serif;
   line-height: 1;
@@ -1374,34 +1484,39 @@ a {
 }
 
 #sceneCounter {
-  padding: 3px 9px;
-  border: 1px solid rgba(255, 231, 168, 0.20);
-  border-radius: 999px;
-  background: rgba(3, 7, 18, 0.34);
-  color: rgba(255, 247, 232, 0.64);
-  font-size: 0.96rem;
+  display: none !important;
 }
 
 #dialogueText {
   position: relative;
   z-index: 1;
-  min-height: 3.08em;
-  margin: 10px 0 0;
+  min-height: 3.28em;
+  margin: 0;
   color: var(--ink);
   font-size: clamp(1.28rem, 2.08vw, 1.56rem);
   line-height: 1.52;
   overflow: hidden;
 }
 
-.dialogue-box.speaker-narrator #speakerName,
-.dialogue-box.is-narration #speakerName {
-  color: rgba(255, 247, 232, 0.88);
+.dialogue-box.is-narration {
+  min-height: clamp(136px, 21svh, 188px);
+  padding-top: 22px;
+}
+
+.dialogue-box.speaker-narrator .dialogue-meta,
+.dialogue-box.is-narration .dialogue-meta {
+  display: none;
 }
 
 .dialogue-box.speaker-narrator #dialogueText,
 .dialogue-box.is-narration #dialogueText {
-  color: rgba(255, 247, 232, 0.88);
-  font-style: italic;
+  min-height: 4.1em;
+  color: #bff3a8;
+  font-style: normal;
+  font-weight: 700;
+  text-shadow:
+    0 0 10px rgba(133, 255, 155, 0.16),
+    0 2px 8px rgba(0, 0, 0, 0.68);
 }
 
 .dialogue-box.speaker-you #speakerName,
@@ -1787,19 +1902,25 @@ a {
 
 @keyframes storyEmotionGlyphPulse {
   0% {
-    transform: scale(0.46);
+    opacity: 0;
+    transform: translate(-50%, -50%) scaleX(0.32) scaleY(1.46);
   }
-  24% {
-    transform: scale(1.34);
+  16% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(0.44) scaleY(1.62);
   }
-  46% {
-    transform: scale(0.92);
+  34% {
+    transform: translate(-50%, -50%) scaleX(1.42) scaleY(0.58);
   }
-  68% {
-    transform: scale(1.1);
+  52% {
+    transform: translate(-50%, -50%) scaleX(0.84) scaleY(1.12);
+  }
+  72% {
+    transform: translate(-50%, -50%) scaleX(1.08) scaleY(0.94);
   }
   100% {
-    transform: scale(1);
+    opacity: 1;
+    transform: translate(-50%, -50%) scaleX(1) scaleY(1);
   }
 }
 
@@ -2133,8 +2254,13 @@ a {
     right: 10px;
     bottom: max(10px, env(safe-area-inset-bottom));
     width: calc(100% - 20px);
-    min-height: clamp(116px, 20svh, 150px);
-    padding: 13px 15px 15px;
+    min-height: clamp(124px, 21svh, 164px);
+    padding: 20px 15px 15px;
+  }
+
+  .dialogue-meta {
+    left: 13px;
+    top: -21px;
   }
 
   .interaction-panel {
@@ -2148,8 +2274,13 @@ a {
 
   #dialogueText {
     min-height: 3em;
+    margin-top: 0;
     font-size: 1.2rem;
     line-height: 1.45;
+  }
+
+  .dialogue-box.is-narration #dialogueText {
+    min-height: 4em;
   }
 
   .choice-row,
@@ -2327,9 +2458,9 @@ a {
     right: auto;
     bottom: max(7px, env(safe-area-inset-bottom));
     width: min(660px, calc(76vw - env(safe-area-inset-left)));
-    min-height: min(30svh, 126px);
-    padding: 10px 12px 11px;
-    max-height: min(40svh, 160px);
+    min-height: min(32svh, 136px);
+    padding: 18px 12px 11px;
+    max-height: min(44svh, 178px);
   }
 
   .interaction-panel {
@@ -2353,6 +2484,8 @@ a {
   }
 
   .dialogue-meta {
+    left: 11px;
+    top: -19px;
     font-size: 0.78rem;
     line-height: 1.1;
   }
@@ -2363,9 +2496,18 @@ a {
 
   #dialogueText {
     min-height: 2.8em;
-    margin-top: 6px;
+    margin-top: 0;
     font-size: clamp(1rem, 2.35vw, 1.22rem);
     line-height: 1.34;
+  }
+
+  .dialogue-box.is-narration {
+    min-height: min(38svh, 152px);
+    max-height: min(48svh, 190px);
+  }
+
+  .dialogue-box.is-narration #dialogueText {
+    min-height: 3.7em;
   }
 
   .dialogue-actions {
@@ -2549,6 +2691,7 @@ a {
 
   #speakerName {
     min-width: clamp(112px, 35vw, 180px);
+    min-height: 31px;
     padding: 5px 14px 6px 18px;
   }
 
@@ -2597,11 +2740,13 @@ a {
   }
 
   .dialogue-meta {
+    top: -18px;
     font-size: 0.7rem;
   }
 
   #speakerName {
     min-width: clamp(98px, 18vw, 160px);
+    min-height: 29px;
     padding: 4px 12px 5px 16px;
   }
 }
