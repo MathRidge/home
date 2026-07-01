@@ -29,6 +29,7 @@
     "camera-punch-out",
     "camera-shake-soft",
     "camera-shake-strong",
+    "camera-path-close",
     "camera-pan-left",
     "camera-pan-right"
   ]);
@@ -2360,7 +2361,8 @@
         glyph: preset.glyph || emotion,
         shape: preset.shape || "round",
         tone: preset.tone || emotion,
-        character: defaultEmotionCharacter(frame)
+        character: defaultEmotionCharacter(frame),
+        placement: preset.placement || ""
       };
     }
 
@@ -2374,7 +2376,8 @@
       glyph,
       shape: emotion.shape || preset.shape || "round",
       tone: emotion.tone || preset.tone || key || "custom",
-      character: emotion.character || defaultEmotionCharacter(frame)
+      character: emotion.character || defaultEmotionCharacter(frame),
+      placement: emotion.placement || preset.placement || ""
     };
   }
 
@@ -2386,6 +2389,7 @@
       emotionBubble.removeAttribute("data-character");
       emotionBubble.removeAttribute("data-shape");
       emotionBubble.removeAttribute("data-tone");
+      emotionBubble.removeAttribute("data-placement");
       emotionBubble.setAttribute("aria-hidden", "true");
       return;
     }
@@ -2400,6 +2404,8 @@
     emotionBubble.dataset.character = character;
     emotionBubble.dataset.shape = next.shape;
     emotionBubble.dataset.tone = next.tone;
+    if (next.placement) emotionBubble.dataset.placement = next.placement;
+    else emotionBubble.removeAttribute("data-placement");
     const glyph = emotionBubble.querySelector(".story-emotion-glyph");
     if (glyph) glyph.textContent = next.glyph;
     emotionBubble.setAttribute("aria-hidden", "false");

@@ -21,8 +21,8 @@
   const NEXT_SCENE_PREFETCH = [
     STORY_STAGE_URL,
     STORY_STAGE_SKIP_URL,
-    "assets/css/story-stage-1-1.css?v=20260630-bubble-crop",
-    "assets/js/story-stage-1-1.js?v=20260630-bubble-crop",
+    "assets/css/story-stage-1-1.css?v=20260701-satchel-items",
+    "assets/js/story-stage-1-1.js?v=20260701-satchel-items",
     "assets/images/bg-scene/Stage-1-1/story-bg-s01-arrival.png",
     "assets/images/bg-scene/Stage-1-1/story-bg-cipher_ridge.png",
     "assets/images/Mira-sprite/Mira-sprite-alpha-png/mira-holding-hat.png",

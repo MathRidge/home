@@ -30,6 +30,7 @@
     "camera-punch-out",
     "camera-shake-soft",
     "camera-shake-strong",
+    "camera-path-close",
     "camera-pan-left",
     "camera-pan-right"
   ]);
@@ -48,6 +49,17 @@
     darkVignette: 1800
   };
   const emotionBubbleSource = "assets/images/effect/retro-empty-comic-bubbles-halftone_TRUE_ALPHA.png";
+  const storyItemSource = "assets/images/effect/mathridge_items_TRUE_ALPHA.png";
+  const storyItemPresets = {
+    spoon: { key: "spoon", size: "large" },
+    sock: { key: "sock", size: "large" },
+    noodles: { key: "noodles", size: "large" },
+    pebble: { key: "pebble", size: "large" },
+    map: { key: "map", size: "wide" },
+    pencils: { key: "pencils", size: "large" },
+    cracker: { key: "cracker", size: "large" },
+    book: { key: "book", size: "wide" }
+  };
   const emotionBubblePresets = {
     happy: { glyph: "\u203C", shape: "round", tone: "happy" },
     proud: { glyph: "\u2726", shape: "long", tone: "proud" },
@@ -391,13 +403,13 @@
     { bg: "arrival", sprite: "holdingHat", motion: "fade-in", speaker: "Narrator", text: "Mira stepped onto the dirt trail, holding her oversized mage hat down with both hands." },
     { bg: "arrival", sprite: "holdingHat", speaker: "Mira", text: "Come on. Cipher Ridge Town is not far from here." },
     { bg: "arrival", sprite: "holdingHat", speaker: "Narrator", text: "She paused." },
-    { bg: "arrival", sprite: "confused", speaker: "Mira", text: "Probably.", camera: "camera-shake-soft", effect: "redShock", emotion: "worried" },
+    { bg: "arrival", sprite: "confused", speaker: "Mira", text: "Probably.", camera: "camera-shake-soft", effect: "redShock", emotion: { key: "worried", placement: "mira-left" } },
     { bg: "arrival", sprite: "confused", speaker: "Narrator", text: "You looked at her." },
     { bg: "arrival", sprite: "confused", speaker: "You", text: "Probably?" },
     { bg: "arrival", sprite: "pointing", speaker: "Mira", text: "I-I mean, yes. Definitely. I am very good at directions." },
     { bg: "arrival", sprite: "butterfly", speaker: "Narrator", text: "A small butterfly-shaped symbol floated past her." },
     { bg: "arrival", sprite: "butterfly", speaker: "Narrator", text: "Mira's ears perked up." },
-    { bg: "arrival", sprite: "butterfly", speaker: "Mira", text: "Ooh...", camera: "camera-punch-in", effect: "blueFocus", emotion: "magic" },
+    { bg: "arrival", sprite: "butterfly", speaker: "Mira", text: "Ooh...", camera: "camera-punch-in", effect: "blueFocus", emotion: { key: "magic", placement: "mira-soft-left" } },
     { bg: "arrival", sprite: "butterfly", motion: "walk-right", speaker: "Narrator", text: "She started following it." },
     { bg: "arrival", sprite: "butterfly", speaker: "Narrator", text: "You cleared your throat." },
     { bg: "arrival", sprite: "butterfly", speaker: "You", text: "Mira?" },
@@ -472,15 +484,15 @@
     { bg: "path", sprite: "worried", speaker: "Mira", text: "The gates are locking. The paths are breaking. Even Math Ridge is becoming unstable." },
     { bg: "path", sprite: "thinking", speaker: "Mira", text: "Elder Shellwick says the old spell knowledge is fading. We needed outside resources. Manuals from the Pagebound Realm." },
     { bg: "path", sprite: "confused", speaker: "You", text: "Manuals?" },
-    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "Mira opened her satchel. It looked far too small to hold anything important." },
-    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "Mira opened her emergency satchel. Her arm went in farther than it should have." },
-    { bg: "path", sprite: "confused", speaker: "You", text: "What is that bag?" },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "Mira opened her satchel. It looked far too small to hold anything important.", camera: "camera-path-close" },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "Mira opened her emergency satchel. Her arm went in farther than it should have.", camera: "camera-path-close" },
+    { bg: "path", sprite: "magicSatchel", speaker: "You", text: "What is that bag?", camera: "camera-path-close" },
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "My emergency satchel." },
-    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a wooden spoon." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a wooden spoon.", camera: "camera-path-close", item: "spoon" },
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "No." },
-    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a sock." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a sock.", camera: "camera-path-close", item: "sock" },
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "Not that." },
-    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a tiny bag labeled Emergency Cup Noodles. She froze. Her ears twitched." },
+    { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "She pulled out a tiny bag labeled Emergency Cup Noodles. She froze. Her ears twitched.", camera: "camera-path-close", item: { key: "noodles", size: "large" }, emotion: { key: "surprised", placement: "mira-left" } },
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "Also not that." },
     { bg: "path", sprite: "magicSatchel", speaker: "Narrator", text: "You raised an eyebrow. Mira quickly shoved it back in." },
     { bg: "path", sprite: "magicSatchel", speaker: "Mira", text: "This is not the time." },
@@ -745,6 +757,7 @@
   const sceneFader = document.getElementById("sceneFader");
   const sceneEffectOverlay = createSceneEffectOverlay();
   const emotionBubble = createEmotionBubble();
+  const storyItemPop = createStoryItemPop();
   const miraStage = document.getElementById("miraStage");
   const miraSprite = document.getElementById("miraSprite");
   const elderStage = document.getElementById("elderStage");
@@ -1471,6 +1484,7 @@
     const effect = sceneEffectForFrame(frame);
     if (effect?.image) jobs.push(prepareSceneImageSource(effect.image));
     if (normalizeEmotionBubble(frame)) jobs.push(prepareSceneImageSource(emotionBubbleSource));
+    if (normalizeStoryItem(frame)) jobs.push(prepareSceneImageSource(storyItemSource));
     return jobs;
   }
 
@@ -2030,6 +2044,62 @@
     return bubble;
   }
 
+  function createStoryItemPop() {
+    if (!storyVn || typeof document === "undefined") return null;
+    let item = document.getElementById("storyItemPop");
+    if (item) return item;
+
+    item = document.createElement("div");
+    item.id = "storyItemPop";
+    item.className = "story-item-pop";
+    item.setAttribute("aria-hidden", "true");
+    if (sceneFader?.parentNode === storyVn) storyVn.insertBefore(item, sceneFader);
+    else storyVn.appendChild(item);
+    return item;
+  }
+
+  function normalizeStoryItem(frame) {
+    const item = frame?.item || frame?.storyItem;
+    if (!item) return null;
+
+    if (typeof item === "string") {
+      const preset = storyItemPresets[item];
+      return preset ? Object.assign({}, preset) : { key: item, size: "" };
+    }
+
+    const key = String(item.key || item.name || item.type || "").trim();
+    if (!key) return null;
+    const preset = storyItemPresets[key] || {};
+    return {
+      key,
+      size: item.size || preset.size || "",
+      placement: item.placement || preset.placement || ""
+    };
+  }
+
+  function setStoryItem(frame) {
+    if (!storyItemPop) return;
+    const next = normalizeStoryItem(frame);
+    if (!next) {
+      storyItemPop.classList.remove("is-active");
+      storyItemPop.removeAttribute("data-item");
+      storyItemPop.removeAttribute("data-size");
+      storyItemPop.removeAttribute("data-placement");
+      storyItemPop.setAttribute("aria-hidden", "true");
+      return;
+    }
+
+    storyItemPop.dataset.item = next.key;
+    if (next.size) storyItemPop.dataset.size = next.size;
+    else storyItemPop.removeAttribute("data-size");
+    if (next.placement) storyItemPop.dataset.placement = next.placement;
+    else storyItemPop.removeAttribute("data-placement");
+    storyItemPop.setAttribute("aria-hidden", "false");
+    storyItemPop.classList.remove("is-active");
+    void storyItemPop.offsetWidth;
+    storyItemPop.classList.add("is-active");
+  }
+
   function defaultEmotionCharacter(frame) {
     if (frame?.speaker === "Elder Shellwick") return "elder";
     const spriteKey = resolveFrameSprite(frame);
@@ -2050,7 +2120,8 @@
         glyph: preset.glyph || emotion,
         shape: preset.shape || "round",
         tone: preset.tone || emotion,
-        character: defaultEmotionCharacter(frame)
+        character: defaultEmotionCharacter(frame),
+        placement: preset.placement || ""
       };
     }
 
@@ -2064,7 +2135,8 @@
       glyph,
       shape: emotion.shape || preset.shape || "round",
       tone: emotion.tone || preset.tone || key || "custom",
-      character: emotion.character || defaultEmotionCharacter(frame)
+      character: emotion.character || defaultEmotionCharacter(frame),
+      placement: emotion.placement || preset.placement || ""
     };
   }
 
@@ -2076,6 +2148,7 @@
       emotionBubble.removeAttribute("data-character");
       emotionBubble.removeAttribute("data-shape");
       emotionBubble.removeAttribute("data-tone");
+      emotionBubble.removeAttribute("data-placement");
       emotionBubble.setAttribute("aria-hidden", "true");
       return;
     }
@@ -2090,6 +2163,8 @@
     emotionBubble.dataset.character = character;
     emotionBubble.dataset.shape = next.shape;
     emotionBubble.dataset.tone = next.tone;
+    if (next.placement) emotionBubble.dataset.placement = next.placement;
+    else emotionBubble.removeAttribute("data-placement");
     const glyph = emotionBubble.querySelector(".story-emotion-glyph");
     if (glyph) glyph.textContent = next.glyph;
     emotionBubble.setAttribute("aria-hidden", "false");
@@ -2529,9 +2604,11 @@
       hideActor("mira");
       hideActor("elder");
       setEmotionBubble(null);
+      setStoryItem(null);
     } else {
       setSprite(resolveFrameSprite(frame), frame.motion || "", frame);
       setEmotionBubble(frame);
+      setStoryItem(frame);
     }
     setDialogueSpeaker(frame);
     speakerName.textContent = isNarrationFrame(frame) ? "Narrator" : frame.speaker || "";
